@@ -1,0 +1,16 @@
+language: go
+go: 1.7.3
+dist: trusty
+sudo: false
+
+env:
+  global:
+    - secure: ""
+    - 'DEPLOY_BRANCH="master"'
+    - 'DEPLOY_REPO_SLUG="vim-jp/vimdoc-en"'
+    - 'DEPLOY_USER_NAME="vimdoc-en on travis-ci"'
+    - 'DEPLOY_USER_EMAIL="vimdoc-en+travis-ci@vim-jp.org"'
+
+script:
+  - sh ./tools/install_sshkey_github.sh "$CI_KEY" ./tools/ci@vimdoc-en.vim-jp.org.enc ~/.ssh/ci@vimdoc-en.vim-jp.org
+  - '[ "$TRAVIS_BRANCH" == "$DEPLOY_BRANCH" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && sh ./tools/deploy-gh-pages.sh _gh-pages'
