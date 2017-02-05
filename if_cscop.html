@@ -1,0 +1,510 @@
+---
+layout: vimdoc
+helpname: 'if_cscop'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="if_cscop.html" name="if_cscop.txt">*if_cscop.txt*</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2011 Jun 12<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Andy Kahn</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscope" name="cscope">*cscope*</a>&nbsp;<a class="Constant" href="if_cscop.html#Cscope" name="Cscope">*Cscope*</a><br>
+This document explains how to use Vim's cscope interface.<br>
+<br>
+Cscope is a tool like ctags, but think of it as ctags on steroids since it<br>
+does a lot more than what ctags provides.&nbsp;&nbsp;In Vim, jumping to a result from<br>
+a cscope query is just like jumping to any tag; it is saved on the tag stack<br>
+so that with the right keyboard mappings, you can jump back and forth between<br>
+functions as you normally would with&nbsp;<a class="Identifier" href="tagsrch.html#tags">|tags|</a>.<br>
+<br>
+1. Cscope introduction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="if_cscop.html#cscope-intro">|cscope-intro|</a><br>
+2. Cscope related commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="if_cscop.html#cscope-commands">|cscope-commands|</a><br>
+3. Cscope options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="if_cscop.html#cscope-options">|cscope-options|</a><br>
+4. How to use cscope in Vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="if_cscop.html#cscope-howtouse">|cscope-howtouse|</a><br>
+5. Limitations&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="if_cscop.html#cscope-limitations">|cscope-limitations|</a><br>
+6. Suggested usage&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="if_cscop.html#cscope-suggestions">|cscope-suggestions|</a><br>
+7. Availability &amp; Information&nbsp;&nbsp;&nbsp;<a class="Identifier" href="if_cscop.html#cscope-info">|cscope-info|</a><br>
+<br>
+This is currently for Unix and Win32 only.<br>
+<span class="Special">{Vi does not have any of these commands}</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Cscope introduction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscope-intro" name="cscope-intro">*cscope-intro*</a><br>
+<br>
+The following text is taken from a version of the cscope man page:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----<br>
+<br>
+&nbsp;&nbsp;Cscope is an interactive screen-oriented tool that helps you:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Learn how a C program works without endless flipping through a thick<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; listing.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Locate the section of code to change to fix a bug without having to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; learn the entire program.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Examine the effect of a proposed change such as adding a value to an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enum variable.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Verify that a change has been made in all source files such as adding<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; an argument to an existing function.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rename a global variable in all source files.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Change a constant to a preprocessor symbol in selected lines of files.<br>
+<br>
+&nbsp;&nbsp;It is designed to answer questions like:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Where is this symbol used?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Where is it defined?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Where did this variable get its value?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; What is this global symbol's definition?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Where is this function in the source files?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; What functions call this function?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; What functions are called by this function?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Where does the message &quot;out of space&quot; come from?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Where is this source file in the directory structure?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; What files include this header file?<br>
+<br>
+&nbsp;&nbsp;Cscope answers these questions from a symbol database that it builds the<br>
+&nbsp;&nbsp;first time it is used on the source files.&nbsp;&nbsp;On a subsequent call, cscope<br>
+&nbsp;&nbsp;rebuilds the database only if a source file has changed or the list of<br>
+&nbsp;&nbsp;source files is different.&nbsp;&nbsp;When the database is rebuilt the data for the<br>
+&nbsp;&nbsp;unchanged files is copied from the old database, which makes rebuilding<br>
+&nbsp;&nbsp;much faster than the initial build.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----<br>
+<br>
+When cscope is normally invoked, you will get a full-screen selection<br>
+screen allowing you to make a query for one of the above questions.<br>
+However, once a match is found to your query and you have entered your<br>
+text editor to edit the source file containing match, you cannot simply<br>
+jump from tag to tag as you normally would with vi's Ctrl-] or :tag<br>
+command.<br>
+<br>
+Vim's cscope interface is done by invoking cscope with its line-oriented<br>
+interface, and then parsing the output returned from a query.&nbsp;&nbsp;The end<br>
+result is that cscope query results become just like regular tags, so<br>
+you can jump to them just like you do with normal tags (Ctrl-] or :tag)<br>
+and then go back by popping off the tagstack with Ctrl-T.&nbsp;&nbsp;(Please&nbsp;<span class="Todo">note</span><br>
+however, that you don't actually jump to a cscope tag simply by doing<br>
+Ctrl-] or :tag without remapping these commands or setting an option.<br>
+See the remaining sections on how the cscope interface works and for<br>
+suggested use.)<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Cscope related commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscope-commands" name="cscope-commands">*cscope-commands*</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#:cscope" name=":cscope">*:cscope*</a>&nbsp;<a class="Constant" href="if_cscop.html#:cs" name=":cs">*:cs*</a>&nbsp;<a class="Constant" href="if_cscop.html#:scs" name=":scs">*:scs*</a>&nbsp;<a class="Constant" href="if_cscop.html#:scscope" name=":scscope">*:scscope*</a>&nbsp;<a class="Constant" href="if_cscop.html#E259" name="E259">*E259*</a>&nbsp;<a class="Constant" href="if_cscop.html#E262" name="E262">*E262*</a>&nbsp;<a class="Constant" href="if_cscop.html#E561" name="E561">*E561*</a>&nbsp;<a class="Constant" href="if_cscop.html#E560" name="E560">*E560*</a><br>
+All cscope commands are accessed through suboptions to the main cscope<br>
+command &quot;:cscope&quot;.&nbsp;&nbsp;The shortest abbreviation is &quot;:cs&quot;.&nbsp;&nbsp;The &quot;:scscope&quot;<br>
+command does the same and also splits the window (short: &quot;scs&quot;).<br>
+<br>
+The available subcommands are:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#E563" name="E563">*E563*</a>&nbsp;<a class="Constant" href="if_cscop.html#E564" name="E564">*E564*</a>&nbsp;<a class="Constant" href="if_cscop.html#E566" name="E566">*E566*</a>&nbsp;<a class="Constant" href="if_cscop.html#E568" name="E568">*E568*</a>&nbsp;<a class="Constant" href="if_cscop.html#E622" name="E622">*E622*</a>&nbsp;<a class="Constant" href="if_cscop.html#E623" name="E623">*E623*</a>&nbsp;<a class="Constant" href="if_cscop.html#E625" name="E625">*E625*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#E626" name="E626">*E626*</a>&nbsp;<a class="Constant" href="if_cscop.html#E609" name="E609">*E609*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;add&nbsp;&nbsp; : Add a new cscope database/connection.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USAGE&nbsp;&nbsp; :cs add {file|dir}&nbsp;<span class="Special">[pre-path]</span>&nbsp;<span class="Special">[flags]</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[pre-path]</span>&nbsp;is the pathname used with the -P command to cscope.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[flags]</span>&nbsp;are any additional flags you want to pass to cscope.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXAMPLES<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cscope add /usr/local/cdb/cscope.out<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cscope add /projects/vim/cscope.out /usr/local/vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cscope add cscope.out /usr/local/vim -C</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscope-find" name="cscope-find">*cscope-find*</a>&nbsp;<a class="Constant" href="if_cscop.html#cs-find" name="cs-find">*cs-find*</a>&nbsp;<a class="Constant" href="if_cscop.html#E567" name="E567">*E567*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;find&nbsp;&nbsp;: Query cscope.&nbsp;&nbsp;All cscope query options are available<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;except option #5 (&quot;Change this grep pattern&quot;).<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USAGE&nbsp;&nbsp; :cs find&nbsp;<span class="Special">{querytype}</span>&nbsp;<span class="Special">{name}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{querytype}</span>&nbsp;corresponds to the actual cscope line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;interface numbers as well as default nvi commands:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 or s: Find this C symbol<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 or g: Find this definition<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 or d: Find functions called by this function<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3 or c: Find functions calling this function<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4 or t: Find this text string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6 or e: Find this egrep pattern<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7 or f: Find this file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 or i: Find files #including this file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9 or a: Find places where this symbol is assigned a value<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For all types, except 4 and 6, leading white space for&nbsp;<span class="Special">{name}</span>&nbsp;is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;removed.&nbsp;&nbsp;For 4 and 6 there is exactly one space between&nbsp;<span class="Special">{querytype}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;<span class="Special">{name}</span>.&nbsp;&nbsp;Further white space is included in&nbsp;<span class="Special">{name}</span>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXAMPLES<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cscope find c vim_free<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cscope find 3&nbsp;&nbsp;vim_free</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;These two examples perform the same query: functions calling<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;vim_free&quot;.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cscope find t initOnce<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cscope find t&nbsp;&nbsp;initOnce</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first one searches for the text &quot;initOnce&quot;, the second one for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; initOnce&quot;.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cscope find 0 DEFAULT_TERM</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Executing this example on the source code for Vim 5.1 produces the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;following output:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cscope tag: DEFAULT_TERM<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #&nbsp;&nbsp; line&nbsp;&nbsp;filename / context / line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp; 1009&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;GLOBAL&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #define DEFAULT_TERM (char_u *)&quot;amiga&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp; 1013&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;GLOBAL&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #define DEFAULT_TERM (char_u *)&quot;win32&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3&nbsp;&nbsp; 1017&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;GLOBAL&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #define DEFAULT_TERM (char_u *)&quot;pcterm&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4&nbsp;&nbsp; 1021&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;GLOBAL&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #define DEFAULT_TERM (char_u *)&quot;ansi&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5&nbsp;&nbsp; 1025&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;GLOBAL&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #define DEFAULT_TERM (char_u *)&quot;vt52&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6&nbsp;&nbsp; 1029&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;GLOBAL&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #define DEFAULT_TERM (char_u *)&quot;os2ansi&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7&nbsp;&nbsp; 1033&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;GLOBAL&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #define DEFAULT_TERM (char_u *)&quot;ansi&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8&nbsp;&nbsp; 1037&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;GLOBAL&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # undef DEFAULT_TERM<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9&nbsp;&nbsp; 1038&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;GLOBAL&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #define DEFAULT_TERM (char_u *)&quot;beos-ansi&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp; 1042&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;GLOBAL&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #define DEFAULT_TERM (char_u *)&quot;mac-ansi&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp; 1335&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;set_termname&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; term = DEFAULT_TERM;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12&nbsp;&nbsp; 1459&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;set_termname&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (STRCMP(term, DEFAULT_TERM))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13&nbsp;&nbsp; 1826&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;termcapinit&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; term = DEFAULT_TERM;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14&nbsp;&nbsp; 1833&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;termcapinit&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; term = DEFAULT_TERM;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15&nbsp;&nbsp; 3635&nbsp;&nbsp;vim-5.1-gtk/src/term.c &lt;<span class="Special">&lt;update_tcap&gt;</span>&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; p = find_builtin_term(DEFAULT_TERM);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enter nr of choice (<span class="Special">&lt;CR&gt;</span>&nbsp;to abort):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The output shows several pieces of information:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. The tag number (there are 15 in this example).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. The line number where the tag occurs.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. The filename where the tag occurs.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. The context of the tag (e.g., global, or the function name).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. The line from the file itself.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;help&nbsp;&nbsp;: Show a brief synopsis.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USAGE&nbsp;&nbsp; :cs help<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#E261" name="E261">*E261*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;kill&nbsp;&nbsp;: Kill a cscope connection (or kill all cscope connections).<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USAGE&nbsp;&nbsp; :cs kill {num|partial_name}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To kill a cscope connection, the connection number or a partial<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name must be specified.&nbsp;&nbsp;The partial name is simply any part of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the pathname of the cscope database.&nbsp;&nbsp;Kill a cscope connection<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using the partial name with caution!<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the specified connection number is -1, then _ALL_ cscope<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connections will be killed.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reset : Reinit all cscope connections.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USAGE&nbsp;&nbsp; :cs reset<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;show&nbsp;&nbsp;: Show cscope connections.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USAGE&nbsp;&nbsp; :cs show<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#:lcscope" name=":lcscope">*:lcscope*</a>&nbsp;<a class="Constant" href="if_cscop.html#:lcs" name=":lcs">*:lcs*</a><br>
+This command is same as the &quot;:cscope&quot; command, except when the<br>
+<a class="Type" href="options.html#'cscopequickfix'">'cscopequickfix'</a>&nbsp;option is set, the location list for the current window is<br>
+used instead of the quickfix list to show the cscope results.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#:cstag" name=":cstag">*:cstag*</a>&nbsp;<a class="Constant" href="if_cscop.html#E257" name="E257">*E257*</a>&nbsp;<a class="Constant" href="if_cscop.html#E562" name="E562">*E562*</a><br>
+If you use cscope as well as ctags,&nbsp;<a class="Identifier" href="if_cscop.html#:cstag">|:cstag|</a>&nbsp;allows you to search one or<br>
+the other before making a jump.&nbsp;&nbsp;For example, you can choose to first<br>
+search your cscope database(s) for a match, and if one is not found, then<br>
+your tags file(s) will be searched.&nbsp;&nbsp;The order in which this happens<br>
+is determined by the value of&nbsp;<a class="Identifier" href="if_cscop.html#csto">|csto|</a>.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="if_cscop.html#cscope-options">|cscope-options|</a>&nbsp;for more<br>
+details.<br>
+<br>
+<a class="Identifier" href="if_cscop.html#:cstag">|:cstag|</a>&nbsp;performs the equivalent of &quot;:cs find g&quot; on the identifier when<br>
+searching through the cscope database(s).<br>
+<br>
+<a class="Identifier" href="if_cscop.html#:cstag">|:cstag|</a>&nbsp;performs the equivalent of&nbsp;<a class="Identifier" href="tagsrch.html#:tjump">|:tjump|</a>&nbsp;on the identifier when searching<br>
+through your tags file(s).<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Cscope options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscope-options" name="cscope-options">*cscope-options*</a><br>
+<br>
+Use the&nbsp;<a class="Identifier" href="options.html#:set">|:set|</a>&nbsp;command to set all cscope options.&nbsp;&nbsp;Ideally, you would do<br>
+this in one of your startup files (e.g., .vimrc).&nbsp;&nbsp;Some cscope related<br>
+variables are only valid within&nbsp;<a class="Identifier" href="starting.html#.vimrc">|.vimrc|</a>.&nbsp;&nbsp;Setting them after vim has<br>
+started will have no effect!<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscopeprg" name="cscopeprg">*cscopeprg*</a>&nbsp;<a class="Constant" href="if_cscop.html#csprg" name="csprg">*csprg*</a><br>
+<a class="Type" href="options.html#'cscopeprg'">'cscopeprg'</a>&nbsp;specifies the command to execute cscope.&nbsp;&nbsp;The default is<br>
+&quot;cscope&quot;.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set csprg=/usr/local/bin/cscope</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscopequickfix" name="cscopequickfix">*cscopequickfix*</a>&nbsp;<a class="Constant" href="if_cscop.html#csqf" name="csqf">*csqf*</a>&nbsp;<a class="Constant" href="if_cscop.html#E469" name="E469">*E469*</a><br>
+<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+quickfix">|+quickfix|</a><span class="Special">&nbsp;feature}</span><br>
+<a class="Type" href="options.html#'cscopequickfix'">'cscopequickfix'</a>&nbsp;specifies whether to use quickfix window to show cscope<br>
+results.&nbsp;&nbsp;This is a list of comma-separated values. Each item consists of<br>
+<a class="Identifier" href="if_cscop.html#cscope-find">|cscope-find|</a>&nbsp;command (s, g, d, c, t, e, f, i or a) and flag (+, - or 0).<br>
+'+' indicates that results must be appended to quickfix window,<br>
+'-' implies previous results clearance, '0' or command absence - don't use<br>
+quickfix.&nbsp;&nbsp;Search is performed from start until first command occurrence.<br>
+The default value is &quot;&quot; (don't use quickfix anyway).&nbsp;&nbsp;The following value<br>
+seems to be useful:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set cscopequickfix=s-,c-,d-,i-,t-,e-,a-</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscopetag" name="cscopetag">*cscopetag*</a>&nbsp;<a class="Constant" href="if_cscop.html#cst" name="cst">*cst*</a><br>
+If&nbsp;<a class="Type" href="options.html#'cscopetag'">'cscopetag'</a>&nbsp;is set, the commands &quot;:tag&quot; and&nbsp;<span class="Special">CTRL-]</span>&nbsp;as well as &quot;vim -t&quot;<br>
+will always use&nbsp;<a class="Identifier" href="if_cscop.html#:cstag">|:cstag|</a>&nbsp;instead of the default :tag behavior.&nbsp;&nbsp;Effectively,<br>
+by setting&nbsp;<a class="Type" href="options.html#'cst'">'cst'</a>, you will always search your cscope databases as well as<br>
+your tag files.&nbsp;&nbsp;The default is off.&nbsp;&nbsp;Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set cst<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nocst</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscoperelative" name="cscoperelative">*cscoperelative*</a>&nbsp;<a class="Constant" href="if_cscop.html#csre" name="csre">*csre*</a><br>
+If&nbsp;<a class="Type" href="options.html#'cscoperelative'">'cscoperelative'</a>&nbsp;is set, then in absence of a prefix given to cscope<br>
+(prefix is the argument of -P option of cscope), basename of cscope.out<br>
+location (usually the project root directory) will be used as the prefix<br>
+to construct an absolute path.&nbsp;&nbsp;The default is off.&nbsp;&nbsp;<span class="Todo">Note</span>: This option is<br>
+only effective when cscope (cscopeprg) is initialized without a prefix<br>
+path (-P).&nbsp;&nbsp;Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set csre<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nocsre</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscopetagorder" name="cscopetagorder">*cscopetagorder*</a>&nbsp;<a class="Constant" href="if_cscop.html#csto" name="csto">*csto*</a><br>
+The value of&nbsp;<a class="Type" href="options.html#'csto'">'csto'</a>&nbsp;determines the order in which&nbsp;<a class="Identifier" href="if_cscop.html#:cstag">|:cstag|</a>&nbsp;performs a search.<br>
+If&nbsp;<a class="Type" href="options.html#'csto'">'csto'</a>&nbsp;is set to zero, cscope database(s) are searched first, followed<br>
+by tag file(s) if cscope did not return any matches.&nbsp;&nbsp;If&nbsp;<a class="Type" href="options.html#'csto'">'csto'</a>&nbsp;is set to<br>
+one, tag file(s) are searched before cscope database(s).&nbsp;&nbsp;The default is zero.<br>
+Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set csto=0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set csto=1</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscopeverbose" name="cscopeverbose">*cscopeverbose*</a>&nbsp;<a class="Constant" href="if_cscop.html#csverb" name="csverb">*csverb*</a><br>
+If&nbsp;<a class="Type" href="options.html#'cscopeverbose'">'cscopeverbose'</a>&nbsp;is not set (the default), messages will not be printed<br>
+indicating success or failure when adding a cscope database.&nbsp;&nbsp;Ideally, you<br>
+should reset this option in your&nbsp;<a class="Identifier" href="starting.html#.vimrc">|.vimrc|</a>&nbsp;before adding any cscope databases,<br>
+and after adding them, set it.&nbsp;&nbsp;From then on, when you add more databases<br>
+within Vim, you will get a (hopefully) useful message should the database fail<br>
+to be added.&nbsp;&nbsp;Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set csverb<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nocsverb</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscopepathcomp" name="cscopepathcomp">*cscopepathcomp*</a>&nbsp;<a class="Constant" href="if_cscop.html#cspc" name="cspc">*cspc*</a><br>
+The value of&nbsp;<a class="Type" href="options.html#'cspc'">'cspc'</a>&nbsp;determines how many components of a file's path to<br>
+display.&nbsp;&nbsp;With the default value of zero the entire path will be displayed.<br>
+The value one will display only the filename with no path.&nbsp;&nbsp;Other values<br>
+display that many components.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set cspc=3</div>
+will display the last 3 components of the file's path, including the file<br>
+name itself.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. How to use cscope in Vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscope-howtouse" name="cscope-howtouse">*cscope-howtouse*</a><br>
+<br>
+The first thing you need to do is to build a cscope database for your<br>
+source files.&nbsp;&nbsp;For the most basic case, simply do &quot;cscope -b&quot;.&nbsp;&nbsp;Please<br>
+refer to the cscope man page for more details.<br>
+<br>
+Assuming you have a cscope database, you need to &quot;add&quot; the database to Vim.<br>
+This establishes a cscope &quot;connection&quot; and makes it available for Vim to use.<br>
+You can do this in your .vimrc file, or you can do it manually after starting<br>
+vim.&nbsp;&nbsp;For example, to add the cscope database &quot;cscope.out&quot;, you would do:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cs add cscope.out<br>
+<br>
+You can double-check the result of this by executing &quot;:cs show&quot;.&nbsp;&nbsp;This will<br>
+produce output which looks like this:<br>
+<br>
+&nbsp;# pid&nbsp;&nbsp;&nbsp;&nbsp;database name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; prepend path<br>
+&nbsp;0 28806&nbsp;&nbsp;cscope.out&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;none&gt;</span><br>
+<br>
+<span class="Todo">Note</span>:<br>
+Because of the Microsoft RTL limitations, Win32 version shows 0 instead<br>
+of the real pid.<br>
+<br>
+Once a cscope connection is established, you can make queries to cscope and<br>
+the results will be printed to you.&nbsp;&nbsp;Queries are made using the command<br>
+&quot;:cs find&quot;.&nbsp;&nbsp;For example:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cs find g ALIGN_SIZE<br>
+<br>
+This can get a little cumbersome since one ends up doing a significant<br>
+amount of typing.&nbsp;&nbsp;Fortunately, there are ways around this by mapping<br>
+shortcut keys.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="if_cscop.html#cscope-suggestions">|cscope-suggestions|</a>&nbsp;for suggested usage.<br>
+<br>
+If the results return only one match, you will automatically be taken to it.<br>
+If there is more than one match, you will be given a selection screen to pick<br>
+the match you want to go to.&nbsp;&nbsp;After you have jumped to the new location,<br>
+simply hit Ctrl-T to get back to the previous one.<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+5. Limitations&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscope-limitations" name="cscope-limitations">*cscope-limitations*</a><br>
+<br>
+Cscope support for Vim is only available on systems that support these four<br>
+system calls: fork(), pipe(), execl(), waitpid().&nbsp;&nbsp;This means it is mostly<br>
+limited to Unix systems.<br>
+<br>
+Additionally Cscope support works for Win32.&nbsp;&nbsp;For more information and a<br>
+cscope version for Win32 see:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://iamphet.nm.ru/cscope/index.html">http://iamphet.nm.ru/cscope/index.html</a></span><br>
+<br>
+The DJGPP-built version from&nbsp;<span class="Constant"><a href="http://cscope.sourceforge.net">http://cscope.sourceforge.net</a></span>&nbsp;is known to not<br>
+work with Vim.<br>
+<br>
+Hard-coded limitation: doing a&nbsp;<a class="Identifier" href="tagsrch.html#:tjump">|:tjump|</a>&nbsp;when&nbsp;<a class="Identifier" href="if_cscop.html#:cstag">|:cstag|</a>&nbsp;searches the tag files<br>
+is not configurable (e.g., you can't do a tselect instead).<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+6. Suggested usage&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscope-suggestions" name="cscope-suggestions">*cscope-suggestions*</a><br>
+<br>
+Put these entries in your .vimrc (adjust the pathname accordingly to your<br>
+setup):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has(&quot;cscope&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set csprg=/usr/local/bin/cscope<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set csto=0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set cst<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set nocsverb<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; add any database in current directory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if filereadable(&quot;cscope.out&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs add cscope.out<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; else add database pointed to by environment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif $CSCOPE_DB != &quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs add $CSCOPE_DB<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set csverb<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+By setting&nbsp;<a class="Type" href="options.html#'cscopetag'">'cscopetag'</a>, we have effectively replaced all instances of the :tag<br>
+command with :cstag.&nbsp;&nbsp;This includes :tag, Ctrl-], and &quot;vim -t&quot;.&nbsp;&nbsp;In doing<br>
+this, the regular tag command not only searches your ctags generated tag<br>
+files, but your cscope databases as well.<br>
+<br>
+Some users may want to keep the regular tag behavior and have a different<br>
+shortcut to access :cstag.&nbsp;&nbsp;For example, one could map Ctrl-_&nbsp;&nbsp;(underscore)<br>
+to :cstag with the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map &lt;C-_&gt; :cstag &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</div>
+<br>
+A couple of very commonly used cscope queries (using &quot;:cs find&quot;) is to<br>
+find all functions calling a certain function and to find all occurrences<br>
+of a particular C symbol.&nbsp;&nbsp;To do this, you can use these mappings as an<br>
+example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map g&lt;C-]&gt; :cs find 3 &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map g&lt;C-\&gt; :cs find 0 &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</div>
+<br>
+These mappings for Ctrl-] (right bracket) and Ctrl-\ (backslash) allow you to<br>
+place your cursor over the function name or C symbol and quickly query cscope<br>
+for any matches.<br>
+<br>
+Or you may use the following scheme, inspired by Vim/Cscope tutorial from<br>
+Cscope Home Page (<span class="Constant"><a href="http://cscope.sourceforge.net/">http://cscope.sourceforge.net/</a></span>):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-_&gt;s :cs find s &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-_&gt;g :cs find g &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-_&gt;c :cs find c &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-_&gt;t :cs find t &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-_&gt;e :cs find e &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-_&gt;f :cs find f &lt;C-R&gt;=expand(&quot;&lt;cfile&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-_&gt;i :cs find i ^&lt;C-R&gt;=expand(&quot;&lt;cfile&gt;&quot;)&lt;CR&gt;$&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-_&gt;d :cs find d &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-_&gt;a :cs find a &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Using 'CTRL-spacebar' then a search type makes the vim window<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; split horizontally, with search result displayed in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; the new window.</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;s :scs find s &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;g :scs find g &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;c :scs find c &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;t :scs find t &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;e :scs find e &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;f :scs find f &lt;C-R&gt;=expand(&quot;&lt;cfile&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;i :scs find i ^&lt;C-R&gt;=expand(&quot;&lt;cfile&gt;&quot;)&lt;CR&gt;$&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;d :scs find d &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;a :scs find a &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Hitting CTRL-space *twice* before the search type does a vertical<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; split instead of a horizontal one</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;&lt;C-Space&gt;s<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\:vert scs find s &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;&lt;C-Space&gt;g<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\:vert scs find g &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;&lt;C-Space&gt;c<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\:vert scs find c &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;&lt;C-Space&gt;t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\:vert scs find t &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;&lt;C-Space&gt;e<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\:vert scs find e &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;&lt;C-Space&gt;i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\:vert scs find i ^&lt;C-R&gt;=expand(&quot;&lt;cfile&gt;&quot;)&lt;CR&gt;$&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;&lt;C-Space&gt;d<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\:vert scs find d &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;C-Space&gt;&lt;C-Space&gt;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\:vert scs find a &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+7. Cscope availability and information&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscope-info" name="cscope-info">*cscope-info*</a><br>
+<br>
+If you do not already have cscope (it did not come with your compiler<br>
+license or OS distribution), then you can download it for free from:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://cscope.sourceforge.net/">http://cscope.sourceforge.net/</a></span><br>
+This is released by SCO under the BSD license.<br>
+<br>
+If you want a newer version of cscope, you will probably have to buy it.<br>
+According to the (old) nvi documentation:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can buy version 13.3 source with an unrestricted license<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for $400 from AT&amp;T Software Solutions by calling +1-800-462-8146.<br>
+<br>
+Also you can download cscope 13.x and mlcscope 14.x (multi-lingual cscope<br>
+which supports C, C++, Java, lex, yacc, breakpoint listing, Ingres, and SDL)<br>
+from World-Wide Exptools Open Source packages page:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.bell-labs.com/project/wwexptools/packages.html">http://www.bell-labs.com/project/wwexptools/packages.html</a></span><br>
+<br>
+In Solaris 2.x, if you have the C compiler license, you will also have<br>
+cscope.&nbsp;&nbsp;Both are usually located under /opt/SUNWspro/bin<br>
+<br>
+SGI developers can also get it.&nbsp;&nbsp;Search for Cscope on this page:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://freeware.sgi.com/index-by-alpha.html">http://freeware.sgi.com/index-by-alpha.html</a></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="https://toolbox.sgi.com/toolbox/utilities/cscope/">https://toolbox.sgi.com/toolbox/utilities/cscope/</a></span><br>
+The second one is for those who have a password for the SGI toolbox.<br>
+<br>
+There is source to an older version of a cscope clone (called &quot;cs&quot;) available<br>
+on the net.&nbsp;&nbsp;Due to various reasons, this is not supported with Vim.<br>
+<br>
+The cscope interface/support for Vim was originally written by<br>
+Andy Kahn &lt;ackahn@netapp.com&gt;.&nbsp;&nbsp;The original structure (as well as a tiny<br>
+bit of code) was adapted from the cscope interface in nvi.&nbsp;&nbsp;Please report<br>
+any problems, suggestions, patches, et al., you have for the usage of<br>
+cscope within Vim to him.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_cscop.html#cscope-win32" name="cscope-win32">*cscope-win32*</a><br>
+For a cscope version for Win32 see:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://code.google.com/p/cscope-win32/">http://code.google.com/p/cscope-win32/</a></span><br>
+<br>
+Win32 support was added by Sergey Khorev &lt;sergey.khorev@gmail.com&gt;.&nbsp;&nbsp;Contact<br>
+him if you have Win32-specific issues.<br>
+<br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

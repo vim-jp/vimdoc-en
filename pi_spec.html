@@ -1,0 +1,117 @@
+---
+layout: vimdoc
+helpname: 'pi_spec'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="pi_spec.html" name="pi_spec.txt">*pi_spec.txt*</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2006 Apr 24<br>
+<br>
+<span class="PreProc">by Gustavo Niemeyer</span><br>
+<br>
+This is a filetype plugin to work with rpm spec files.<br>
+<br>
+Currently, this Vim plugin allows you to easily update the %changelog<br>
+section in RPM spec files.&nbsp;&nbsp;It will even create a section for you if it<br>
+doesn't exist yet.&nbsp;&nbsp;If you've already inserted an entry today, it will<br>
+give you the opportunity to just add a new item in today's entry.&nbsp;&nbsp;If you<br>
+don't provide a format string (<a class="Identifier" href="pi_spec.html#spec_chglog_format">|spec_chglog_format|</a>), it'll ask you an<br>
+email address and build a format string by itself.<br>
+<br>
+1. How to use it&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pi_spec.html#spec-how-to-use-it">|spec-how-to-use-it|</a><br>
+2. Customizing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pi_spec.html#spec-customizing">|spec-customizing|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. How to use it&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pi_spec.html#spec-how-to-use-it" name="spec-how-to-use-it">*spec-how-to-use-it*</a><br>
+<br>
+The spec_chglog plugin provides a map like the following:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:map&nbsp;<span class="Special">&lt;buffer&gt;</span>&nbsp;<span class="Special">&lt;LocalLeader&gt;</span>c&nbsp;<span class="Special">&lt;Plug&gt;</span>SpecChangelog<br>
+<br>
+It means that you may run the plugin inside a spec file by pressing<br>
+your maplocalleader key (default is '\') plus 'c'.&nbsp;&nbsp;If you do not have<br>
+<a class="Identifier" href="pi_spec.html#spec_chglog_format">|spec_chglog_format|</a>&nbsp;set, the plugin will ask you for an email address<br>
+to use in this edit session.<br>
+<br>
+Every time you run the plugin, it will check to see if the last entry in the<br>
+changelog has been written today and by you.&nbsp;&nbsp;If the entry matches, it will<br>
+just insert a new changelog item, otherwise it will create a new changelog<br>
+entry.&nbsp;&nbsp;If you are running with&nbsp;<a class="Identifier" href="pi_spec.html#spec_chglog_release_info">|spec_chglog_release_info|</a>&nbsp;enabled, it will<br>
+also check if the name, version and release matches.&nbsp;&nbsp;The plugin is smart<br>
+enough to ask you if it should update the package release, if you have not<br>
+done so.<br>
+<br>
+Setting a map&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pi_spec.html#spec-setting-a-map" name="spec-setting-a-map">*spec-setting-a-map*</a><br>
+<span class="PreProc">-------------</span><br>
+<br>
+As you should know, you can easily set a map to access any Vim command (or<br>
+anything, for that matter).&nbsp;&nbsp;If you don't like the default map of<br>
+<span class="Special">&lt;LocalLeader&gt;</span>c, you may just set up your own key.&nbsp;&nbsp;The following line<br>
+shows you how you could do this in your .vimrc file, mapping the plugin to<br>
+the&nbsp;<span class="Special">&lt;F5&gt;</span>&nbsp;key:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au FileType spec map&nbsp;<span class="Special">&lt;buffer&gt;</span>&nbsp;<span class="Special">&lt;F5&gt;</span>&nbsp;<span class="Special">&lt;Plug&gt;</span>SpecChangelog<br>
+<br>
+<span class="Todo">Note</span>: the plugin will respect your desire to change the default mapping<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and won't set it.<br>
+<br>
+This command will add a map only in the spec file buffers.<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Customizing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pi_spec.html#spec-customizing" name="spec-customizing">*spec-customizing*</a><br>
+<br>
+The format string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pi_spec.html#spec_chglog_format" name="spec_chglog_format">*spec_chglog_format*</a><br>
+<span class="PreProc">-----------------</span><br>
+<br>
+You can easily customize how your spec file entry will look like.&nbsp;&nbsp;To do<br>
+this just set the variable &quot;spec_chglog_format&quot; in your .vimrc file like<br>
+this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let spec_chglog_format = &quot;%a %b %d %Y My Name &lt;my@email.com&gt;&quot;</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that &quot;%a %b %d %Y&quot; is the most used time format.&nbsp;&nbsp;If you don't provide<br>
+a format string, when you run the SpecChangelog command for the first<br>
+time, it will ask you an email address and build the&nbsp;<a class="Identifier" href="pi_spec.html#spec_chglog_format">|spec_chglog_format|</a><br>
+variable for you.&nbsp;&nbsp;This way, you will only need to provide your email<br>
+address once.<br>
+<br>
+To discover which format options you can use, take a look at the strftime()<br>
+function man page.<br>
+<br>
+Where to insert new items&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pi_spec.html#spec_chglog_prepend" name="spec_chglog_prepend">*spec_chglog_prepend*</a><br>
+<span class="PreProc">-------------------------</span><br>
+<br>
+The plugin will usually insert new %changelog entry items (<span class="Todo">note</span>&nbsp;that it's<br>
+not the entry itself) after the existing ones.&nbsp;&nbsp;If you set the<br>
+spec_chglog_prepend variable<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let spec_chglog_prepend = 1</div>
+<br>
+it will insert new items before the existing ones.<br>
+<br>
+Inserting release info&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pi_spec.html#spec_chglog_release_info" name="spec_chglog_release_info">*spec_chglog_release_info*</a><br>
+<span class="PreProc">----------------------</span><br>
+<br>
+If you want, the plugin may automatically insert release information<br>
+on each changelog entry.&nbsp;&nbsp;One advantage of turning this feature on is<br>
+that it may control if the release has been updated after the last<br>
+change in the package or not.&nbsp;&nbsp;If you have not updated the package<br>
+version or release, it will ask you if it should update the package<br>
+release for you.&nbsp;&nbsp;To turn this feature on, just insert the following<br>
+code in your .vimrc:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let spec_chglog_release_info = 1</div>
+<br>
+Then, the first item in your changelog entry will be something like:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ name-1.0-1cl</div>
+<br>
+If you don't like the release updating feature and don't want to answer<br>
+&quot;No&quot; each time it detects an old release, you may disable it with<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let spec_chglog_never_increase_release = 1</div>
+<br>
+<br>
+Good luck!!<br>
+<br>
+vim&#0058;tw=78:ts=8:ft=help:norl:<br>
+</div>

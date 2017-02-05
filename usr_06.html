@@ -1,0 +1,286 @@
+---
+layout: vimdoc
+helpname: 'usr_06'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_06.html" name="usr_06.txt">*usr_06.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2009 Oct 28<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Using syntax highlighting<br>
+<br>
+<br>
+Black and white text is boring.&nbsp;&nbsp;With colors your file comes to life.&nbsp;&nbsp;This<br>
+not only looks nice, it also speeds up your work.&nbsp;&nbsp;Change the colors used for<br>
+the different sorts of text.&nbsp;&nbsp;Print your text, with the colors you see on the<br>
+screen.<br>
+<br>
+<a class="Identifier" href="usr_06.html#06.1">|06.1|</a>&nbsp;&nbsp;Switching it on<br>
+<a class="Identifier" href="usr_06.html#06.2">|06.2|</a>&nbsp;&nbsp;No or wrong colors?<br>
+<a class="Identifier" href="usr_06.html#06.3">|06.3|</a>&nbsp;&nbsp;Different colors<br>
+<a class="Identifier" href="usr_06.html#06.4">|06.4|</a>&nbsp;&nbsp;With colors or without colors<br>
+<a class="Identifier" href="usr_06.html#06.5">|06.5|</a>&nbsp;&nbsp;Printing with colors<br>
+<a class="Identifier" href="usr_06.html#06.6">|06.6|</a>&nbsp;&nbsp;Further reading<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_07.html">|usr_07.txt|</a>&nbsp;&nbsp;Editing more than one file<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_05.html">|usr_05.txt|</a>&nbsp;&nbsp;Set your settings<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_06.html#06.1" name="06.1">*06.1*</a>&nbsp;&nbsp;Switching it on<br>
+<br>
+It all starts with one simple command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax enable</div>
+<br>
+That should work in most situations to get color in your files.&nbsp;&nbsp;Vim will<br>
+automagically detect the type of file and load the right syntax highlighting.<br>
+Suddenly comments are blue, keywords brown and strings red.&nbsp;&nbsp;This makes it<br>
+easy to overview the file.&nbsp;&nbsp;After a while you will find that black&amp;white text<br>
+slows you down!<br>
+<br>
+If you always want to use syntax highlighting, put the &quot;:syntax enable&quot;<br>
+command in your&nbsp;<a class="Identifier" href="starting.html#vimrc">|vimrc|</a>&nbsp;file.<br>
+<br>
+If you want syntax highlighting only when the terminal supports colors, you<br>
+can put this in your&nbsp;<a class="Identifier" href="starting.html#vimrc">|vimrc|</a>&nbsp;file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if &amp;t_Co &gt; 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; syntax enable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+If you want syntax highlighting only in the GUI version, put the &quot;:syntax<br>
+enable&quot; command in your&nbsp;<a class="Identifier" href="gui.html#gvimrc">|gvimrc|</a>&nbsp;file.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_06.html#06.2" name="06.2">*06.2*</a>&nbsp;&nbsp;No or wrong colors?<br>
+<br>
+There can be a number of reasons why you don't see colors:<br>
+<br>
+- Your terminal does not support colors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim will use bold, italic and underlined text, but this doesn't look<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;very nice.&nbsp;&nbsp;You probably will want to try to get a terminal with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;colors.&nbsp;&nbsp;For Unix, I recommend the xterm from the XFree86 project:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="syntax.html#xfree-xterm">|xfree-xterm|</a>.<br>
+<br>
+- Your terminal does support colors, but Vim doesn't know this.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Make sure your $TERM setting is correct.&nbsp;&nbsp;For example, when using an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xterm that supports colors:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setenv TERM xterm-color</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or (depending on your shell):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TERM=xterm-color; export TERM</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The terminal name must match the terminal you are using.&nbsp;&nbsp;If it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;still doesn't work, have a look at&nbsp;<a class="Identifier" href="syntax.html#xterm-color">|xterm-color|</a>, which shows a few<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ways to make Vim display colors (not only for an xterm).<br>
+<br>
+- The file type is not recognized.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim doesn't know all file types, and sometimes it's near to impossible<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to tell what language a file uses.&nbsp;&nbsp;Try this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set filetype</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the result is &quot;filetype=&quot; then the problem is indeed that Vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doesn't know what type of file this is.&nbsp;&nbsp;You can set the type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manually:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set filetype=fortran</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To see which types are available, look in the directory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$VIMRUNTIME/syntax.&nbsp;&nbsp;For the GUI you can use the Syntax menu.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Setting the filetype can also be done with a&nbsp;<a class="Identifier" href="options.html#modeline">|modeline|</a>, so that the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file will be highlighted each time you edit it.&nbsp;&nbsp;For example, this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line can be used in a Makefile (put it near the start or end of the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# vim&#0058; syntax=make</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; You might know how to detect the file type yourself.&nbsp;&nbsp;Often the file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name extension (after the dot) can be used.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="filetype.html#new-filetype">|new-filetype|</a>&nbsp;for how to tell Vim to detect that file type.<br>
+<br>
+- There is no highlighting for your file type.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You could try using a similar file type by manually setting it as<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mentioned above.&nbsp;&nbsp;If that isn't good enough, you can write your own<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;syntax file, see&nbsp;<a class="Identifier" href="syntax.html#mysyntaxfile">|mysyntaxfile|</a>.<br>
+<br>
+<br>
+Or the colors could be wrong:<br>
+<br>
+- The colored text is very hard to read.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim guesses the background color that you are using.&nbsp;&nbsp;If it is black<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or another dark color) it will use light colors for text.&nbsp;&nbsp;If it is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;white (or another light color) it will use dark colors for text.&nbsp;&nbsp;If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim guessed wrong the text will be hard to read.&nbsp;&nbsp;To solve this, set<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;<a class="Type" href="options.html#'background'">'background'</a>&nbsp;option.&nbsp;&nbsp;For a dark background:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set background=dark</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; And for a light background:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set background=light</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Make sure you put this _before_ the &quot;:syntax enable&quot; command,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;otherwise the colors will already have been set.&nbsp;&nbsp;You could do<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;:syntax reset&quot; after setting&nbsp;<a class="Type" href="options.html#'background'">'background'</a>&nbsp;to make Vim set the default<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;colors again.<br>
+<br>
+- The colors are wrong when scrolling bottom to top.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim doesn't read the whole file to parse the text.&nbsp;&nbsp;It starts parsing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wherever you are viewing the file.&nbsp;&nbsp;That saves a lot of time, but<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sometimes the colors are wrong.&nbsp;&nbsp;A simple fix is hitting&nbsp;<span class="Special">CTRL-L</span>.&nbsp;&nbsp;Or<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scroll back a bit and then forward again.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For a real fix, see&nbsp;<a class="Identifier" href="syntax.html#:syn-sync">|:syn-sync|</a>.&nbsp;&nbsp;Some syntax files have a way to make<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it look further back, see the help for the specific syntax file.&nbsp;&nbsp;For<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;example,&nbsp;<a class="Identifier" href="syntax.html#tex.vim">|tex.vim|</a>&nbsp;for the TeX syntax.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_06.html#06.3" name="06.3">*06.3*</a>&nbsp;&nbsp;Different colors&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_06.html#:syn-default-override" name=":syn-default-override">*:syn-default-override*</a><br>
+<br>
+If you don't like the default colors, you can select another color scheme.&nbsp;&nbsp;In<br>
+the GUI use the Edit/Color Scheme menu.&nbsp;&nbsp;You can also type the command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:colorscheme evening</div>
+<br>
+&quot;evening&quot; is the name of the color scheme.&nbsp;&nbsp;There are several others you might<br>
+want to try out.&nbsp;&nbsp;Look in the directory $VIMRUNTIME/colors.<br>
+<br>
+When you found the color scheme that you like, add the &quot;:colorscheme&quot; command<br>
+to your&nbsp;<a class="Identifier" href="starting.html#vimrc">|vimrc|</a>&nbsp;file.<br>
+<br>
+You could also write your own color scheme.&nbsp;&nbsp;This is how you do it:<br>
+<br>
+1. Select a color scheme that comes close.&nbsp;&nbsp;Copy this file to your own Vim<br>
+&nbsp;&nbsp; directory.&nbsp;&nbsp;For Unix, this should work:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!mkdir ~/.vim/colors<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!cp $VIMRUNTIME/colors/morning.vim ~/.vim/colors/mine.vim</div>
+<br>
+&nbsp;&nbsp; This is done from Vim, because it knows the value of $VIMRUNTIME.<br>
+<br>
+2. Edit the color scheme file.&nbsp;&nbsp;These entries are useful:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;term&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;attributes in a B&amp;W terminal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cterm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; attributes in a color terminal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctermfg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; foreground color in a color terminal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctermbg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; background color in a color terminal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gui&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; attributes in the GUI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;guifg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; foreground color in the GUI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;guibg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; background color in the GUI<br>
+<br>
+&nbsp;&nbsp; For example, to make comments green:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:highlight Comment ctermfg=green guifg=green</div>
+<br>
+&nbsp;&nbsp; Attributes you can use for &quot;cterm&quot; and &quot;gui&quot; are &quot;bold&quot; and &quot;underline&quot;.<br>
+&nbsp;&nbsp; If you want both, use &quot;bold,underline&quot;.&nbsp;&nbsp;For details see the&nbsp;<a class="Identifier" href="syntax.html#:highlight">|:highlight|</a><br>
+&nbsp;&nbsp; command.<br>
+<br>
+3. Tell Vim to always use your color scheme.&nbsp;&nbsp;Put this line in your&nbsp;<a class="Identifier" href="starting.html#vimrc">|vimrc|</a>:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;colorscheme mine</div>
+<br>
+If you want to see what the most often used color combinations look like, use<br>
+this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:runtime syntax/colortest.vim</div>
+<br>
+You will see text in various color combinations.&nbsp;&nbsp;You can check which ones are<br>
+readable and look nice.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_06.html#06.4" name="06.4">*06.4*</a>&nbsp;&nbsp;With colors or without colors<br>
+<br>
+Displaying text in color takes a lot of effort.&nbsp;&nbsp;If you find the displaying<br>
+too slow, you might want to disable syntax highlighting for a moment:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax clear</div>
+<br>
+When editing another file (or the same one) the colors will come back.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_06.html#:syn-off" name=":syn-off">*:syn-off*</a><br>
+If you want to stop highlighting completely use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax off</div>
+<br>
+This will completely disable syntax highlighting and remove it immediately for<br>
+all buffers.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_06.html#:syn-manual" name=":syn-manual">*:syn-manual*</a><br>
+If you want syntax highlighting only for specific files, use this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax manual</div>
+<br>
+This will enable the syntax highlighting, but not switch it on automatically<br>
+when starting to edit a buffer.&nbsp;&nbsp;To switch highlighting on for the current<br>
+buffer, set the&nbsp;<a class="Type" href="options.html#'syntax'">'syntax'</a>&nbsp;option:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set syntax=ON</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_06.html#06.5" name="06.5">*06.5*</a>&nbsp;&nbsp;Printing with colors&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_06.html#syntax-printing" name="syntax-printing">*syntax-printing*</a><br>
+<br>
+In the MS-Windows version you can print the current file with this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:hardcopy</div>
+<br>
+You will get the usual printer dialog, where you can select the printer and a<br>
+few settings.&nbsp;&nbsp;If you have a color printer, the paper output should look the<br>
+same as what you see inside Vim.&nbsp;&nbsp;But when you use a dark background the<br>
+colors will be adjusted to look good on white paper.<br>
+<br>
+There are several options that change the way Vim prints:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'printdevice'">'printdevice'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'printheader'">'printheader'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'printfont'">'printfont'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'printoptions'">'printoptions'</a><br>
+<br>
+To print only a range of lines,&nbsp;&nbsp;use Visual mode to select the lines and then<br>
+type the command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v100j:hardcopy</div>
+<br>
+&quot;v&quot; starts Visual mode.&nbsp;&nbsp;&quot;100j&quot; moves a hundred lines down, they will be<br>
+highlighted.&nbsp;&nbsp;Then &quot;:hardcopy&quot; will print those lines.&nbsp;&nbsp;You can use other<br>
+commands to move in Visual mode, of course.<br>
+<br>
+This also works on Unix, if you have a PostScript printer.&nbsp;&nbsp;Otherwise, you<br>
+will have to do a bit more work.&nbsp;&nbsp;You need to convert the text to HTML first,<br>
+and then print it from a web browser.<br>
+<br>
+Convert the current file to HTML with this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:TOhtml</div>
+<br>
+In case that doesn't work:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:source $VIMRUNTIME/syntax/2html.vim</div>
+<br>
+You will see it crunching away, this can take quite a while for a large file.<br>
+Some time later another window shows the HTML code.&nbsp;&nbsp;Now write this somewhere<br>
+(doesn't matter where, you throw it away later):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:write main.c.html</div>
+<br>
+Open this file in your favorite browser and print it from there.&nbsp;&nbsp;If all goes<br>
+well, the output should look exactly as it does in Vim.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="syntax.html#2html.vim">|2html.vim|</a>&nbsp;for<br>
+details.&nbsp;&nbsp;Don't forget to delete the HTML file when you are done with it.<br>
+<br>
+Instead of printing, you could also put the HTML file on a web server, and let<br>
+others look at the colored text.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_06.html#06.6" name="06.6">*06.6*</a>&nbsp;&nbsp;Further reading<br>
+<br>
+<a class="Identifier" href="usr_44.html">|usr_44.txt|</a>&nbsp;&nbsp;Your own syntax highlighted.<br>
+<a class="Identifier" href="syntax.html#syntax">|syntax|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;All the details.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_07.html">|usr_07.txt|</a>&nbsp;&nbsp;Editing more than one file<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

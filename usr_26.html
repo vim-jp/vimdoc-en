@@ -1,0 +1,227 @@
+---
+layout: vimdoc
+helpname: 'usr_26'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_26.html" name="usr_26.txt">*usr_26.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2006 Apr 24<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Repeating<br>
+<br>
+<br>
+An editing task is hardly ever unstructured.&nbsp;&nbsp;A change often needs to be made<br>
+several times.&nbsp;&nbsp;In this chapter a number of useful ways to repeat a change<br>
+will be explained.<br>
+<br>
+<a class="Identifier" href="usr_26.html#26.1">|26.1|</a>&nbsp;&nbsp;Repeating with Visual mode<br>
+<a class="Identifier" href="usr_26.html#26.2">|26.2|</a>&nbsp;&nbsp;Add and subtract<br>
+<a class="Identifier" href="usr_26.html#26.3">|26.3|</a>&nbsp;&nbsp;Making a change in many files<br>
+<a class="Identifier" href="usr_26.html#26.4">|26.4|</a>&nbsp;&nbsp;Using Vim from a shell script<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_27.html">|usr_27.txt|</a>&nbsp;&nbsp;Search commands and patterns<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_25.html">|usr_25.txt|</a>&nbsp;&nbsp;Editing formatted text<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_26.html#26.1" name="26.1">*26.1*</a>&nbsp;&nbsp;Repeating with Visual mode<br>
+<br>
+Visual mode is very handy for making a change in any sequence of lines.&nbsp;&nbsp;You<br>
+can see the highlighted text, thus you can check if the correct lines are<br>
+changed.&nbsp;&nbsp;But making the selection takes some typing.&nbsp;&nbsp;The &quot;gv&quot; command<br>
+selects the same area again.&nbsp;&nbsp;This allows you to do another operation on the<br>
+same text.<br>
+&nbsp;&nbsp; Suppose you have some lines where you want to change &quot;2001&quot; to &quot;2002&quot; and<br>
+&quot;2000&quot; to &quot;2001&quot;:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">The financial results for 2001 are better</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">than for 2000.&nbsp;&nbsp;The income increased by 50%,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">even though 2001 had more rain than 2000.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">2000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2001</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">income&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;45,403&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;66,234</span><br>
+<br>
+First change &quot;2001&quot; to &quot;2002&quot;.&nbsp;&nbsp;Select the lines in Visual mode, and use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:s/2001/2002/g</div>
+<br>
+Now use &quot;gv&quot; to reselect the same text.&nbsp;&nbsp;It doesn't matter where the cursor<br>
+is.&nbsp;&nbsp;Then use &quot;:s/2000/2001/g&quot; to make the second change.<br>
+&nbsp;&nbsp; Obviously, you can repeat these changes several times.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_26.html#26.2" name="26.2">*26.2*</a>&nbsp;&nbsp;Add and subtract<br>
+<br>
+When repeating the change of one number into another, you often have a fixed<br>
+offset.&nbsp;&nbsp;In the example above, one was added to each year.&nbsp;&nbsp;Instead of typing<br>
+a substitute command for each year that appears, the&nbsp;<span class="Special">CTRL-A</span>&nbsp;command can be<br>
+used.<br>
+&nbsp;&nbsp; Using the same text as above, search for a year:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/19[0-9][0-9]\|20[0-9][0-9]</div>
+<br>
+Now press&nbsp;<span class="Special">CTRL-A</span>.&nbsp;&nbsp;The year will be increased by one:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">The financial results for 2002 are better</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">than for 2000.&nbsp;&nbsp;The income increased by 50%,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">even though 2001 had more rain than 2000.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">2000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2001</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">income&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;45,403&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;66,234</span><br>
+<br>
+Use &quot;n&quot; to find the next year, and press &quot;.&quot; to repeat the&nbsp;<span class="Special">CTRL-A</span>&nbsp;(&quot;.&quot; is a<br>
+bit quicker to type).&nbsp;&nbsp;Repeat &quot;n&quot; and &quot;.&quot; for all years that appear.<br>
+&nbsp;&nbsp; Hint: set the&nbsp;<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;option to see the matches you are going to change,<br>
+then you can look ahead and do it faster.<br>
+<br>
+Adding more than one can be done by prepending the number to&nbsp;<span class="Special">CTRL-A</span>.&nbsp;&nbsp;Suppose<br>
+you have this list:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">1.&nbsp;&nbsp;item four</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">2.&nbsp;&nbsp;item five</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">3.&nbsp;&nbsp;item six</span><br>
+<br>
+Move the cursor to &quot;1.&quot; and type:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3 CTRL-A</div>
+<br>
+The &quot;1.&quot; will change to &quot;4.&quot;.&nbsp;&nbsp;Again, you can use &quot;.&quot; to repeat this on the<br>
+other numbers.<br>
+<br>
+Another example:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">006&nbsp;&nbsp;&nbsp;&nbsp; foo bar</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">007&nbsp;&nbsp;&nbsp;&nbsp; foo bar</span><br>
+<br>
+Using&nbsp;<span class="Special">CTRL-A</span>&nbsp;on these numbers results in:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">007&nbsp;&nbsp;&nbsp;&nbsp; foo bar</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">010&nbsp;&nbsp;&nbsp;&nbsp; foo bar</span><br>
+<br>
+7 plus one is 10?&nbsp;&nbsp;What happened here is that Vim recognized &quot;007&quot; as an octal<br>
+number, because there is a leading zero.&nbsp;&nbsp;This notation is often used in C<br>
+programs.&nbsp;&nbsp;If you do not want a number with leading zeros to be handled as<br>
+octal, use this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nrformats-=octal</div>
+<br>
+The&nbsp;<span class="Special">CTRL-X</span>&nbsp;command does subtraction in a similar way.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_26.html#26.3" name="26.3">*26.3*</a>&nbsp;&nbsp;Making a change in many files<br>
+<br>
+Suppose you have a variable called &quot;x_cnt&quot; and you want to change it to<br>
+&quot;x_counter&quot;.&nbsp;&nbsp;This variable is used in several of your C files.&nbsp;&nbsp;You need to<br>
+change it in all files.&nbsp;&nbsp;This is how you do it.<br>
+&nbsp;&nbsp; Put all the relevant files in the argument list:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:args *.c</div>
+<br>
+This finds all C files and edits the first one.&nbsp;&nbsp;Now you can perform a<br>
+substitution command on all these files:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:argdo %s/\&lt;x_cnt\&gt;/x_counter/ge | update</div>
+<br>
+The &quot;:argdo&quot; command takes an argument that is another command.&nbsp;&nbsp;That command<br>
+will be executed on all files in the argument list.<br>
+&nbsp;&nbsp; The &quot;%s&quot; substitute command that follows works on all lines.&nbsp;&nbsp;It finds the<br>
+word &quot;x_cnt&quot; with &quot;\&lt;x_cnt\&gt;&quot;.&nbsp;&nbsp;The &quot;\&lt;&quot; and &quot;\&gt;&quot; are used to match the whole<br>
+word only, and not &quot;px_cnt&quot; or &quot;x_cnt2&quot;.<br>
+&nbsp;&nbsp; The flags for the substitute command include &quot;g&quot; to replace all occurrences<br>
+of &quot;x_cnt&quot; in the same line.&nbsp;&nbsp;The &quot;e&quot; flag is used to avoid an error message<br>
+when &quot;x_cnt&quot; does not appear in the file.&nbsp;&nbsp;Otherwise &quot;:argdo&quot; would abort on<br>
+the first file where &quot;x_cnt&quot; was not found.<br>
+&nbsp;&nbsp; The &quot;|&quot; separates two commands.&nbsp;&nbsp;The following &quot;update&quot; command writes the<br>
+file only if it was changed.&nbsp;&nbsp;If no &quot;x_cnt&quot; was changed to &quot;x_counter&quot; nothing<br>
+happens.<br>
+<br>
+There is also the &quot;:windo&quot; command, which executes its argument in all<br>
+windows.&nbsp;&nbsp;And &quot;:bufdo&quot; executes its argument on all buffers.&nbsp;&nbsp;Be careful with<br>
+this, because you might have more files in the buffer list than you think.<br>
+Check this with the &quot;:buffers&quot; command (or &quot;:ls&quot;).<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_26.html#26.4" name="26.4">*26.4*</a>&nbsp;&nbsp;Using Vim from a shell script<br>
+<br>
+Suppose you have a lot of files in which you need to change the string<br>
+&quot;-person-&quot; to &quot;Jones&quot; and then print it.&nbsp;&nbsp;How do you do that?&nbsp;&nbsp;One way is to<br>
+do a lot of typing.&nbsp;&nbsp;The other is to write a shell script to do the work.<br>
+&nbsp;&nbsp; The Vim editor does a superb job as a screen-oriented editor when using<br>
+Normal mode commands.&nbsp;&nbsp;For batch processing, however, Normal mode commands do<br>
+not result in clear, commented command files; so here you will use Ex mode<br>
+instead.&nbsp;&nbsp;This mode gives you a nice command-line interface that makes it easy<br>
+to put into a batch file.&nbsp;&nbsp;(&quot;Ex command&quot; is just another name for a<br>
+command-line (:) command.)<br>
+&nbsp;&nbsp; The Ex mode commands you need are as follows:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s/-person-/Jones/g<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write tempfile<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quit</div>
+<br>
+You put these commands in the file &quot;change.vim&quot;.&nbsp;&nbsp;Now to run the editor in<br>
+batch mode, use this shell script:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for file in *.txt; do<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -e -s $file &lt; change.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lpr -r tempfile<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;done</div>
+<br>
+The for-done loop is a shell construct to repeat the two lines in between,<br>
+while the $file variable is set to a different file name each time.<br>
+&nbsp;&nbsp; The second line runs the Vim editor in Ex mode (-e argument) on the file<br>
+$file and reads commands from the file &quot;change.vim&quot;.&nbsp;&nbsp;The -s argument tells<br>
+Vim to operate in silent mode.&nbsp;&nbsp;In other words, do not keep outputting the<br>
+:prompt, or any other prompt for that matter.<br>
+&nbsp;&nbsp; The &quot;lpr -r tempfile&quot; command prints the resulting &quot;tempfile&quot; and deletes<br>
+it (that's what the -r argument does).<br>
+<br>
+<br>
+READING FROM STDIN<br>
+<br>
+Vim can read text on standard input.&nbsp;&nbsp;Since the normal way is to read commands<br>
+there, you must tell Vim to read text instead.&nbsp;&nbsp;This is done by passing the<br>
+&quot;-&quot; argument in place of a file.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls | vim -</div>
+<br>
+This allows you to edit the output of the &quot;ls&quot; command, without first saving<br>
+the text in a file.<br>
+&nbsp;&nbsp; If you use the standard input to read text from, you can use the &quot;-S&quot;<br>
+argument to read a script:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;producer | vim -S change.vim -</div>
+<br>
+<br>
+NORMAL MODE SCRIPTS<br>
+<br>
+If you really want to use Normal mode commands in a script, you can use it<br>
+like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -s script file.txt ...</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;-s&quot; has a different meaning when it is used without &quot;-e&quot;.&nbsp;&nbsp;Here it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;means to source the &quot;script&quot; as Normal mode commands.&nbsp;&nbsp;When used with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;-e&quot; it means to be silent, and doesn't use the next argument as a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file name.<br>
+<br>
+The commands in &quot;script&quot; are executed like you typed them.&nbsp;&nbsp;Don't forget that<br>
+a line break is interpreted as pressing&nbsp;<span class="Special">&lt;Enter&gt;</span>.&nbsp;&nbsp;In Normal mode that moves<br>
+the cursor to the next line.<br>
+&nbsp;&nbsp; To create the script you can edit the script file and type the commands.<br>
+You need to imagine what the result would be, which can be a bit difficult.<br>
+Another way is to record the commands while you perform them manually.&nbsp;&nbsp;This<br>
+is how you do that:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -w script file.txt ...</div>
+<br>
+All typed keys will be written to &quot;script&quot;.&nbsp;&nbsp;If you make a small mistake you<br>
+can just continue and remember to edit the script later.<br>
+&nbsp;&nbsp; The &quot;-w&quot; argument appends to an existing script.&nbsp;&nbsp;That is good when you<br>
+want to record the script bit by bit.&nbsp;&nbsp;If you want to start from scratch and<br>
+start all over, use the &quot;-W&quot; argument.&nbsp;&nbsp;It overwrites any existing file.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_27.html">|usr_27.txt|</a>&nbsp;&nbsp;Search commands and patterns<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

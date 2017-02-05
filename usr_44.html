@@ -1,0 +1,725 @@
+---
+layout: vimdoc
+helpname: 'usr_44'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_44.html" name="usr_44.txt">*usr_44.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2008 Dec 28<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Your own syntax highlighted<br>
+<br>
+<br>
+Vim comes with highlighting for a couple of hundred different file types.&nbsp;&nbsp;If<br>
+the file you are editing isn't included, read this chapter to find out how to<br>
+get this type of file highlighted.&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="syntax.html#:syn-define">|:syn-define|</a>&nbsp;in the reference<br>
+manual.<br>
+<br>
+<a class="Identifier" href="usr_44.html#44.1">|44.1|</a>&nbsp;&nbsp;Basic syntax commands<br>
+<a class="Identifier" href="usr_44.html#44.2">|44.2|</a>&nbsp;&nbsp;Keywords<br>
+<a class="Identifier" href="usr_44.html#44.3">|44.3|</a>&nbsp;&nbsp;Matches<br>
+<a class="Identifier" href="usr_44.html#44.4">|44.4|</a>&nbsp;&nbsp;Regions<br>
+<a class="Identifier" href="usr_44.html#44.5">|44.5|</a>&nbsp;&nbsp;Nested items<br>
+<a class="Identifier" href="usr_44.html#44.6">|44.6|</a>&nbsp;&nbsp;Following groups<br>
+<a class="Identifier" href="usr_44.html#44.7">|44.7|</a>&nbsp;&nbsp;Other arguments<br>
+<a class="Identifier" href="usr_44.html#44.8">|44.8|</a>&nbsp;&nbsp;Clusters<br>
+<a class="Identifier" href="usr_44.html#44.9">|44.9|</a>&nbsp;&nbsp;Including another syntax file<br>
+<a class="Identifier" href="usr_44.html#44.10">|44.10|</a>&nbsp;Synchronizing<br>
+<a class="Identifier" href="usr_44.html#44.11">|44.11|</a>&nbsp;Installing a syntax file<br>
+<a class="Identifier" href="usr_44.html#44.12">|44.12|</a>&nbsp;Portable syntax file layout<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_45.html">|usr_45.txt|</a>&nbsp;&nbsp;Select your language<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_43.html">|usr_43.txt|</a>&nbsp;&nbsp;Using filetypes<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.1" name="44.1">*44.1*</a>&nbsp;&nbsp;Basic syntax commands<br>
+<br>
+Using an existing syntax file to start with will save you a lot of time.&nbsp;&nbsp;Try<br>
+finding a syntax file in $VIMRUNTIME/syntax for a language that is similar.<br>
+These files will also show you the normal layout of a syntax file.&nbsp;&nbsp;To<br>
+understand it, you need to read the following.<br>
+<br>
+Let's start with the basic arguments.&nbsp;&nbsp;Before we start defining any new<br>
+syntax, we need to clear out any old definitions:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax clear</div>
+<br>
+This isn't required in the final syntax file, but very useful when<br>
+experimenting.<br>
+<br>
+There are more simplifications in this chapter.&nbsp;&nbsp;If you are writing a syntax<br>
+file to be used by others, read all the way through the end to find out the<br>
+details.<br>
+<br>
+<br>
+LISTING DEFINED ITEMS<br>
+<br>
+To check which syntax items are currently defined, use this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax</div>
+<br>
+You can use this to check which items have actually been defined.&nbsp;&nbsp;Quite<br>
+useful when you are experimenting with a new syntax file.&nbsp;&nbsp;It also shows the<br>
+colors used for each item, which helps to find out what is what.<br>
+&nbsp;&nbsp; To list the items in a specific syntax group use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax list {group-name}</div>
+<br>
+This also can be used to list clusters (explained in&nbsp;<a class="Identifier" href="usr_44.html#44.8">|44.8|</a>).&nbsp;&nbsp;Just include<br>
+the @ in the name.<br>
+<br>
+<br>
+MATCHING CASE<br>
+<br>
+Some languages are not case sensitive, such as Pascal.&nbsp;&nbsp;Others, such as C, are<br>
+case sensitive.&nbsp;&nbsp;You need to tell which type you have with the following<br>
+commands:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax case match<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax case ignore</div>
+<br>
+The &quot;match&quot; argument means that Vim will match the case of syntax elements.<br>
+Therefore, &quot;int&quot; differs from &quot;Int&quot; and &quot;INT&quot;.&nbsp;&nbsp;If the &quot;ignore&quot; argument is<br>
+used, the following are equivalent: &quot;Procedure&quot;, &quot;PROCEDURE&quot; and &quot;procedure&quot;.<br>
+&nbsp;&nbsp; The &quot;:syntax case&quot; commands can appear anywhere in a syntax file and affect<br>
+the syntax definitions that follow.&nbsp;&nbsp;In most cases, you have only one &quot;:syntax<br>
+case&quot; command in your syntax file; if you work with an unusual language that<br>
+contains both case-sensitive and non-case-sensitive elements, however, you can<br>
+scatter the &quot;:syntax case&quot; command throughout the file.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.2" name="44.2">*44.2*</a>&nbsp;&nbsp;Keywords<br>
+<br>
+The most basic syntax elements are keywords.&nbsp;&nbsp;To define a keyword, use the<br>
+following form:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax keyword {group} {keyword} ...</div>
+<br>
+The&nbsp;<span class="Special">{group}</span>&nbsp;is the name of a syntax group.&nbsp;&nbsp;With the &quot;:highlight&quot; command you<br>
+can assign colors to a&nbsp;<span class="Special">{group}</span>.&nbsp;&nbsp;The&nbsp;<span class="Special">{keyword}</span>&nbsp;argument is an actual keyword.<br>
+Here are a few examples:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax keyword xType int long char<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax keyword xStatement if then else endif</div>
+<br>
+This example uses the group names &quot;xType&quot; and &quot;xStatement&quot;.&nbsp;&nbsp;By convention,<br>
+each group name is prefixed by the filetype for the language being defined.<br>
+This example defines syntax for the x language (eXample language without an<br>
+interesting name).&nbsp;&nbsp;In a syntax file for &quot;csh&quot; scripts the name &quot;cshType&quot;<br>
+would be used.&nbsp;&nbsp;Thus the prefix is equal to the value of&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>.<br>
+&nbsp;&nbsp; These commands cause the words &quot;int&quot;, &quot;long&quot; and &quot;char&quot; to be highlighted<br>
+one way and the words &quot;if&quot;, &quot;then&quot;, &quot;else&quot; and &quot;endif&quot; to be highlighted<br>
+another way.&nbsp;&nbsp;Now you need to connect the x group names to standard Vim<br>
+names.&nbsp;&nbsp;You do this with the following commands:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:highlight link xType Type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:highlight link xStatement Statement</div>
+<br>
+This tells Vim to highlight &quot;xType&quot; like &quot;Type&quot; and &quot;xStatement&quot; like<br>
+&quot;Statement&quot;.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="syntax.html#group-name">|group-name|</a>&nbsp;for the standard names.<br>
+<br>
+<br>
+UNUSUAL KEYWORDS<br>
+<br>
+The characters used in a keyword must be in the&nbsp;<a class="Type" href="options.html#'iskeyword'">'iskeyword'</a>&nbsp;option.&nbsp;&nbsp;If you<br>
+use another character, the word will never match.&nbsp;&nbsp;Vim doesn't give a warning<br>
+message for this.<br>
+&nbsp;&nbsp; The x language uses the '-' character in keywords.&nbsp;&nbsp;This is how it's done:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:setlocal iskeyword+=-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax keyword xStatement when-not</div>
+<br>
+The &quot;:setlocal&quot; command is used to change&nbsp;<a class="Type" href="options.html#'iskeyword'">'iskeyword'</a>&nbsp;only for the current<br>
+buffer.&nbsp;&nbsp;Still it does change the behavior of commands like &quot;w&quot; and &quot;*&quot;.&nbsp;&nbsp;If<br>
+that is not wanted, don't define a keyword but use a match (explained in the<br>
+next section).<br>
+<br>
+The x language allows for abbreviations.&nbsp;&nbsp;For example, &quot;next&quot; can be<br>
+abbreviated to &quot;n&quot;, &quot;ne&quot; or &quot;nex&quot;.&nbsp;&nbsp;You can define them by using this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax keyword xStatement n[ext]</div>
+<br>
+This doesn't match &quot;nextone&quot;, keywords always match whole words only.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.3" name="44.3">*44.3*</a>&nbsp;&nbsp;Matches<br>
+<br>
+Consider defining something a bit more complex.&nbsp;&nbsp;You want to match ordinary<br>
+identifiers.&nbsp;&nbsp;To do this, you define a match syntax item.&nbsp;&nbsp;This one matches<br>
+any word consisting of only lowercase letters:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xIdentifier /\&lt;\l\+\&gt;/</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Keywords overrule any other syntax item.&nbsp;&nbsp;Thus the keywords &quot;if&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;then&quot;, etc., will be keywords, as defined with the &quot;:syntax keyword&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;commands above, even though they also match the pattern for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xIdentifier.<br>
+<br>
+The part at the end is a pattern, like it's used for searching.&nbsp;&nbsp;The // is<br>
+used to surround the pattern (like how it's done in a &quot;:substitute&quot; command).<br>
+You can use any other character, like a plus or a quote.<br>
+<br>
+Now define a match for a comment.&nbsp;&nbsp;In the x language it is anything from # to<br>
+the end of a line:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xComment /#.*/</div>
+<br>
+Since you can use any search pattern, you can highlight very complex things<br>
+with a match item.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="pattern.html#pattern">|pattern|</a>&nbsp;for help on search patterns.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.4" name="44.4">*44.4*</a>&nbsp;&nbsp;Regions<br>
+<br>
+In the example x language, strings are enclosed in double quotation marks (&quot;).<br>
+To highlight strings you define a region.&nbsp;&nbsp;You need a region start (double<br>
+quote) and a region end (double quote).&nbsp;&nbsp;The definition is as follows:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xString start=/&quot;/ end=/&quot;/</div>
+<br>
+The &quot;start&quot; and &quot;end&quot; directives define the patterns used to find the start<br>
+and end of the region.&nbsp;&nbsp;But what about strings that look like this?<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;A string with a double quote (\&quot;) in it&quot;</span><br>
+<br>
+This creates a problem: The double quotation marks in the middle of the string<br>
+will end the region.&nbsp;&nbsp;You need to tell Vim to skip over any escaped double<br>
+quotes in the string.&nbsp;&nbsp;Do this with the skip keyword:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xString start=/&quot;/ skip=/\\&quot;/ end=/&quot;/</div>
+<br>
+The double backslash matches a single backslash, since the backslash is a<br>
+special character in search patterns.<br>
+<br>
+When to use a region instead of a match?&nbsp;&nbsp;The main difference is that a match<br>
+item is a single pattern, which must match as a whole.&nbsp;&nbsp;A region starts as<br>
+soon as the &quot;start&quot; pattern matches.&nbsp;&nbsp;Whether the &quot;end&quot; pattern is found or<br>
+not doesn't matter.&nbsp;&nbsp;Thus when the item depends on the &quot;end&quot; pattern to match,<br>
+you cannot use a region.&nbsp;&nbsp;Otherwise, regions are often simpler to define.&nbsp;&nbsp;And<br>
+it is easier to use nested items, as is explained in the next section.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.5" name="44.5">*44.5*</a>&nbsp;&nbsp;Nested items<br>
+<br>
+Take a look at this comment:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">%Get input&nbsp;&nbsp;TODO: Skip white space</span><br>
+<br>
+You want to highlight TODO in big yellow letters, even though it is in a<br>
+comment that is highlighted blue.&nbsp;&nbsp;To let Vim know about this, you define the<br>
+following syntax groups:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax keyword xTodo TODO contained<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xComment /%.*/ contains=xTodo</div>
+<br>
+In the first line, the &quot;contained&quot; argument tells Vim that this keyword can<br>
+exist only inside another syntax item.&nbsp;&nbsp;The next line has &quot;contains=xTodo&quot;.<br>
+This indicates that the xTodo syntax element is inside it.&nbsp;&nbsp;The result is that<br>
+the comment line as a whole is matched with &quot;xComment&quot; and made blue.&nbsp;&nbsp;The<br>
+word TODO inside it is matched by xTodo and highlighted yellow (highlighting<br>
+for xTodo was setup for this).<br>
+<br>
+<br>
+RECURSIVE NESTING<br>
+<br>
+The x language defines code blocks in curly braces.&nbsp;&nbsp;And a code block may<br>
+contain other code blocks.&nbsp;&nbsp;This can be defined this way:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xBlock start=/{/ end=/}/ contains=xBlock</div>
+<br>
+Suppose you have this text:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">while i &lt; b {</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">if a {</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">b = c;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">}</span><br>
+<br>
+First a xBlock starts at the { in the first line.&nbsp;&nbsp;In the second line another<br>
+{ is found.&nbsp;&nbsp;Since we are inside a xBlock item, and it contains itself, a<br>
+nested xBlock item will start here.&nbsp;&nbsp;Thus the &quot;b = c&quot; line is inside the<br>
+second level xBlock region.&nbsp;&nbsp;Then a } is found in the next line, which matches<br>
+with the end pattern of the region.&nbsp;&nbsp;This ends the nested xBlock.&nbsp;&nbsp;Because the<br>
+} is included in the nested region, it is hidden from the first xBlock region.<br>
+Then at the last } the first xBlock region ends.<br>
+<br>
+<br>
+KEEPING THE END<br>
+<br>
+Consider the following two syntax items:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xComment start=/%/ end=/$/ contained<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xPreProc start=/#/ end=/$/ contains=xComment</div>
+<br>
+You define a comment as anything from % to the end of the line.&nbsp;&nbsp;A<br>
+preprocessor directive is anything from # to the end of the line.&nbsp;&nbsp;Because you<br>
+can have a comment on a preprocessor line, the preprocessor definition<br>
+includes a &quot;contains=xComment&quot; argument.&nbsp;&nbsp;Now look what happens with this<br>
+text:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#define X = Y&nbsp;&nbsp;% Comment text</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">int foo = 1;</span><br>
+<br>
+What you see is that the second line is also highlighted as xPreProc.&nbsp;&nbsp;The<br>
+preprocessor directive should end at the end of the line.&nbsp;&nbsp;That is why<br>
+you have used &quot;end=/$/&quot;.&nbsp;&nbsp;So what is going wrong?<br>
+&nbsp;&nbsp; The problem is the contained comment.&nbsp;&nbsp;The comment starts with % and ends<br>
+at the end of the line.&nbsp;&nbsp;After the comment ends, the preprocessor syntax<br>
+continues.&nbsp;&nbsp;This is after the end of the line has been seen, so the next<br>
+line is included as well.<br>
+&nbsp;&nbsp; To avoid this problem and to avoid a contained syntax item eating a needed<br>
+end of line, use the &quot;keepend&quot; argument.&nbsp;&nbsp;This takes care of<br>
+the double end-of-line matching:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xComment start=/%/ end=/$/ contained<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xPreProc start=/#/ end=/$/ contains=xComment keepend</div>
+<br>
+<br>
+CONTAINING MANY ITEMS<br>
+<br>
+You can use the contains argument to specify that everything can be contained.<br>
+For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xList start=/\[/ end=/\]/ contains=ALL</div>
+<br>
+All syntax items will be contained in this one.&nbsp;&nbsp;It also contains itself, but<br>
+not at the same position (that would cause an endless loop).<br>
+&nbsp;&nbsp; You can specify that some groups are not contained.&nbsp;&nbsp;Thus contain all<br>
+groups but the ones that are listed:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xList start=/\[/ end=/\]/ contains=ALLBUT,xString</div>
+<br>
+With the &quot;TOP&quot; item you can include all items that don't have a &quot;contained&quot;<br>
+argument.&nbsp;&nbsp;&quot;CONTAINED&quot; is used to only include items with a &quot;contained&quot;<br>
+argument.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="syntax.html#:syn-contains">|:syn-contains|</a>&nbsp;for the details.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.6" name="44.6">*44.6*</a>&nbsp;&nbsp;Following groups<br>
+<br>
+The x language has statements in this form:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">if (condition) then</span><br>
+<br>
+You want to highlight the three items differently.&nbsp;&nbsp;But &quot;(condition)&quot; and<br>
+&quot;then&quot; might also appear in other places, where they get different<br>
+highlighting.&nbsp;&nbsp;This is how you can do this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xIf /if/ nextgroup=xIfCondition skipwhite<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xIfCondition /([^)]*)/ contained nextgroup=xThen skipwhite<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xThen /then/ contained</div>
+<br>
+The &quot;nextgroup&quot; argument specifies which item can come next.&nbsp;&nbsp;This is not<br>
+required.&nbsp;&nbsp;If none of the items that are specified are found, nothing happens.<br>
+For example, in this text:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">if not (condition) then</span><br>
+<br>
+The &quot;if&quot; is matched by xIf.&nbsp;&nbsp;&quot;not&quot; doesn't match the specified nextgroup<br>
+xIfCondition, thus only the &quot;if&quot; is highlighted.<br>
+<br>
+The &quot;skipwhite&quot; argument tells Vim that white space (spaces and tabs) may<br>
+appear in between the items.&nbsp;&nbsp;Similar arguments are &quot;skipnl&quot;, which allows a<br>
+line break in between the items, and &quot;skipempty&quot;, which allows empty lines.<br>
+Notice that &quot;skipnl&quot; doesn't skip an empty line, something must match after<br>
+the line break.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.7" name="44.7">*44.7*</a>&nbsp;&nbsp;Other arguments<br>
+<br>
+MATCHGROUP<br>
+<br>
+When you define a region, the entire region is highlighted according to the<br>
+group name specified.&nbsp;&nbsp;To highlight the text enclosed in parentheses () with<br>
+the group xInside, for example, use the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xInside start=/(/ end=/)/</div>
+<br>
+Suppose, that you want to highlight the parentheses differently.&nbsp;&nbsp;You can do<br>
+this with a lot of convoluted region statements, or you can use the<br>
+&quot;matchgroup&quot; argument.&nbsp;&nbsp;This tells Vim to highlight the start and end of a<br>
+region with a different highlight group (in this case, the xParen group):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xInside matchgroup=xParen start=/(/ end=/)/</div>
+<br>
+The &quot;matchgroup&quot; argument applies to the start or end match that comes after<br>
+it.&nbsp;&nbsp;In the previous example both start and end are highlighted with xParen.<br>
+To highlight the end with xParenEnd:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xInside matchgroup=xParen start=/(/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ matchgroup=xParenEnd end=/)/</div>
+<br>
+A side effect of using &quot;matchgroup&quot; is that contained items will not match in<br>
+the start or end of the region.&nbsp;&nbsp;The example for &quot;transparent&quot; uses this.<br>
+<br>
+<br>
+TRANSPARENT<br>
+<br>
+In a C language file you would like to highlight the () text after a &quot;while&quot;<br>
+differently from the () text after a &quot;for&quot;.&nbsp;&nbsp;In both of these there can be<br>
+nested () items, which should be highlighted in the same way.&nbsp;&nbsp;You must make<br>
+sure the () highlighting stops at the matching ).&nbsp;&nbsp;This is one way to do this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region cWhile matchgroup=cWhile start=/while\s*(/ end=/)/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ contains=cCondNest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region cFor matchgroup=cFor start=/for\s*(/ end=/)/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ contains=cCondNest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region cCondNest start=/(/ end=/)/ contained transparent</div>
+<br>
+Now you can give cWhile and cFor different highlighting.&nbsp;&nbsp;The cCondNest item<br>
+can appear in either of them, but take over the highlighting of the item it is<br>
+contained in.&nbsp;&nbsp;The &quot;transparent&quot; argument causes this.<br>
+&nbsp;&nbsp; Notice that the &quot;matchgroup&quot; argument has the same group as the item<br>
+itself.&nbsp;&nbsp;Why define it then?&nbsp;&nbsp;Well, the side effect of using a matchgroup is<br>
+that contained items are not found in the match with the start item then.<br>
+This avoids that the cCondNest group matches the ( just after the &quot;while&quot; or<br>
+&quot;for&quot;.&nbsp;&nbsp;If this would happen, it would span the whole text until the matching<br>
+) and the region would continue after it.&nbsp;&nbsp;Now cCondNest only matches after<br>
+the match with the start pattern, thus after the first (.<br>
+<br>
+<br>
+OFFSETS<br>
+<br>
+Suppose you want to define a region for the text between ( and ) after an<br>
+&quot;if&quot;.&nbsp;&nbsp;But you don't want to include the &quot;if&quot; or the ( and ).&nbsp;&nbsp;You can do this<br>
+by specifying offsets for the patterns.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xCond start=/if\s*(/ms=e+1 end=/)/me=s-1</div>
+<br>
+The offset for the start pattern is &quot;ms=e+1&quot;.&nbsp;&nbsp;&quot;ms&quot; stands for Match Start.<br>
+This defines an offset for the start of the match.&nbsp;&nbsp;Normally the match starts<br>
+where the pattern matches.&nbsp;&nbsp;&quot;e+1&quot; means that the match now starts at the end<br>
+of the pattern match, and then one character further.<br>
+&nbsp;&nbsp; The offset for the end pattern is &quot;me=s-1&quot;.&nbsp;&nbsp;&quot;me&quot; stands for Match End.<br>
+&quot;s-1&quot; means the start of the pattern match and then one character back.&nbsp;&nbsp;The<br>
+result is that in this text:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">if (foo == bar)</span><br>
+<br>
+Only the text &quot;foo == bar&quot; will be highlighted as xCond.<br>
+<br>
+More about offsets here:&nbsp;<a class="Identifier" href="syntax.html#:syn-pattern-offset">|:syn-pattern-offset|</a>.<br>
+<br>
+<br>
+ONELINE<br>
+<br>
+The &quot;oneline&quot; argument indicates that the region does not cross a line<br>
+boundary.&nbsp;&nbsp;For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xIfThen start=/if/ end=/then/ oneline</div>
+<br>
+This defines a region that starts at &quot;if&quot; and ends at &quot;then&quot;.&nbsp;&nbsp;But if there is<br>
+no &quot;then&quot; after the &quot;if&quot;, the region doesn't match.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When using &quot;oneline&quot; the region doesn't start if the end pattern<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doesn't match in the same line.&nbsp;&nbsp;Without &quot;oneline&quot; Vim does _not_<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check if there is a match for the end pattern.&nbsp;&nbsp;The region starts even<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when the end pattern doesn't match in the rest of the file.<br>
+<br>
+<br>
+CONTINUATION LINES AND AVOIDING THEM<br>
+<br>
+Things now become a little more complex.&nbsp;&nbsp;Let's define a preprocessor line.<br>
+This starts with a # in the first column and continues until the end of the<br>
+line.&nbsp;&nbsp;A line that ends with \ makes the next line a continuation line.&nbsp;&nbsp;The<br>
+way you handle this is to allow the syntax item to contain a continuation<br>
+pattern:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xPreProc start=/^#/ end=/$/ contains=xLineContinue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xLineContinue &quot;\\$&quot; contained</div>
+<br>
+In this case, although xPreProc normally matches a single line, the group<br>
+contained in it (namely xLineContinue) lets it go on for more than one line.<br>
+For example, it would match both of these lines:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#define SPAM&nbsp;&nbsp;spam spam spam \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">bacon and spam</span><br>
+<br>
+In this case, this is what you want.&nbsp;&nbsp;If it is not what you want, you can call<br>
+for the region to be on a single line by adding &quot;excludenl&quot; to the contained<br>
+pattern.&nbsp;&nbsp;For example, you want to highlight &quot;end&quot; in xPreProc, but only at<br>
+the end of the line.&nbsp;&nbsp;To avoid making the xPreProc continue on the next line,<br>
+like xLineContinue does, use &quot;excludenl&quot; like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region xPreProc start=/^#/ end=/$/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ contains=xLineContinue,xPreProcEnd<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xPreProcEnd excludenl /end$/ contained<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xLineContinue &quot;\\$&quot; contained</div>
+<br>
+&quot;excludenl&quot; must be placed before the pattern.&nbsp;&nbsp;Since &quot;xLineContinue&quot; doesn't<br>
+have &quot;excludenl&quot;, a match with it will extend xPreProc to the next line as<br>
+before.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.8" name="44.8">*44.8*</a>&nbsp;&nbsp;Clusters<br>
+<br>
+One of the things you will notice as you start to write a syntax file is that<br>
+you wind up generating a lot of syntax groups.&nbsp;&nbsp;Vim enables you to define a<br>
+collection of syntax groups called a cluster.<br>
+&nbsp;&nbsp; Suppose you have a language that contains for loops, if statements, while<br>
+loops, and functions.&nbsp;&nbsp;Each of them contains the same syntax elements: numbers<br>
+and identifiers.&nbsp;&nbsp;You define them like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xFor /^for.*/ contains=xNumber,xIdent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xIf /^if.*/ contains=xNumber,xIdent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xWhile /^while.*/ contains=xNumber,xIdent</div>
+<br>
+You have to repeat the same &quot;contains=&quot; every time.&nbsp;&nbsp;If you want to add<br>
+another contained item, you have to add it three times.&nbsp;&nbsp;Syntax clusters<br>
+simplify these definitions by enabling you to have one cluster stand for<br>
+several syntax groups.<br>
+&nbsp;&nbsp; To define a cluster for the two items that the three groups contain, use<br>
+the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax cluster xState contains=xNumber,xIdent</div>
+<br>
+Clusters are used inside other syntax items just like any syntax group.<br>
+Their names start with @.&nbsp;&nbsp;Thus, you can define the three groups like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xFor /^for.*/ contains=@xState<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xIf /^if.*/ contains=@xState<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax match xWhile /^while.*/ contains=@xState</div>
+<br>
+You can add new group names to this cluster with the &quot;add&quot; argument:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax cluster xState add=xString</div>
+<br>
+You can remove syntax groups from this list as well:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax cluster xState remove=xNumber</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.9" name="44.9">*44.9*</a>&nbsp;&nbsp;Including another syntax file<br>
+<br>
+The C++ language syntax is a superset of the C language.&nbsp;&nbsp;Because you do not<br>
+want to write two syntax files, you can have the C++ syntax file read in the<br>
+one for C by using the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:runtime! syntax/c.vim</div>
+<br>
+The &quot;:runtime!&quot; command searches&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;for all &quot;syntax/c.vim&quot; files.<br>
+This makes the C parts of the C++ syntax be defined like for C files.&nbsp;&nbsp;If you<br>
+have replaced the c.vim syntax file, or added items with an extra file, these<br>
+will be loaded as well.<br>
+&nbsp;&nbsp; After loading the C syntax items the specific C++ items can be defined.<br>
+For example, add keywords that are not used in C:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax keyword cppStatement&nbsp;&nbsp;&nbsp;&nbsp;new delete this friend using</div>
+<br>
+This works just like in any other syntax file.<br>
+<br>
+Now consider the Perl language.&nbsp;&nbsp;A Perl script consists of two distinct parts:<br>
+a documentation section in POD format, and a program written in Perl itself.<br>
+The POD section starts with &quot;=head&quot; and ends with &quot;=cut&quot;.<br>
+&nbsp;&nbsp; You want to define the POD syntax in one file, and use it from the Perl<br>
+syntax file.&nbsp;&nbsp;The &quot;:syntax include&quot; command reads in a syntax file and stores<br>
+the elements it defined in a syntax cluster.&nbsp;&nbsp;For Perl, the statements are as<br>
+follows:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax include @Pod &lt;sfile&gt;:p:h/pod.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax region perlPOD start=/^=head/ end=/^=cut/ contains=@Pod</div>
+<br>
+When &quot;=head&quot; is found in a Perl file, the perlPOD region starts.&nbsp;&nbsp;In this<br>
+region the @Pod cluster is contained.&nbsp;&nbsp;All the items defined as top-level<br>
+items in the pod.vim syntax files will match here.&nbsp;&nbsp;When &quot;=cut&quot; is found, the<br>
+region ends and we go back to the items defined in the Perl file.<br>
+&nbsp;&nbsp; The &quot;:syntax include&quot; command is clever enough to ignore a &quot;:syntax clear&quot;<br>
+command in the included file.&nbsp;&nbsp;And an argument such as &quot;contains=ALL&quot; will<br>
+only contain items defined in the included file, not in the file that includes<br>
+it.<br>
+&nbsp;&nbsp; The &quot;<span class="Special">&lt;sfile&gt;</span>:p:h/&quot; part uses the name of the current file (<span class="Special">&lt;sfile&gt;</span>),<br>
+expands it to a full path (:p) and then takes the head (:h).&nbsp;&nbsp;This results in<br>
+the directory name of the file.&nbsp;&nbsp;This causes the pod.vim file in the same<br>
+directory to be included.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.10" name="44.10">*44.10*</a>&nbsp;Synchronizing<br>
+<br>
+Compilers have it easy.&nbsp;&nbsp;They start at the beginning of a file and parse it<br>
+straight through.&nbsp;&nbsp;Vim does not have it so easy.&nbsp;&nbsp;It must start in the middle,<br>
+where the editing is being done.&nbsp;&nbsp;So how does it tell where it is?<br>
+&nbsp;&nbsp; The secret is the &quot;:syntax sync&quot; command.&nbsp;&nbsp;This tells Vim how to figure out<br>
+where it is.&nbsp;&nbsp;For example, the following command tells Vim to scan backward<br>
+for the beginning or end of a C-style comment and begin syntax coloring from<br>
+there:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax sync ccomment</div>
+<br>
+You can tune this processing with some arguments.&nbsp;&nbsp;The &quot;minlines&quot; argument<br>
+tells Vim the minimum number of lines to look backward, and &quot;maxlines&quot; tells<br>
+the editor the maximum number of lines to scan.<br>
+&nbsp;&nbsp; For example, the following command tells Vim to look at least 10 lines<br>
+before the top of the screen:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax sync ccomment minlines=10 maxlines=500</div>
+<br>
+If it cannot figure out where it is in that space, it starts looking farther<br>
+and farther back until it figures out what to do.&nbsp;&nbsp;But it looks no farther<br>
+back than 500 lines.&nbsp;&nbsp;(A large &quot;maxlines&quot; slows down processing.&nbsp;&nbsp;A small one<br>
+might cause synchronization to fail.)<br>
+&nbsp;&nbsp; To make synchronizing go a bit faster, tell Vim which syntax items can be<br>
+skipped.&nbsp;&nbsp;Every match and region that only needs to be used when actually<br>
+displaying text can be given the &quot;display&quot; argument.<br>
+&nbsp;&nbsp; By default, the comment to be found will be colored as part of the Comment<br>
+syntax group.&nbsp;&nbsp;If you want to color things another way, you can specify a<br>
+different syntax group:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax sync ccomment xAltComment</div>
+<br>
+If your programming language does not have C-style comments in it, you can try<br>
+another method of synchronization.&nbsp;&nbsp;The simplest way is to tell Vim to space<br>
+back a number of lines and try to figure out things from there.&nbsp;&nbsp;The following<br>
+command tells Vim to go back 150 lines and start parsing from there:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax sync minlines=150</div>
+<br>
+A large &quot;minlines&quot; value can make Vim slower, especially when scrolling<br>
+backwards in the file.<br>
+&nbsp;&nbsp; Finally, you can specify a syntax group to look for by using this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax sync match {sync-group-name}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ grouphere {group-name} {pattern}</div>
+<br>
+This tells Vim that when it sees&nbsp;<span class="Special">{pattern}</span>&nbsp;the syntax group named&nbsp;<span class="Special">{group-name}</span><br>
+begins just after the pattern given.&nbsp;&nbsp;The&nbsp;<span class="Special">{sync-group-name}</span>&nbsp;is used to give a<br>
+name to this synchronization specification.&nbsp;&nbsp;For example, the sh scripting<br>
+language begins an if statement with &quot;if&quot; and ends it with &quot;fi&quot;:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">if [ --f file.txt ] ; then</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">echo &quot;File exists&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">fi</span><br>
+<br>
+To define a &quot;grouphere&quot; directive for this syntax, you use the following<br>
+command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax sync match shIfSync grouphere shIf &quot;\&lt;if\&gt;&quot;</div>
+<br>
+The &quot;groupthere&quot; argument tells Vim that the pattern ends a group.&nbsp;&nbsp;For<br>
+example, the end of the if/fi group is as follows:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax sync match shIfSync groupthere NONE &quot;\&lt;fi\&gt;&quot;</div>
+<br>
+In this example, the NONE tells Vim that you are not in any special syntax<br>
+region.&nbsp;&nbsp;In particular, you are not inside an if block.<br>
+<br>
+You also can define matches and regions that are with no &quot;grouphere&quot; or<br>
+&quot;groupthere&quot; arguments.&nbsp;&nbsp;These groups are for syntax groups skipped during<br>
+synchronization.&nbsp;&nbsp;For example, the following skips over anything inside {},<br>
+even if it would normally match another synchronization method:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax sync match xSpecial /{.*}/</div>
+<br>
+More about synchronizing in the reference manual:&nbsp;<a class="Identifier" href="syntax.html#:syn-sync">|:syn-sync|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.11" name="44.11">*44.11*</a>&nbsp;Installing a syntax file<br>
+<br>
+When your new syntax file is ready to be used, drop it in a &quot;syntax&quot; directory<br>
+in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;For Unix that would be &quot;~/.vim/syntax&quot;.<br>
+&nbsp;&nbsp;The name of the syntax file must be equal to the file type, with &quot;.vim&quot;<br>
+added.&nbsp;&nbsp;Thus for the x language, the full path of the file would be:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">~/.vim/syntax/x.vim</span><br>
+<br>
+You must also make the file type be recognized.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="usr_43.html#43.2">|43.2|</a>.<br>
+<br>
+If your file works well, you might want to make it available to other Vim<br>
+users.&nbsp;&nbsp;First read the next section to make sure your file works well for<br>
+others.&nbsp;&nbsp;Then e-mail it to the Vim maintainer: &lt;maintainer@vim.org&gt;.&nbsp;&nbsp;Also<br>
+explain how the filetype can be detected.&nbsp;&nbsp;With a bit of luck your file will<br>
+be included in the next Vim version!<br>
+<br>
+<br>
+ADDING TO AN EXISTING SYNTAX FILE<br>
+<br>
+We were assuming you were adding a completely new syntax file.&nbsp;&nbsp;When an existing<br>
+syntax file works, but is missing some items, you can add items in a separate<br>
+file.&nbsp;&nbsp;That avoids changing the distributed syntax file, which will be lost<br>
+when installing a new version of Vim.<br>
+&nbsp;&nbsp; Write syntax commands in your file, possibly using group names from the<br>
+existing syntax.&nbsp;&nbsp;For example, to add new variable types to the C syntax file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syntax keyword cType off_t uint</div>
+<br>
+Write the file with the same name as the original syntax file.&nbsp;&nbsp;In this case<br>
+&quot;c.vim&quot;.&nbsp;&nbsp;Place it in a directory near the end of&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;This makes<br>
+it loaded after the original syntax file.&nbsp;&nbsp;For Unix this would be:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">~/.vim/after/syntax/c.vim</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_44.html#44.12" name="44.12">*44.12*</a>&nbsp;Portable syntax file layout<br>
+<br>
+Wouldn't it be nice if all Vim users exchange syntax files?&nbsp;&nbsp;To make this<br>
+possible, the syntax file must follow a few guidelines.<br>
+<br>
+Start with a header that explains what the syntax file is for, who maintains<br>
+it and when it was last updated.&nbsp;&nbsp;Don't include too much information about<br>
+changes history, not many people will read it.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Vim syntax file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Language:&nbsp;&nbsp;&nbsp;&nbsp; C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Maintainer:&nbsp;&nbsp; Bram Moolenaar &lt;Bram@vim.org&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Last Change:&nbsp;&nbsp;2001 Jun 18<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Remark:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Included by the C++ syntax.</div>
+<br>
+Use the same layout as the other syntax files.&nbsp;&nbsp;Using an existing syntax file<br>
+as an example will save you a lot of time.<br>
+<br>
+Choose a good, descriptive name for your syntax file.&nbsp;&nbsp;Use lowercase letters<br>
+and digits.&nbsp;&nbsp;Don't make it too long, it is used in many places: The name of<br>
+the syntax file &quot;name.vim&quot;,&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>, b:current_syntax and the start of each<br>
+syntax group (nameType, nameStatement, nameString, etc).<br>
+<br>
+Start with a check for &quot;b:current_syntax&quot;.&nbsp;&nbsp;If it is defined, some other<br>
+syntax file, earlier in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;was already loaded:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if exists(&quot;b:current_syntax&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+To be compatible with Vim 5.8 use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if version &lt; 600<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;syntax clear<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif exists(&quot;b:current_syntax&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+Set &quot;b:current_syntax&quot; to the name of the syntax at the end.&nbsp;&nbsp;Don't forget<br>
+that included files do this too, you might have to reset &quot;b:current_syntax&quot; if<br>
+you include two files.<br>
+<br>
+If you want your syntax file to work with Vim 5.x, add a check for v:version.<br>
+See yacc.vim for an example.<br>
+<br>
+Do not include anything that is a user preference.&nbsp;&nbsp;Don't set&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>,<br>
+<a class="Type" href="options.html#'expandtab'">'expandtab'</a>, etc.&nbsp;&nbsp;These belong in a filetype plugin.<br>
+<br>
+Do not include mappings or abbreviations.&nbsp;&nbsp;Only include setting&nbsp;<a class="Type" href="options.html#'iskeyword'">'iskeyword'</a>&nbsp;if<br>
+it is really necessary for recognizing keywords.<br>
+<br>
+To allow users select their own preferred colors, make a different group name<br>
+for every kind of highlighted item.&nbsp;&nbsp;Then link each of them to one of the<br>
+standard highlight groups.&nbsp;&nbsp;That will make it work with every color scheme.<br>
+If you select specific colors it will look bad with some color schemes.&nbsp;&nbsp;And<br>
+don't forget that some people use a different background color, or have only<br>
+eight colors available.<br>
+<br>
+For the linking use &quot;hi def link&quot;, so that the user can select different<br>
+highlighting before your syntax file is loaded.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hi def link nameString&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hi def link nameNumber&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hi def link nameCommand&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Statement<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... etc ...</div>
+<br>
+Add the &quot;display&quot; argument to items that are not used when syncing, to speed<br>
+up scrolling backwards and&nbsp;<span class="Special">CTRL-L</span>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_45.html">|usr_45.txt|</a>&nbsp;&nbsp;Select your language<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

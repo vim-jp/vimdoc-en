@@ -1,0 +1,412 @@
+---
+layout: vimdoc
+helpname: 'undo'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="undo.html" name="undo.txt">*undo.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2014 May 24<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+Undo and redo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#undo-redo" name="undo-redo">*undo-redo*</a><br>
+<br>
+The basics are explained in section&nbsp;<a class="Identifier" href="usr_02.html#02.5">|02.5|</a>&nbsp;of the user manual.<br>
+<br>
+1. Undo and redo commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="undo.html#undo-commands">|undo-commands|</a><br>
+2. Two ways of undo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="undo.html#undo-two-ways">|undo-two-ways|</a><br>
+3. Undo blocks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="undo.html#undo-blocks">|undo-blocks|</a><br>
+4. Undo branches&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="undo.html#undo-branches">|undo-branches|</a><br>
+5. Undo persistence&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="undo.html#undo-persistence">|undo-persistence|</a><br>
+6. Remarks about undo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="undo.html#undo-remarks">|undo-remarks|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Undo and redo commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#undo-commands" name="undo-commands">*undo-commands*</a><br>
+<br>
+<span class="Special">&lt;Undo&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#undo" name="undo">*undo*</a>&nbsp;<a class="Constant" href="undo.html#<Undo>" name="&lt;Undo&gt;">*&lt;Undo&gt;*</a>&nbsp;<a class="Constant" href="undo.html#u" name="u">*u*</a><br>
+u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Undo&nbsp;<span class="Special">[count]</span>&nbsp;changes.&nbsp;&nbsp;<span class="Special">{Vi: only one level}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#:u" name=":u">*:u*</a>&nbsp;<a class="Constant" href="undo.html#:un" name=":un">*:un*</a>&nbsp;<a class="Constant" href="undo.html#:undo" name=":undo">*:undo*</a><br>
+:u[ndo]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Undo one change.&nbsp;&nbsp;<span class="Special">{Vi: only one level}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#E830" name="E830">*E830*</a><br>
+:u[ndo]&nbsp;<span class="Special">{N}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Jump to after change number&nbsp;<span class="Special">{N}</span>.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="undo.html#undo-branches">|undo-branches|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for the meaning of&nbsp;<span class="Special">{N}</span>.&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#CTRL-R" name="CTRL-R">*CTRL-R*</a><br>
+<span class="Special">CTRL-R</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Redo&nbsp;<span class="Special">[count]</span>&nbsp;changes which were undone.&nbsp;&nbsp;<span class="Special">{Vi: redraw</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">screen}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#:red" name=":red">*:red*</a>&nbsp;<a class="Constant" href="undo.html#:redo" name=":redo">*:redo*</a>&nbsp;<a class="Constant" href="undo.html#redo" name="redo">*redo*</a><br>
+:red[o]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Redo one change which was undone.&nbsp;&nbsp;<span class="Special">{Vi: no redo}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#U" name="U">*U*</a><br>
+U&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Undo all latest changes on one line, the line where<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the latest change was made.&nbsp;<a class="Identifier" href="undo.html#U">|U|</a>&nbsp;itself also counts as<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a change, and thus&nbsp;<a class="Identifier" href="undo.html#U">|U|</a>&nbsp;undoes a previous&nbsp;<a class="Identifier" href="undo.html#U">|U|</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: while not moved off of the last modified line}</span><br>
+<br>
+The last changes are remembered.&nbsp;&nbsp;You can use the undo and redo commands above<br>
+to revert the text to how it was before each change.&nbsp;&nbsp;You can also apply the<br>
+changes again, getting back the text before the undo.<br>
+<br>
+The &quot;U&quot; command is treated by undo/redo just like any other command.&nbsp;&nbsp;Thus a<br>
+&quot;u&quot; command undoes a &quot;U&quot; command and a '<span class="Special">CTRL-R</span>' command redoes it again.&nbsp;&nbsp;When<br>
+mixing &quot;U&quot;, &quot;u&quot; and '<span class="Special">CTRL-R</span>' you will notice that the &quot;U&quot; command will<br>
+restore the situation of a line to before the previous &quot;U&quot; command.&nbsp;&nbsp;This may<br>
+be confusing.&nbsp;&nbsp;Try it out to get used to it.<br>
+The &quot;U&quot; command will always mark the buffer as changed.&nbsp;&nbsp;When &quot;U&quot; changes the<br>
+buffer back to how it was without changes, it is still considered changed.<br>
+Use &quot;u&quot; to undo changes until the buffer becomes unchanged.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Two ways of undo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#undo-two-ways" name="undo-two-ways">*undo-two-ways*</a><br>
+<br>
+How undo and redo commands work depends on the 'u' flag in&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>.<br>
+There is the Vim way ('u' excluded) and the Vi-compatible way ('u' included).<br>
+In the Vim way, &quot;uu&quot; undoes two changes.&nbsp;&nbsp;In the Vi-compatible way, &quot;uu&quot; does<br>
+nothing (undoes an undo).<br>
+<br>
+'u' excluded, the Vim way:<br>
+You can go back in time with the undo command.&nbsp;&nbsp;You can then go forward again<br>
+with the redo command.&nbsp;&nbsp;If you make a new change after the undo command,<br>
+the redo will not be possible anymore.<br>
+<br>
+'u' included, the Vi-compatible way:<br>
+The undo command undoes the previous change, and also the previous undo command.<br>
+The redo command repeats the previous undo command.&nbsp;&nbsp;It does NOT repeat a<br>
+change command, use &quot;.&quot; for that.<br>
+<br>
+<span class="PreProc">Examples&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim way&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vi-compatible way</span><br>
+&quot;uu&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;two times undo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no-op<br>
+&quot;u&nbsp;<span class="Special">CTRL-R</span>&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no-op&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; two times undo<br>
+<br>
+Rationale:&nbsp;&nbsp;Nvi uses the &quot;.&quot; command instead of&nbsp;<span class="Special">CTRL-R</span>.&nbsp;&nbsp;Unfortunately, this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is not Vi compatible.&nbsp;&nbsp;For example &quot;dwdwu.&quot; in Vi deletes two<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;words, in Nvi it does nothing.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Undo blocks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#undo-blocks" name="undo-blocks">*undo-blocks*</a><br>
+<br>
+One undo command normally undoes a typed command, no matter how many changes<br>
+that command makes.&nbsp;&nbsp;This sequence of undo-able changes forms an undo block.<br>
+Thus if the typed key(s) call a function, all the commands in the function are<br>
+undone together.<br>
+<br>
+If you want to write a function or script that doesn't create a new undoable<br>
+change but joins in with the previous change use this command:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#:undoj" name=":undoj">*:undoj*</a>&nbsp;<a class="Constant" href="undo.html#:undojoin" name=":undojoin">*:undojoin*</a>&nbsp;<a class="Constant" href="undo.html#E790" name="E790">*E790*</a><br>
+:undoj[oin]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Join further changes with the previous undo block.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Warning: Use with care, it may prevent the user from<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;properly undoing changes.&nbsp;&nbsp;Don't use this after undo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or redo.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+<br>
+This is most useful when you need to prompt the user halfway through a change.<br>
+For example in a function that calls&nbsp;<a class="Identifier" href="eval.html#getchar()">|getchar()|</a>.&nbsp;&nbsp;Do make sure that there was<br>
+a related change before this that you must join with.<br>
+<br>
+This doesn't work by itself, because the next key press will start a new<br>
+change again.&nbsp;&nbsp;But you can do something like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:undojoin | delete</div>
+<br>
+After this an &quot;u&quot; command will undo the delete command and the previous<br>
+change.<br>
+<br>
+To do the opposite, break a change into two undo blocks, in Insert mode use<br>
+<span class="Special">CTRL-G</span>&nbsp;u.&nbsp;&nbsp;This is useful if you want an insert command to be undoable in<br>
+parts.&nbsp;&nbsp;E.g., for each sentence.&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-G_u">|i_CTRL-G_u|</a><br>
+Setting the value of&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>&nbsp;also breaks undo.&nbsp;&nbsp;Even when the new value<br>
+is equal to the old value.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. Undo branches&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#undo-branches" name="undo-branches">*undo-branches*</a>&nbsp;<a class="Constant" href="undo.html#undo-tree" name="undo-tree">*undo-tree*</a><br>
+<br>
+Above we only discussed one line of undo/redo.&nbsp;&nbsp;But it is also possible to<br>
+branch off.&nbsp;&nbsp;This happens when you undo a few changes and then make a new<br>
+change.&nbsp;&nbsp;The undone changes become a branch.&nbsp;&nbsp;You can go to that branch with<br>
+the following commands.<br>
+<br>
+This is explained in the user manual:&nbsp;<a class="Identifier" href="usr_32.html">|usr_32.txt|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#:undol" name=":undol">*:undol*</a>&nbsp;<a class="Constant" href="undo.html#:undolist" name=":undolist">*:undolist*</a><br>
+:undol[ist]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; List the leafs in the tree of changes.&nbsp;&nbsp;Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">number changes&nbsp;&nbsp;when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; saved</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 88&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;88&nbsp;&nbsp;2010/01/04 14:25:53<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;108&nbsp;&nbsp;&nbsp;&nbsp; 107&nbsp;&nbsp;08/07 12:47:51<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;136&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;46&nbsp;&nbsp;13:33:01&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;166&nbsp;&nbsp;&nbsp;&nbsp; 164&nbsp;&nbsp;3 seconds ago<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;number&quot; column is the change number.&nbsp;&nbsp;This number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continuously increases and can be used to identify a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specific undo-able change, see&nbsp;<a class="Identifier" href="undo.html#:undo">|:undo|</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;changes&quot; column is the number of changes to this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;leaf from the root of the tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;when&quot; column is the date and time when this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;change was made.&nbsp;&nbsp;The four possible formats are:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">N</span>&nbsp;seconds ago<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HH:MM:SS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hour, minute, seconds<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MM/DD HH:MM:SS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; idem, with month and day<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YYYY/MM/DD HH:MM:SS&nbsp;&nbsp;idem, with year<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;saved&quot; column specifies, if this change was<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;written to disk and which file write it was. This can<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be used with the&nbsp;<a class="Identifier" href="undo.html#:later">|:later|</a>&nbsp;and&nbsp;<a class="Identifier" href="undo.html#:earlier">|:earlier|</a>&nbsp;commands.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For more details use the&nbsp;<a class="Identifier" href="eval.html#undotree()">|undotree()|</a>&nbsp;function.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#g-" name="g-">*g-*</a><br>
+g-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Go to older text state.&nbsp;&nbsp;With a count repeat that many<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;times.&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#:ea" name=":ea">*:ea*</a>&nbsp;<a class="Constant" href="undo.html#:earlier" name=":earlier">*:earlier*</a><br>
+:earlier&nbsp;<span class="Special">{count}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Go to older text state&nbsp;<span class="Special">{count}</span>&nbsp;times.<br>
+:earlier&nbsp;<span class="Special">{N}</span>s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go to older text state about&nbsp;<span class="Special">{N}</span>&nbsp;seconds before.<br>
+:earlier&nbsp;<span class="Special">{N}</span>m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go to older text state about&nbsp;<span class="Special">{N}</span>&nbsp;minutes before.<br>
+:earlier&nbsp;<span class="Special">{N}</span>h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go to older text state about&nbsp;<span class="Special">{N}</span>&nbsp;hours before.<br>
+:earlier&nbsp;<span class="Special">{N}</span>d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go to older text state about&nbsp;<span class="Special">{N}</span>&nbsp;days before.<br>
+<br>
+:earlier&nbsp;<span class="Special">{N}</span>f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go to older text state&nbsp;<span class="Special">{N}</span>&nbsp;file writes before.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When changes were made since the last write<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;:earlier 1f&quot; will revert the text to the state when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it was written.&nbsp;&nbsp;Otherwise it will go to the write<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;before that.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When at the state of the first file write, or when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the file was not written, &quot;:earlier 1f&quot; will go to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;before the first change.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#g+" name="g+">*g+*</a><br>
+g+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Go to newer text state.&nbsp;&nbsp;With a count repeat that many<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;times.&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#:lat" name=":lat">*:lat*</a>&nbsp;<a class="Constant" href="undo.html#:later" name=":later">*:later*</a><br>
+:later&nbsp;<span class="Special">{count}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Go to newer text state&nbsp;<span class="Special">{count}</span>&nbsp;times.<br>
+:later&nbsp;<span class="Special">{N}</span>s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go to newer text state about&nbsp;<span class="Special">{N}</span>&nbsp;seconds later.<br>
+:later&nbsp;<span class="Special">{N}</span>m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go to newer text state about&nbsp;<span class="Special">{N}</span>&nbsp;minutes later.<br>
+:later&nbsp;<span class="Special">{N}</span>h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go to newer text state about&nbsp;<span class="Special">{N}</span>&nbsp;hours later.<br>
+:later&nbsp;<span class="Special">{N}</span>d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go to newer text state about&nbsp;<span class="Special">{N}</span>&nbsp;days later.<br>
+<br>
+:later&nbsp;<span class="Special">{N}</span>f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go to newer text state&nbsp;<span class="Special">{N}</span>&nbsp;file writes later.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When at the state of the last file write, &quot;:later 1f&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will go to the newest text state.<br>
+<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that text states will become unreachable when undo information is cleared<br>
+for&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>.<br>
+<br>
+Don't be surprised when moving through time shows multiple changes to take<br>
+place at a time.&nbsp;&nbsp;This happens when moving through the undo tree and then<br>
+making a new change.<br>
+<br>
+EXAMPLE<br>
+<br>
+Start with this text:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">one two three</span><br>
+<br>
+Delete the first word by pressing &quot;x&quot; three times:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">ne two three</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">e two three</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">two three</span><br>
+<br>
+Now undo that by pressing &quot;u&quot; three times:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">e two three</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">ne two three</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">one two three</span><br>
+<br>
+Delete the second word by pressing &quot;x&quot; three times:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">one wo three</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">one o three</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">one&nbsp;&nbsp;three</span><br>
+<br>
+Now undo that by using &quot;g-&quot; three times:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">one o three</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">one wo three</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">two three</span><br>
+<br>
+You are now back in the first undo branch, after deleting &quot;one&quot;.&nbsp;&nbsp;Repeating<br>
+&quot;g-&quot; will now bring you back to the original text:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">e two three</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">ne two three</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">one two three</span><br>
+<br>
+Jump to the last change with &quot;:later 1h&quot;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">one&nbsp;&nbsp;three</span><br>
+<br>
+And back to the start again with &quot;:earlier 1h&quot;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">one two three</span><br>
+<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that using &quot;u&quot; and&nbsp;<span class="Special">CTRL-R</span>&nbsp;will not get you to all possible text states<br>
+while repeating &quot;g-&quot; and &quot;g+&quot; does.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+5. Undo persistence&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#undo-persistence" name="undo-persistence">*undo-persistence*</a>&nbsp;<a class="Constant" href="undo.html#persistent-undo" name="persistent-undo">*persistent-undo*</a><br>
+<br>
+When unloading a buffer Vim normally destroys the tree of undos created for<br>
+that buffer.&nbsp;&nbsp;By setting the&nbsp;<a class="Type" href="options.html#'undofile'">'undofile'</a>&nbsp;option, Vim will automatically save<br>
+your undo history when you write a file and restore undo history when you edit<br>
+the file again.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'undofile'">'undofile'</a>&nbsp;option is checked after writing a file, before the BufWritePost<br>
+autocommands.&nbsp;&nbsp;If you want to control what files to write undo information<br>
+for, you can use a BufWritePre autocommand:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au BufWritePre /tmp/* setlocal noundofile</div>
+<br>
+Vim saves undo trees in a separate undo file, one for each edited file, using<br>
+a simple scheme that maps filesystem paths directly to undo files. Vim will<br>
+detect if an undo file is no longer synchronized with the file it was written<br>
+for (with a hash of the file contents) and ignore it when the file was changed<br>
+after the undo file was written, to prevent corruption.&nbsp;&nbsp;An undo file is also<br>
+ignored if its owner differs from the owner of the edited file, except when<br>
+the owner of the undo file is the current user.&nbsp;&nbsp;Set&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;to get a<br>
+message about that when opening a file.<br>
+<br>
+Undo files are normally saved in the same directory as the file.&nbsp;&nbsp;This can be<br>
+changed with the&nbsp;<a class="Type" href="options.html#'undodir'">'undodir'</a>&nbsp;option.<br>
+<br>
+When the file is encrypted, the text in the undo file is also crypted.&nbsp;&nbsp;The<br>
+same key and method is used.&nbsp;<a class="Identifier" href="editing.html#encryption">|encryption|</a><br>
+<br>
+You can also save and restore undo histories by using &quot;:wundo&quot; and &quot;:rundo&quot;<br>
+respectively:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#:wundo" name=":wundo">*:wundo*</a>&nbsp;<a class="Constant" href="undo.html#:rundo" name=":rundo">*:rundo*</a><br>
+:wundo[!]&nbsp;<span class="Special">{file}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write undo history to&nbsp;<span class="Special">{file}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">{file}</span>&nbsp;exists and it does not look like an undo file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(the magic number at the start of the file is wrong), then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this fails, unless the ! was added.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If it exists and does look like an undo file it is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;overwritten. If there is no undo-history, nothing will be&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;written.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Implementation detail: Overwriting happens by first deleting<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the existing file and then creating a new file with the same<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name. So it is not possible to overwrite an existing undofile<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in a write-protected directory.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+<br>
+:rundo&nbsp;<span class="Special">{file}</span>&nbsp;&nbsp; Read undo history from&nbsp;<span class="Special">{file}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+<br>
+You can use these in autocommands to explicitly specify the name of the<br>
+history file.&nbsp;&nbsp;E.g.:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au BufReadPost * call ReadUndo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au BufWritePost * call WriteUndo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func ReadUndo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if filereadable(expand('%:h'). '/UNDO/' . expand('%:t'))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rundo %:h/UNDO/%:t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func WriteUndo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let dirname = expand('%:h') . '/UNDO'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if !isdirectory(dirname)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call mkdir(dirname)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wundo %:h/UNDO/%:t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
+<br>
+You should keep&nbsp;<a class="Type" href="options.html#'undofile'">'undofile'</a>&nbsp;off, otherwise you end up with two undo files for<br>
+every write.<br>
+<br>
+You can use the&nbsp;<a class="Identifier" href="eval.html#undofile()">|undofile()|</a>&nbsp;function to find out the file name that Vim would<br>
+use.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that while reading/writing files and&nbsp;<a class="Type" href="options.html#'undofile'">'undofile'</a>&nbsp;is set most errors will<br>
+be silent, unless&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;is set.&nbsp;&nbsp;With :wundo and :rundo you will get more<br>
+error messages, e.g., when the file cannot be read or written.<br>
+<br>
+<span class="Todo">NOTE</span>: undo files are never deleted by Vim.&nbsp;&nbsp;You need to delete them yourself.<br>
+<br>
+Reading an existing undo file may fail for several reasons:<br>
+<a class="Constant" href="undo.html#E822" name="E822">*E822*</a>&nbsp;&nbsp;It cannot be opened, because the file permissions don't allow it.<br>
+<a class="Constant" href="undo.html#E823" name="E823">*E823*</a>&nbsp;&nbsp;The magic number at the start of the file doesn't match.&nbsp;&nbsp;This usually<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;means it is not an undo file.<br>
+<a class="Constant" href="undo.html#E824" name="E824">*E824*</a>&nbsp;&nbsp;The version number of the undo file indicates that it's written by a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;newer version of Vim.&nbsp;&nbsp;You need that newer version to open it.&nbsp;&nbsp;Don't<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write the buffer if you want to keep the undo info in the file.<br>
+&quot;File contents changed, cannot use undo info&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The file text differs from when the undo file was written.&nbsp;&nbsp;This means<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the undo file cannot be used, it would corrupt the text.&nbsp;&nbsp;This also<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;happens when&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;differs from when the undo file was written.<br>
+<a class="Constant" href="undo.html#E825" name="E825">*E825*</a>&nbsp;&nbsp;The undo file does not contain valid contents and cannot be used.<br>
+<a class="Constant" href="undo.html#E826" name="E826">*E826*</a>&nbsp;&nbsp;The undo file is encrypted but decryption failed.<br>
+<a class="Constant" href="undo.html#E827" name="E827">*E827*</a>&nbsp;&nbsp;The undo file is encrypted but this version of Vim does not support<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;encryption.&nbsp;&nbsp;Open the file with another Vim.<br>
+<a class="Constant" href="undo.html#E832" name="E832">*E832*</a>&nbsp;&nbsp;The undo file is encrypted but&nbsp;<a class="Type" href="options.html#'key'">'key'</a>&nbsp;is not set, the text file is not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;encrypted.&nbsp;&nbsp;This would happen if the text file was written by Vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;encrypted at first, and later overwritten by not encrypted text.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You probably want to delete this undo file.<br>
+&quot;Not reading undo file, owner differs&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The undo file is owned by someone else than the owner of the text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file.&nbsp;&nbsp;For safety the undo file is not used.<br>
+<br>
+Writing an undo file may fail for these reasons:<br>
+<a class="Constant" href="undo.html#E828" name="E828">*E828*</a>&nbsp;&nbsp;The file to be written cannot be created.&nbsp;&nbsp;Perhaps you do not have<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write permissions in the directory.<br>
+&quot;Cannot write undo file in any directory in&nbsp;<a class="Type" href="options.html#'undodir'">'undodir'</a>&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None of the directories in&nbsp;<a class="Type" href="options.html#'undodir'">'undodir'</a>&nbsp;can be used.<br>
+&quot;Will not overwrite with undo file, cannot read&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A file exists with the name of the undo file to be written, but it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cannot be read.&nbsp;&nbsp;You may want to delete this file or rename it.<br>
+&quot;Will not overwrite, this is not an undo file&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A file exists with the name of the undo file to be written, but it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;does not start with the right magic number.&nbsp;&nbsp;You may want to delete<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this file or rename it.<br>
+&quot;Skipping undo file write, nothing to undo&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There is no undo information to be written, nothing has been changed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>&nbsp;is negative.<br>
+<a class="Constant" href="undo.html#E829" name="E829">*E829*</a>&nbsp;&nbsp;An error occurred while writing the undo file.&nbsp;&nbsp;You may want to try<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;again.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+6. Remarks about undo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#undo-remarks" name="undo-remarks">*undo-remarks*</a><br>
+<br>
+The number of changes that are remembered is set with the&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>&nbsp;option.<br>
+If it is zero, the Vi-compatible way is always used.&nbsp;&nbsp;If it is negative no<br>
+undo is possible.&nbsp;&nbsp;Use this if you are running out of memory.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#clear-undo" name="clear-undo">*clear-undo*</a><br>
+When you set&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>&nbsp;to -1 the undo information is not immediately<br>
+cleared, this happens at the next change.&nbsp;&nbsp;To force clearing the undo<br>
+information you can use these commands:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let old_undolevels = &amp;undolevels<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set undolevels=-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:exe &quot;normal a \&lt;BS&gt;\&lt;Esc&gt;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let &amp;undolevels = old_undolevels<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:unlet old_undolevels</div>
+<br>
+Marks for the buffer ('a to 'z) are also saved and restored, together with the<br>
+text.&nbsp;&nbsp;<span class="Special">{Vi does this a little bit different}</span><br>
+<br>
+When all changes have been undone, the buffer is not considered to be changed.<br>
+It is then possible to exit Vim with &quot;:q&quot; instead of &quot;:q!&quot;&nbsp;<span class="Special">{not in Vi}</span>.&nbsp;&nbsp;<span class="Todo">Note</span><br>
+that this is relative to the last write of the file.&nbsp;&nbsp;Typing &quot;u&quot; after &quot;:w&quot;<br>
+actually changes the buffer, compared to what was written, so the buffer is<br>
+considered changed then.<br>
+<br>
+When manual&nbsp;<a class="Identifier" href="fold.html#folding">|folding|</a>&nbsp;is being used, the folds are not saved and restored.<br>
+Only changes completely within a fold will keep the fold as it was, because<br>
+the first and last line of the fold don't change.<br>
+<br>
+The numbered registers can also be used for undoing deletes.&nbsp;&nbsp;Each time you<br>
+delete text, it is put into register &quot;1.&nbsp;&nbsp;The contents of register &quot;1 are<br>
+shifted to &quot;2, etc.&nbsp;&nbsp;The contents of register &quot;9 are lost.&nbsp;&nbsp;You can now get<br>
+back the most recent deleted text with the put command: '&quot;1P'.&nbsp;&nbsp;(also, if the<br>
+deleted text was the result of the last delete or copy operation, 'P' or 'p'<br>
+also works as this puts the contents of the unnamed register).&nbsp;&nbsp;You can get<br>
+back the text of three deletes ago with '&quot;3P'.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#redo-register" name="redo-register">*redo-register*</a><br>
+If you want to get back more than one part of deleted text, you can use a<br>
+special feature of the repeat command &quot;.&quot;.&nbsp;&nbsp;It will increase the number of the<br>
+register used.&nbsp;&nbsp;So if you first do &quot;&quot;1P&quot;, the following &quot;.&quot; will result in a<br>
+'&quot;2P'.&nbsp;&nbsp;Repeating this will result in all numbered registers being inserted.<br>
+<br>
+Example:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you deleted text with 'dd....' it can be restored with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&quot;1P....'.<br>
+<br>
+If you don't know in which register the deleted text is, you can use the<br>
+:display command.&nbsp;&nbsp;An alternative is to try the first register with '&quot;1P', and<br>
+if it is not what you want do 'u.'.&nbsp;&nbsp;This will remove the contents of the<br>
+first put, and repeat the put command for the second register.&nbsp;&nbsp;Repeat the<br>
+'u.' until you got what you want.<br>
+<br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

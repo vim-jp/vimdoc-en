@@ -1,0 +1,988 @@
+---
+layout: vimdoc
+helpname: 'repeat'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="repeat.html" name="repeat.txt">*repeat.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2016 Sep 11<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+Repeating commands, Vim scripts and debugging&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#repeating" name="repeating">*repeating*</a><br>
+<br>
+Chapter 26 of the user manual introduces repeating&nbsp;<a class="Identifier" href="usr_26.html">|usr_26.txt|</a>.<br>
+<br>
+1. Single repeats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="repeat.html#single-repeat">|single-repeat|</a><br>
+2. Multiple repeats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="repeat.html#multi-repeat">|multi-repeat|</a><br>
+3. Complex repeats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="repeat.html#complex-repeat">|complex-repeat|</a><br>
+4. Using Vim scripts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="repeat.html#using-scripts">|using-scripts|</a><br>
+5. Using Vim packages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="repeat.html#packages">|packages|</a><br>
+6. Creating Vim packages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="repeat.html#package-create">|package-create|</a><br>
+7. Debugging scripts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="repeat.html#debug-scripts">|debug-scripts|</a><br>
+8. Profiling&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="repeat.html#profiling">|profiling|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Single repeats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#single-repeat" name="single-repeat">*single-repeat*</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#." name=".">*.*</a><br>
+.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Repeat last change, with count replaced with&nbsp;<span class="Special">[count]</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also repeat a yank command, when the 'y' flag is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;included in&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>.&nbsp;&nbsp;Does not repeat a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command-line command.<br>
+<br>
+Simple changes can be repeated with the &quot;.&quot; command.&nbsp;&nbsp;Without a count, the<br>
+count of the last change is used.&nbsp;&nbsp;If you enter a count, it will replace the<br>
+last one.&nbsp;&nbsp;<a class="Identifier" href="eval.html#v:count">|v:count|</a>&nbsp;and&nbsp;<a class="Identifier" href="eval.html#v:count1">|v:count1|</a>&nbsp;will be set.<br>
+<br>
+If the last change included a specification of a numbered register, the<br>
+register number will be incremented.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="undo.html#redo-register">|redo-register|</a>&nbsp;for an example how<br>
+to use this.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that when repeating a command that used a Visual selection, the same SIZE<br>
+of area is used, see&nbsp;<a class="Identifier" href="visual.html#visual-repeat">|visual-repeat|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#@:" name="@:">*@:*</a><br>
+@:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Repeat last command-line&nbsp;<span class="Special">[count]</span>&nbsp;times.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not available when compiled without the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="various.html#+cmdline_hist">|+cmdline_hist|</a><span class="Special">&nbsp;feature}</span><br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Multiple repeats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#multi-repeat" name="multi-repeat">*multi-repeat*</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:g" name=":g">*:g*</a>&nbsp;<a class="Constant" href="repeat.html#:global" name=":global">*:global*</a>&nbsp;<a class="Constant" href="repeat.html#E147" name="E147">*E147*</a>&nbsp;<a class="Constant" href="repeat.html#E148" name="E148">*E148*</a><br>
+:<span class="Special">[range]</span>g[lobal]/<span class="Special">{pattern}</span>/<span class="Special">[cmd]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute the Ex command&nbsp;<span class="Special">[cmd]</span>&nbsp;(default &quot;:p&quot;) on the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lines within&nbsp;<span class="Special">[range]</span>&nbsp;where&nbsp;<span class="Special">{pattern}</span>&nbsp;matches.<br>
+<br>
+:<span class="Special">[range]</span>g[lobal]!/<span class="Special">{pattern}</span>/<span class="Special">[cmd]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute the Ex command&nbsp;<span class="Special">[cmd]</span>&nbsp;(default &quot;:p&quot;) on the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lines within&nbsp;<span class="Special">[range]</span>&nbsp;where&nbsp;<span class="Special">{pattern}</span>&nbsp;does NOT match.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:v" name=":v">*:v*</a>&nbsp;<a class="Constant" href="repeat.html#:vglobal" name=":vglobal">*:vglobal*</a><br>
+:<span class="Special">[range]</span>v[global]/<span class="Special">{pattern}</span>/<span class="Special">[cmd]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as :g!.<br>
+<br>
+Instead of the '/' which surrounds the&nbsp;<span class="Special">{pattern}</span>, you can use any other<br>
+single byte character, but not an alphabetic character, '\', '&quot;' or '|'.<br>
+This is useful if you want to include a '/' in the search pattern or<br>
+replacement string.<br>
+<br>
+For the definition of a pattern, see&nbsp;<a class="Identifier" href="pattern.html#pattern">|pattern|</a>.<br>
+<br>
+<span class="Todo">NOTE</span>&nbsp;<span class="Special">[cmd]</span>&nbsp;may contain a range; see&nbsp;<a class="Identifier" href="tips.html#collapse">|collapse|</a>&nbsp;and&nbsp;<a class="Identifier" href="usr_25.html#edit-paragraph-join">|edit-paragraph-join|</a>&nbsp;for<br>
+examples.<br>
+<br>
+The global commands work by first scanning through the&nbsp;<span class="Special">[range]</span>&nbsp;lines and<br>
+marking each line where a match occurs (for a multi-line pattern, only the<br>
+start of the match matters).<br>
+In a second scan the&nbsp;<span class="Special">[cmd]</span>&nbsp;is executed for each marked line, as if the cursor<br>
+was in that line.&nbsp;&nbsp;For &quot;:v&quot; and &quot;:g!&quot; the command is executed for each not<br>
+marked line.&nbsp;&nbsp;If a line is deleted its mark disappears.<br>
+The default for&nbsp;<span class="Special">[range]</span>&nbsp;is the whole buffer (1,$).&nbsp;&nbsp;Use &quot;<span class="Special">CTRL-C</span>&quot; to interrupt<br>
+the command.&nbsp;&nbsp;If an error message is given for a line, the command for that<br>
+line is aborted and the global command continues with the next marked or<br>
+unmarked line.<br>
+<br>
+To repeat a non-Ex command, you can use the &quot;:normal&quot; command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:g/pat/normal {commands}</div>
+Make sure that&nbsp;<span class="Special">{commands}</span>&nbsp;ends with a whole command, otherwise Vim will wait<br>
+for you to type the rest of the command for each match.&nbsp;&nbsp;The screen will not<br>
+have been updated, so you don't know what you are doing.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="various.html#:normal">|:normal|</a>.<br>
+<br>
+The undo/redo command will undo/redo the whole global command at once.<br>
+The previous context mark will only be set once (with &quot;''&quot; you go back to<br>
+where the cursor was before the global command).<br>
+<br>
+The global command sets both the last used search pattern and the last used<br>
+substitute pattern (this is vi compatible).&nbsp;&nbsp;This makes it easy to globally<br>
+replace a string:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:g/pat/s//PAT/g<br>
+This replaces all occurrences of &quot;pat&quot; with &quot;PAT&quot;.&nbsp;&nbsp;The same can be done with:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/pat/PAT/g<br>
+Which is two characters shorter!<br>
+<br>
+When using &quot;global&quot; in Ex mode, a special case is using &quot;:visual&quot; as a<br>
+command.&nbsp;&nbsp;This will move to a matching line, go to Normal mode to let you<br>
+execute commands there until you use&nbsp;<a class="Identifier" href="intro.html#Q">|Q|</a>&nbsp;to return to Ex mode.&nbsp;&nbsp;This will be<br>
+repeated for each matching line.&nbsp;&nbsp;While doing this you cannot use &quot;:global&quot;.<br>
+To abort this type&nbsp;<span class="Special">CTRL-C</span>&nbsp;twice.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Complex repeats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#complex-repeat" name="complex-repeat">*complex-repeat*</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#q" name="q">*q*</a>&nbsp;<a class="Constant" href="repeat.html#recording" name="recording">*recording*</a><br>
+q<span class="Special">{0-9a-zA-Z&quot;}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Record typed characters into register&nbsp;<span class="Special">{0-9a-zA-Z&quot;}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(uppercase to append).&nbsp;&nbsp;The 'q' command is disabled<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while executing a register, and it doesn't work inside<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a mapping and&nbsp;<a class="Identifier" href="various.html#:normal">|:normal|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>: If the register being used for recording is also<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used for&nbsp;<a class="Identifier" href="change.html#y">|y|</a>&nbsp;and&nbsp;<a class="Identifier" href="change.html#p">|p|</a>&nbsp;the result is most likely not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;what is expected, because the put will paste the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;recorded macro and the yank will overwrite the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;recorded macro.&nbsp;<span class="Special">{Vi: no recording}</span><br>
+<br>
+q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Stops recording.&nbsp;&nbsp;(Implementation&nbsp;<span class="Todo">note</span>: The 'q' that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stops recording is not stored in the register, unless<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it was the result of a mapping)&nbsp;&nbsp;<span class="Special">{Vi: no recording}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#@" name="@">*@*</a><br>
+@<span class="Special">{0-9a-z&quot;.=*+}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute the contents of register&nbsp;<span class="Special">{0-9a-z&quot;.=*+}</span>&nbsp;<span class="Special">[count]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;times.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that register '%' (name of the current<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file) and '#' (name of the alternate file) cannot be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The register is executed like a mapping, that means<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that the difference between&nbsp;<a class="Type" href="options.html#'wildchar'">'wildchar'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'wildcharm'">'wildcharm'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;applies.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For &quot;@=&quot; you are prompted to enter an expression.&nbsp;&nbsp;The<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result of the expression is then executed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See also&nbsp;<a class="Identifier" href="repeat.html#@:">|@:|</a>.&nbsp;&nbsp;<span class="Special">{Vi: only named registers}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#@@" name="@@">*@@*</a>&nbsp;<a class="Constant" href="repeat.html#E748" name="E748">*E748*</a><br>
+@@&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Repeat the previous @<span class="Special">{0-9a-z&quot;:*}</span>&nbsp;<span class="Special">[count]</span>&nbsp;times.<br>
+<br>
+:<span class="Special">[addr]</span>*<span class="Special">{0-9a-z&quot;.=+}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:@" name=":@">*:@*</a>&nbsp;<a class="Constant" href="repeat.html#:star" name=":star">*:star*</a><br>
+:<span class="Special">[addr]</span>@<span class="Special">{0-9a-z&quot;.=*+}</span>&nbsp;&nbsp; Execute the contents of register&nbsp;<span class="Special">{0-9a-z&quot;.=*+}</span>&nbsp;as an Ex<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command.&nbsp;&nbsp;First set cursor at line&nbsp;<span class="Special">[addr]</span>&nbsp;(default is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;current line).&nbsp;&nbsp;When the last line in the register does<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not have a&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;it will be added automatically when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the 'e' flag is present in&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that the &quot;:*&quot; command is only recognized when the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'*' flag is present in&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>.&nbsp;&nbsp;This is NOT the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default when&nbsp;<a class="Type" href="options.html#'nocompatible'">'nocompatible'</a>&nbsp;is used.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For &quot;:@=&quot; the last used expression is used.&nbsp;&nbsp;The<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result of evaluating the expression is executed as an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ex command.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mappings are not recognized in these commands.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: only in some versions}</span>&nbsp;Future: Will execute the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;register for each line in the address range.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:@:" name=":@:">*:@:*</a><br>
+:<span class="Special">[addr]</span>@:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Repeat last command-line.&nbsp;&nbsp;First set cursor at line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[addr]</span>&nbsp;(default is current line).&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+<br>
+:<span class="Special">[addr]</span>@&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:@@" name=":@@">*:@@*</a><br>
+:<span class="Special">[addr]</span>@@&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Repeat the previous :@<span class="Special">{0-9a-z&quot;}</span>.&nbsp;&nbsp;First set cursor at<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line&nbsp;<span class="Special">[addr]</span>&nbsp;(default is current line).&nbsp;&nbsp;<span class="Special">{Vi: only in</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">some versions}</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. Using Vim scripts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#using-scripts" name="using-scripts">*using-scripts*</a><br>
+<br>
+For writing a Vim script, see chapter 41 of the user manual&nbsp;<a class="Identifier" href="usr_41.html">|usr_41.txt|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:so" name=":so">*:so*</a>&nbsp;<a class="Constant" href="repeat.html#:source" name=":source">*:source*</a>&nbsp;<a class="Constant" href="repeat.html#load-vim-script" name="load-vim-script">*load-vim-script*</a><br>
+:so[urce]&nbsp;<span class="Special">{file}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read Ex commands from&nbsp;<span class="Special">{file}</span>.&nbsp;&nbsp;These are commands that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start with a &quot;:&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Triggers the&nbsp;<a class="Identifier" href="autocmd.html#SourcePre">|SourcePre|</a>&nbsp;autocommand.<br>
+<br>
+:so[urce]!&nbsp;<span class="Special">{file}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Read Vim commands from&nbsp;<span class="Special">{file}</span>.&nbsp;&nbsp;These are commands<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that are executed from Normal mode, like you type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;them.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When used after&nbsp;<a class="Identifier" href="repeat.html#:global">|:global|</a>,&nbsp;<a class="Identifier" href="editing.html#:argdo">|:argdo|</a>,&nbsp;<a class="Identifier" href="windows.html#:windo">|:windo|</a>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="windows.html#:bufdo">|:bufdo|</a>, in a loop or when another command follows<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the display won't be updated while executing the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;commands.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:ru" name=":ru">*:ru*</a>&nbsp;<a class="Constant" href="repeat.html#:runtime" name=":runtime">*:runtime*</a><br>
+:ru[ntime][!]&nbsp;<span class="Special">[where]</span>&nbsp;<span class="Special">{file}</span>&nbsp;..<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read Ex commands from&nbsp;<span class="Special">{file}</span>&nbsp;in each directory given<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;by&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;and/or&nbsp;<a class="Type" href="options.html#'packpath'">'packpath'</a>.&nbsp;&nbsp;There is no error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for non-existing files.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:runtime syntax/c.vim</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There can be multiple&nbsp;<span class="Special">{file}</span>&nbsp;arguments, separated by<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;spaces.&nbsp;&nbsp;Each&nbsp;<span class="Special">{file}</span>&nbsp;is searched for in the first<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;directory from&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>, then in the second<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;directory, etc.&nbsp;&nbsp;Use a backslash to include a space<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inside&nbsp;<span class="Special">{file}</span>&nbsp;(although it's better not to use spaces<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in file names, it causes trouble).<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When [!] is included, all found files are sourced.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When it is not included only the first found file is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sourced.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">[where]</span>&nbsp;is omitted only&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;is used.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other values:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;START&nbsp;&nbsp; search under &quot;start&quot; in&nbsp;<a class="Type" href="options.html#'packpath'">'packpath'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OPT&nbsp;&nbsp;&nbsp;&nbsp; search under &quot;opt&quot; in&nbsp;<a class="Type" href="options.html#'packpath'">'packpath'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PACK&nbsp;&nbsp;&nbsp;&nbsp;search under &quot;start&quot; and &quot;opt&quot; in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'packpath'">'packpath'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ALL&nbsp;&nbsp;&nbsp;&nbsp; first use&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>, then search<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;under &quot;start&quot; and &quot;opt&quot; in&nbsp;<a class="Type" href="options.html#'packpath'">'packpath'</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">{file}</span>&nbsp;contains wildcards it is expanded to all<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matching files.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:runtime! plugin/*.vim</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is what Vim uses to load the plugin files when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;starting up.&nbsp;&nbsp;This similar command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:runtime plugin/*.vim</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; would source the first file only.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;is one or higher, there is a message<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when no file could be found.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;is two or higher, there is a message<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;about each searched file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:pa" name=":pa">*:pa*</a>&nbsp;<a class="Constant" href="repeat.html#:packadd" name=":packadd">*:packadd*</a>&nbsp;<a class="Constant" href="repeat.html#E919" name="E919">*E919*</a><br>
+:pa[ckadd][!]&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;&nbsp;&nbsp;Search for an optional plugin directory in&nbsp;<a class="Type" href="options.html#'packpath'">'packpath'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and source any plugin files found.&nbsp;&nbsp;The directory must<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;match:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">pack/*/opt/{name}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The directory is added to&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;if it wasn't<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;there yet.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the directory pack/*/opt/<span class="Special">{name}</span>/after exists it is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;added at the end of&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that&nbsp;<span class="Special">{name}</span>&nbsp;is the directory name, not the name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of the .vim file.&nbsp;&nbsp;All the files matching the pattern<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">pack/*/opt/{name}/plugin/**/*.vim</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will be sourced.&nbsp;&nbsp;This allows for using subdirectories<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;below &quot;plugin&quot;, just like with plugins in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the filetype detection was not enabled yet (this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is usually done with a &quot;syntax enable&quot; or &quot;filetype<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on&quot; command in your .vimrc file), this will also look<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for &quot;<span class="Special">{name}</span>/ftdetect/*.vim&quot; files.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When the optional ! is added no plugin files or<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ftdetect scripts are loaded, only the matching<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;directories are added to&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;This is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;useful in your .vimrc.&nbsp;&nbsp;The plugins will then be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;loaded during initialization, see&nbsp;<a class="Identifier" href="starting.html#load-plugins">|load-plugins|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="repeat.html#pack-add">|pack-add|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:packl" name=":packl">*:packl*</a>&nbsp;<a class="Constant" href="repeat.html#:packloadall" name=":packloadall">*:packloadall*</a><br>
+:packl[oadall][!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Load all packages in the &quot;start&quot; directory under each<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;entry in&nbsp;<a class="Type" href="options.html#'packpath'">'packpath'</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First all the directories found are added to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>, then the plugins found in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;directories are sourced.&nbsp;&nbsp;This allows for a plugin to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;depend on something of another plugin, e.g. an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;autoload&quot; directory.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="repeat.html#packload-two-steps">|packload-two-steps|</a>&nbsp;for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;how this can be useful.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is normally done automatically during startup,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;after loading your .vimrc file.&nbsp;&nbsp;With this command it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can be done earlier.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Packages will be loaded only once.&nbsp;&nbsp;After this command<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it won't happen again.&nbsp;&nbsp;When the optional ! is added<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this command will load packages even when done before.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An error only causes sourcing the script where it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;happens to be aborted, further plugins will be loaded.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="repeat.html#packages">|packages|</a>.<br>
+<br>
+:scripte[ncoding]&nbsp;<span class="Special">[encoding]</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:scripte" name=":scripte">*:scripte*</a>&nbsp;<a class="Constant" href="repeat.html#:scriptencoding" name=":scriptencoding">*:scriptencoding*</a>&nbsp;<a class="Constant" href="repeat.html#E167" name="E167">*E167*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify the character encoding used in the script.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The following lines will be converted from&nbsp;<span class="Special">[encoding]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to the value of the&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;option, if they are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;different.&nbsp;&nbsp;Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scriptencoding iso-8859-5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scriptencoding cp932</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">[encoding]</span>&nbsp;is empty, no conversion is done.&nbsp;&nbsp;This<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can be used to restrict conversion to a sequence of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lines:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scriptencoding euc-jp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... lines to be converted ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scriptencoding<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... not converted ...</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When conversion isn't supported by the system, there<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is no error message and no conversion is done.&nbsp;&nbsp;When a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line can't be converted there is no error and the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;original line is kept.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Don't use &quot;ucs-2&quot; or &quot;ucs-4&quot;, scripts cannot be in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;these encodings (they would contain NUL bytes).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When a sourced script starts with a BOM (Byte Order<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mark) in utf-8 format Vim will recognize it, no need<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to use &quot;:scriptencoding utf-8&quot; then.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When compiled without the&nbsp;<a class="Identifier" href="various.html#+multi_byte">|+multi_byte|</a>&nbsp;feature this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command is ignored.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:scr" name=":scr">*:scr*</a>&nbsp;<a class="Constant" href="repeat.html#:scriptnames" name=":scriptnames">*:scriptnames*</a><br>
+:scr[iptnames]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List all sourced script names, in the order they were<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first sourced.&nbsp;&nbsp;The number is used for the script ID<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="map.html#<SID>">|&lt;SID&gt;|</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not in Vi}</span>&nbsp;<span class="Special">{not available when compiled without the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="various.html#+eval">|+eval|</a><span class="Special">&nbsp;feature}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:fini" name=":fini">*:fini*</a>&nbsp;<a class="Constant" href="repeat.html#:finish" name=":finish">*:finish*</a>&nbsp;<a class="Constant" href="repeat.html#E168" name="E168">*E168*</a><br>
+:fini[sh]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Stop sourcing a script.&nbsp;&nbsp;Can only be used in a Vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;script file.&nbsp;&nbsp;This is a quick way to skip the rest of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the file.&nbsp;&nbsp;If it is used after a&nbsp;<a class="Identifier" href="eval.html#:try">|:try|</a>&nbsp;but before the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matching&nbsp;<a class="Identifier" href="eval.html#:finally">|:finally|</a>&nbsp;(if present), the commands<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;following the &quot;:finally&quot; up to the matching&nbsp;<a class="Identifier" href="eval.html#:endtry">|:endtry|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;are executed first.&nbsp;&nbsp;This process applies to all<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nested &quot;:try&quot;s in the script.&nbsp;&nbsp;The outermost &quot;:endtry&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;then stops sourcing the script.&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+<br>
+All commands and command sequences can be repeated by putting them in a named<br>
+register and then executing it.&nbsp;&nbsp;There are two ways to get the commands in the<br>
+register:<br>
+- Use the record command &quot;q&quot;.&nbsp;&nbsp;You type the commands once, and while they are<br>
+&nbsp;&nbsp;being executed they are stored in a register.&nbsp;&nbsp;Easy, because you can see<br>
+&nbsp;&nbsp;what you are doing.&nbsp;&nbsp;If you make a mistake, &quot;p&quot;ut the register into the<br>
+&nbsp;&nbsp;file, edit the command sequence, and then delete it into the register<br>
+&nbsp;&nbsp;again.&nbsp;&nbsp;You can continue recording by appending to the register (use an<br>
+&nbsp;&nbsp;uppercase letter).<br>
+- Delete or yank the command sequence into the register.<br>
+<br>
+Often used command sequences can be put under a function key with the ':map'<br>
+command.<br>
+<br>
+An alternative is to put the commands in a file, and execute them with the<br>
+':source!' command.&nbsp;&nbsp;Useful for long command sequences.&nbsp;&nbsp;Can be combined with<br>
+the ':map' command to put complicated commands under a function key.<br>
+<br>
+The ':source' command reads Ex commands from a file line by line.&nbsp;&nbsp;You will<br>
+have to type any needed keyboard input.&nbsp;&nbsp;The ':source!' command reads from a<br>
+script file character by character, interpreting each character as if you<br>
+typed it.<br>
+<br>
+Example: When you give the &quot;:!ls&quot; command you get the&nbsp;<a class="Identifier" href="message.html#hit-enter">|hit-enter|</a>&nbsp;prompt.&nbsp;&nbsp;If<br>
+you ':source' a file with the line &quot;!ls&quot; in it, you will have to type the<br>
+<span class="Special">&lt;Enter&gt;</span>&nbsp;yourself.&nbsp;&nbsp;But if you ':source!' a file with the line &quot;:!ls&quot; in it,<br>
+the next characters from that file are read until a&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;is found.&nbsp;&nbsp;You will<br>
+not have to type&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;yourself, unless &quot;:!ls&quot; was the last line in the file.<br>
+<br>
+It is possible to put ':source[!]' commands in the script file, so you can<br>
+make a top-down hierarchy of script files.&nbsp;&nbsp;The ':source' command can be<br>
+nested as deep as the number of files that can be opened at one time (about<br>
+15).&nbsp;&nbsp;The ':source!' command can be nested up to 15 levels deep.<br>
+<br>
+You can use the &quot;<span class="Special">&lt;sfile&gt;</span>&quot; string (literally, this is not a special key) inside<br>
+of the sourced file, in places where a file name is expected.&nbsp;&nbsp;It will be<br>
+replaced by the file name of the sourced file.&nbsp;&nbsp;For example, if you have a<br>
+&quot;other.vimrc&quot; file in the same directory as your &quot;.vimrc&quot; file, you can source<br>
+it from your &quot;.vimrc&quot; file with this command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:source &lt;sfile&gt;:h/other.vimrc</div>
+<br>
+In script files terminal-dependent key codes are represented by<br>
+terminal-independent two character codes.&nbsp;&nbsp;This means that they can be used<br>
+in the same way on different kinds of terminals.&nbsp;&nbsp;The first character of a<br>
+key code is 0x80 or 128, shown on the screen as &quot;~@&quot;.&nbsp;&nbsp;The second one can be<br>
+found in the list&nbsp;<a class="Identifier" href="intro.html#key-notation">|key-notation|</a>.&nbsp;&nbsp;Any of these codes can also be entered<br>
+with&nbsp;<span class="Special">CTRL-V</span>&nbsp;followed by the three digit decimal code.&nbsp;&nbsp;This does NOT work for<br>
+the&nbsp;<span class="Special">&lt;t_xx&gt;</span>&nbsp;termcap codes, these can only be used in mappings.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:source_crnl" name=":source_crnl">*:source_crnl*</a>&nbsp;<a class="Constant" href="repeat.html#W15" name="W15">*W15*</a><br>
+MS-DOS, Win32 and OS/2: Files that are read with &quot;:source&quot; normally have<br>
+<span class="Special">&lt;CR&gt;&lt;NL&gt;</span>&nbsp;<span class="Special">&lt;EOL&gt;</span>s.&nbsp;&nbsp;These always work.&nbsp;&nbsp;If you are using a file with&nbsp;<span class="Special">&lt;NL&gt;</span>&nbsp;<span class="Special">&lt;EOL&gt;</span>s<br>
+(for example, a file made on Unix), this will be recognized if&nbsp;<a class="Type" href="options.html#'fileformats'">'fileformats'</a><br>
+is not empty and the first line does not end in a&nbsp;<span class="Special">&lt;CR&gt;</span>.&nbsp;&nbsp;This fails if the<br>
+first line has something like &quot;:map&nbsp;<span class="Special">&lt;F1&gt;</span>&nbsp;:help^M&quot;, where &quot;^M&quot; is a&nbsp;<span class="Special">&lt;CR&gt;</span>.&nbsp;&nbsp;If<br>
+the first line ends in a&nbsp;<span class="Special">&lt;CR&gt;</span>, but following ones don't, you will get an error<br>
+message, because the&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;from the first lines will be lost.<br>
+<br>
+Mac Classic: Files that are read with &quot;:source&quot; normally have&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;<span class="Special">&lt;EOL&gt;</span>s.<br>
+These always work.&nbsp;&nbsp;If you are using a file with&nbsp;<span class="Special">&lt;NL&gt;</span>&nbsp;<span class="Special">&lt;EOL&gt;</span>s (for example, a<br>
+file made on Unix), this will be recognized if&nbsp;<a class="Type" href="options.html#'fileformats'">'fileformats'</a>&nbsp;is not empty and<br>
+the first line does not end in a&nbsp;<span class="Special">&lt;CR&gt;</span>.&nbsp;&nbsp;Be careful not to use a file with&nbsp;<span class="Special">&lt;NL&gt;</span><br>
+linebreaks which has a&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;in first line.<br>
+<br>
+On other systems, Vim expects &quot;:source&quot;ed files to end in a&nbsp;<span class="Special">&lt;NL&gt;</span>.&nbsp;&nbsp;These<br>
+always work.&nbsp;&nbsp;If you are using a file with&nbsp;<span class="Special">&lt;CR&gt;&lt;NL&gt;</span>&nbsp;<span class="Special">&lt;EOL&gt;</span>s (for example, a<br>
+file made on MS-DOS), all lines will have a trailing&nbsp;<span class="Special">&lt;CR&gt;</span>.&nbsp;&nbsp;This may cause<br>
+problems for some commands (e.g., mappings).&nbsp;&nbsp;There is no automatic&nbsp;<span class="Special">&lt;EOL&gt;</span><br>
+detection, because it's common to start with a line that defines a mapping<br>
+that ends in a&nbsp;<span class="Special">&lt;CR&gt;</span>, which will confuse the automaton.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#line-continuation" name="line-continuation">*line-continuation*</a><br>
+Long lines in a &quot;:source&quot;d Ex command script file can be split by inserting<br>
+a line continuation symbol &quot;\&quot; (backslash) at the start of the next line.<br>
+There can be white space before the backslash, which is ignored.<br>
+<br>
+Example: the lines<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set comments=sr:/*,mb:*,el:*/,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \://,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \b:#,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \:%,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \n:&gt;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \fb:-</div>
+are interpreted as if they were given in one line:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set comments=sr:/*,mb:*,el:*/,://,b:#,:%,n:&gt;,fb:-<br>
+<br>
+All leading whitespace characters in the line before a backslash are ignored.<br>
+<span class="Todo">Note</span>&nbsp;however that trailing whitespace in the line before it cannot be<br>
+inserted freely; it depends on the position where a command is split up<br>
+whether additional whitespace is allowed or not.<br>
+<br>
+When a space is required it's best to put it right after the backslash.&nbsp;&nbsp;A<br>
+space at the end of a line is hard to see and may be accidentally deleted.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syn match Comment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ &quot;very long regexp&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ keepend</div>
+<br>
+There is a problem with the &quot;:append&quot; and &quot;:insert&quot; commands:<br>
+<div class="helpExample">&nbsp;&nbsp; :1append<br>
+&nbsp;&nbsp; \asdf<br>
+&nbsp;&nbsp; .</div>
+The backslash is seen as a line-continuation symbol, thus this results in the<br>
+command:<br>
+<div class="helpExample">&nbsp;&nbsp; :1appendasdf<br>
+&nbsp;&nbsp; .</div>
+To avoid this, add the 'C' flag to the&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;option:<br>
+<div class="helpExample">&nbsp;&nbsp; :set cpo+=C<br>
+&nbsp;&nbsp; :1append<br>
+&nbsp;&nbsp; \asdf<br>
+&nbsp;&nbsp; .<br>
+&nbsp;&nbsp; :set cpo-=C</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that when the commands are inside a function, you need to add the 'C'<br>
+flag when defining the function, it is not relevant when executing it.<br>
+<div class="helpExample">&nbsp;&nbsp; :set cpo+=C<br>
+&nbsp;&nbsp; :function Foo()<br>
+&nbsp;&nbsp; :1append<br>
+&nbsp;&nbsp; \asdf<br>
+&nbsp;&nbsp; .<br>
+&nbsp;&nbsp; :endfunction<br>
+&nbsp;&nbsp; :set cpo-=C</div>
+<br>
+Rationale:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Most programs work with a trailing backslash to indicate line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continuation.&nbsp;&nbsp;Using this in Vim would cause incompatibility with Vi.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For example for this Vi mapping:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:map xx&nbsp;&nbsp;asdf\</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Therefore the unusual leading backslash is used.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+5. Using Vim packages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#packages" name="packages">*packages*</a><br>
+<br>
+A Vim package is a directory that contains one or more plugins.&nbsp;&nbsp;The<br>
+advantages over normal plugins:<br>
+- A package can be downloaded as an archive and unpacked in its own directory.<br>
+&nbsp;&nbsp;Thus the files are not mixed with files of other plugins.&nbsp;&nbsp;That makes it<br>
+&nbsp;&nbsp;easy to update and remove.<br>
+- A package can be a git, mercurial, etc. repository.&nbsp;&nbsp;That makes it really<br>
+&nbsp;&nbsp;easy to update.<br>
+- A package can contain multiple plugins that depend on each other.<br>
+- A package can contain plugins that are automatically loaded on startup and<br>
+&nbsp;&nbsp;ones that are only loaded when needed with&nbsp;<a class="Comment" href="repeat.html#:packadd">`:packadd`</a>.<br>
+<br>
+<br>
+<span class="PreProc">Using a package and loading automatically</span><br>
+<br>
+Let's assume your Vim files are in the &quot;~/.vim&quot; directory and you want to add a<br>
+package from a zip archive &quot;/tmp/foopack.zip&quot;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% mkdir -p ~/.vim/pack/foo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% cd ~/.vim/pack/foo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% unzip /tmp/foopack.zip<br>
+<br>
+The directory name &quot;foo&quot; is arbitrary, you can pick anything you like.<br>
+<br>
+You would now have these files under ~/.vim:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pack/foo/README.txt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pack/foo/start/foobar/plugin/foo.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pack/foo/start/foobar/syntax/some.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pack/foo/opt/foodebug/plugin/debugger.vim<br>
+<br>
+When Vim starts up, after processing your .vimrc, it scans all directories in<br>
+<a class="Type" href="options.html#'packpath'">'packpath'</a>&nbsp;for plugins under the &quot;pack/*/start&quot; directory.&nbsp;&nbsp;First all those<br>
+directories are added to&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;Then all the plugins are loaded.<br>
+See&nbsp;<a class="Identifier" href="repeat.html#packload-two-steps">|packload-two-steps|</a>&nbsp;for how these two steps can be useful.<br>
+<br>
+In the example Vim will find &quot;pack/foo/start/foobar/plugin/foo.vim&quot; and adds&nbsp;<br>
+&quot;~/.vim/pack/foo/start/foobar&quot; to&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.<br>
+<br>
+If the &quot;foobar&quot; plugin kicks in and sets the&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>&nbsp;to &quot;some&quot;, Vim will<br>
+find the syntax/some.vim file, because its directory is in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.<br>
+<br>
+Vim will also load ftdetect files, if there are any.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that the files under &quot;pack/foo/opt&quot; are not loaded automatically, only the<br>
+ones under &quot;pack/foo/start&quot;.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="repeat.html#pack-add">|pack-add|</a>&nbsp;below for how the &quot;opt&quot; directory<br>
+is used.<br>
+<br>
+Loading packages automatically will not happen if loading plugins is disabled,<br>
+see&nbsp;<a class="Identifier" href="starting.html#load-plugins">|load-plugins|</a>.<br>
+<br>
+To load packages earlier, so that&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;gets updated:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:packloadall</div>
+This also works when loading plugins is disabled.&nbsp;&nbsp;The automatic loading will<br>
+only happen once.<br>
+<br>
+If the package has an &quot;after&quot; directory, that directory is added to the end of<br>
+<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>, so that anything there will be loaded later.<br>
+<br>
+<br>
+<span class="PreProc">Using a single plugin and loading it automatically</span><br>
+<br>
+If you don't have a package but a single plugin, you need to create the extra<br>
+directory level:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% mkdir -p ~/.vim/pack/foo/start/foobar<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% cd ~/.vim/pack/foo/start/foobar<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% unzip /tmp/someplugin.zip<br>
+<br>
+You would now have these files:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pack/foo/start/foobar/plugin/foo.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pack/foo/start/foobar/syntax/some.vim<br>
+<br>
+From here it works like above.<br>
+<br>
+<br>
+<span class="PreProc">Optional plugins</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#pack-add" name="pack-add">*pack-add*</a><br>
+To load an optional plugin from a pack use the&nbsp;<a class="Comment" href="repeat.html#:packadd">`:packadd`</a>&nbsp;command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:packadd foodebug</div>
+This searches for &quot;pack/*/opt/foodebug&quot; in&nbsp;<a class="Type" href="options.html#'packpath'">'packpath'</a>&nbsp;and will find<br>
+~/.vim/pack/foo/opt/foodebug/plugin/debugger.vim and source it.<br>
+<br>
+This could be done if some conditions are met.&nbsp;&nbsp;For example, depending on<br>
+whether Vim supports a feature or a dependency is missing.<br>
+<br>
+You can also load an optional plugin at startup, by putting this command in<br>
+your&nbsp;<a class="Identifier" href="starting.html#.vimrc">|.vimrc|</a>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:packadd! foodebug</div>
+The extra &quot;!&quot; is so that the plugin isn't loaded if Vim was started with<br>
+<a class="Identifier" href="starting.html#--noplugin">|--noplugin|</a>.<br>
+<br>
+It is perfectly normal for a package to only have files in the &quot;opt&quot;<br>
+directory.&nbsp;&nbsp;You then need to load each plugin when you want to use it.<br>
+<br>
+<br>
+<span class="PreProc">Where to put what</span><br>
+<br>
+Since color schemes, loaded with&nbsp;<a class="Comment" href="syntax.html#:colorscheme">`:colorscheme`</a>, are found below<br>
+&quot;pack/*/start&quot; and &quot;pack/*/opt&quot;, you could put them anywhere.&nbsp;&nbsp;We recommend<br>
+you put them below &quot;pack/*/opt&quot;, for example<br>
+&quot;.vim/pack/mycolors/opt/dark/colors/very_dark.vim&quot;.<br>
+<br>
+Filetype plugins should go under &quot;pack/*/start&quot;, so that they are always<br>
+found.&nbsp;&nbsp;Unless you have more than one plugin for a file type and want to<br>
+select which one to load with&nbsp;<a class="Comment" href="repeat.html#:packadd">`:packadd`</a>.&nbsp;&nbsp;E.g. depending on the compiler<br>
+version:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if foo_compiler_version &gt; 34<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;packadd foo_new<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;packadd foo_old<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+The &quot;after&quot; directory is most likely not useful in a package.&nbsp;&nbsp;It's not<br>
+disallowed though.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+6. Creating Vim packages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#package-create" name="package-create">*package-create*</a><br>
+<br>
+This assumes you write one or more plugins that you distribute as a package.<br>
+<br>
+If you have two unrelated plugins you would use two packages, so that Vim<br>
+users can chose what they include or not.&nbsp;&nbsp;Or you can decide to use one<br>
+package with optional plugins, and tell the user to add the ones he wants with<br>
+<a class="Comment" href="repeat.html#:packadd">`:packadd`</a>.<br>
+<br>
+Decide how you want to distribute the package.&nbsp;&nbsp;You can create an archive or<br>
+you could use a repository.&nbsp;&nbsp;An archive can be used by more users, but is a<br>
+bit harder to update to a new version.&nbsp;&nbsp;A repository can usually be kept<br>
+up-to-date easily, but it requires a program like &quot;git&quot; to be available.<br>
+You can do both, github can automatically create an archive for a release.<br>
+<br>
+Your directory layout would be like this:<br>
+&nbsp;&nbsp; start/foobar/plugin/foo.vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; always loaded, defines commands<br>
+&nbsp;&nbsp; start/foobar/plugin/bar.vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; always loaded, defines commands<br>
+&nbsp;&nbsp; start/foobar/autoload/foo.vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; loaded when foo command used<br>
+&nbsp;&nbsp; start/foobar/doc/foo.txt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; help for foo.vim<br>
+&nbsp;&nbsp; start/foobar/doc/tags&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; help tags<br>
+&nbsp;&nbsp; opt/fooextra/plugin/extra.vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; optional plugin, defines commands<br>
+&nbsp;&nbsp; opt/fooextra/autoload/extra.vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; loaded when extra command used<br>
+&nbsp;&nbsp; opt/fooextra/doc/extra.txt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; help for extra.vim<br>
+&nbsp;&nbsp; opt/fooextra/doc/tags&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; help tags<br>
+<br>
+This allows for the user to do:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mkdir ~/.vim/pack/myfoobar<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd ~/.vim/pack/myfoobar<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git clone <a href="https://github.com/you/foobar.git">https://github.com/you/foobar.git</a></div>
+<br>
+Here &quot;myfoobar&quot; is a name that the user can choose, the only condition is that<br>
+it differs from other packages.<br>
+<br>
+In your documentation you explain what the plugins do, and tell the user how<br>
+to load the optional plugin:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:packadd! fooextra</div>
+<br>
+You could add this packadd command in one of your plugins, to be executed when<br>
+the optional plugin is needed.<br>
+<br>
+Run the&nbsp;<a class="Comment" href="helphelp.html#:helptags">`:helptags`</a>&nbsp;command to generate the doc/tags file.&nbsp;&nbsp;Including this<br>
+generated file in the package means that the user can drop the package in his<br>
+pack directory and the help command works right away.&nbsp;&nbsp;Don't forget to re-run<br>
+the command after changing the plugin help:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:helptags path/start/foobar/doc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:helptags path/opt/fooextra/doc</div>
+<br>
+<br>
+<span class="PreProc">Dependencies between plugins</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#packload-two-steps" name="packload-two-steps">*packload-two-steps*</a><br>
+Suppose you have two plugins that depend on the same functionality. You can<br>
+put the common functionality in an autoload directory, so that it will be<br>
+found automatically.&nbsp;&nbsp;Your package would have these files:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pack/foo/start/one/plugin/one.vim&nbsp;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call foolib#getit()</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pack/foo/start/two/plugin/two.vim<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call foolib#getit()</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pack/foo/start/lib/autoload/foolib.vim<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func foolib#getit()</div>
+<br>
+This works, because loading packages will first add all found directories to<br>
+<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;before sourcing the plugins.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+7. Debugging scripts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#debug-scripts" name="debug-scripts">*debug-scripts*</a><br>
+<br>
+Besides the obvious messages that you can add to your scripts to find out what<br>
+they are doing, Vim offers a debug mode.&nbsp;&nbsp;This allows you to step through a<br>
+sourced file or user function and set breakpoints.<br>
+<br>
+<span class="Todo">NOTE</span>: The debugging mode is far from perfect.&nbsp;&nbsp;Debugging will have side<br>
+effects on how Vim works.&nbsp;&nbsp;You cannot use it to debug everything.&nbsp;&nbsp;For<br>
+example, the display is messed up by the debugging messages.<br>
+<span class="Special">{Vi does not have a debug mode}</span><br>
+<br>
+An alternative to debug mode is setting the&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;option.&nbsp;&nbsp;With a bigger<br>
+number it will give more verbose messages about what Vim is doing.<br>
+<br>
+<br>
+<span class="Statement">STARTING DEBUG MODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="repeat.html#debug-mode" name="debug-mode">*debug-mode*</a><br>
+<br>
+To enter debugging mode use one of these methods:<br>
+1. Start Vim with the&nbsp;<a class="Identifier" href="starting.html#-D">|-D|</a>&nbsp;argument:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -D file.txt</div>
+&nbsp;&nbsp;&nbsp;Debugging will start as soon as the first vimrc file is sourced.&nbsp;&nbsp;This is<br>
+&nbsp;&nbsp; useful to find out what is happening when Vim is starting up.&nbsp;&nbsp;A side<br>
+&nbsp;&nbsp; effect is that Vim will switch the terminal mode before initialisations<br>
+&nbsp;&nbsp; have finished, with unpredictable results.<br>
+&nbsp;&nbsp; For a GUI-only version (Windows, Macintosh) the debugging will start as<br>
+&nbsp;&nbsp; soon as the GUI window has been opened.&nbsp;&nbsp;To make this happen early, add a<br>
+&nbsp;&nbsp; &quot;:gui&quot; command in the vimrc file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:debug" name=":debug">*:debug*</a><br>
+2. Run a command with &quot;:debug&quot; prepended.&nbsp;&nbsp;Debugging will only be done while<br>
+&nbsp;&nbsp; this command executes.&nbsp;&nbsp;Useful for debugging a specific script or user<br>
+&nbsp;&nbsp; function.&nbsp;&nbsp;And for scripts and functions used by autocommands.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:debug edit test.txt.gz</div>
+<br>
+3. Set a breakpoint in a sourced file or user function.&nbsp;&nbsp;You could do this in<br>
+&nbsp;&nbsp; the command line:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -c &quot;breakadd file */explorer.vim&quot; .</div>
+&nbsp;&nbsp;&nbsp;This will run Vim and stop in the first line of the &quot;explorer.vim&quot; script.<br>
+&nbsp;&nbsp; Breakpoints can also be set while in debugging mode.<br>
+<br>
+In debugging mode every executed command is displayed before it is executed.<br>
+Comment lines, empty lines and lines that are not executed are skipped.&nbsp;&nbsp;When<br>
+a line contains two commands, separated by &quot;|&quot;, each command will be displayed<br>
+separately.<br>
+<br>
+<br>
+DEBUG MODE<br>
+<br>
+Once in debugging mode, the usual Ex commands can be used.&nbsp;&nbsp;For example, to<br>
+inspect the value of a variable:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo idx</div>
+When inside a user function, this will print the value of the local variable<br>
+&quot;idx&quot;.&nbsp;&nbsp;Prepend &quot;g:&quot; to get the value of a global variable:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo g:idx</div>
+All commands are executed in the context of the current function or script.<br>
+You can also set options, for example setting or resetting&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;will show<br>
+what happens, but you might want to set it just before executing the lines you<br>
+are interested in:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set verbose=20</div>
+<br>
+Commands that require updating the screen should be avoided, because their<br>
+effect won't be noticed until after leaving debug mode.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:help</div>
+won't be very helpful.<br>
+<br>
+There is a separate command-line history for debug mode.<br>
+<br>
+The line number for a function line is relative to the start of the function.<br>
+If you have trouble figuring out where you are, edit the file that defines<br>
+the function in another Vim, search for the start of the function and do<br>
+&quot;99j&quot;.&nbsp;&nbsp;Replace &quot;99&quot; with the line number.<br>
+<br>
+Additionally, these commands can be used:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>cont" name="&gt;cont">*&gt;cont*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cont&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Continue execution until the next breakpoint is hit.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>quit" name="&gt;quit">*&gt;quit*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Abort execution.&nbsp;&nbsp;This is like using&nbsp;<span class="Special">CTRL-C</span>, some<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;things might still be executed, doesn't abort<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;everything.&nbsp;&nbsp;Still stops at the next breakpoint.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>next" name="&gt;next">*&gt;next*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;next&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute the command and come back to debug mode when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it's finished.&nbsp;&nbsp;This steps over user function calls<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and sourced files.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>step" name="&gt;step">*&gt;step*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;step&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute the command and come back to debug mode for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the next command.&nbsp;&nbsp;This steps into called user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;functions and sourced files.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>interrupt" name="&gt;interrupt">*&gt;interrupt*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;interrupt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is like using&nbsp;<span class="Special">CTRL-C</span>, but unlike &quot;&gt;quit&quot; comes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;back to debug mode for the next command that is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;executed.&nbsp;&nbsp;Useful for testing&nbsp;<a class="Identifier" href="eval.html#:finally">|:finally|</a>&nbsp;and&nbsp;<a class="Identifier" href="eval.html#:catch">|:catch|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on interrupt exceptions.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>finish" name="&gt;finish">*&gt;finish*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Finish the current script or user function and come<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;back to debug mode for the command after the one that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sourced or called it.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>bt" name="&gt;bt">*&gt;bt*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>backtrace" name="&gt;backtrace">*&gt;backtrace*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>where" name="&gt;where">*&gt;where*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backtrace&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Show the call stacktrace for current debugging session.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>frame" name="&gt;frame">*&gt;frame*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;frame&nbsp;<span class="Special">N</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Goes to&nbsp;<span class="Special">N</span>&nbsp;backtrace level. + and - signs make movement<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;relative.&nbsp;&nbsp;E.g., &quot;:frame +3&quot; goes three frames up.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>up" name="&gt;up">*&gt;up*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;up&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Goes one level up from call stacktrace.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#>down" name="&gt;down">*&gt;down*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;down&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Goes one level down from call stacktrace.<br>
+<br>
+About the additional commands in debug mode:<br>
+- There is no command-line completion for them, you get the completion for the<br>
+&nbsp;&nbsp;normal Ex commands only.<br>
+- You can shorten them, up to a single character, unless more than one command<br>
+&nbsp;&nbsp;starts with the same letter.&nbsp;&nbsp;&quot;f&quot; stands for &quot;finish&quot;, use &quot;fr&quot; for &quot;frame&quot;.<br>
+- Hitting&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;will repeat the previous one.&nbsp;&nbsp;When doing another command, this<br>
+&nbsp;&nbsp;is reset (because it's not clear what you want to repeat).<br>
+- When you want to use the Ex command with the same name, prepend a colon:<br>
+&nbsp;&nbsp;&quot;:cont&quot;, &quot;:next&quot;, &quot;:finish&quot; (or shorter).<br>
+<br>
+The backtrace shows the hierarchy of function calls, e.g.:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&gt;bt</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">3 function One[3]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">2 Two[3]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">-&gt;1 Three[3]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">0 Four</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">line 1: let four = 4</span><br>
+<br>
+The &quot;-&gt;&quot; points to the current frame.&nbsp;&nbsp;Use &quot;up&quot;, &quot;down&quot; and &quot;frame&nbsp;<span class="Special">N</span>&quot; to<br>
+select another frame.<br>
+<br>
+In the current frame you can evaluate the local function variables.&nbsp;&nbsp;There is<br>
+no way to see the command at the current line yet.<br>
+<br>
+<br>
+DEFINING BREAKPOINTS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:breaka" name=":breaka">*:breaka*</a>&nbsp;<a class="Constant" href="repeat.html#:breakadd" name=":breakadd">*:breakadd*</a><br>
+:breaka[dd] func&nbsp;<span class="Special">[lnum]</span>&nbsp;<span class="Special">{name}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set a breakpoint in a function.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:breakadd func Explore</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Doesn't check for a valid function name, thus the breakpoint<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can be set before the function is defined.<br>
+<br>
+:breaka[dd] file&nbsp;<span class="Special">[lnum]</span>&nbsp;<span class="Special">{name}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set a breakpoint in a sourced file.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:breakadd file 43 .vimrc</div>
+<br>
+:breaka[dd] here<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set a breakpoint in the current line of the current file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like doing:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:breakadd file &lt;cursor-line&gt; &lt;current-file&gt;</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that this only works for commands that are executed when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sourcing the file, not for a function defined in that file.<br>
+<br>
+The&nbsp;<span class="Special">[lnum]</span>&nbsp;is the line number of the breakpoint.&nbsp;&nbsp;Vim will stop at or after<br>
+this line.&nbsp;&nbsp;When omitted line 1 is used.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:debug-name" name=":debug-name">*:debug-name*</a><br>
+<span class="Special">{name}</span>&nbsp;is a pattern that is matched with the file or function name.&nbsp;&nbsp;The<br>
+pattern is like what is used for autocommands.&nbsp;&nbsp;There must be a full match (as<br>
+if the pattern starts with &quot;^&quot; and ends in &quot;$&quot;).&nbsp;&nbsp;A &quot;*&quot; matches any sequence<br>
+of characters.&nbsp;&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>&nbsp;is not used, but &quot;\c&quot; can be used in the pattern<br>
+to ignore case&nbsp;<a class="Identifier" href="pattern.html#/\c">|/\c|</a>.&nbsp;&nbsp;Don't include the () for the function name!<br>
+<br>
+The match for sourced scripts is done against the full file name.&nbsp;&nbsp;If no path<br>
+is specified the current directory is used.&nbsp;&nbsp;Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;breakadd file explorer.vim</div>
+matches &quot;explorer.vim&quot; in the current directory.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;breakadd file *explorer.vim</div>
+matches &quot;.../plugin/explorer.vim&quot;, &quot;.../plugin/iexplorer.vim&quot;, etc.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;breakadd file */explorer.vim</div>
+matches &quot;.../plugin/explorer.vim&quot; and &quot;explorer.vim&quot; in any other directory.<br>
+<br>
+The match for functions is done against the name as it's shown in the output<br>
+of &quot;:function&quot;.&nbsp;&nbsp;For local functions this means that something like &quot;<span class="Special">&lt;SNR&gt;</span>99_&quot;<br>
+is prepended.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that functions are first loaded and later executed.&nbsp;&nbsp;When they are loaded<br>
+the &quot;file&quot; breakpoints are checked, when they are executed the &quot;func&quot;<br>
+breakpoints.<br>
+<br>
+<br>
+DELETING BREAKPOINTS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:breakd" name=":breakd">*:breakd*</a>&nbsp;<a class="Constant" href="repeat.html#:breakdel" name=":breakdel">*:breakdel*</a>&nbsp;<a class="Constant" href="repeat.html#E161" name="E161">*E161*</a><br>
+:breakd[el]&nbsp;<span class="Special">{nr}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Delete breakpoint&nbsp;<span class="Special">{nr}</span>.&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="repeat.html#:breaklist">|:breaklist|</a>&nbsp;to see the number of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;each breakpoint.<br>
+<br>
+:breakd[el] *<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Delete all breakpoints.<br>
+<br>
+:breakd[el] func&nbsp;<span class="Special">[lnum]</span>&nbsp;<span class="Special">{name}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Delete a breakpoint in a function.<br>
+<br>
+:breakd[el] file&nbsp;<span class="Special">[lnum]</span>&nbsp;<span class="Special">{name}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Delete a breakpoint in a sourced file.<br>
+<br>
+:breakd[el] here<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Delete a breakpoint at the current line of the current file.<br>
+<br>
+When&nbsp;<span class="Special">[lnum]</span>&nbsp;is omitted, the first breakpoint in the function or file is<br>
+deleted.<br>
+The&nbsp;<span class="Special">{name}</span>&nbsp;must be exactly the same as what was typed for the &quot;:breakadd&quot;<br>
+command.&nbsp;&nbsp;&quot;explorer&quot;, &quot;*explorer.vim&quot; and &quot;*explorer*&quot; are different.<br>
+<br>
+<br>
+LISTING BREAKPOINTS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:breakl" name=":breakl">*:breakl*</a>&nbsp;<a class="Constant" href="repeat.html#:breaklist" name=":breaklist">*:breaklist*</a><br>
+:breakl[ist]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List all breakpoints.<br>
+<br>
+<br>
+OBSCURE<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:debugg" name=":debugg">*:debugg*</a>&nbsp;<a class="Constant" href="repeat.html#:debuggreedy" name=":debuggreedy">*:debuggreedy*</a><br>
+:debugg[reedy]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read debug mode commands from the normal input stream, instead<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of getting them directly from the user.&nbsp;&nbsp;Only useful for test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scripts.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'q^Mq' | vim -e -s -c debuggreedy -c 'breakadd file script.vim' -S script.vim</div>
+<br>
+:0debugg[reedy]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Undo &quot;:debuggreedy&quot;: get debug mode commands directly from the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user, don't use typeahead for debug commands.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+8. Profiling&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#profile" name="profile">*profile*</a>&nbsp;<a class="Constant" href="repeat.html#profiling" name="profiling">*profiling*</a><br>
+<br>
+Profiling means that Vim measures the time that is spent on executing<br>
+functions and/or scripts.&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="various.html#+profile">|+profile|</a>&nbsp;feature is required for this.<br>
+It is only included when Vim was compiled with &quot;huge&quot; features.<br>
+<span class="Special">{Vi does not have profiling}</span><br>
+<br>
+You can also use the&nbsp;<a class="Identifier" href="eval.html#reltime()">|reltime()|</a>&nbsp;function to measure time.&nbsp;&nbsp;This only requires<br>
+the&nbsp;<a class="Identifier" href="various.html#+reltime">|+reltime|</a>&nbsp;feature, which is present more often.<br>
+<br>
+For profiling syntax highlighting see&nbsp;<a class="Identifier" href="syntax.html#:syntime">|:syntime|</a>.<br>
+<br>
+For example, to profile the one_script.vim script file:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:profile start /tmp/one_script_profile<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:profile file one_script.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:source one_script.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:exit</div>
+<br>
+<br>
+:prof[ile] start&nbsp;<span class="Special">{fname}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:prof" name=":prof">*:prof*</a>&nbsp;<a class="Constant" href="repeat.html#:profile" name=":profile">*:profile*</a>&nbsp;<a class="Constant" href="repeat.html#E750" name="E750">*E750*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start profiling, write the output in&nbsp;<span class="Special">{fname}</span>&nbsp;upon exit.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;~/&quot; and environment variables in&nbsp;<span class="Special">{fname}</span>&nbsp;will be expanded.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;<span class="Special">{fname}</span>&nbsp;already exists it will be silently overwritten.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The variable&nbsp;<a class="Identifier" href="eval.html#v:profiling">|v:profiling|</a>&nbsp;is set to one.<br>
+<br>
+:prof[ile] pause<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Don't profile until the following &quot;:profile continue&quot;.&nbsp;&nbsp;Can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used when doing something that should not be counted (e.g., an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;external command).&nbsp;&nbsp;Does not nest.<br>
+<br>
+:prof[ile] continue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Continue profiling after &quot;:profile pause&quot;.<br>
+<br>
+:prof[ile] func&nbsp;<span class="Special">{pattern}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Profile function that matches the pattern&nbsp;<span class="Special">{pattern}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="repeat.html#:debug-name">|:debug-name|</a>&nbsp;for how&nbsp;<span class="Special">{pattern}</span>&nbsp;is used.<br>
+<br>
+:prof[ile][!] file&nbsp;<span class="Special">{pattern}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Profile script file that matches the pattern&nbsp;<span class="Special">{pattern}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="repeat.html#:debug-name">|:debug-name|</a>&nbsp;for how&nbsp;<span class="Special">{pattern}</span>&nbsp;is used.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This only profiles the script itself, not the functions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defined in it.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When the [!] is added then all functions defined in the script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will also be profiled.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that profiling only starts when the script is loaded<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;after this command.&nbsp;&nbsp;A :profile command in the script itself<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;won't work.<br>
+<br>
+<br>
+:profd[el] ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:profd" name=":profd">*:profd*</a>&nbsp;<a class="Constant" href="repeat.html#:profdel" name=":profdel">*:profdel*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stop profiling for the arguments specified. See&nbsp;<a class="Identifier" href="repeat.html#:breakdel">|:breakdel|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for the arguments.<br>
+<br>
+<br>
+You must always start with a &quot;:profile start fname&quot; command.&nbsp;&nbsp;The resulting<br>
+file is written when Vim exits.&nbsp;&nbsp;Here is an example of the output, with line<br>
+numbers prepended for the explanation:<br>
+<br>
+&nbsp;&nbsp;<span class="PreProc">1 FUNCTION&nbsp;&nbsp;Test2()</span><br>
+&nbsp;&nbsp;<span class="PreProc">2 Called 1 time</span><br>
+&nbsp;&nbsp;<span class="PreProc">3 Total time:&nbsp;&nbsp; 0.155251</span><br>
+&nbsp;&nbsp;<span class="PreProc">4&nbsp;&nbsp;Self time:&nbsp;&nbsp; 0.002006</span><br>
+&nbsp;&nbsp;<span class="PreProc">5&nbsp;</span><br>
+&nbsp;&nbsp;<span class="PreProc">6 count&nbsp;&nbsp;total (s)&nbsp;&nbsp; self (s)</span><br>
+&nbsp;&nbsp;<span class="PreProc">7&nbsp;&nbsp;&nbsp;&nbsp; 9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.000096&nbsp;&nbsp; for i in range(8)</span><br>
+&nbsp;&nbsp;<span class="PreProc">8&nbsp;&nbsp;&nbsp;&nbsp; 8&nbsp;&nbsp; 0.153655&nbsp;&nbsp; 0.000410&nbsp;&nbsp;&nbsp;&nbsp; call Test3()</span><br>
+&nbsp;&nbsp;<span class="PreProc">9&nbsp;&nbsp;&nbsp;&nbsp; 8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.000070&nbsp;&nbsp; endfor</span><br>
+&nbsp;<span class="PreProc">10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; Ask a question</span><br>
+&nbsp;<span class="PreProc">11&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.001341&nbsp;&nbsp; echo input(&quot;give me an answer: &quot;)</span><br>
+<br>
+The header (lines 1-4) gives the time for the whole function.&nbsp;&nbsp;The &quot;Total&quot;<br>
+time is the time passed while the function was executing.&nbsp;&nbsp;The &quot;Self&quot; time is<br>
+the &quot;Total&quot; time reduced by time spent in:<br>
+- other user defined functions<br>
+- sourced scripts<br>
+- executed autocommands<br>
+- external (shell) commands<br>
+<br>
+Lines 7-11 show the time spent in each executed line.&nbsp;&nbsp;Lines that are not<br>
+executed do not count.&nbsp;&nbsp;Thus a comment line is never counted.<br>
+<br>
+The Count column shows how many times a line was executed.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that the<br>
+&quot;for&quot; command in line 7 is executed one more time as the following lines.<br>
+That is because the line is also executed to detect the end of the loop.<br>
+<br>
+The time Vim spends waiting for user input isn't counted at all.&nbsp;&nbsp;Thus how<br>
+long you take to respond to the input() prompt is irrelevant.<br>
+<br>
+Profiling should give a good indication of where time is spent, but keep in<br>
+mind there are various things that may clobber the results:<br>
+<br>
+- The accuracy of the time measured depends on the gettimeofday() system<br>
+&nbsp;&nbsp;function.&nbsp;&nbsp;It may only be as accurate as 1/100 second, even though the times<br>
+&nbsp;&nbsp;are displayed in micro seconds.<br>
+<br>
+- Real elapsed time is measured, if other processes are busy they may cause<br>
+&nbsp;&nbsp;delays at unpredictable moments.&nbsp;&nbsp;You may want to run the profiling several<br>
+&nbsp;&nbsp;times and use the lowest results.<br>
+<br>
+- If you have several commands in one line you only get one time.&nbsp;&nbsp;Split the<br>
+&nbsp;&nbsp;line to see the time for the individual commands.<br>
+<br>
+- The time of the lines added up is mostly less than the time of the whole<br>
+&nbsp;&nbsp;function.&nbsp;&nbsp;There is some overhead in between.<br>
+<br>
+- Functions that are deleted before Vim exits will not produce profiling<br>
+&nbsp;&nbsp;information.&nbsp;&nbsp;You can check the&nbsp;<a class="Identifier" href="eval.html#v:profiling">|v:profiling|</a>&nbsp;variable if needed:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:if !v:profiling<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp; delfunc MyFunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:endif</div>
+<br>
+- Profiling may give weird results on multi-processor systems, when sleep<br>
+&nbsp;&nbsp;mode kicks in or the processor frequency is reduced to save power.<br>
+<br>
+- The &quot;self&quot; time is wrong when a function is used recursively.<br>
+<br>
+<br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

@@ -1,0 +1,118 @@
+---
+layout: vimdoc
+helpname: 'hangulin'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="hangulin.html" name="hangulin.txt">*hangulin.txt*</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2015 Nov 24<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Chi-Deok Hwang and Sung-Hyun Nam</span><br>
+<br>
+<br>
+Introduction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="hangulin.html#hangul" name="hangul">*hangul*</a><br>
+<span class="PreProc">------------</span><br>
+It is to input hangul, the Korean language, with VIM GUI version.<br>
+If you have a XIM program, you can use another&nbsp;<a class="Identifier" href="various.html#+xim">|+xim|</a>&nbsp;feature.<br>
+Basically, it is for anybody who has no XIM program.<br>
+<br>
+Compile<br>
+<span class="PreProc">-------</span><br>
+Next is a basic option.&nbsp;&nbsp;You can add any other configure option.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp; ./configure --with-x --enable-multibyte --enable-hangulinput \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--disable-xim</div>
+<br>
+And you should check feature.h.&nbsp;&nbsp;If&nbsp;<a class="Identifier" href="various.html#+hangul_input">|+hangul_input|</a>&nbsp;feature is enabled<br>
+by configure, you can select more options such as keyboard type, 2 bulsik<br>
+or 3 bulsik.&nbsp;&nbsp;You can find keywords like next in there.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#define HANGUL_DEFAULT_KEYBOARD 2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#define ESC_CHG_TO_ENG_MODE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* #define X_LOCALE */</div>
+<br>
+Environment variables<br>
+<span class="PreProc">---------------------</span><br>
+You should set LANG variable to Korean locale such as ko, ko_KR.eucKR<br>
+or ko_KR.UTF-8.<br>
+If you set LC_ALL variable, it should be set to Korean locale also.<br>
+<br>
+VIM resource<br>
+<span class="PreProc">------------</span><br>
+You may want to set&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'fileencodings'">'fileencodings'</a>.<br>
+Next are examples:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set encoding=euc-kr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set encoding=utf-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set fileencodings=ucs-bom,utf-8,cp949,euc-kr,latin1</div>
+<br>
+Keyboard<br>
+<span class="PreProc">--------</span><br>
+You can change keyboard type (2 bulsik or 3 bulsik) using VIM_KEYBOARD<br>
+or HANGUL_KEYBOARD_TYPE environment variables.&nbsp;&nbsp;For sh, just do (2 bulsik):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;export VIM_KEYBOARD=&quot;2&quot;</div>
+or<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;export HANGUL_KEYBOARD_TYPE=&quot;2&quot;</div>
+<br>
+If both are set, VIM_KEYBOARD has higher priority.<br>
+<br>
+Hangul Fonts<br>
+<span class="PreProc">------------</span><br>
+If you use GTK version of GVIM, you should set&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>.<br>
+For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;set guifont=Courier\ 12<br>
+&nbsp;&nbsp;&nbsp;&nbsp;set guifontwide=NanumGothicCoding\ 12</div>
+<br>
+If you use Motif or Athena version of GVIM, you should set&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;in<br>
+your vimrc.&nbsp;&nbsp;You can set fontset in the .Xdefaults file.<br>
+<br>
+$HOME/.gvimrc:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;set guifontset=english_font,hangul_font</div>
+<br>
+$HOME/.Xdefaults:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;Vim.font: english_font</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;! Nexts are for hangul menu with Athena<br>
+&nbsp;&nbsp;&nbsp;&nbsp;*international: True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Vim*fontSet: english_font,hangul_font</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;! Nexts are for hangul menu with Motif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;*international: True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Vim*fontList: english_font;hangul_font:</div>
+<br>
+attention! the , (comma) or ; (semicolon)<br>
+<br>
+And there should be no ':set guifont'.&nbsp;&nbsp;If it exists, then Gvim ignores<br>
+':set guifontset'.&nbsp;&nbsp;It means VIM runs without fontset supporting.<br>
+So, you can see only English.&nbsp;&nbsp;Hangul does not be correctly displayed.<br>
+<br>
+After&nbsp;<span class="MissingTag">'fontset'</span>&nbsp;feature is enabled, VIM does not allow using english<br>
+font only in&nbsp;<span class="MissingTag">'font'</span>&nbsp;setting for syntax.<br>
+For example, if you use<br>
+<div class="helpExample">&nbsp;&nbsp; :set guifontset=eng_font,your_font</div>
+in your .gvimrc, then you should do for syntax<br>
+<div class="helpExample">&nbsp;&nbsp; :hi Comment guifg=Cyan font=another_eng_font,another_your_font</div>
+If you just do<br>
+<div class="helpExample">&nbsp;&nbsp; :hi Comment font=another_eng_font</div>
+then you can see a error message.&nbsp;&nbsp;Be careful!<br>
+<br>
+hangul_font width should be twice than english_font width.<br>
+<br>
+Unsupported Feature<br>
+<span class="PreProc">-------------------</span><br>
+We don't support Johab font.<br>
+We don't support Hanja input.<br>
+And We don't have any plan to support them.<br>
+<br>
+If you really need such features, you can use console version of VIM with a<br>
+capable terminal emulator.<br>
+<br>
+Bug or Comment<br>
+<span class="PreProc">--------------</span><br>
+Send comments, patches and suggestions to:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SungHyun Nam &lt;goweol@gmail.com&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chi-Deok Hwang &lt;...&gt;<br>
+<br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

@@ -1,0 +1,539 @@
+---
+layout: vimdoc
+helpname: 'develop'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="develop.html" name="develop.txt">*develop.txt*</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Jan 05<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+Development of Vim.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="develop.html#development" name="development">*development*</a><br>
+<br>
+This text is important for those who want to be involved in further developing<br>
+Vim.<br>
+<br>
+1. Design goals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="develop.html#design-goals">|design-goals|</a><br>
+2. Coding style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="develop.html#coding-style">|coding-style|</a><br>
+3. Design decisions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="develop.html#design-decisions">|design-decisions|</a><br>
+4. Assumptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="develop.html#design-assumptions">|design-assumptions|</a><br>
+<br>
+See the file README.txt in the &quot;src&quot; directory for an overview of the source<br>
+code.<br>
+<br>
+Vim is open source software.&nbsp;&nbsp;Everybody is encouraged to contribute to help<br>
+improving Vim.&nbsp;&nbsp;For sending patches a context diff &quot;diff -c&quot; is preferred.<br>
+Also see&nbsp;<span class="Constant"><a href="http://vim.wikia.com/wiki/How_to_make_and_submit_a_patch">http://vim.wikia.com/wiki/How_to_make_and_submit_a_patch</a></span>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Design goals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="develop.html#design-goals" name="design-goals">*design-goals*</a><br>
+<br>
+Most important things come first (roughly).<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that quite a few items are contradicting.&nbsp;&nbsp;This is intentional.&nbsp;&nbsp;A<br>
+balance must be found between them.<br>
+<br>
+<br>
+<span class="Statement">VIM IS... VI COMPATIBLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#design-compatible" name="design-compatible">*design-compatible*</a><br>
+<br>
+First of all, it should be possible to use Vim as a drop-in replacement for<br>
+Vi.&nbsp;&nbsp;When the user wants to, he can use Vim in compatible mode and hardly<br>
+notice any difference with the original Vi.<br>
+<br>
+Exceptions:<br>
+- We don't reproduce obvious Vi bugs in Vim.<br>
+- There are different versions of Vi.&nbsp;&nbsp;I am using Version 3.7 (6/7/85) as a<br>
+&nbsp;&nbsp;reference.&nbsp;&nbsp;But support for other versions is also included when possible.<br>
+&nbsp;&nbsp;The Vi part of POSIX is not considered a definitive source.<br>
+- Vim adds new commands, you cannot rely on some command to fail because it<br>
+&nbsp;&nbsp;didn't exist in Vi.<br>
+- Vim will have a lot of features that Vi doesn't have.&nbsp;&nbsp;Going back from Vim<br>
+&nbsp;&nbsp;to Vi will be a problem, this cannot be avoided.<br>
+- Some things are hardly ever used (open mode, sending an e-mail when<br>
+&nbsp;&nbsp;crashing, etc.).&nbsp;&nbsp;Those will only be included when someone has a good reason<br>
+&nbsp;&nbsp;why it should be included and it's not too much work.<br>
+- For some items it is debatable whether Vi compatibility should be<br>
+&nbsp;&nbsp;maintained.&nbsp;&nbsp;There will be an option flag for these.<br>
+<br>
+<br>
+<span class="Statement">VIM IS... IMPROVED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#design-improved" name="design-improved">*design-improved*</a><br>
+<br>
+The IMproved bits of Vim should make it a better Vi, without becoming a<br>
+completely different editor.&nbsp;&nbsp;Extensions are done with a &quot;Vi spirit&quot;.<br>
+- Use the keyboard as much as feasible.&nbsp;&nbsp;The mouse requires a third hand,<br>
+&nbsp;&nbsp;which we don't have.&nbsp;&nbsp;Many terminals don't have a mouse.<br>
+- When the mouse is used anyway, avoid the need to switch back to the<br>
+&nbsp;&nbsp;keyboard.&nbsp;&nbsp;Avoid mixing mouse and keyboard handling.<br>
+- Add commands and options in a consistent way.&nbsp;&nbsp;Otherwise people will have a<br>
+&nbsp;&nbsp;hard time finding and remembering them.&nbsp;&nbsp;Keep in mind that more commands and<br>
+&nbsp;&nbsp;options will be added later.<br>
+- A feature that people do not know about is a useless feature.&nbsp;&nbsp;Don't add<br>
+&nbsp;&nbsp;obscure features, or at least add hints in documentation that they exist.<br>
+- Minimize using CTRL and other modifiers, they are more difficult to type.<br>
+- There are many first-time and inexperienced Vim users.&nbsp;&nbsp;Make it easy for<br>
+&nbsp;&nbsp;them to start using Vim and learn more over time.<br>
+- There is no limit to the features that can be added.&nbsp;&nbsp;Selecting new features<br>
+&nbsp;&nbsp;is one based on (1) what users ask for, (2) how much effort it takes to<br>
+&nbsp;&nbsp;implement and (3) someone actually implementing it.<br>
+<br>
+<br>
+<span class="Statement">VIM IS... MULTI PLATFORM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#design-multi-platform" name="design-multi-platform">*design-multi-platform*</a><br>
+<br>
+Vim tries to help as many users on as many platforms as possible.<br>
+- Support many kinds of terminals.&nbsp;&nbsp;The minimal demands are cursor positioning<br>
+&nbsp;&nbsp;and clear-screen.&nbsp;&nbsp;Commands should only use key strokes that most keyboards<br>
+&nbsp;&nbsp;have.&nbsp;&nbsp;Support all the keys on the keyboard for mapping.<br>
+- Support many platforms.&nbsp;&nbsp;A condition is that there is someone willing to do<br>
+&nbsp;&nbsp;Vim development on that platform, and it doesn't mean messing up the code.<br>
+- Support many compilers and libraries.&nbsp;&nbsp;Not everybody is able or allowed to<br>
+&nbsp;&nbsp;install another compiler or GUI library.<br>
+- People switch from one platform to another, and from GUI to terminal<br>
+&nbsp;&nbsp;version.&nbsp;&nbsp;Features should be present in all versions, or at least in as many<br>
+&nbsp;&nbsp;as possible with a reasonable effort.&nbsp;&nbsp;Try to avoid that users must switch<br>
+&nbsp;&nbsp;between platforms to accomplish their work efficiently.<br>
+- That a feature is not possible on some platforms, or only possible on one<br>
+&nbsp;&nbsp;platform, does not mean it cannot be implemented.&nbsp;&nbsp;[This intentionally<br>
+&nbsp;&nbsp;contradicts the previous item, these two must be balanced.]<br>
+<br>
+<br>
+<span class="Statement">VIM IS... WELL DOCUMENTED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#design-documented" name="design-documented">*design-documented*</a><br>
+<br>
+- A feature that isn't documented is a useless feature.&nbsp;&nbsp;A patch for a new<br>
+&nbsp;&nbsp;feature must include the documentation.<br>
+- Documentation should be comprehensive and understandable.&nbsp;&nbsp;Using examples is<br>
+&nbsp;&nbsp;recommended.<br>
+- Don't make the text unnecessarily long.&nbsp;&nbsp;Less documentation means that an<br>
+&nbsp;&nbsp;item is easier to find.<br>
+<br>
+<br>
+<span class="Statement">VIM IS... HIGH SPEED AND SMALL IN SIZE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#design-speed-size" name="design-speed-size">*design-speed-size*</a><br>
+<br>
+Using Vim must not be a big attack on system resources.&nbsp;&nbsp;Keep it small and<br>
+fast.<br>
+- Computers are becoming faster and bigger each year.&nbsp;&nbsp;Vim can grow too, but<br>
+&nbsp;&nbsp;no faster than computers are growing.&nbsp;&nbsp;Keep Vim usable on older systems.<br>
+- Many users start Vim from a shell very often.&nbsp;&nbsp;Startup time must be short.<br>
+- Commands must work efficiently.&nbsp;&nbsp;The time they consume must be as small as<br>
+&nbsp;&nbsp;possible.&nbsp;&nbsp;Useful commands may take longer.<br>
+- Don't forget that some people use Vim over a slow connection.&nbsp;&nbsp;Minimize the<br>
+&nbsp;&nbsp;communication overhead.<br>
+- Items that add considerably to the size and are not used by many people<br>
+&nbsp;&nbsp;should be a feature that can be disabled.<br>
+- Vim is a component among other components.&nbsp;&nbsp;Don't turn it into a massive<br>
+&nbsp;&nbsp;application, but have it work well together with other programs.<br>
+<br>
+<br>
+<span class="Statement">VIM IS... MAINTAINABLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#design-maintain" name="design-maintain">*design-maintain*</a><br>
+<br>
+- The source code should not become a mess.&nbsp;&nbsp;It should be reliable code.<br>
+- Use the same layout in all files to make it easy to read&nbsp;<a class="Identifier" href="develop.html#coding-style">|coding-style|</a>.<br>
+- Use comments in a useful way!&nbsp;&nbsp;Quoting the function name and argument names<br>
+&nbsp;&nbsp;is NOT useful.&nbsp;&nbsp;Do explain what they are for.<br>
+- Porting to another platform should be made easy, without having to change<br>
+&nbsp;&nbsp;too much platform-independent code.<br>
+- Use the object-oriented spirit: Put data and code together.&nbsp;&nbsp;Minimize the<br>
+&nbsp;&nbsp;knowledge spread to other parts of the code.<br>
+<br>
+<br>
+<span class="Statement">VIM IS... FLEXIBLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#design-flexible" name="design-flexible">*design-flexible*</a><br>
+<br>
+Vim should make it easy for users to work in their preferred styles rather<br>
+than coercing its users into particular patterns of work.&nbsp;&nbsp;This can be for<br>
+items with a large impact (e.g., the&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;option) or for details.&nbsp;&nbsp;The<br>
+defaults are carefully chosen such that most users will enjoy using Vim as it<br>
+is.&nbsp;&nbsp;Commands and options can be used to adjust Vim to the desire of the user<br>
+and its environment.<br>
+<br>
+<br>
+<span class="Statement">VIM IS... NOT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#design-not" name="design-not">*design-not*</a><br>
+<br>
+- Vim is not a shell or an Operating System.&nbsp;&nbsp;You will not be able to run a<br>
+&nbsp;&nbsp;shell inside Vim or use it to control a debugger.&nbsp;&nbsp;This should work the<br>
+&nbsp;&nbsp;other way around: Use Vim as a component from a shell or in an IDE.<br>
+&nbsp;&nbsp;A satirical way to say this: &quot;Unlike Emacs, Vim does not attempt to include<br>
+&nbsp;&nbsp;everything but the kitchen sink, but some people say that you can clean one<br>
+&nbsp;&nbsp;with it.&nbsp;&nbsp;;-)&quot;<br>
+&nbsp;&nbsp;To use Vim with gdb see:&nbsp;<span class="Constant"><a href="http://www.agide.org">http://www.agide.org</a></span>&nbsp;and&nbsp;<span class="Constant"><a href="http://clewn.sf.net">http://clewn.sf.net</a></span>.<br>
+- Vim is not a fancy GUI editor that tries to look nice at the cost of<br>
+&nbsp;&nbsp;being less consistent over all platforms.&nbsp;&nbsp;But functional GUI features are<br>
+&nbsp;&nbsp;welcomed.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Coding style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="develop.html#coding-style" name="coding-style">*coding-style*</a><br>
+<br>
+These are the rules to use when making changes to the Vim source code.&nbsp;&nbsp;Please<br>
+stick to these rules, to keep the sources readable and maintainable.<br>
+<br>
+This list is not complete.&nbsp;&nbsp;Look in the source code for more examples.<br>
+<br>
+<br>
+<span class="Statement">MAKING CHANGES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-changes" name="style-changes">*style-changes*</a><br>
+<br>
+The basic steps to make changes to the code:<br>
+1. Get the code from github.&nbsp;&nbsp;That makes it easier to keep your changed<br>
+&nbsp;&nbsp; version in sync with the main code base (it may be a while before your<br>
+&nbsp;&nbsp; changes will be included).&nbsp;&nbsp;You do need to spend some time learning git,<br>
+&nbsp;&nbsp; it's not the most user friendly tool.<br>
+2. Adjust the documentation.&nbsp;&nbsp;Doing this first gives you an impression of how<br>
+&nbsp;&nbsp; your changes affect the user.<br>
+3. Make the source code changes.<br>
+4. Check ../doc/todo.txt if the change affects any listed item.<br>
+5. Make a patch with &quot;git diff&quot;.&nbsp;&nbsp;You can also create a pull request on<br>
+&nbsp;&nbsp; github, but it's the diff that matters.<br>
+6. Make a&nbsp;<span class="Todo">note</span>&nbsp;about what changed, preferably mentioning the problem and the<br>
+&nbsp;&nbsp; solution.&nbsp;&nbsp;Send an email to the&nbsp;<a class="Identifier" href="intro.html#vim-dev">|vim-dev|</a>&nbsp;maillist with an explanation and<br>
+&nbsp;&nbsp; include the diff. Or create a pull request on github.<br>
+<br>
+<br>
+<span class="Statement">C COMPILER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-compiler" name="style-compiler">*style-compiler*</a><br>
+<br>
+The minimal C compiler version supported is C89, also known as ANSI C.<br>
+Later standards don't add much and C89 is the widest supported.<br>
+<br>
+One restriction that this implies: no // comments, only /* comments */.<br>
+<br>
+<br>
+<span class="Statement">USE OF COMMON FUNCTIONS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-functions" name="style-functions">*style-functions*</a><br>
+<br>
+Some functions that are common to use, have a special Vim version.&nbsp;&nbsp;Always<br>
+consider using the Vim version, because they were introduced with a reason.<br>
+<br>
+NORMAL NAME&nbsp;&nbsp;&nbsp;&nbsp; VIM NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DIFFERENCE OF VIM VERSION<br>
+free()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim_free()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks for freeing NULL<br>
+malloc()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alloc()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Checks for out of memory situation<br>
+malloc()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lalloc()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like alloc(), but has long argument<br>
+strcpy()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;STRCPY()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Includes cast to (char *), for char_u * args<br>
+strchr()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim_strchr()&nbsp;&nbsp;&nbsp;&nbsp;Accepts special characters<br>
+strrchr()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vim_strrchr()&nbsp;&nbsp; Accepts special characters<br>
+isspace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vim_isspace()&nbsp;&nbsp; Can handle characters &gt; 128<br>
+iswhite()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vim_iswhite()&nbsp;&nbsp; Only TRUE for tab and space<br>
+memcpy()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mch_memmove()&nbsp;&nbsp; Handles overlapped copies<br>
+bcopy()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mch_memmove()&nbsp;&nbsp; Handles overlapped copies<br>
+memset()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim_memset()&nbsp;&nbsp;&nbsp;&nbsp;Uniform for all systems<br>
+<br>
+<br>
+<span class="Statement">NAMES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-names" name="style-names">*style-names*</a><br>
+<br>
+Function names can not be more than 31 characters long (because of VMS).<br>
+<br>
+Don't use &quot;delete&quot; or &quot;this&quot; as a variable name, C++ doesn't like it.<br>
+<br>
+Because of the requirement that Vim runs on as many systems as possible, we<br>
+need to avoid using names that are already defined by the system.&nbsp;&nbsp;This is a<br>
+list of names that are known to cause trouble.&nbsp;&nbsp;The name is given as a regexp<br>
+pattern.<br>
+<br>
+is.*()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX, ctype.h<br>
+to.*()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX, ctype.h<br>
+<br>
+d_.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX, dirent.h<br>
+l_.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX, fcntl.h<br>
+gr_.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; POSIX, grp.h<br>
+pw_.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; POSIX, pwd.h<br>
+sa_.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; POSIX, signal.h<br>
+mem.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; POSIX, string.h<br>
+str.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; POSIX, string.h<br>
+wcs.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; POSIX, string.h<br>
+st_.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; POSIX, stat.h<br>
+tms_.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX, times.h<br>
+tm_.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; POSIX, time.h<br>
+c_.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX, termios.h<br>
+MAX.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; POSIX, limits.h<br>
+__.*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX, system<br>
+_[A-Z].*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX, system<br>
+E[A-Z0-9]*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX, errno.h<br>
+<br>
+.*_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX, for typedefs.&nbsp;&nbsp;Use .*_T instead.<br>
+<br>
+wait&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;don't use as argument to a function, conflicts with types.h<br>
+index&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shadows global declaration<br>
+time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shadows global declaration<br>
+new&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; C++ reserved keyword<br>
+try&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Borland C++ doesn't like it to be used as a variable.<br>
+<br>
+clear&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mac curses.h<br>
+echo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mac curses.h<br>
+instr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mac curses.h<br>
+meta&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mac curses.h<br>
+newwin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mac curses.h<br>
+nl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mac curses.h<br>
+overwrite&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mac curses.h<br>
+refresh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mac curses.h<br>
+scroll&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mac curses.h<br>
+typeahead&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mac curses.h<br>
+<br>
+basename()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GNU string function<br>
+dirname()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GNU string function<br>
+get_env_value() Linux system function<br>
+<br>
+<br>
+<span class="Statement">VARIOUS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-various" name="style-various">*style-various*</a><br>
+<br>
+Typedef'ed names should end in &quot;_T&quot;:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;typedef int some_T;</div>
+Define'ed names should be uppercase:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;#define SOME_THING</div>
+Features always start with &quot;FEAT_&quot;:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;#define FEAT_FOO</div>
+<br>
+Don't use '\&quot;', some compilers can't handle it.&nbsp;&nbsp;'&quot;' works fine.<br>
+<br>
+Don't use:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#if HAVE_SOME<br>
+Some compilers can't handle that and complain that &quot;HAVE_SOME&quot; is not defined.<br>
+Use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#ifdef HAVE_SOME<br>
+or<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#if defined(HAVE_SOME)<br>
+<br>
+<br>
+<span class="Statement">STYLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-examples" name="style-examples">*style-examples*</a><br>
+<br>
+General rule: One statement per line.<br>
+<br>
+Wrong:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (cond) a = 1;<br>
+<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a = 1;<br>
+<br>
+Wrong:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (cond);<br>
+<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<br>
+<br>
+Wrong:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;do a = 1; while (cond);<br>
+<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; do<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a = 1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (cond);<br>
+<br>
+Wrong:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (cond) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+Use ANSI (new style) function declarations with the return type on a separate<br>
+indented line.<br>
+<br>
+Wrong:&nbsp;&nbsp;int function_name(int arg1, int arg2)<br>
+<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp; /*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * Explanation of what this function is used for.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * Return value explanation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function_name(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; arg1,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* short comment about arg1 */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; arg2)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* short comment about arg2 */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; local;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* comment about local */<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;local = arg1 * arg2;<br>
+<br>
+<br>
+<br>
+<span class="Statement">SPACES AND PUNCTUATION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-spaces" name="style-spaces">*style-spaces*</a><br>
+<br>
+No space between a function name and the bracket:<br>
+<br>
+Wrong:&nbsp;&nbsp;func (arg);<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp; func(arg);<br>
+<br>
+Do use a space after if, while, switch, etc.<br>
+<br>
+Wrong:&nbsp;&nbsp;if(arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for(;;)<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp; if (arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (;;)<br>
+<br>
+Use a space after a comma and semicolon:<br>
+<br>
+Wrong:&nbsp;&nbsp;func(arg1,arg2);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0;i &lt; 2;++i)<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp; func(arg1, arg2);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; 2; ++i)<br>
+<br>
+Use a space before and after '=', '+', '/', etc.<br>
+<br>
+Wrong:&nbsp;&nbsp;var=a*5;<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp; var = a * 5;<br>
+<br>
+In general: Use empty lines to group lines of code together.&nbsp;&nbsp;Put a comment<br>
+just above the group of lines.&nbsp;&nbsp;This makes it easier to quickly see what is<br>
+being done.<br>
+<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp; /* Prepare for building the table. */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get_first_item();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table_idx = 0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* Build the table */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (has_item())<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table[table_idx++] = next_item();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* Finish up. */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cleanup_items();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;generate_hash(table);<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Design decisions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="develop.html#design-decisions" name="design-decisions">*design-decisions*</a><br>
+<br>
+Folding<br>
+<br>
+Several forms of folding should be possible for the same buffer.&nbsp;&nbsp;For example,<br>
+have one window that shows the text with function bodies folded, another<br>
+window that shows a function body.<br>
+<br>
+Folding is a way to display the text.&nbsp;&nbsp;It should not change the text itself.<br>
+Therefore the folding has been implemented as a filter between the text stored<br>
+in a buffer (buffer lines) and the text displayed in a window (logical lines).<br>
+<br>
+<br>
+Naming the window<br>
+<br>
+The word &quot;window&quot; is commonly used for several things: A window on the screen,<br>
+the xterm window, a window inside Vim to view a buffer.<br>
+To avoid confusion, other items that are sometimes called window have been<br>
+given another name.&nbsp;&nbsp;Here is an overview of the related items:<br>
+<br>
+screen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The whole display.&nbsp;&nbsp;For the GUI it's something like 1024x768<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pixels.&nbsp;&nbsp;The Vim shell can use the whole screen or part of it.<br>
+shell&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Vim application.&nbsp;&nbsp;This can cover the whole screen (e.g.,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when running in a console) or part of it (xterm or GUI).<br>
+window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;View on a buffer.&nbsp;&nbsp;There can be several windows in Vim,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;together with the command line, menubar, toolbar, etc. they<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fit in the shell.<br>
+<br>
+<br>
+Spell checking&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="develop.html#develop-spell" name="develop-spell">*develop-spell*</a><br>
+<br>
+When spell checking was going to be added to Vim a survey was done over the<br>
+available spell checking libraries and programs.&nbsp;&nbsp;Unfortunately, the result<br>
+was that none of them provided sufficient capabilities to be used as the spell<br>
+checking engine in Vim, for various reasons:<br>
+<br>
+- Missing support for multi-byte encodings.&nbsp;&nbsp;At least UTF-8 must be supported,<br>
+&nbsp;&nbsp;so that more than one language can be used in the same file.<br>
+&nbsp;&nbsp;Doing on-the-fly conversion is not always possible (would require iconv<br>
+&nbsp;&nbsp;support).<br>
+- For the programs and libraries: Using them as-is would require installing<br>
+&nbsp;&nbsp;them separately from Vim.&nbsp;&nbsp;That's mostly not impossible, but a drawback.<br>
+- Performance: A few tests showed that it's possible to check spelling on the<br>
+&nbsp;&nbsp;fly (while redrawing), just like syntax highlighting.&nbsp;&nbsp;But the mechanisms<br>
+&nbsp;&nbsp;used by other code are much slower.&nbsp;&nbsp;Myspell uses a hashtable, for example.<br>
+&nbsp;&nbsp;The affix compression that most spell checkers use makes it slower too.<br>
+- For using an external program like aspell a communication mechanism would<br>
+&nbsp;&nbsp;have to be setup.&nbsp;&nbsp;That's complicated to do in a portable way (Unix-only<br>
+&nbsp;&nbsp;would be relatively simple, but that's not good enough).&nbsp;&nbsp;And performance<br>
+&nbsp;&nbsp;will become a problem (lots of process switching involved).<br>
+- Missing support for words with non-word characters, such as &quot;Etten-Leur&quot; and<br>
+&nbsp;&nbsp;&quot;et al.&quot;, would require marking the pieces of them OK, lowering the<br>
+&nbsp;&nbsp;reliability.<br>
+- Missing support for regions or dialects.&nbsp;&nbsp;Makes it difficult to accept<br>
+&nbsp;&nbsp;all English words and highlight non-Canadian words differently.<br>
+- Missing support for rare words.&nbsp;&nbsp;Many words are correct but hardly ever used<br>
+&nbsp;&nbsp;and could be a misspelled often-used word.<br>
+- For making suggestions the speed is less important and requiring to install<br>
+&nbsp;&nbsp;another program or library would be acceptable.&nbsp;&nbsp;But the word lists probably<br>
+&nbsp;&nbsp;differ, the suggestions may be wrong words.<br>
+<br>
+<br>
+Spelling suggestions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="develop.html#develop-spell-suggestions" name="develop-spell-suggestions">*develop-spell-suggestions*</a><br>
+<br>
+For making suggestions there are two basic mechanisms:<br>
+1. Try changing the bad word a little bit and check for a match with a good<br>
+&nbsp;&nbsp; word.&nbsp;&nbsp;Or go through the list of good words, change them a little bit and<br>
+&nbsp;&nbsp; check for a match with the bad word.&nbsp;&nbsp;The changes are deleting a character,<br>
+&nbsp;&nbsp; inserting a character, swapping two characters, etc.<br>
+2. Perform soundfolding on both the bad word and the good words and then find<br>
+&nbsp;&nbsp; matches, possibly with a few changes like with the first mechanism.<br>
+<br>
+The first is good for finding typing mistakes.&nbsp;&nbsp;After experimenting with<br>
+hashtables and looking at solutions from other spell checkers the conclusion<br>
+was that a trie (a kind of tree structure) is ideal for this.&nbsp;&nbsp;Both for<br>
+reducing memory use and being able to try sensible changes.&nbsp;&nbsp;For example, when<br>
+inserting a character only characters that lead to good words need to be<br>
+tried.&nbsp;&nbsp;Other mechanisms (with hashtables) need to try all possible letters at<br>
+every position in the word.&nbsp;&nbsp;Also, a hashtable has the requirement that word<br>
+boundaries are identified separately, while a trie does not require this.<br>
+That makes the mechanism a lot simpler.<br>
+<br>
+Soundfolding is useful when someone knows how the words sounds but doesn't<br>
+know how it is spelled.&nbsp;&nbsp;For example, the word &quot;dictionary&quot; might be written<br>
+as &quot;daktonerie&quot;.&nbsp;&nbsp;The number of changes that the first method would need to<br>
+try is very big, it's hard to find the good word that way.&nbsp;&nbsp;After soundfolding<br>
+the words become &quot;tktnr&quot; and &quot;tkxnry&quot;, these differ by only two letters.<br>
+<br>
+To find words by their soundfolded equivalent (soundalike word) we need a list<br>
+of all soundfolded words.&nbsp;&nbsp;A few experiments have been done to find out what<br>
+the best method is.&nbsp;&nbsp;Alternatives:<br>
+1. Do the sound folding on the fly when looking for suggestions.&nbsp;&nbsp;This means<br>
+&nbsp;&nbsp; walking through the trie of good words, soundfolding each word and<br>
+&nbsp;&nbsp; checking how different it is from the bad word.&nbsp;&nbsp;This is very efficient for<br>
+&nbsp;&nbsp; memory use, but takes a long time.&nbsp;&nbsp;On a fast PC it takes a couple of<br>
+&nbsp;&nbsp; seconds for English, which can be acceptable for interactive use.&nbsp;&nbsp;But for<br>
+&nbsp;&nbsp; some languages it takes more than ten seconds (e.g., German, Catalan),<br>
+&nbsp;&nbsp; which is unacceptable slow.&nbsp;&nbsp;For batch processing (automatic corrections)<br>
+&nbsp;&nbsp; it's too slow for all languages.<br>
+2. Use a trie for the soundfolded words, so that searching can be done just<br>
+&nbsp;&nbsp; like how it works without soundfolding.&nbsp;&nbsp;This requires remembering a list<br>
+&nbsp;&nbsp; of good words for each soundfolded word.&nbsp;&nbsp;This makes finding matches very<br>
+&nbsp;&nbsp; fast but requires quite a lot of memory, in the order of 1 to 10 Mbyte.<br>
+&nbsp;&nbsp; For some languages more than the original word list.<br>
+3. Like the second alternative, but reduce the amount of memory by using affix<br>
+&nbsp;&nbsp; compression and store only the soundfolded basic word.&nbsp;&nbsp;This is what Aspell<br>
+&nbsp;&nbsp; does.&nbsp;&nbsp;Disadvantage is that affixes need to be stripped from the bad word<br>
+&nbsp;&nbsp; before soundfolding it, which means that mistakes at the start and/or end<br>
+&nbsp;&nbsp; of the word will cause the mechanism to fail.&nbsp;&nbsp;Also, this becomes slow when<br>
+&nbsp;&nbsp; the bad word is quite different from the good word.<br>
+<br>
+The choice made is to use the second mechanism and use a separate file.&nbsp;&nbsp;This<br>
+way a user with sufficient memory can get very good suggestions while a user<br>
+who is short of memory or just wants the spell checking and no suggestions<br>
+doesn't use so much memory.<br>
+<br>
+<br>
+Word frequency<br>
+<br>
+For sorting suggestions it helps to know which words are common.&nbsp;&nbsp;In theory we<br>
+could store a word frequency with the word in the dictionary.&nbsp;&nbsp;However, this<br>
+requires storing a count per word.&nbsp;&nbsp;That degrades word tree compression a lot.<br>
+And maintaining the word frequency for all languages will be a heavy task.<br>
+Also, it would be nice to prefer words that are already in the text.&nbsp;&nbsp;This way<br>
+the words that appear in the specific text are preferred for suggestions.<br>
+<br>
+What has been implemented is to count words that have been seen during<br>
+displaying.&nbsp;&nbsp;A hashtable is used to quickly find the word count.&nbsp;&nbsp;The count is<br>
+initialized from words listed in COMMON items in the affix file, so that it<br>
+also works when starting a new file.<br>
+<br>
+This isn't ideal, because the longer Vim is running the higher the counts<br>
+become.&nbsp;&nbsp;But in practice it is a noticeable improvement over not using the word<br>
+count.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. Assumptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="develop.html#design-assumptions" name="design-assumptions">*design-assumptions*</a><br>
+<br>
+Size of variables:<br>
+char&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 bit signed<br>
+char_u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 bit unsigned<br>
+int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32 or 64 bit signed (16 might be possible with limited features)<br>
+unsigned&nbsp;&nbsp;&nbsp;&nbsp;32 or 64 bit unsigned (16 as with ints)<br>
+long&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32 or 64 bit signed, can hold a pointer<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that some compilers cannot handle long lines or strings.&nbsp;&nbsp;The C89<br>
+standard specifies a limit of 509 characters.<br>
+<br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

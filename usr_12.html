@@ -1,0 +1,364 @@
+---
+layout: vimdoc
+helpname: 'usr_12'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_12.html" name="usr_12.txt">*usr_12.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2007 May 11<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clever tricks<br>
+<br>
+<br>
+By combining several commands you can make Vim do nearly everything.&nbsp;&nbsp;In this<br>
+chapter a number of useful combinations will be presented.&nbsp;&nbsp;This uses the<br>
+commands introduced in the previous chapters and a few more.<br>
+<br>
+<a class="Identifier" href="usr_12.html#12.1">|12.1|</a>&nbsp;&nbsp;Replace a word<br>
+<a class="Identifier" href="usr_12.html#12.2">|12.2|</a>&nbsp;&nbsp;Change &quot;Last, First&quot; to &quot;First Last&quot;<br>
+<a class="Identifier" href="usr_12.html#12.3">|12.3|</a>&nbsp;&nbsp;Sort a list<br>
+<a class="Identifier" href="usr_12.html#12.4">|12.4|</a>&nbsp;&nbsp;Reverse line order<br>
+<a class="Identifier" href="usr_12.html#12.5">|12.5|</a>&nbsp;&nbsp;Count words<br>
+<a class="Identifier" href="usr_12.html#12.6">|12.6|</a>&nbsp;&nbsp;Find a man page<br>
+<a class="Identifier" href="usr_12.html#12.7">|12.7|</a>&nbsp;&nbsp;Trim blanks<br>
+<a class="Identifier" href="usr_12.html#12.8">|12.8|</a>&nbsp;&nbsp;Find where a word is used<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_20.html">|usr_20.txt|</a>&nbsp;&nbsp;Typing command-line commands quickly<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_11.html">|usr_11.txt|</a>&nbsp;&nbsp;Recovering from a crash<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_12.html#12.1" name="12.1">*12.1*</a>&nbsp;&nbsp;Replace a word<br>
+<br>
+The substitute command can be used to replace all occurrences of a word with<br>
+another word:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/four/4/g</div>
+<br>
+The &quot;%&quot; range means to replace in all lines.&nbsp;&nbsp;The &quot;g&quot; flag at the end causes<br>
+all words in a line to be replaced.<br>
+&nbsp;&nbsp; This will not do the right thing if your file also contains &quot;thirtyfour&quot;.<br>
+It would be replaced with &quot;thirty4&quot;.&nbsp;&nbsp;To avoid this, use the &quot;\&lt;&quot; item to<br>
+match the start of a word:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/\&lt;four/4/g</div>
+<br>
+Obviously, this still goes wrong on &quot;fourteen&quot;.&nbsp;&nbsp;Use &quot;\&gt;&quot; to match the end of<br>
+a word:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/\&lt;four\&gt;/4/g</div>
+<br>
+If you are programming, you might want to replace &quot;four&quot; in comments, but not<br>
+in the code.&nbsp;&nbsp;Since this is difficult to specify, add the &quot;c&quot; flag to have the<br>
+substitute command prompt you for each replacement:<br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/\&lt;four\&gt;/4/gc</div>
+<br>
+<br>
+REPLACING IN SEVERAL FILES<br>
+<br>
+Suppose you want to replace a word in more than one file.&nbsp;&nbsp;You could edit each<br>
+file and type the command manually.&nbsp;&nbsp;It's a lot faster to use record and<br>
+playback.<br>
+&nbsp;&nbsp; Let's assume you have a directory with C++ files, all ending in &quot;.cpp&quot;.<br>
+There is a function called &quot;GetResp&quot; that you want to rename to &quot;GetAnswer&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim *.cpp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Start Vim, defining the argument list to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contain all the C++ files.&nbsp;&nbsp;You are now in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;qq&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start recording into the q register<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/\&lt;GetResp\&gt;/GetAnswer/g<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Do the replacements in the first file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:wnext&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write this file and move to the next one.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Stop recording.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute the q register.&nbsp;&nbsp;This will replay the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;substitution and &quot;:wnext&quot;.&nbsp;&nbsp;You can verify<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that this doesn't produce an error message.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;999@q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Execute the q register on the remaining files.<br>
+<br>
+At the last file you will get an error message, because &quot;:wnext&quot; cannot move<br>
+to the next file.&nbsp;&nbsp;This stops the execution, and everything is done.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When playing back a recorded sequence, an error stops the execution.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Therefore, make sure you don't get an error message when recording.<br>
+<br>
+There is one catch: If one of the .cpp files does not contain the word<br>
+&quot;GetResp&quot;, you will get an error and replacing will stop.&nbsp;&nbsp;To avoid this, add<br>
+the &quot;e&quot; flag to the substitute command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/\&lt;GetResp\&gt;/GetAnswer/ge</div>
+<br>
+The &quot;e&quot; flag tells &quot;:substitute&quot; that not finding a match is not an error.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_12.html#12.2" name="12.2">*12.2*</a>&nbsp;&nbsp;Change &quot;Last, First&quot; to &quot;First Last&quot;<br>
+<br>
+You have a list of names in this form:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Doe, John</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Smith, Peter</span><br>
+<br>
+You want to change that to:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">John Doe</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Peter Smith</span><br>
+<br>
+This can be done with just one command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/\([^,]*\), \(.*\)/\2 \1/</div>
+<br>
+Let's break this down in parts.&nbsp;&nbsp;Obviously it starts with a substitute<br>
+command.&nbsp;&nbsp;The &quot;%&quot; is the line range, which stands for the whole file.&nbsp;&nbsp;Thus<br>
+the substitution is done in every line in the file.<br>
+&nbsp;&nbsp; The arguments for the substitute command are &quot;/from/to/&quot;.&nbsp;&nbsp;The slashes<br>
+separate the &quot;from&quot; pattern and the &quot;to&quot; string.&nbsp;&nbsp;This is what the &quot;from&quot;<br>
+pattern contains:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">\([^,]*\), \(.*\)</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first part between \( \) matches &quot;Last&quot;&nbsp;&nbsp;&nbsp;&nbsp; \(&nbsp;&nbsp;&nbsp;&nbsp; \)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;match anything but a comma&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[^,]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any number of times&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matches &quot;, &quot; literally&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The second part between \( \) matches &quot;First&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\(&nbsp;&nbsp;\)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any character&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any number of times&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *<br>
+<br>
+In the &quot;to&quot; part we have &quot;\2&quot; and &quot;\1&quot;.&nbsp;&nbsp;These are called backreferences.<br>
+They refer to the text matched by the &quot;\( \)&quot; parts in the pattern.&nbsp;&nbsp;&quot;\2&quot;<br>
+refers to the text matched by the second &quot;\( \)&quot;, which is the &quot;First&quot; name.<br>
+&quot;\1&quot; refers to the first &quot;\( \)&quot;, which is the &quot;Last&quot; name.<br>
+&nbsp;&nbsp; You can use up to nine backreferences in the &quot;to&quot; part of a substitute<br>
+command.&nbsp;&nbsp;&quot;\0&quot; stands for the whole matched pattern.&nbsp;&nbsp;There are a few more<br>
+special items in a substitute command, see&nbsp;<a class="Identifier" href="change.html#sub-replace-special">|sub-replace-special|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_12.html#12.3" name="12.3">*12.3*</a>&nbsp;&nbsp;Sort a list<br>
+<br>
+In a Makefile you often have a list of files.&nbsp;&nbsp;For example:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">OBJS = \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">version.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">pch.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">getopt.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">util.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">getopt1.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">inp.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">patch.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">backup.o</span><br>
+<br>
+To sort this list, filter the text through the external sort command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/^OBJS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:.,/^$/-1!sort</div>
+<br>
+This goes to the first line, where &quot;OBJS&quot; is the first thing in the line.<br>
+Then it goes one line down and filters the lines until the next empty line.<br>
+You could also select the lines in Visual mode and then use &quot;!sort&quot;.&nbsp;&nbsp;That's<br>
+easier to type, but more work when there are many lines.<br>
+&nbsp;&nbsp; The result is this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">OBJS = \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">backup.o</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">getopt.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">getopt1.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">inp.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">patch.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">pch.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">util.o \</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">version.o \</span><br>
+<br>
+<br>
+Notice that a backslash at the end of each line is used to indicate the line<br>
+continues.&nbsp;&nbsp;After sorting, this is wrong!&nbsp;&nbsp;The &quot;backup.o&quot; line that was at<br>
+the end didn't have a backslash.&nbsp;&nbsp;Now that it sorts to another place, it<br>
+must have a backslash.<br>
+&nbsp;&nbsp; The simplest solution is to add the backslash with &quot;A \<span class="Special">&lt;Esc&gt;</span>&quot;.&nbsp;&nbsp;You can<br>
+keep the backslash in the last line, if you make sure an empty line comes<br>
+after it.&nbsp;&nbsp;That way you don't have this problem again.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_12.html#12.4" name="12.4">*12.4*</a>&nbsp;&nbsp;Reverse line order<br>
+<br>
+The&nbsp;<a class="Identifier" href="repeat.html#:global">|:global|</a>&nbsp;command can be combined with the&nbsp;<a class="Identifier" href="change.html#:move">|:move|</a>&nbsp;command to move all the<br>
+lines before the first line, resulting in a reversed file.&nbsp;&nbsp;The command is:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:global/^/m 0</div>
+<br>
+Abbreviated:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:g/^/m 0</div>
+<br>
+The &quot;^&quot; regular expression matches the beginning of the line (even if the line<br>
+is blank).&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="change.html#:move">|:move|</a>&nbsp;command moves the matching line to after the mythical<br>
+zeroth line, so the current matching line becomes the first line of the file.<br>
+As the&nbsp;<a class="Identifier" href="repeat.html#:global">|:global|</a>&nbsp;command is not confused by the changing line numbering,<br>
+<a class="Identifier" href="repeat.html#:global">|:global|</a>&nbsp;proceeds to match all remaining lines of the file and puts each as<br>
+the first.<br>
+<br>
+This also works on a range of lines.&nbsp;&nbsp;First move to above the first line and<br>
+mark it with &quot;mt&quot;.&nbsp;&nbsp;Then move the cursor to the last line in the range and<br>
+type:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:'t+1,.g/^/m 't</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_12.html#12.5" name="12.5">*12.5*</a>&nbsp;&nbsp;Count words<br>
+<br>
+Sometimes you have to write a text with a maximum number of words.&nbsp;&nbsp;Vim can<br>
+count the words for you.<br>
+&nbsp;&nbsp; When the whole file is what you want to count the words in, use this<br>
+command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g CTRL-G</div>
+<br>
+Do not type a space after the g, this is just used here to make the command<br>
+easy to read.<br>
+&nbsp;&nbsp; The output looks like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Col 1 of 0; Line 141 of 157; Word 748 of 774; Byte 4489 of 4976</span><br>
+<br>
+You can see on which word you are (748), and the total number of words in the<br>
+file (774).<br>
+<br>
+When the text is only part of a file, you could move to the start of the text,<br>
+type &quot;g&nbsp;<span class="Special">CTRL-G</span>&quot;, move to the end of the text, type &quot;g&nbsp;<span class="Special">CTRL-G</span>&quot; again, and then<br>
+use your brain to compute the difference in the word position.&nbsp;&nbsp;That's a good<br>
+exercise, but there is an easier way.&nbsp;&nbsp;With Visual mode, select the text you<br>
+want to count words in.&nbsp;&nbsp;Then type g&nbsp;<span class="Special">CTRL-G</span>.&nbsp;&nbsp;The result:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Selected 5 of 293 Lines; 70 of 1884 Words; 359 of 10928 Bytes</span><br>
+<br>
+For other ways to count words, lines and other items, see&nbsp;<a class="Identifier" href="tips.html#count-items">|count-items|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_12.html#12.6" name="12.6">*12.6*</a>&nbsp;&nbsp;Find a man page&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_12.html#find-manpage" name="find-manpage">*find-manpage*</a><br>
+<br>
+While editing a shell script or C program, you are using a command or function<br>
+that you want to find the man page for (this is on Unix).&nbsp;&nbsp;Let's first use a<br>
+simple way: Move the cursor to the word you want to find help on and press<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;K</div>
+<br>
+Vim will run the external &quot;man&quot; program on the word.&nbsp;&nbsp;If the man page is<br>
+found, it is displayed.&nbsp;&nbsp;This uses the normal pager to scroll through the text<br>
+(mostly the &quot;more&quot; program).&nbsp;&nbsp;When you get to the end pressing&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;will<br>
+get you back into Vim.<br>
+<br>
+A disadvantage is that you can't see the man page and the text you are working<br>
+on at the same time.&nbsp;&nbsp;There is a trick to make the man page appear in a Vim<br>
+window.&nbsp;&nbsp;First, load the man filetype plugin:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:runtime! ftplugin/man.vim</div>
+<br>
+Put this command in your vimrc file if you intend to do this often.&nbsp;&nbsp;Now you<br>
+can use the &quot;:Man&quot; command to open a window on a man page:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Man csh</div>
+<br>
+You can scroll around and the text is highlighted.&nbsp;&nbsp;This allows you to find<br>
+the help you were looking for.&nbsp;&nbsp;Use&nbsp;<span class="Special">CTRL-W</span>&nbsp;w to jump to the window with the<br>
+text you were working on.<br>
+&nbsp;&nbsp; To find a man page in a specific section, put the section number first.<br>
+For example, to look in section 3 for &quot;echo&quot;:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Man 3 echo</div>
+<br>
+To jump to another man page, which is in the text with the typical form<br>
+&quot;word(1)&quot;, press&nbsp;<span class="Special">CTRL-]</span>&nbsp;on it.&nbsp;&nbsp;Further &quot;:Man&quot; commands will use the same<br>
+window.<br>
+<br>
+To display a man page for the word under the cursor, use this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\K</div>
+<br>
+(If you redefined the&nbsp;<span class="Special">&lt;Leader&gt;</span>, use it instead of the backslash).<br>
+For example, you want to know the return value of &quot;strstr()&quot; while editing<br>
+this line:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">if ( strstr (input, &quot;aap&quot;) == )</span><br>
+<br>
+Move the cursor to somewhere on &quot;strstr&quot; and type &quot;\K&quot;.&nbsp;&nbsp;A window will open<br>
+to display the man page for strstr().<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_12.html#12.7" name="12.7">*12.7*</a>&nbsp;&nbsp;Trim blanks<br>
+<br>
+Some people find spaces and tabs at the end of a line useless, wasteful, and<br>
+ugly.&nbsp;&nbsp;To remove whitespace at the end of every line, execute the following<br>
+command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/\s\+$//</div>
+<br>
+The line range &quot;%&quot; is used, thus this works on the whole file.&nbsp;&nbsp;The pattern<br>
+that the &quot;:substitute&quot; command matches with is &quot;\s\+$&quot;.&nbsp;&nbsp;This finds white<br>
+space characters (\s), 1 or more of them (\+), before the end-of-line ($).<br>
+Later will be explained how you write patterns like this&nbsp;<a class="Identifier" href="usr_27.html">|usr_27.txt|</a>.<br>
+&nbsp;&nbsp; The &quot;to&quot; part of the substitute command is empty: &quot;//&quot;.&nbsp;&nbsp;Thus it replaces<br>
+with nothing, effectively deleting the matched white space.<br>
+<br>
+Another wasteful use of spaces is placing them before a tab.&nbsp;&nbsp;Often these can<br>
+be deleted without changing the amount of white space.&nbsp;&nbsp;But not always!<br>
+Therefore, you can best do this manually.&nbsp;&nbsp;Use this search command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+<br>
+You cannot see it, but there is a space before a tab in this command.&nbsp;&nbsp;Thus<br>
+it's &quot;/<span class="Special">&lt;Space&gt;&lt;Tab&gt;</span>&quot;.&nbsp;&nbsp; Now use &quot;x&quot; to delete the space and check that the<br>
+amount of white space doesn't change.&nbsp;&nbsp;You might have to insert a tab if it<br>
+does change.&nbsp;&nbsp;Type &quot;n&quot; to find the next match.&nbsp;&nbsp;Repeat this until no more<br>
+matches can be found.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_12.html#12.8" name="12.8">*12.8*</a>&nbsp;&nbsp;Find where a word is used<br>
+<br>
+If you are a UNIX user, you can use a combination of Vim and the grep command<br>
+to edit all the files that contain a given word.&nbsp;&nbsp;This is extremely useful if<br>
+you are working on a program and want to view or edit all the files that<br>
+contain a specific variable.<br>
+&nbsp;&nbsp; For example, suppose you want to edit all the C program files that contain<br>
+the word &quot;frame_counter&quot;.&nbsp;&nbsp;To do this you use the command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim `grep -l frame_counter *.c`</div>
+<br>
+Let's look at this command in detail.&nbsp;&nbsp;The grep command searches through a set<br>
+of files for a given word.&nbsp;&nbsp;Because the -l argument is specified, the command<br>
+will only list the files containing the word and not print the matching lines.<br>
+The word it is searching for is &quot;frame_counter&quot;.&nbsp;&nbsp;Actually, this can be any<br>
+regular expression.&nbsp;&nbsp;(<span class="Todo">Note</span>: What grep uses for regular expressions is not<br>
+exactly the same as what Vim uses.)<br>
+&nbsp;&nbsp; The entire command is enclosed in backticks (`).&nbsp;&nbsp;This tells the UNIX shell<br>
+to run this command and pretend that the results were typed on the command<br>
+line.&nbsp;&nbsp;So what happens is that the grep command is run and produces a list of<br>
+files, these files are put on the Vim command line.&nbsp;&nbsp;This results in Vim<br>
+editing the file list that is the output of grep.&nbsp;&nbsp;You can then use commands<br>
+like &quot;:next&quot; and &quot;:first&quot; to browse through the files.<br>
+<br>
+<br>
+FINDING EACH LINE<br>
+<br>
+The above command only finds the files in which the word is found.&nbsp;&nbsp;You still<br>
+have to find the word within the files.<br>
+&nbsp;&nbsp; Vim has a built-in command that you can use to search a set of files for a<br>
+given string.&nbsp;&nbsp;If you want to find all occurrences of &quot;error_string&quot; in all C<br>
+program files, for example, enter the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:grep error_string *.c</div>
+<br>
+This causes Vim to search for the string &quot;error_string&quot; in all the specified<br>
+files (*.c).&nbsp;&nbsp;The editor will now open the first file where a match is found<br>
+and position the cursor on the first matching line.&nbsp;&nbsp;To go to the next<br>
+matching line (no matter in what file it is), use the &quot;:cnext&quot; command.&nbsp;&nbsp;To go<br>
+to the previous match, use the &quot;:cprev&quot; command.&nbsp;&nbsp;Use &quot;:clist&quot; to see all the<br>
+matches and where they are.<br>
+&nbsp;&nbsp; The &quot;:grep&quot; command uses the external commands grep (on Unix) or findstr<br>
+(on Windows).&nbsp;&nbsp;You can change this by setting the option&nbsp;<a class="Type" href="options.html#'grepprg'">'grepprg'</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_20.html">|usr_20.txt|</a>&nbsp;&nbsp;Typing command-line commands quickly<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

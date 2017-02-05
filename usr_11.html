@@ -1,0 +1,313 @@
+---
+layout: vimdoc
+helpname: 'usr_11'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_11.html" name="usr_11.txt">*usr_11.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2010 Jul 20<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Recovering from a crash<br>
+<br>
+<br>
+Did your computer crash?&nbsp;&nbsp;And you just spent hours editing?&nbsp;&nbsp;Don't panic!&nbsp;&nbsp;Vim<br>
+stores enough information to be able to restore most of your work.&nbsp;&nbsp;This<br>
+chapter shows you how to get your work back and explains how the swap file is<br>
+used.<br>
+<br>
+<a class="Identifier" href="usr_11.html#11.1">|11.1|</a>&nbsp;&nbsp;Basic recovery<br>
+<a class="Identifier" href="usr_11.html#11.2">|11.2|</a>&nbsp;&nbsp;Where is the swap file?<br>
+<a class="Identifier" href="usr_11.html#11.3">|11.3|</a>&nbsp;&nbsp;Crashed or not?<br>
+<a class="Identifier" href="usr_11.html#11.4">|11.4|</a>&nbsp;&nbsp;Further reading<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_12.html">|usr_12.txt|</a>&nbsp;&nbsp;Clever tricks<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_10.html">|usr_10.txt|</a>&nbsp;&nbsp;Making big changes<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_11.html#11.1" name="11.1">*11.1*</a>&nbsp;&nbsp;Basic recovery<br>
+<br>
+In most cases recovering a file is quite simple, assuming you know which file<br>
+you were editing (and the harddisk is still working).&nbsp;&nbsp;Start Vim on the file,<br>
+with the &quot;-r&quot; argument added:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -r help.txt</div>
+<br>
+Vim will read the swap file (used to store text you were editing) and may read<br>
+bits and pieces of the original file.&nbsp;&nbsp;If Vim recovered your changes you will<br>
+see these messages (with different file names, of course):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Using swap file &quot;.help.txt.swp&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Original file &quot;~/vim/runtime/doc/help.txt&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Recovery completed. You should check if everything is OK.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">(You might want to write out this file under another name</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">and run diff with the original file to check for changes)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">You may want to delete the .swp file now.</span><br>
+<br>
+To be on the safe side, write this file under another name:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:write help.txt.recovered</div>
+<br>
+Compare the file with the original file to check if you ended up with what you<br>
+expected.&nbsp;&nbsp;Vimdiff is very useful for this&nbsp;<a class="Identifier" href="usr_08.html#08.7">|08.7|</a>.&nbsp;&nbsp;For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:write help.txt.recovered<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:edit #<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:diffsp help.txt</div>
+<br>
+Watch out for the original file to contain a more recent version (you saved<br>
+the file just before the computer crashed).&nbsp;&nbsp;And check that no lines are<br>
+missing (something went wrong that Vim could not recover).<br>
+&nbsp;&nbsp; If Vim produces warning messages when recovering, read them carefully.<br>
+This is rare though.<br>
+<br>
+If the recovery resulted in text that is exactly the same as the file<br>
+contents, you will get this message:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Using swap file &quot;.help.txt.swp&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Original file &quot;~/vim/runtime/doc/help.txt&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Recovery completed. Buffer contents equals file contents.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">You may want to delete the .swp file now.</span><br>
+<br>
+This usually happens if you already recovered your changes, or you wrote the<br>
+file after making changes.&nbsp;&nbsp;It is safe to delete the swap file now.<br>
+<br>
+It is normal that the last few changes can not be recovered.&nbsp;&nbsp;Vim flushes the<br>
+changes to disk when you don't type for about four seconds, or after typing<br>
+about two hundred characters.&nbsp;&nbsp;This is set with the&nbsp;<a class="Type" href="options.html#'updatetime'">'updatetime'</a>&nbsp;and<br>
+<a class="Type" href="options.html#'updatecount'">'updatecount'</a>&nbsp;options.&nbsp;&nbsp;Thus when Vim didn't get a chance to save itself when<br>
+the system went down, the changes after the last flush will be lost.<br>
+<br>
+If you were editing without a file name, give an empty string as argument:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -r &quot;&quot;</div>
+<br>
+You must be in the right directory, otherwise Vim can't find the swap file.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_11.html#11.2" name="11.2">*11.2*</a>&nbsp;&nbsp;Where is the swap file?<br>
+<br>
+Vim can store the swap file in several places.&nbsp;&nbsp;Normally it is in the same<br>
+directory as the original file.&nbsp;&nbsp;To find it, change to the directory of the<br>
+file, and use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -r</div>
+<br>
+Vim will list the swap files that it can find.&nbsp;&nbsp;It will also look in other<br>
+directories where the swap file for files in the current directory may be<br>
+located.&nbsp;&nbsp;It will not find swap files in any other directories though, it<br>
+doesn't search the directory tree.<br>
+&nbsp;&nbsp; The output could look like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Swap files found:</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">In current directory:</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">1.&nbsp;&nbsp;&nbsp;&nbsp;.main.c.swp</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">owned by: mool&nbsp;&nbsp; dated: Tue May 29 21:00:25 2001</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">file name: ~mool/vim/vim6/src/main.c</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">modified: YES</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">user name: mool&nbsp;&nbsp; host name: masaka.moolenaar.net</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">process ID: 12525</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">In directory ~/tmp:</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">-- none --</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">In directory /var/tmp:</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">-- none --</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">In directory /tmp:</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">-- none --</span><br>
+<br>
+If there are several swap files that look like they may be the one you want to<br>
+use, a list is given of these swap files and you are requested to enter the<br>
+number of the one you want to use.&nbsp;&nbsp;Carefully look at the dates to decide<br>
+which one you want to use.<br>
+&nbsp;&nbsp; In case you don't know which one to use, just try them one by one and check<br>
+the resulting files if they are what you expected.<br>
+<br>
+<br>
+USING A SPECIFIC SWAP FILE<br>
+<br>
+If you know which swap file needs to be used, you can recover by giving the<br>
+swap file name.&nbsp;&nbsp;Vim will then finds out the name of the original file from<br>
+the swap file.<br>
+<br>
+Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -r .help.txt.swo</div>
+<br>
+This is also handy when the swap file is in another directory than expected.<br>
+Vim recognizes files with the pattern *.s[uvw][a-z] as swap files.<br>
+<br>
+If this still does not work, see what file names Vim reports and rename the<br>
+files accordingly.&nbsp;&nbsp;Check the&nbsp;<a class="Type" href="options.html#'directory'">'directory'</a>&nbsp;option to see where Vim may have<br>
+put the swap file.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim tries to find the swap file by searching the directories in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'dir'">'dir'</a>&nbsp;option, looking for files that match &quot;filename.sw?&quot;.&nbsp;&nbsp;If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wildcard expansion doesn't work (e.g., when the&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>&nbsp;option is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;invalid), Vim does a desperate try to find the file &quot;filename.swp&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If that fails too, you will have to give the name of the swapfile<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;itself to be able to recover the file.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_11.html#11.3" name="11.3">*11.3*</a>&nbsp;&nbsp;Crashed or not?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_11.html#ATTENTION" name="ATTENTION">*ATTENTION*</a>&nbsp;<a class="Constant" href="usr_11.html#E325" name="E325">*E325*</a><br>
+<br>
+Vim tries to protect you from doing stupid things.&nbsp;&nbsp;Suppose you innocently<br>
+start editing a file, expecting the contents of the file to show up.&nbsp;&nbsp;Instead,<br>
+Vim produces a very long message:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">E325: ATTENTION</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Found a swap file by the name &quot;.main.c.swp&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">owned by: mool&nbsp;&nbsp; dated: Tue May 29 21:09:28 2001</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">file name: ~mool/vim/vim6/src/main.c</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">modified: no</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">user name: mool&nbsp;&nbsp; host name: masaka.moolenaar.net</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">process ID: 12559 (still running)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">While opening file &quot;main.c&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">dated: Tue May 29 19:46:12 2001</span><br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">(1) Another program may be editing the same file.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">If this is the case, be careful not to end up with two</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">different instances of the same file when making changes.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Quit, or continue with caution.</span><br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">(2) An edit session for this file crashed.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">If this is the case, use &quot;:recover&quot; or &quot;vim -r main.c&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">to recover the changes (see &quot;:help recovery&quot;).</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">If you did this already, delete the swap file &quot;.main.c.swp&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">to avoid this message.</span><br>
+<br>
+You get this message, because, when starting to edit a file, Vim checks if a<br>
+swap file already exists for that file.&nbsp;&nbsp;If there is one, there must be<br>
+something wrong.&nbsp;&nbsp;It may be one of these two situations.<br>
+<br>
+1. Another edit session is active on this file.&nbsp;&nbsp;Look in the message for the<br>
+&nbsp;&nbsp; line with &quot;process ID&quot;.&nbsp;&nbsp;It might look like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">process ID: 12559 (still running)</span><br>
+<br>
+&nbsp;&nbsp; The text &quot;(still running)&quot; indicates that the process editing this file<br>
+&nbsp;&nbsp; runs on the same computer.&nbsp;&nbsp;When working on a non-Unix system you will not<br>
+&nbsp;&nbsp; get this extra hint.&nbsp;&nbsp;When editing a file over a network, you may not see<br>
+&nbsp;&nbsp; the hint, because the process might be running on another computer.&nbsp;&nbsp;In<br>
+&nbsp;&nbsp; those two cases you must find out what the situation is yourself.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there is another Vim editing the same file, continuing to edit will<br>
+&nbsp;&nbsp; result in two versions of the same file.&nbsp;&nbsp;The one that is written last will<br>
+&nbsp;&nbsp; overwrite the other one, resulting in loss of changes.&nbsp;&nbsp;You better quit<br>
+&nbsp;&nbsp; this Vim.<br>
+<br>
+2. The swap file might be the result from a previous crash of Vim or the<br>
+&nbsp;&nbsp; computer.&nbsp;&nbsp;Check the dates mentioned in the message.&nbsp;&nbsp;If the date of the<br>
+&nbsp;&nbsp; swap file is newer than the file you were editing, and this line appears:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">modified: YES</span><br>
+<br>
+&nbsp;&nbsp; Then you very likely have a crashed edit session that is worth recovering.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the date of the file is newer than the date of the swap file, then<br>
+&nbsp;&nbsp; either it was changed after the crash (perhaps you recovered it earlier,<br>
+&nbsp;&nbsp; but didn't delete the swap file?), or else the file was saved before the<br>
+&nbsp;&nbsp; crash but after the last write of the swap file (then you're lucky: you<br>
+&nbsp;&nbsp; don't even need that old swap file).&nbsp;&nbsp;Vim will warn you for this with this<br>
+&nbsp;&nbsp; extra line:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">NEWER than swap file!</span><br>
+<br>
+<br>
+UNREADABLE SWAP FILE<br>
+<br>
+Sometimes the line<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[cannot be read]</span><br>
+<br>
+will appear under the name of the swap file.&nbsp;&nbsp;This can be good or bad,<br>
+depending on circumstances.<br>
+<br>
+It is good if a previous editing session crashed without having made any<br>
+changes to the file.&nbsp;&nbsp;Then a directory listing of the swap file will show<br>
+that it has zero bytes.&nbsp;&nbsp;You may delete it and proceed.<br>
+<br>
+It is slightly bad if you don't have read permission for the swap file.&nbsp;&nbsp;You<br>
+may want to view the file read-only, or quit.&nbsp;&nbsp;On multi-user systems, if you<br>
+yourself did the last changes under a different login name, a logout<br>
+followed by a login under that other name might cure the &quot;read error&quot;.&nbsp;&nbsp;Or<br>
+else you might want to find out who last edited (or is editing) the file and<br>
+have a talk with them.<br>
+<br>
+It is very bad if it means there is a physical read error on the disk<br>
+containing the swap file.&nbsp;&nbsp;Fortunately, this almost never happens.<br>
+You may want to view the file read-only at first (if you can), to see the<br>
+extent of the changes that were &quot;forgotten&quot;.&nbsp;&nbsp;If you are the one in charge of<br>
+that file, be prepared to redo your last changes.<br>
+<br>
+<br>
+WHAT TO DO?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_11.html#swap-exists-choices" name="swap-exists-choices">*swap-exists-choices*</a><br>
+<br>
+If dialogs are supported you will be asked to select one of five choices:<br>
+<br>
+&nbsp;&nbsp;<span class="PreProc">Swap file &quot;.main.c.swp&quot; already exists!</span><br>
+&nbsp;&nbsp;<span class="PreProc">[O]pen Read-Only, (E)dit anyway, (R)ecover, (Q)uit, (A)bort, (D)elete it:</span><br>
+<br>
+O&nbsp;&nbsp;Open the file readonly.&nbsp;&nbsp;Use this when you just want to view the file and<br>
+&nbsp;&nbsp; don't need to recover it.&nbsp;&nbsp;You might want to use this when you know someone<br>
+&nbsp;&nbsp; else is editing the file, but you just want to look in it and not make<br>
+&nbsp;&nbsp; changes.<br>
+<br>
+E&nbsp;&nbsp;Edit the file anyway.&nbsp;&nbsp;Use this with caution!&nbsp;&nbsp;If the file is being edited<br>
+&nbsp;&nbsp; in another Vim, you might end up with two versions of the file.&nbsp;&nbsp;Vim will<br>
+&nbsp;&nbsp; try to warn you when this happens, but better be safe then sorry.<br>
+<br>
+R&nbsp;&nbsp;Recover the file from the swap file.&nbsp;&nbsp;Use this if you know that the swap<br>
+&nbsp;&nbsp; file contains changes that you want to recover.<br>
+<br>
+Q&nbsp;&nbsp;Quit.&nbsp;&nbsp;This avoids starting to edit the file.&nbsp;&nbsp;Use this if there is another<br>
+&nbsp;&nbsp; Vim editing the same file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When you just started Vim, this will exit Vim.&nbsp;&nbsp;When starting Vim with<br>
+&nbsp;&nbsp; files in several windows, Vim quits only if there is a swap file for the<br>
+&nbsp;&nbsp; first one.&nbsp;&nbsp;When using an edit command, the file will not be loaded and you<br>
+&nbsp;&nbsp; are taken back to the previously edited file.<br>
+<br>
+A&nbsp;&nbsp;Abort.&nbsp;&nbsp;Like Quit, but also abort further commands.&nbsp;&nbsp;This is useful when<br>
+&nbsp;&nbsp; loading a script that edits several files, such as a session with multiple<br>
+&nbsp;&nbsp; windows.<br>
+<br>
+D&nbsp;&nbsp;Delete the swap file.&nbsp;&nbsp;Use this when you are sure you no longer need it.<br>
+&nbsp;&nbsp; For example, when it doesn't contain changes, or when the file itself is<br>
+&nbsp;&nbsp; newer than the swap file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;On Unix this choice is only offered when the process that created the<br>
+&nbsp;&nbsp; swap file does not appear to be running.<br>
+<br>
+If you do not get the dialog (you are running a version of Vim that does not<br>
+support it), you will have to do it manually.&nbsp;&nbsp;To recover the file, use this<br>
+command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:recover</div>
+<br>
+<br>
+Vim cannot always detect that a swap file already exists for a file.&nbsp;&nbsp;This is<br>
+the case when the other edit session puts the swap files in another directory<br>
+or when the path name for the file is different when editing it on different<br>
+machines.&nbsp;&nbsp;Therefore, don't rely on Vim always warning you.<br>
+<br>
+If you really don't want to see this message, you can add the 'A' flag to the<br>
+<a class="Type" href="options.html#'shortmess'">'shortmess'</a>&nbsp;option.&nbsp;&nbsp;But it's very unusual that you need this.<br>
+<br>
+For remarks about encryption and the swap file, see&nbsp;<a class="Identifier" href="recover.html#:recover-crypt">|:recover-crypt|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_11.html#11.4" name="11.4">*11.4*</a>&nbsp;&nbsp;Further reading<br>
+<br>
+<a class="Identifier" href="recover.html#swap-file">|swap-file|</a>&nbsp;&nbsp;&nbsp;&nbsp; An explanation about where the swap file will be created and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;what its name is.<br>
+<a class="Identifier" href="recover.html#:preserve">|:preserve|</a>&nbsp;&nbsp;&nbsp;&nbsp; Manually flushing the swap file to disk.<br>
+<a class="Identifier" href="recover.html#:swapname">|:swapname|</a>&nbsp;&nbsp;&nbsp;&nbsp; See the name of the swap file for the current file.<br>
+<a class="Type" href="options.html#'updatecount'">'updatecount'</a>&nbsp;&nbsp; Number of key strokes after which the swap file is flushed to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;disk.<br>
+<a class="Type" href="options.html#'updatetime'">'updatetime'</a>&nbsp;&nbsp;&nbsp;&nbsp;Timeout after which the swap file is flushed to disk.<br>
+<a class="Type" href="options.html#'swapsync'">'swapsync'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether the disk is synced when the swap file is flushed.<br>
+<a class="Type" href="options.html#'directory'">'directory'</a>&nbsp;&nbsp;&nbsp;&nbsp; List of directory names where to store the swap file.<br>
+<a class="Type" href="options.html#'maxmem'">'maxmem'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Limit for memory usage before writing text to the swap file.<br>
+<a class="Type" href="options.html#'maxmemtot'">'maxmemtot'</a>&nbsp;&nbsp;&nbsp;&nbsp; Same, but for all files in total.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_12.html">|usr_12.txt|</a>&nbsp;&nbsp;Clever tricks<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

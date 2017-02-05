@@ -1,0 +1,610 @@
+---
+layout: vimdoc
+helpname: 'fold'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="fold.html" name="fold.txt">*fold.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2016 Jan 02<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+Folding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#Folding" name="Folding">*Folding*</a>&nbsp;<a class="Constant" href="fold.html#folding" name="folding">*folding*</a>&nbsp;<a class="Constant" href="fold.html#folds" name="folds">*folds*</a><br>
+<br>
+You can find an introduction on folding in chapter 28 of the user manual.<br>
+<a class="Identifier" href="usr_28.html">|usr_28.txt|</a><br>
+<br>
+1. Fold methods&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="fold.html#fold-methods">|fold-methods|</a><br>
+2. Fold commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="fold.html#fold-commands">|fold-commands|</a><br>
+3. Fold options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="fold.html#fold-options">|fold-options|</a><br>
+4. Behavior of folds&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="fold.html#fold-behavior">|fold-behavior|</a><br>
+<br>
+<span class="Special">{Vi has no Folding}</span><br>
+<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+folding">|+folding|</a><span class="Special">&nbsp;feature}</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Fold methods&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#fold-methods" name="fold-methods">*fold-methods*</a><br>
+<br>
+The folding method can be set with the&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;option.<br>
+<br>
+When setting&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;to a value other than &quot;manual&quot;, all folds are<br>
+deleted and new ones created.&nbsp;&nbsp;Switching to the &quot;manual&quot; method doesn't remove<br>
+the existing folds.&nbsp;&nbsp;This can be used to first define the folds automatically<br>
+and then change them manually.<br>
+<br>
+There are six methods to select folds:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manual&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manually define folds<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;more indent means a higher fold level<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specify an expression to define folds<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;syntax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folds defined by syntax highlighting<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folds for unchanged text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;marker&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folds defined by markers in the text<br>
+<br>
+<br>
+<span class="Statement">MANUAL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-manual" name="fold-manual">*fold-manual*</a><br>
+<br>
+Use commands to manually define the fold regions.&nbsp;&nbsp;This can also be used by a<br>
+script that parses text to find folds.<br>
+<br>
+The level of a fold is only defined by its nesting.&nbsp;&nbsp;To increase the fold<br>
+level of a fold for a range of lines, define a fold inside it that has the<br>
+same lines.<br>
+<br>
+The manual folds are lost when you abandon the file.&nbsp;&nbsp;To save the folds use<br>
+the&nbsp;<a class="Identifier" href="starting.html#:mkview">|:mkview|</a>&nbsp;command.&nbsp;&nbsp;The view can be restored later with&nbsp;<a class="Identifier" href="starting.html#:loadview">|:loadview|</a>.<br>
+<br>
+<br>
+<span class="Statement">INDENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-indent" name="fold-indent">*fold-indent*</a><br>
+<br>
+The folds are automatically defined by the indent of the lines.<br>
+<br>
+The foldlevel is computed from the indent of the line, divided by the<br>
+<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;(rounded down).&nbsp;&nbsp;A sequence of lines with the same or higher fold<br>
+level form a fold, with the lines with a higher level forming a nested fold.<br>
+<br>
+The nesting of folds is limited with&nbsp;<a class="Type" href="options.html#'foldnestmax'">'foldnestmax'</a>.<br>
+<br>
+Some lines are ignored and get the fold level of the line above or below it,<br>
+whichever is lower.&nbsp;&nbsp;These are empty or white lines and lines starting<br>
+with a character in&nbsp;<a class="Type" href="options.html#'foldignore'">'foldignore'</a>.&nbsp;&nbsp;White space is skipped before checking for<br>
+characters in&nbsp;<a class="Type" href="options.html#'foldignore'">'foldignore'</a>.&nbsp;&nbsp;For C use &quot;#&quot; to ignore preprocessor lines.<br>
+<br>
+When you want to ignore lines in another way, use the&nbsp;<span class="MissingTag">'expr'</span>&nbsp;method.&nbsp;&nbsp;The<br>
+<a class="Identifier" href="eval.html#indent()">|indent()|</a>&nbsp;function can be used in&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;to get the indent of a line.<br>
+<br>
+<br>
+<span class="Statement">EXPR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-expr" name="fold-expr">*fold-expr*</a><br>
+<br>
+The folds are automatically defined by their foldlevel, like with the &quot;indent&quot;<br>
+method.&nbsp;&nbsp;The value of the&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;option is evaluated to get the foldlevel<br>
+of a line.&nbsp;&nbsp;Examples:<br>
+This will create a fold for all consecutive lines that start with a tab:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set foldexpr=getline(v:lnum)[0]==\&quot;\\t\&quot;</div>
+This will call a function to compute the fold level:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set foldexpr=MyFoldLevel(v:lnum)</div>
+This will make a fold out of paragraphs separated by blank lines:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set foldexpr=getline(v:lnum)=~'^\\s*$'&amp;&amp;getline(v:lnum+1)=~'\\S'?'&lt;1':1</div>
+this does the same:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set foldexpr=getline(v:lnum-1)=~'^\\s*$'&amp;&amp;getline(v:lnum)=~'\\S'?'&gt;1':1</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that backslashes must be used to escape characters that &quot;:set&quot; handles<br>
+differently (space, backslash, double quote, etc., see&nbsp;<a class="Identifier" href="options.html#option-backslash">|option-backslash|</a>).<br>
+<br>
+These are the conditions with which the expression is evaluated:<br>
+- The current buffer and window are set for the line.<br>
+- The variable &quot;v:lnum&quot; is set to the line number.<br>
+- The result is used for the fold level in this way:<br>
+&nbsp;&nbsp;<span class="PreProc">value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; meaning</span><br>
+&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the line is not in a fold<br>
+&nbsp;&nbsp;1, 2, ..&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the line is in a fold with this level<br>
+&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the fold level is undefined, use the fold level of a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line before or after this line, whichever is the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lowest.<br>
+&nbsp;&nbsp;&quot;=&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; use fold level from the previous line<br>
+&nbsp;&nbsp;&quot;a1&quot;, &quot;a2&quot;, ..&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;add one, two, .. to the fold level of the previous<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line, use the result for the current line<br>
+&nbsp;&nbsp;&quot;s1&quot;, &quot;s2&quot;, ..&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;subtract one, two, .. from the fold level of the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;previous line, use the result for the next line<br>
+&nbsp;&nbsp;&quot;&lt;1&quot;, &quot;&lt;2&quot;, ..&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a fold with this level ends at this line<br>
+&nbsp;&nbsp;&quot;&gt;1&quot;, &quot;&gt;2&quot;, ..&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a fold with this level starts at this line<br>
+<br>
+It is not required to mark the start (end) of a fold with &quot;&gt;1&quot; (&quot;&lt;1&quot;), a fold<br>
+will also start (end) when the fold level is higher (lower) than the fold<br>
+level of the previous line.<br>
+<br>
+There must be no side effects from the expression.&nbsp;&nbsp;The text in the buffer,<br>
+cursor position, the search patterns, options etc. must not be changed.<br>
+You can change and restore them if you are careful.<br>
+<br>
+If there is some error in the expression, or the resulting value isn't<br>
+recognized, there is no error message and the fold level will be zero.<br>
+For debugging the&nbsp;<a class="Type" href="options.html#'debug'">'debug'</a>&nbsp;option can be set to &quot;msg&quot;, the error messages will<br>
+be visible then.<br>
+<br>
+<span class="Todo">Note</span>: Since the expression has to be evaluated for every line, this fold<br>
+method can be very slow!<br>
+<br>
+Try to avoid the &quot;=&quot;, &quot;a&quot; and &quot;s&quot; return values, since Vim often has to search<br>
+backwards for a line for which the fold level is defined.&nbsp;&nbsp;This can be slow.<br>
+<br>
+An example of using &quot;a1&quot; and &quot;s1&quot;: For a multi-line C comment, a line<br>
+containing &quot;/*&quot; would return &quot;a1&quot; to start a fold, and a line containing &quot;*/&quot;<br>
+would return &quot;s1&quot; to end the fold after that line:<br>
+<div class="helpExample">&nbsp;&nbsp;if match(thisline, '/\*') &gt;= 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return 'a1'<br>
+&nbsp;&nbsp;elseif match(thisline, '\*/') &gt;= 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return 's1'<br>
+&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return '='<br>
+&nbsp;&nbsp;endif</div>
+However, this won't work for single line comments, strings, etc.<br>
+<br>
+<a class="Identifier" href="eval.html#foldlevel()">|foldlevel()|</a>&nbsp;can be useful to compute a fold level relative to a previous<br>
+fold level.&nbsp;&nbsp;But&nbsp;<span class="Todo">note</span>&nbsp;that foldlevel() may return -1 if the level is not known<br>
+yet.&nbsp;&nbsp;And it returns the level at the start of the line, while a fold might<br>
+end in that line.<br>
+<br>
+It may happened that folds are not updated properly.&nbsp;&nbsp;You can use&nbsp;<a class="Identifier" href="fold.html#zx">|zx|</a>&nbsp;or&nbsp;<a class="Identifier" href="fold.html#zX">|zX|</a><br>
+to force updating folds.<br>
+<br>
+<br>
+<span class="Statement">SYNTAX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-syntax" name="fold-syntax">*fold-syntax*</a><br>
+<br>
+A fold is defined by syntax items that have the &quot;fold&quot; argument.&nbsp;<a class="Identifier" href="syntax.html#:syn-fold">|:syn-fold|</a><br>
+<br>
+The fold level is defined by nesting folds.&nbsp;&nbsp;The nesting of folds is limited<br>
+with&nbsp;<a class="Type" href="options.html#'foldnestmax'">'foldnestmax'</a>.<br>
+<br>
+Be careful to specify proper syntax syncing.&nbsp;&nbsp;If this is not done right, folds<br>
+may differ from the displayed highlighting.&nbsp;&nbsp;This is especially relevant when<br>
+using patterns that match more than one line.&nbsp;&nbsp;In case of doubt, try using<br>
+brute-force syncing:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:syn sync fromstart</div>
+<br>
+<br>
+<span class="Statement">DIFF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-diff" name="fold-diff">*fold-diff*</a><br>
+<br>
+The folds are automatically defined for text that is not part of a change or<br>
+close to a change.<br>
+<br>
+This method only works properly when the&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;option is set for the current<br>
+window and changes are being displayed.&nbsp;&nbsp;Otherwise the whole buffer will be<br>
+one big fold.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>&nbsp;option can be used to specify the context.&nbsp;&nbsp;That is, the number<br>
+of lines between the fold and a change that are not included in the fold.&nbsp;&nbsp;For<br>
+example, to use a context of 8 lines:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set diffopt=filler,context:8</div>
+The default context is six lines.<br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'scrollbind'">'scrollbind'</a>&nbsp;is also set, Vim will attempt to keep the same folds open in<br>
+other diff windows, so that the same text is visible.<br>
+<br>
+<br>
+<span class="Statement">MARKER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-marker" name="fold-marker">*fold-marker*</a><br>
+<br>
+Markers in the text tell where folds start and end.&nbsp;&nbsp;This allows you to<br>
+precisely specify the folds.&nbsp;&nbsp;This will allow deleting and putting a fold,<br>
+without the risk of including the wrong lines.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;option is<br>
+normally set such that the text before the marker shows up in the folded line.<br>
+This makes it possible to give a name to the fold.<br>
+<br>
+Markers can have a level included, or can use matching pairs.&nbsp;&nbsp;Including a<br>
+level is easier, you don't have to add end markers and avoid problems with<br>
+non-matching marker pairs.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* global variables {{ "{{{" }}1 */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int varA, varB;</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* functions {{ "{{{" }}1 */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* funcA() {{ "{{{" }}2 */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void funcA() {}</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* funcB() {{ "{{{" }}2 */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void funcB() {}</div>
+<br>
+A fold starts at a &quot;{{ "{{{" }}&quot; marker.&nbsp;&nbsp;The following number specifies the fold<br>
+level.&nbsp;&nbsp;What happens depends on the difference between the current fold level<br>
+and the level given by the marker:<br>
+1. If a marker with the same fold level is encountered, the previous fold<br>
+&nbsp;&nbsp; ends and another fold with the same level starts.<br>
+2. If a marker with a higher fold level is found, a nested fold is started.<br>
+3. if a marker with a lower fold level is found, all folds up to and including<br>
+&nbsp;&nbsp; this level end and a fold with the specified level starts.<br>
+<br>
+The number indicates the fold level.&nbsp;&nbsp;A zero cannot be used (a marker with<br>
+level zero is ignored).&nbsp;&nbsp;You can use &quot;}}}&quot; with a digit to indicate the level<br>
+of the fold that ends.&nbsp;&nbsp;The fold level of the following line will be one less<br>
+than the indicated level.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that Vim doesn't look back to the level of the<br>
+matching marker (that would take too much time).&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ "{{{" }}1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fold level here is 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ "{{{" }}3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fold level here is 3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}}}3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fold level here is 2</div>
+<br>
+You can also use matching pairs of &quot;{{ "{{{" }}&quot; and &quot;}}}&quot; markers to define folds.<br>
+Each &quot;{{ "{{{" }}&quot; increases the fold level by one, each &quot;}}}&quot; decreases the fold<br>
+level by one.&nbsp;&nbsp;Be careful to keep the markers matching!&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ "{{{" }}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fold level here is 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ "{{{" }}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fold level here is 2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}}}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fold level here is 1</div>
+<br>
+You can mix using markers with a number and without a number.&nbsp;&nbsp;A useful way of<br>
+doing this is to use numbered markers for large folds, and unnumbered markers<br>
+locally in a function.&nbsp;&nbsp;For example use level one folds for the sections of<br>
+your file like &quot;structure definitions&quot;, &quot;local variables&quot; and &quot;functions&quot;.<br>
+Use level 2 markers for each definition and function,&nbsp;&nbsp;Use unnumbered markers<br>
+inside functions.&nbsp;&nbsp;When you make changes in a function to split up folds, you<br>
+don't have to renumber the markers.<br>
+<br>
+The markers can be set with the&nbsp;<a class="Type" href="options.html#'foldmarker'">'foldmarker'</a>&nbsp;option.&nbsp;&nbsp;It is recommended to<br>
+keep this at the default value of &quot;{{ "{{" }}<span class="Special">{,}</span>}}&quot;, so that files can be exchanged<br>
+between Vim users.&nbsp;&nbsp;Only change it when it is required for the file (e.g., it<br>
+contains markers from another folding editor, or the default markers cause<br>
+trouble for the language of the file).<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#fold-create-marker" name="fold-create-marker">*fold-create-marker*</a><br>
+&quot;zf&quot; can be used to create a fold defined by markers.&nbsp;&nbsp;Vim will insert the<br>
+markers for you.&nbsp;&nbsp;Vim will append the start and end marker, as specified with<br>
+<a class="Type" href="options.html#'foldmarker'">'foldmarker'</a>.&nbsp;&nbsp;The markers are appended to the end of the line.<br>
+<a class="Type" href="options.html#'commentstring'">'commentstring'</a>&nbsp;is used if it isn't empty.<br>
+This does not work properly when:<br>
+- The line already contains a marker with a level number.&nbsp;&nbsp;Vim then doesn't<br>
+&nbsp;&nbsp;know what to do.<br>
+- Folds nearby use a level number in their marker which gets in the way.<br>
+- The line is inside a comment,&nbsp;<a class="Type" href="options.html#'commentstring'">'commentstring'</a>&nbsp;isn't empty and nested<br>
+&nbsp;&nbsp;comments don't work.&nbsp;&nbsp;For example with C: adding /* {{ "{{{" }} */ inside a comment<br>
+&nbsp;&nbsp;will truncate the existing comment.&nbsp;&nbsp;Either put the marker before or after<br>
+&nbsp;&nbsp;the comment, or add the marker manually.<br>
+Generally it's not a good idea to let Vim create markers when you already have<br>
+markers with a level number.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#fold-delete-marker" name="fold-delete-marker">*fold-delete-marker*</a><br>
+&quot;zd&quot; can be used to delete a fold defined by markers.&nbsp;&nbsp;Vim will delete the<br>
+markers for you.&nbsp;&nbsp;Vim will search for the start and end markers, as specified<br>
+with&nbsp;<a class="Type" href="options.html#'foldmarker'">'foldmarker'</a>, at the start and end of the fold.&nbsp;&nbsp;When the text around the<br>
+marker matches with&nbsp;<a class="Type" href="options.html#'commentstring'">'commentstring'</a>, that text is deleted as well.<br>
+This does not work properly when:<br>
+- A line contains more than one marker and one of them specifies a level.<br>
+&nbsp;&nbsp;Only the first one is removed, without checking if this will have the<br>
+&nbsp;&nbsp;desired effect of deleting the fold.<br>
+- The marker contains a level number and is used to start or end several folds<br>
+&nbsp;&nbsp;at the same time.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Fold commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#fold-commands" name="fold-commands">*fold-commands*</a>&nbsp;<a class="Constant" href="fold.html#E490" name="E490">*E490*</a><br>
+<br>
+All folding commands start with &quot;z&quot;.&nbsp;&nbsp;Hint: the &quot;z&quot; looks like a folded piece<br>
+of paper, if you look at it from the side.<br>
+<br>
+<br>
+<span class="PreProc">CREATING AND DELETING FOLDS</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zf" name="zf">*zf*</a>&nbsp;<a class="Constant" href="fold.html#E350" name="E350">*E350*</a><br>
+zf<span class="Special">{motion}</span>&nbsp;&nbsp;or<br>
+<span class="Special">{Visual}</span>zf&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Operator to create a fold.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This only works when&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;is &quot;manual&quot; or &quot;marker&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The new fold will be closed for the &quot;manual&quot; method.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>&nbsp;will be set.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="fold.html#fold-create-marker">|fold-create-marker|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zF" name="zF">*zF*</a><br>
+zF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a fold for&nbsp;<span class="Special">[count]</span>&nbsp;lines.&nbsp;&nbsp;Works like &quot;zf&quot;.<br>
+<br>
+:<span class="Special">{range}</span>fo[ld]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#:fold" name=":fold">*:fold*</a>&nbsp;<a class="Constant" href="fold.html#:fo" name=":fo">*:fo*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a fold for the lines in&nbsp;<span class="Special">{range}</span>.&nbsp;&nbsp;Works like &quot;zf&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zd" name="zd">*zd*</a>&nbsp;<a class="Constant" href="fold.html#E351" name="E351">*E351*</a><br>
+zd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Delete one fold at the cursor.&nbsp;&nbsp;When the cursor is on a folded<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line, that fold is deleted.&nbsp;&nbsp;Nested folds are moved one level<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;up.&nbsp;&nbsp;In Visual mode one level of all folds (partially) in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;selected area are deleted.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Careful: This easily deletes more folds than you expect and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;there is no undo for manual folding.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This only works when&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;is &quot;manual&quot; or &quot;marker&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="fold.html#fold-delete-marker">|fold-delete-marker|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zD" name="zD">*zD*</a><br>
+zD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Delete folds recursively at the cursor.&nbsp;&nbsp;In Visual mode all<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folds (partially) in the selected area and all nested folds in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;them are deleted.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This only works when&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;is &quot;manual&quot; or &quot;marker&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="fold.html#fold-delete-marker">|fold-delete-marker|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zE" name="zE">*zE*</a>&nbsp;<a class="Constant" href="fold.html#E352" name="E352">*E352*</a><br>
+zE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Eliminate all folds in the window.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This only works when&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;is &quot;manual&quot; or &quot;marker&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="fold.html#fold-delete-marker">|fold-delete-marker|</a>.<br>
+<br>
+<br>
+<span class="PreProc">OPENING AND CLOSING FOLDS</span><br>
+<br>
+A fold smaller than&nbsp;<a class="Type" href="options.html#'foldminlines'">'foldminlines'</a>&nbsp;will always be displayed like it was open.<br>
+Therefore the commands below may work differently on small folds.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zo" name="zo">*zo*</a><br>
+zo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Open one fold under the cursor.&nbsp;&nbsp;When a count is given, that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;many folds deep will be opened.&nbsp;&nbsp;In Visual mode one level of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folds is opened for all lines in the selected area.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zO" name="zO">*zO*</a><br>
+zO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Open all folds under the cursor recursively.&nbsp;&nbsp;Folds that don't<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contain the cursor line are unchanged.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In Visual mode it opens all folds that are in the selected<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;area, also those that are only partly selected.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zc" name="zc">*zc*</a><br>
+zc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Close one fold under the cursor.&nbsp;&nbsp;When a count is given, that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;many folds deep are closed.&nbsp;&nbsp;In Visual mode one level of folds<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is closed for all lines in the selected area.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>&nbsp;will be set.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zC" name="zC">*zC*</a><br>
+zC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Close all folds under the cursor recursively.&nbsp;&nbsp;Folds that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;don't contain the cursor line are unchanged.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In Visual mode it closes all folds that are in the selected<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;area, also those that are only partly selected.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>&nbsp;will be set.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#za" name="za">*za*</a><br>
+za&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When on a closed fold: open it.&nbsp;&nbsp;When folds are nested, you<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;may have to use &quot;za&quot; several times.&nbsp;&nbsp;When a count is given,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that many closed folds are opened.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When on an open fold: close it and set&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>.&nbsp;&nbsp;This<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will only close one level, since using &quot;za&quot; again will open<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the fold.&nbsp;&nbsp;When a count is given that many folds will be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;closed (that's not the same as repeating &quot;za&quot; that many<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;times).<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zA" name="zA">*zA*</a><br>
+zA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When on a closed fold: open it recursively.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When on an open fold: close it recursively and set<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zv" name="zv">*zv*</a><br>
+zv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;View cursor line: Open just enough folds to make the line in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which the cursor is located not folded.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zx" name="zx">*zx*</a><br>
+zx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Update folds: Undo manually opened and closed folds: re-apply<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>, then do &quot;zv&quot;: View cursor line.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also forces recomputing folds.&nbsp;&nbsp;This is useful when using<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;and the buffer is changed in a way that results in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folds not to be updated properly.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zX" name="zX">*zX*</a><br>
+zX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Undo manually opened and closed folds: re-apply&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also forces recomputing folds, like&nbsp;<a class="Identifier" href="fold.html#zx">|zx|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zm" name="zm">*zm*</a><br>
+zm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fold more: Subtract&nbsp;<a class="Identifier" href="eval.html#v:count1">|v:count1|</a>&nbsp;from&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>.&nbsp;&nbsp;If&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>&nbsp;was<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;already zero nothing happens.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>&nbsp;will be set.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zM" name="zM">*zM*</a><br>
+zM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Close all folds: set&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>&nbsp;to 0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>&nbsp;will be set.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zr" name="zr">*zr*</a><br>
+zr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reduce folding: Add&nbsp;<a class="Identifier" href="eval.html#v:count1">|v:count1|</a>&nbsp;to&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zR" name="zR">*zR*</a><br>
+zR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Open all folds.&nbsp;&nbsp;This sets&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>&nbsp;to highest fold level.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#:foldo" name=":foldo">*:foldo*</a>&nbsp;<a class="Constant" href="fold.html#:foldopen" name=":foldopen">*:foldopen*</a><br>
+:<span class="Special">{range}</span>foldo[pen][!]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Open folds in&nbsp;<span class="Special">{range}</span>.&nbsp;&nbsp;When [!] is added all folds are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;opened.&nbsp;&nbsp;Useful to see all the text in&nbsp;<span class="Special">{range}</span>.&nbsp;&nbsp;Without [!]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;one level of folds is opened.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#:foldc" name=":foldc">*:foldc*</a>&nbsp;<a class="Constant" href="fold.html#:foldclose" name=":foldclose">*:foldclose*</a><br>
+:<span class="Special">{range}</span>foldc[lose][!]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Close folds in&nbsp;<span class="Special">{range}</span>.&nbsp;&nbsp;When [!] is added all folds are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;closed.&nbsp;&nbsp;Useful to hide all the text in&nbsp;<span class="Special">{range}</span>.&nbsp;&nbsp;Without [!]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;one level of folds is closed.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zn" name="zn">*zn*</a><br>
+zn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fold none: reset&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>.&nbsp;&nbsp;All folds will be open.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zN" name="zN">*zN*</a><br>
+zN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fold normal: set&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>.&nbsp;&nbsp;All folds will be as they<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;were before.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zi" name="zi">*zi*</a><br>
+zi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invert&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>.<br>
+<br>
+<br>
+<span class="PreProc">MOVING OVER FOLDS</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#[z" name="[z">*[z*</a><br>
+[z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Move to the start of the current open fold.&nbsp;&nbsp;If already at the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start, move to the start of the fold that contains it.&nbsp;&nbsp;If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;there is no containing fold, the command fails.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When a count is used, repeats the command&nbsp;<span class="Special">[count]</span>&nbsp;times.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#]z" name="]z">*]z*</a><br>
+]z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Move to the end of the current open fold.&nbsp;&nbsp;If already at the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end, move to the end of the fold that contains it.&nbsp;&nbsp;If there<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is no containing fold, the command fails.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When a count is used, repeats the command&nbsp;<span class="Special">[count]</span>&nbsp;times.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zj" name="zj">*zj*</a><br>
+zj&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Move downwards to the start of the next fold.&nbsp;&nbsp;A closed fold<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is counted as one fold.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When a count is used, repeats the command&nbsp;<span class="Special">[count]</span>&nbsp;times.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This command can be used after an&nbsp;<a class="Identifier" href="motion.html#operator">|operator|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zk" name="zk">*zk*</a><br>
+zk&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Move upwards to the end of the previous fold.&nbsp;&nbsp;A closed fold<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is counted as one fold.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When a count is used, repeats the command&nbsp;<span class="Special">[count]</span>&nbsp;times.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This command can be used after an&nbsp;<a class="Identifier" href="motion.html#operator">|operator|</a>.<br>
+<br>
+<br>
+<span class="PreProc">EXECUTING COMMANDS ON FOLDS</span><br>
+<br>
+:<span class="Special">[range]</span>foldd[oopen]&nbsp;<span class="Special">{cmd}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#:foldd" name=":foldd">*:foldd*</a>&nbsp;<a class="Constant" href="fold.html#:folddoopen" name=":folddoopen">*:folddoopen*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute&nbsp;<span class="Special">{cmd}</span>&nbsp;on all lines that are not in a closed fold.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">[range]</span>&nbsp;is given, only these lines are used.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each time&nbsp;<span class="Special">{cmd}</span>&nbsp;is executed the cursor is positioned on the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line it is executed for.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This works like the &quot;:global&quot; command: First all lines that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;are not in a closed fold are marked.&nbsp;&nbsp;Then the&nbsp;<span class="Special">{cmd}</span>&nbsp;is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;executed for all marked lines.&nbsp;&nbsp;Thus when&nbsp;<span class="Special">{cmd}</span>&nbsp;changes the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folds, this has no influence on where it is executed (except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when lines are deleted, of course).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:folddoopen s/end/loop_end/ge</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;the use of the &quot;e&quot; flag to avoid getting an error message<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where &quot;end&quot; doesn't match.<br>
+<br>
+:<span class="Special">[range]</span>folddoc[losed]&nbsp;<span class="Special">{cmd}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#:folddoc" name=":folddoc">*:folddoc*</a>&nbsp;<a class="Constant" href="fold.html#:folddoclosed" name=":folddoclosed">*:folddoclosed*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute&nbsp;<span class="Special">{cmd}</span>&nbsp;on all lines that are in a closed fold.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Otherwise like &quot;:folddoopen&quot;.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Fold options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#fold-options" name="fold-options">*fold-options*</a><br>
+<br>
+<span class="Statement">COLORS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-colors" name="fold-colors">*fold-colors*</a><br>
+<br>
+The colors of a closed fold are set with the Folded group&nbsp;<a class="Identifier" href="syntax.html#hl-Folded">|hl-Folded|</a>.&nbsp;&nbsp;The<br>
+colors of the fold column are set with the FoldColumn group&nbsp;<a class="Identifier" href="syntax.html#hl-FoldColumn">|hl-FoldColumn|</a>.<br>
+Example to set the colors:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:highlight Folded guibg=grey guifg=blue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:highlight FoldColumn guibg=darkgrey guifg=white</div>
+<br>
+<br>
+<span class="Statement">FOLDLEVEL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-foldlevel" name="fold-foldlevel">*fold-foldlevel*</a><br>
+<br>
+<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>&nbsp;is a number option: The higher the more folded regions are open.<br>
+When&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>&nbsp;is 0, all folds are closed.<br>
+When&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>&nbsp;is positive, some folds are closed.<br>
+When&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>&nbsp;is very high, all folds are open.<br>
+<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>&nbsp;is applied when it is changed.&nbsp;&nbsp;After that manually folds can be<br>
+opened and closed.<br>
+When increased, folds above the new level are opened.&nbsp;&nbsp;No manually opened<br>
+folds will be closed.<br>
+When decreased, folds above the new level are closed.&nbsp;&nbsp;No manually closed<br>
+folds will be opened.<br>
+<br>
+<br>
+<span class="Statement">FOLDTEXT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-foldtext" name="fold-foldtext">*fold-foldtext*</a><br>
+<br>
+<a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;is a string option that specifies an expression.&nbsp;&nbsp;This expression<br>
+is evaluated to obtain the text displayed for a closed fold.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:set foldtext=v:folddashes.substitute(getline(v:foldstart),'/\\*\\\|\\*/\\\|{{ "{{{" }}\\d\\=','','g')</div>
+<br>
+This shows the first line of the fold, with &quot;/*&quot;, &quot;*/&quot; and &quot;{{ "{{{" }}&quot; removed.<br>
+<span class="Todo">Note</span>&nbsp;the use of backslashes to avoid some characters to be interpreted by the<br>
+&quot;:set&quot; command.&nbsp;&nbsp;It's simpler to define a function and call that:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:set foldtext=MyFoldText()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:function MyFoldText()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;let line = getline(v:foldstart)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;let sub = substitute(line, '/\*\|\*/\|{{ "{{{" }}\d\=', '', 'g')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;return v:folddashes . sub<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:endfunction</div>
+<br>
+Evaluating&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;is done in the&nbsp;<a class="Identifier" href="eval.html#sandbox">|sandbox|</a>.&nbsp;&nbsp;The current window is set to<br>
+the window that displays the line.&nbsp;&nbsp;Errors are ignored.<br>
+<br>
+The default value is&nbsp;<a class="Identifier" href="eval.html#foldtext()">|foldtext()|</a>.&nbsp;&nbsp;This returns a reasonable text for most<br>
+types of folding.&nbsp;&nbsp;If you don't like it, you can specify your own&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a><br>
+expression.&nbsp;&nbsp;It can use these special Vim variables:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:foldstart&nbsp;&nbsp;&nbsp;&nbsp; line number of first line in the fold<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:foldend&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; line number of last line in the fold<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:folddashes&nbsp;&nbsp;&nbsp;&nbsp;a string that contains dashes to represent the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foldlevel.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:foldlevel&nbsp;&nbsp;&nbsp;&nbsp; the foldlevel of the fold<br>
+<br>
+In the result a TAB is replaced with a space and unprintable characters are<br>
+made into printable characters.<br>
+<br>
+The resulting line is truncated to fit in the window, it never wraps.<br>
+When there is room after the text, it is filled with the character specified<br>
+by&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that backslashes need to be used for characters that the &quot;:set&quot; command<br>
+handles differently: Space, backslash and double-quote.&nbsp;<a class="Identifier" href="options.html#option-backslash">|option-backslash|</a><br>
+<br>
+<br>
+<span class="Statement">FOLDCOLUMN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-foldcolumn" name="fold-foldcolumn">*fold-foldcolumn*</a><br>
+<br>
+<a class="Type" href="options.html#'foldcolumn'">'foldcolumn'</a>&nbsp;is a number, which sets the width for a column on the side of the<br>
+window to indicate folds.&nbsp;&nbsp;When it is zero, there is no foldcolumn.&nbsp;&nbsp;A normal<br>
+value is 4 or 5.&nbsp;&nbsp;The minimal useful value is 2, although 1 still provides<br>
+some information.&nbsp;&nbsp;The maximum is 12.<br>
+<br>
+An open fold is indicated with a column that has a '-' at the top and '|'<br>
+characters below it.&nbsp;&nbsp;This column stops where the open fold stops.&nbsp;&nbsp;When folds<br>
+nest, the nested fold is one character right of the fold it's contained in.<br>
+<br>
+A closed fold is indicated with a '+'.<br>
+<br>
+Where the fold column is too narrow to display all nested folds, digits are<br>
+shown to indicate the nesting level.<br>
+<br>
+The mouse can also be used to open and close folds by clicking in the<br>
+fold column:<br>
+- Click on a '+' to open the closed fold at this row.<br>
+- Click on any other non-blank character to close the open fold at this row.<br>
+<br>
+<br>
+OTHER OPTIONS<br>
+<br>
+<a class="Type" href="options.html#'foldenable'">'foldenable'</a>&nbsp;&nbsp;<a class="Type" href="options.html#'fen'">'fen'</a>:&nbsp;&nbsp;&nbsp;&nbsp;Open all folds while not set.<br>
+<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'fde'">'fde'</a>:&nbsp;&nbsp;&nbsp;&nbsp;Expression used for &quot;expr&quot; folding.<br>
+<a class="Type" href="options.html#'foldignore'">'foldignore'</a>&nbsp;&nbsp;<a class="Type" href="options.html#'fdi'">'fdi'</a>:&nbsp;&nbsp;&nbsp;&nbsp;Characters used for &quot;indent&quot; folding.<br>
+<a class="Type" href="options.html#'foldmarker'">'foldmarker'</a>&nbsp;&nbsp;<a class="Type" href="options.html#'fmr'">'fmr'</a>:&nbsp;&nbsp;&nbsp;&nbsp;Defined markers used for &quot;marker&quot; folding.<br>
+<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;&nbsp;<a class="Type" href="options.html#'fdm'">'fdm'</a>:&nbsp;&nbsp;&nbsp;&nbsp;Name of the current folding method.<br>
+<a class="Type" href="options.html#'foldminlines'">'foldminlines'</a>&nbsp;<a class="Type" href="options.html#'fml'">'fml'</a>:&nbsp;&nbsp; Minimum number of screen lines for a fold to be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;displayed closed.<br>
+<a class="Type" href="options.html#'foldnestmax'">'foldnestmax'</a>&nbsp;<a class="Type" href="options.html#'fdn'">'fdn'</a>:&nbsp;&nbsp;&nbsp;&nbsp;Maximum nesting for &quot;indent&quot; and &quot;syntax&quot; folding.<br>
+<a class="Type" href="options.html#'foldopen'">'foldopen'</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'fdo'">'fdo'</a>:&nbsp;&nbsp;&nbsp;&nbsp;Which kinds of commands open closed folds.<br>
+<a class="Type" href="options.html#'foldclose'">'foldclose'</a>&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'fcl'">'fcl'</a>:&nbsp;&nbsp;&nbsp;&nbsp;When the folds not under the cursor are closed.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. Behavior of folds&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#fold-behavior" name="fold-behavior">*fold-behavior*</a><br>
+<br>
+When moving the cursor upwards or downwards and when scrolling, the cursor<br>
+will move to the first line of a sequence of folded lines.&nbsp;&nbsp;When the cursor is<br>
+already on a folded line, it moves to the next unfolded line or the next<br>
+closed fold.<br>
+<br>
+While the cursor is on folded lines, the cursor is always displayed in the<br>
+first column.&nbsp;&nbsp;The ruler does show the actual cursor position, but since the<br>
+line is folded, it cannot be displayed there.<br>
+<br>
+Many movement commands handle a sequence of folded lines like an empty line.<br>
+For example, the &quot;w&quot; command stops once in the first column.<br>
+<br>
+When in Insert mode, the cursor line is never folded.&nbsp;&nbsp;That allows you to see<br>
+what you type!<br>
+<br>
+When using an operator, a closed fold is included as a whole.&nbsp;&nbsp;Thus &quot;dl&quot;<br>
+deletes the whole closed fold under the cursor.<br>
+<br>
+For Ex commands that work on buffer lines the range is adjusted to always<br>
+start at the first line of a closed fold and end at the last line of a closed<br>
+fold.&nbsp;&nbsp;Thus this command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:s/foo/bar/g</div>
+when used with the cursor on a closed fold, will replace &quot;foo&quot; with &quot;bar&quot; in<br>
+all lines of the fold.<br>
+This does not happen for&nbsp;<a class="Identifier" href="fold.html#:folddoopen">|:folddoopen|</a>&nbsp;and&nbsp;<a class="Identifier" href="fold.html#:folddoclosed">|:folddoclosed|</a>.<br>
+<br>
+When editing a buffer that has been edited before, the last used folding<br>
+settings are used again.&nbsp;&nbsp;For manual folding the defined folds are restored.<br>
+For all folding methods the manually opened and closed folds are restored.<br>
+If this buffer has been edited in this window, the values from back then are<br>
+used.&nbsp;&nbsp;Otherwise the values from the window where the buffer was edited last<br>
+are used.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

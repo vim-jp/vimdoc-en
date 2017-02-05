@@ -1,0 +1,520 @@
+---
+layout: vimdoc
+helpname: 'usr_04'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_04.html" name="usr_04.txt">*usr_04.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2014 Aug 29<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Making small changes<br>
+<br>
+<br>
+This chapter shows you several ways of making corrections and moving text<br>
+around.&nbsp;&nbsp;It teaches you the three basic ways to change text: operator-motion,<br>
+Visual mode and text objects.<br>
+<br>
+<a class="Identifier" href="usr_04.html#04.1">|04.1|</a>&nbsp;&nbsp;Operators and motions<br>
+<a class="Identifier" href="usr_04.html#04.2">|04.2|</a>&nbsp;&nbsp;Changing text<br>
+<a class="Identifier" href="usr_04.html#04.3">|04.3|</a>&nbsp;&nbsp;Repeating a change<br>
+<a class="Identifier" href="usr_04.html#04.4">|04.4|</a>&nbsp;&nbsp;Visual mode<br>
+<a class="Identifier" href="usr_04.html#04.5">|04.5|</a>&nbsp;&nbsp;Moving text<br>
+<a class="Identifier" href="usr_04.html#04.6">|04.6|</a>&nbsp;&nbsp;Copying text<br>
+<a class="Identifier" href="usr_04.html#04.7">|04.7|</a>&nbsp;&nbsp;Using the clipboard<br>
+<a class="Identifier" href="usr_04.html#04.8">|04.8|</a>&nbsp;&nbsp;Text objects<br>
+<a class="Identifier" href="usr_04.html#04.9">|04.9|</a>&nbsp;&nbsp;Replace mode<br>
+<a class="Identifier" href="usr_04.html#04.10">|04.10|</a>&nbsp;Conclusion<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_05.html">|usr_05.txt|</a>&nbsp;&nbsp;Set your settings<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_03.html">|usr_03.txt|</a>&nbsp;&nbsp;Moving around<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_04.html#04.1" name="04.1">*04.1*</a>&nbsp;&nbsp;Operators and motions<br>
+<br>
+In chapter 2 you learned the &quot;x&quot; command to delete a single character.&nbsp;&nbsp;And<br>
+using a count: &quot;4x&quot; deletes four characters.<br>
+&nbsp;&nbsp; The &quot;dw&quot; command deletes a word.&nbsp;&nbsp;You may recognize the &quot;w&quot; command as the<br>
+move word command.&nbsp;&nbsp;In fact, the &quot;d&quot; command may be followed by any motion<br>
+command, and it deletes from the current location to the place where the<br>
+cursor winds up.<br>
+&nbsp;&nbsp; The &quot;4w&quot; command, for example, moves the cursor over four words.&nbsp;&nbsp;The d4w<br>
+command deletes four words.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human. To really foul up you need a computer.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ------------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; d4w<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human. you need a computer.</span><br>
+<br>
+Vim only deletes up to the position where the motion takes the cursor.&nbsp;&nbsp;That's<br>
+because Vim knows that you probably don't want to delete the first character<br>
+of a word.&nbsp;&nbsp;If you use the &quot;e&quot; command to move to the end of a word, Vim<br>
+guesses that you do want to include that last character:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human. you need a computer.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; d2e<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human. a computer.</span><br>
+<br>
+Whether the character under the cursor is included depends on the command you<br>
+used to move to that character.&nbsp;&nbsp;The reference manual calls this &quot;exclusive&quot;<br>
+when the character isn't included and &quot;inclusive&quot; when it is.<br>
+<br>
+The &quot;$&quot; command moves to the end of a line.&nbsp;&nbsp;The &quot;d$&quot; command deletes from the<br>
+cursor to the end of the line.&nbsp;&nbsp;This is an inclusive motion, thus the last<br>
+character of the line is included in the delete operation:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human. a computer.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d$<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human</span><br>
+<br>
+There is a pattern here: operator-motion.&nbsp;&nbsp;You first type an operator command.<br>
+For example, &quot;d&quot; is the delete operator.&nbsp;&nbsp;Then you type a motion command like<br>
+&quot;4l&quot; or &quot;w&quot;.&nbsp;&nbsp;This way you can operate on any text you can move over.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_04.html#04.2" name="04.2">*04.2*</a>&nbsp;&nbsp;Changing text<br>
+<br>
+Another operator is &quot;c&quot;, change.&nbsp;&nbsp;It acts just like the &quot;d&quot; operator, except<br>
+it leaves you in Insert mode.&nbsp;&nbsp;For example, &quot;cw&quot; changes a word.&nbsp;&nbsp;Or more<br>
+specifically, it deletes a word and then puts you in Insert mode.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; c2wbe<span class="Special">&lt;Esc&gt;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To be human</span><br>
+<br>
+This &quot;c2wbe<span class="Special">&lt;Esc&gt;</span>&quot; contains these bits:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the change operator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;move two words (they are deleted and Insert mode started)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert this text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Esc&gt;</span>&nbsp;&nbsp; back to Normal mode<br>
+<br>
+If you have paid attention, you will have noticed something strange: The space<br>
+before &quot;human&quot; isn't deleted.&nbsp;&nbsp;There is a saying that for every problem there<br>
+is an answer that is simple, clear, and wrong.&nbsp;&nbsp;That is the case with the<br>
+example used here for the &quot;cw&quot; command.&nbsp;&nbsp;The c operator works just like the<br>
+d operator, with one exception: &quot;cw&quot;.&nbsp;&nbsp;It actually works like &quot;ce&quot;, change to<br>
+end of word.&nbsp;&nbsp;Thus the space after the word isn't included.&nbsp;&nbsp;This is an<br>
+exception that dates back to the old Vi.&nbsp;&nbsp;Since many people are used to it<br>
+now, the inconsistency has remained in Vim.<br>
+<br>
+<br>
+MORE CHANGES<br>
+<br>
+Like &quot;dd&quot; deletes a whole line, &quot;cc&quot; changes a whole line.&nbsp;&nbsp;It keeps the<br>
+existing indent (leading white space) though.<br>
+<br>
+Just like &quot;d$&quot; deletes until the end of the line, &quot;c$&quot; changes until the end<br>
+of the line.&nbsp;&nbsp;It's like doing &quot;d$&quot; to delete the text and then &quot;a&quot; to start<br>
+Insert mode and append new text.<br>
+<br>
+<br>
+SHORTCUTS<br>
+<br>
+Some operator-motion commands are used so often that they have been given a<br>
+single letter command:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;stands for&nbsp;&nbsp;dl&nbsp;&nbsp;(delete character under the cursor)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;stands for&nbsp;&nbsp;dh&nbsp;&nbsp;(delete character left of the cursor)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D&nbsp;&nbsp;stands for&nbsp;&nbsp;d$&nbsp;&nbsp;(delete to end of the line)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&nbsp;stands for&nbsp;&nbsp;c$&nbsp;&nbsp;(change to end of the line)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;&nbsp;stands for&nbsp;&nbsp;cl&nbsp;&nbsp;(change one character)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S&nbsp;&nbsp;stands for&nbsp;&nbsp;cc&nbsp;&nbsp;(change a whole line)<br>
+<br>
+<br>
+WHERE TO PUT THE COUNT<br>
+<br>
+The commands &quot;3dw&quot; and &quot;d3w&quot; delete three words.&nbsp;&nbsp;If you want to get really<br>
+picky about things, the first command, &quot;3dw&quot;, deletes one word three times;<br>
+the command &quot;d3w&quot; deletes three words once.&nbsp;&nbsp;This is a difference without a<br>
+distinction.&nbsp;&nbsp;You can actually put in two counts, however.&nbsp;&nbsp;For example,<br>
+&quot;3d2w&quot; deletes two words, repeated three times, for a total of six words.<br>
+<br>
+<br>
+REPLACING WITH ONE CHARACTER<br>
+<br>
+The &quot;r&quot; command is not an operator.&nbsp;&nbsp;It waits for you to type a character, and<br>
+will replace the character under the cursor with it.&nbsp;&nbsp;You could do the same<br>
+with &quot;cl&quot; or with the &quot;s&quot; command, but with &quot;r&quot; you don't have to press&nbsp;<span class="Special">&lt;Esc&gt;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">there is somerhing grong here</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rt&nbsp;&nbsp;&nbsp;&nbsp;rw<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">There is something wrong here</span><br>
+<br>
+Using a count with &quot;r&quot; causes that many characters to be replaced with the<br>
+same character.&nbsp;&nbsp;Example:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">There is something wrong here</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5rx<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">There is something xxxxx here</span><br>
+<br>
+To replace a character with a line break use &quot;r<span class="Special">&lt;Enter&gt;</span>&quot;.&nbsp;&nbsp;This deletes one<br>
+character and inserts a line break.&nbsp;&nbsp;Using a count here only applies to the<br>
+number of characters deleted: &quot;4r<span class="Special">&lt;Enter&gt;</span>&quot; replaces four characters with one<br>
+line break.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_04.html#04.3" name="04.3">*04.3*</a>&nbsp;&nbsp;Repeating a change<br>
+<br>
+The &quot;.&quot; command is one of the most simple yet powerful commands in Vim.&nbsp;&nbsp;It<br>
+repeats the last change.&nbsp;&nbsp;For instance, suppose you are editing an HTML file<br>
+and want to delete all the&nbsp;<span class="Special">&lt;B&gt;</span>&nbsp;tags.&nbsp;&nbsp;You position the cursor on the first &lt;<br>
+and delete the&nbsp;<span class="Special">&lt;B&gt;</span>&nbsp;with the command &quot;df&gt;&quot;.&nbsp;&nbsp;You then go to the &lt; of the next<br>
+&lt;/B&gt; and kill it using the &quot;.&quot; command.&nbsp;&nbsp;The &quot;.&quot; command executes the last<br>
+change command (in this case, &quot;df&gt;&quot;).&nbsp;&nbsp;To delete another tag, position the<br>
+cursor on the &lt; and use the &quot;.&quot; command.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To &lt;B&gt;generate&lt;/B&gt; a table of &lt;B&gt;contents</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f&lt;&nbsp;&nbsp; find first &lt;&nbsp;&nbsp;&nbsp;&nbsp; ---&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df&gt;&nbsp;&nbsp;delete to &gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f&lt;&nbsp;&nbsp; find next &lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ---------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;repeat df&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ---&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f&lt;&nbsp;&nbsp; find next &lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;repeat df&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --&gt;<br>
+<br>
+The &quot;.&quot; command works for all changes you make, except for the &quot;u&quot; (undo),<br>
+<span class="Special">CTRL-R</span>&nbsp;(redo) and commands that start with a colon (:).<br>
+<br>
+Another example: You want to change the word &quot;four&quot; to &quot;five&quot;.&nbsp;&nbsp;It appears<br>
+several times in your text.&nbsp;&nbsp;You can do this quickly with this sequence of<br>
+commands:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/four<span class="Special">&lt;Enter&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;find the first string &quot;four&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cwfive<span class="Special">&lt;Esc&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp; change the word to &quot;five&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; find the next &quot;four&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; repeat the change to &quot;five&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; find the next &quot;four&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; repeat the change<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etc.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_04.html#04.4" name="04.4">*04.4*</a>&nbsp;&nbsp;Visual mode<br>
+<br>
+To delete simple items the operator-motion changes work quite well.&nbsp;&nbsp;But often<br>
+it's not so easy to decide which command will move over the text you want to<br>
+change.&nbsp;&nbsp;Then you can use Visual mode.<br>
+<br>
+You start Visual mode by pressing &quot;v&quot;.&nbsp;&nbsp;You move the cursor over the text you<br>
+want to work on.&nbsp;&nbsp;While you do this, the text is highlighted.&nbsp;&nbsp;Finally type<br>
+the operator command.<br>
+&nbsp;&nbsp; For example, to delete from halfway one word to halfway another word:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">This is an examination sample of visual mode</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ----------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; velllld<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">This is an example of visual mode</span><br>
+<br>
+When doing this you don't really have to count how many times you have to<br>
+press &quot;l&quot; to end up in the right position.&nbsp;&nbsp;You can immediately see what text<br>
+will be deleted when you press &quot;d&quot;.<br>
+<br>
+If at any time you decide you don't want to do anything with the highlighted<br>
+text, just press&nbsp;<span class="Special">&lt;Esc&gt;</span>&nbsp;and Visual mode will stop without doing anything.<br>
+<br>
+<br>
+SELECTING LINES<br>
+<br>
+If you want to work on whole lines, use &quot;V&quot; to start Visual mode.&nbsp;&nbsp;You will<br>
+see right away that the whole line is highlighted, without moving around.<br>
+When you move left or right nothing changes.&nbsp;&nbsp;When you move up or down the<br>
+selection is extended whole lines at a time.<br>
+&nbsp;&nbsp; For example, select three lines with &quot;Vjj&quot;:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| text more text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &gt;&gt; | more text more text&nbsp;&nbsp;&nbsp;&nbsp;| |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;selected lines &gt;&gt; | text text text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | | Vjj<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &gt;&gt; | text more&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| V<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| more text more&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+------------------------+<br>
+<br>
+<br>
+SELECTING BLOCKS<br>
+<br>
+If you want to work on a rectangular block of characters, use&nbsp;<span class="Special">CTRL-V</span>&nbsp;to start<br>
+Visual mode.&nbsp;&nbsp;This is very useful when working on tables.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pierre&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;123&nbsp;&nbsp;&nbsp;&nbsp; 455&nbsp;&nbsp;&nbsp;&nbsp; 234<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;john&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 90&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;39<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;steve&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 392&nbsp;&nbsp;&nbsp;&nbsp; 63&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;334<br>
+<br>
+To delete the middle &quot;Q2&quot; column, move the cursor to the &quot;Q&quot; of &quot;Q2&quot;.&nbsp;&nbsp;Press<br>
+<span class="Special">CTRL-V</span>&nbsp;to start blockwise Visual mode.&nbsp;&nbsp;Now move the cursor three lines down<br>
+with &quot;3j&quot; and to the next word with &quot;w&quot;.&nbsp;&nbsp;You can see the first character of<br>
+the last column is included.&nbsp;&nbsp;To exclude it, use &quot;h&quot;.&nbsp;&nbsp;Now press &quot;d&quot; and the<br>
+middle column is gone.<br>
+<br>
+<br>
+GOING TO THE OTHER SIDE<br>
+<br>
+If you have selected some text in Visual mode, and discover that you need to<br>
+change the other end of the selection, use the &quot;o&quot; command (Hint: o for other<br>
+end).&nbsp;&nbsp;The cursor will go to the other end, and you can move the cursor to<br>
+change where the selection starts.&nbsp;&nbsp;Pressing &quot;o&quot; again brings you back to the<br>
+other end.<br>
+<br>
+When using blockwise selection, you have four corners.&nbsp;&nbsp;&quot;o&quot; only takes you to<br>
+one of the other corners, diagonally.&nbsp;&nbsp;Use &quot;O&quot; to move to the other corner in<br>
+the same line.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that &quot;o&quot; and &quot;O&quot; in Visual mode work very differently from Normal mode,<br>
+where they open a new line below or above the cursor.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_04.html#04.5" name="04.5">*04.5*</a>&nbsp;&nbsp;Moving text<br>
+<br>
+When you delete something with the &quot;d&quot;, &quot;x&quot;, or another command, the text is<br>
+saved.&nbsp;&nbsp;You can paste it back by using the p command.&nbsp;&nbsp;(The Vim name for<br>
+this is put).<br>
+&nbsp;&nbsp; Take a look at how this works.&nbsp;&nbsp;First you will delete an entire line, by<br>
+putting the cursor on the line you want to delete and typing &quot;dd&quot;.&nbsp;&nbsp;Now you<br>
+move the cursor to where you want to put the line and use the &quot;p&quot; (put)<br>
+command.&nbsp;&nbsp;The line is inserted on the line below the cursor.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line 2&nbsp;&nbsp;&nbsp;&nbsp;dd&nbsp;&nbsp;&nbsp;&nbsp;line 3&nbsp;&nbsp;&nbsp;&nbsp;p&nbsp;&nbsp; line 3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line 2<br>
+<br>
+Because you deleted an entire line, the &quot;p&quot; command placed the text line below<br>
+the cursor.&nbsp;&nbsp;If you delete part of a line (a word, for instance), the &quot;p&quot;<br>
+command puts it just after the cursor.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Some more boring try text to out commands.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ----&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Some more boring text to out commands.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;welp<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Some more boring text to try out commands.</span><br>
+<br>
+<br>
+MORE ON PUTTING<br>
+<br>
+The &quot;P&quot; command puts text like &quot;p&quot;, but before the cursor.&nbsp;&nbsp;When you deleted a<br>
+whole line with &quot;dd&quot;, &quot;P&quot; will put it back above the cursor.&nbsp;&nbsp;When you deleted<br>
+a word with &quot;dw&quot;, &quot;P&quot; will put it back just before the cursor.<br>
+<br>
+You can repeat putting as many times as you like.&nbsp;&nbsp;The same text will be used.<br>
+<br>
+You can use a count with &quot;p&quot; and &quot;P&quot;.&nbsp;&nbsp;The text will be repeated as many times<br>
+as specified with the count.&nbsp;&nbsp;Thus &quot;dd&quot; and then &quot;3p&quot; puts three copies of the<br>
+same deleted line.<br>
+<br>
+<br>
+SWAPPING TWO CHARACTERS<br>
+<br>
+Frequently when you are typing, your fingers get ahead of your brain (or the<br>
+other way around?).&nbsp;&nbsp;The result is a typo such as &quot;teh&quot; for &quot;the&quot;.&nbsp;&nbsp;Vim<br>
+makes it easy to correct such problems.&nbsp;&nbsp;Just put the cursor on the e of &quot;teh&quot;<br>
+and execute the command &quot;xp&quot;.&nbsp;&nbsp;This works as follows: &quot;x&quot; deletes the<br>
+character e and places it in a register.&nbsp;&nbsp;&quot;p&quot; puts the text after the cursor,<br>
+which is after the h.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">teh&nbsp;&nbsp;&nbsp;&nbsp; th&nbsp;&nbsp;&nbsp;&nbsp; the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; p<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_04.html#04.6" name="04.6">*04.6*</a>&nbsp;&nbsp;Copying text<br>
+<br>
+To copy text from one place to another, you could delete it, use &quot;u&quot; to undo<br>
+the deletion and then &quot;p&quot; to put it somewhere else.&nbsp;&nbsp;There is an easier way:<br>
+yanking.&nbsp;&nbsp;The &quot;y&quot; operator copies text into a register.&nbsp;&nbsp;Then a &quot;p&quot; command<br>
+can be used to put it.<br>
+&nbsp;&nbsp; Yanking is just a Vim name for copying.&nbsp;&nbsp;The &quot;c&quot; letter was already used<br>
+for the change operator, and &quot;y&quot; was still available.&nbsp;&nbsp;Calling this<br>
+operator &quot;yank&quot; made it easier to remember to use the &quot;y&quot; key.<br>
+<br>
+Since &quot;y&quot; is an operator, you use &quot;yw&quot; to yank a word.&nbsp;&nbsp;A count is possible as<br>
+usual.&nbsp;&nbsp;To yank two words use &quot;y2w&quot;.&nbsp;&nbsp;Example:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">let sqr = LongVariable *</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y2w<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">let sqr = LongVariable *</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; p<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">let sqr = LongVariable * LongVariable</span><br>
+<br>
+Notice that &quot;yw&quot; includes the white space after a word.&nbsp;&nbsp;If you don't want<br>
+this, use &quot;ye&quot;.<br>
+<br>
+The &quot;yy&quot; command yanks a whole line, just like &quot;dd&quot; deletes a whole line.<br>
+Unexpectedly, while &quot;D&quot; deletes from the cursor to the end of the line, &quot;Y&quot;<br>
+works like &quot;yy&quot;, it yanks the whole line.&nbsp;&nbsp;Watch out for this inconsistency!<br>
+Use &quot;y$&quot; to yank to the end of the line.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a text line&nbsp;&nbsp; yy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a text line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a text line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line 2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;last line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; last line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a text line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; last line<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_04.html#04.7" name="04.7">*04.7*</a>&nbsp;&nbsp;Using the clipboard<br>
+<br>
+If you are using the GUI version of Vim (gvim), you can find the &quot;Copy&quot; item<br>
+in the &quot;Edit&quot; menu.&nbsp;&nbsp;First select some text with Visual mode, then use the<br>
+Edit/Copy menu.&nbsp;&nbsp;The selected text is now copied to the clipboard.&nbsp;&nbsp;You can<br>
+paste the text in other programs.&nbsp;&nbsp;In Vim itself too.<br>
+<br>
+If you have copied text to the clipboard in another application, you can paste<br>
+it in Vim with the Edit/Paste menu.&nbsp;&nbsp;This works in Normal mode and Insert<br>
+mode.&nbsp;&nbsp;In Visual mode the selected text is replaced with the pasted text.<br>
+<br>
+The &quot;Cut&quot; menu item deletes the text before it's put on the clipboard.&nbsp;&nbsp;The<br>
+&quot;Copy&quot;, &quot;Cut&quot; and &quot;Paste&quot; items are also available in the popup menu (only<br>
+when there is a popup menu, of course).&nbsp;&nbsp;If your Vim has a toolbar, you can<br>
+also find these items there.<br>
+<br>
+If you are not using the GUI, or if you don't like using a menu, you have to<br>
+use another way.&nbsp;&nbsp;You use the normal &quot;y&quot; (yank) and &quot;p&quot; (put) commands, but<br>
+prepend &quot;* (double-quote star) before it.&nbsp;&nbsp;To copy a line to the clipboard:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;*yy</div>
+<br>
+To put text from the clipboard back into the text:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;*p</div>
+<br>
+This only works on versions of Vim that include clipboard support.&nbsp;&nbsp;More about<br>
+the clipboard in section&nbsp;<a class="Identifier" href="usr_09.html#09.3">|09.3|</a>&nbsp;and here:&nbsp;<a class="Identifier" href="gui.html#clipboard">|clipboard|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_04.html#04.8" name="04.8">*04.8*</a>&nbsp;&nbsp;Text objects<br>
+<br>
+If the cursor is in the middle of a word and you want to delete that word, you<br>
+need to move back to its start before you can do &quot;dw&quot;.&nbsp;&nbsp;There is a simpler way<br>
+to do this: &quot;daw&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">this is some example text.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; daw<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">this is some text.</span><br>
+<br>
+The &quot;d&quot; of &quot;daw&quot; is the delete operator.&nbsp;&nbsp;&quot;aw&quot; is a text object.&nbsp;&nbsp;Hint: &quot;aw&quot;<br>
+stands for &quot;A Word&quot;.&nbsp;&nbsp;Thus &quot;daw&quot; is &quot;Delete A Word&quot;.&nbsp;&nbsp;To be precise, the white<br>
+space after the word is also deleted (the white space before the word at the<br>
+end of the line).<br>
+<br>
+Using text objects is the third way to make changes in Vim.&nbsp;&nbsp;We already had<br>
+operator-motion and Visual mode.&nbsp;&nbsp;Now we add operator-text object.<br>
+&nbsp;&nbsp; It is very similar to operator-motion, but instead of operating on the text<br>
+between the cursor position before and after a movement command, the text<br>
+object is used as a whole.&nbsp;&nbsp;It doesn't matter where in the object the cursor<br>
+was.<br>
+<br>
+To change a whole sentence use &quot;cis&quot;.&nbsp;&nbsp;Take this text:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Hello there.&nbsp;&nbsp;This</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">is an example.&nbsp;&nbsp;Just</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">some text.</span><br>
+<br>
+Move to the start of the second line, on &quot;is an&quot;.&nbsp;&nbsp;Now use &quot;cis&quot;:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Hello there.&nbsp;&nbsp;&nbsp;&nbsp;Just</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">some text.</span><br>
+<br>
+The cursor is in between the blanks in the first line.&nbsp;&nbsp;Now you type the new<br>
+sentence &quot;Another line.&quot;:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Hello there.&nbsp;&nbsp;Another line.&nbsp;&nbsp;Just</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">some text.</span><br>
+<br>
+&quot;cis&quot; consists of the &quot;c&quot; (change) operator and the &quot;is&quot; text object.&nbsp;&nbsp;This<br>
+stands for &quot;Inner Sentence&quot;.&nbsp;&nbsp;There is also the &quot;as&quot; (a sentence) object.&nbsp;&nbsp;The<br>
+difference is that &quot;as&quot; includes the white space after the sentence and &quot;is&quot;<br>
+doesn't.&nbsp;&nbsp;If you would delete a sentence, you want to delete the white space<br>
+at the same time, thus use &quot;das&quot;.&nbsp;&nbsp;If you want to type new text the white<br>
+space can remain, thus you use &quot;cis&quot;.<br>
+<br>
+You can also use text objects in Visual mode.&nbsp;&nbsp;It will include the text object<br>
+in the Visual selection.&nbsp;&nbsp;Visual mode continues, thus you can do this several<br>
+times.&nbsp;&nbsp;For example, start Visual mode with &quot;v&quot; and select a sentence with<br>
+&quot;as&quot;.&nbsp;&nbsp;Now you can repeat &quot;as&quot; to include more sentences.&nbsp;&nbsp;Finally you use an<br>
+operator to do something with the selected sentences.<br>
+<br>
+You can find a long list of text objects here:&nbsp;<a class="Identifier" href="motion.html#text-objects">|text-objects|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_04.html#04.9" name="04.9">*04.9*</a>&nbsp;&nbsp;Replace mode<br>
+<br>
+The &quot;R&quot; command causes Vim to enter replace mode.&nbsp;&nbsp;In this mode, each<br>
+character you type replaces the one under the cursor.&nbsp;&nbsp;This continues until<br>
+you type&nbsp;<span class="Special">&lt;Esc&gt;</span>.<br>
+&nbsp;&nbsp; In this example you start Replace mode on the first &quot;t&quot; of &quot;text&quot;:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">This is text.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rinteresting.<span class="Special">&lt;Esc&gt;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">This is interesting.</span><br>
+<br>
+You may have noticed that this command replaced 5 characters in the line with<br>
+twelve others.&nbsp;&nbsp;The &quot;R&quot; command automatically extends the line if it runs out<br>
+of characters to replace.&nbsp;&nbsp;It will not continue on the next line.<br>
+<br>
+You can switch between Insert mode and Replace mode with the&nbsp;<span class="Special">&lt;Insert&gt;</span>&nbsp;key.<br>
+<br>
+When you use&nbsp;<span class="Special">&lt;BS&gt;</span>&nbsp;(backspace) to make correction, you will notice that the<br>
+old text is put back.&nbsp;&nbsp;Thus it works like an undo command for the last typed<br>
+character.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_04.html#04.10" name="04.10">*04.10*</a>&nbsp;Conclusion<br>
+<br>
+The operators, movement commands and text objects give you the possibility to<br>
+make lots of combinations.&nbsp;&nbsp;Now that you know how it works, you can use&nbsp;<span class="Special">N</span><br>
+operators with M movement commands to make&nbsp;<span class="Special">N</span>&nbsp;* M commands!<br>
+<br>
+You can find a list of operators here:&nbsp;<a class="Identifier" href="motion.html#operator">|operator|</a><br>
+<br>
+For example, there are many other ways to delete pieces of text.&nbsp;&nbsp;Here are a<br>
+few often used ones:<br>
+<br>
+x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete character under the cursor (short for &quot;dl&quot;)<br>
+X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete character before the cursor (short for &quot;dh&quot;)<br>
+D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete from cursor to end of line (short for &quot;d$&quot;)<br>
+dw&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete from cursor to next start of word<br>
+db&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete from cursor to previous start of word<br>
+diw&nbsp;&nbsp;&nbsp;&nbsp; delete word under the cursor (excluding white space)<br>
+daw&nbsp;&nbsp;&nbsp;&nbsp; delete word under the cursor (including white space)<br>
+dG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete until the end of the file<br>
+dgg&nbsp;&nbsp;&nbsp;&nbsp; delete until the start of the file<br>
+<br>
+If you use &quot;c&quot; instead of &quot;d&quot; they become change commands.&nbsp;&nbsp;And with &quot;y&quot; you<br>
+yank the text.&nbsp;&nbsp;And so forth.<br>
+<br>
+<br>
+There are a few often used commands to make changes that didn't fit somewhere<br>
+else:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; change case of the character under the cursor, and move the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cursor to the next character.&nbsp;&nbsp;This is not an operator (unless<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'tildeop'">'tildeop'</a>&nbsp;is set), thus you can't use it with a motion<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command.&nbsp;&nbsp;It does work in Visual mode and changes case for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;all the selected text then.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Start Insert mode after moving the cursor to the first<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-blank in the line.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Start Insert mode after moving the cursor to the end of the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_05.html">|usr_05.txt|</a>&nbsp;&nbsp;Set your settings<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

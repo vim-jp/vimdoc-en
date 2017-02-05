@@ -1,0 +1,146 @@
+---
+layout: vimdoc
+helpname: 'debugger'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="debugger.html" name="debugger.txt">*debugger.txt*</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2005 Mar 29<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Gordon Prieur</span><br>
+<br>
+<br>
+Debugger Support Features&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debugger.html#debugger-support" name="debugger-support">*debugger-support*</a><br>
+<br>
+1. Debugger Features&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debugger.html#debugger-features">|debugger-features|</a><br>
+2. Vim Compile Options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debugger.html#debugger-compilation">|debugger-compilation|</a><br>
+3. Integrated Debuggers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debugger.html#debugger-integration">|debugger-integration|</a><br>
+<br>
+<span class="Special">{Vi does not have any of these features}</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Debugger Features&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debugger.html#debugger-features" name="debugger-features">*debugger-features*</a><br>
+<br>
+The following features are available for an integration with a debugger or<br>
+an Integrated Programming Environment (IPE) or Integrated Development<br>
+Environment (IDE):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alternate Command Input&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debugger.html#alt-input">|alt-input|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Debug Signs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debugger.html#debug-signs">|debug-signs|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Debug Source Highlight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debugger.html#debug-highlight">|debug-highlight|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Message Footer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debugger.html#gui-footer">|gui-footer|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Balloon Evaluation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debugger.html#balloon-eval">|balloon-eval|</a><br>
+<br>
+These features were added specifically for use in the Motif version of gvim.<br>
+However, the&nbsp;<a class="Identifier" href="debugger.html#alt-input">|alt-input|</a>&nbsp;and&nbsp;<a class="Identifier" href="debugger.html#debug-highlight">|debug-highlight|</a>&nbsp;were written to be usable in<br>
+both vim and gvim.&nbsp;&nbsp;Some of the other features could be used in the non-GUI<br>
+vim with slight modifications.&nbsp;&nbsp;However, I did not do this nor did I test the<br>
+reliability of building for vim or non Motif GUI versions.<br>
+<br>
+<br>
+1.1 Alternate Command Input&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debugger.html#alt-input" name="alt-input">*alt-input*</a><br>
+<br>
+For Vim to work with a debugger there must be at least an input connection<br>
+with a debugger or external tool.&nbsp;&nbsp;In many cases there will also be an output<br>
+connection but this isn't absolutely necessary.<br>
+<br>
+The purpose of the input connection is to let the external debugger send<br>
+commands to Vim.&nbsp;&nbsp;The commands sent by the debugger should give the debugger<br>
+enough control to display the current debug environment and state.<br>
+<br>
+The current implementation is based on the X Toolkit dispatch loop and the<br>
+XtAddInput() function call.<br>
+<br>
+<br>
+1.2 Debug Signs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debugger.html#debug-signs" name="debug-signs">*debug-signs*</a><br>
+<br>
+Many debuggers mark specific lines by placing a small sign or color highlight<br>
+on the line.&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="sign.html#:sign">|:sign|</a>&nbsp;command lets the debugger set this graphic mark.&nbsp;&nbsp;Some<br>
+examples where this feature would be used would be a debugger showing an arrow<br>
+representing the Program Counter (PC) of the program being debugged.&nbsp;&nbsp;Another<br>
+example would be a small stop sign for a line with a breakpoint.&nbsp;&nbsp;These visible<br>
+highlights let the user keep track of certain parts of the state of the<br>
+debugger.<br>
+<br>
+This feature can be used with more than debuggers, too.&nbsp;&nbsp;An IPE can use a sign<br>
+to highlight build errors, searched text, or other things.&nbsp;&nbsp;The sign feature<br>
+can also work together with the&nbsp;<a class="Identifier" href="debugger.html#debug-highlight">|debug-highlight|</a>&nbsp;to ensure the mark is<br>
+highly visible.<br>
+<br>
+Debug signs are defined and placed using the&nbsp;<a class="Identifier" href="sign.html#:sign">|:sign|</a>&nbsp;command.<br>
+<br>
+<br>
+1.3 Debug Source Highlight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debugger.html#debug-highlight" name="debug-highlight">*debug-highlight*</a><br>
+<br>
+This feature allows a line to have a predominant highlight.&nbsp;&nbsp;The highlight is<br>
+intended to make a specific line stand out.&nbsp;&nbsp;The highlight could be made to<br>
+work for both vim and gvim, whereas the debug sign is, in most cases, limited<br>
+to gvim.&nbsp;&nbsp;The one exception to this is Sun Microsystem's dtterm.&nbsp;&nbsp;The dtterm<br>
+from Sun has a &quot;sign gutter&quot; for showing signs.<br>
+<br>
+<br>
+1.4 Message Footer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debugger.html#gui-footer" name="gui-footer">*gui-footer*</a><br>
+<br>
+The message footer can be used to display messages from a debugger or IPE.&nbsp;&nbsp;It<br>
+can also be used to display menu and toolbar tips.&nbsp;&nbsp;The footer area is at the<br>
+bottom of the GUI window, below the line used to display colon commands.<br>
+<br>
+The display of the footer is controlled by the&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a>&nbsp;letter 'F'.<br>
+<br>
+<br>
+1.5 Balloon Evaluation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debugger.html#balloon-eval" name="balloon-eval">*balloon-eval*</a><br>
+<br>
+This feature allows a debugger, or other external tool, to display dynamic<br>
+information based on where the mouse is pointing.&nbsp;&nbsp;The purpose of this feature<br>
+was to allow Sun's Visual WorkShop debugger to display expression evaluations.<br>
+However, the feature was implemented in as general a manner as possible and<br>
+could be used for displaying other information as well.<br>
+<br>
+The Balloon Evaluation has some settable parameters too.&nbsp;&nbsp;For Motif the font<br>
+list and colors can be set via X resources (XmNballoonEvalFontList,<br>
+XmNballoonEvalBackground, and XmNballoonEvalForeground).<br>
+The&nbsp;<a class="Type" href="options.html#'balloondelay'">'balloondelay'</a>&nbsp;option sets the delay before an attempt is made to show a<br>
+balloon.<br>
+The&nbsp;<a class="Type" href="options.html#'ballooneval'">'ballooneval'</a>&nbsp;option needs to be set to switch it on.<br>
+<br>
+Balloon evaluation is only available when compiled with the&nbsp;<a class="Identifier" href="various.html#+balloon_eval">|+balloon_eval|</a><br>
+feature.<br>
+<br>
+The Balloon evaluation functions are also used to show a tooltip for the<br>
+toolbar.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'ballooneval'">'ballooneval'</a>&nbsp;option does not need to be set for this.&nbsp;&nbsp;But the<br>
+other settings apply.<br>
+<br>
+Another way to use the balloon is with the&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>&nbsp;option.&nbsp;&nbsp;This is<br>
+completely user definable.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Vim Compile Options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debugger.html#debugger-compilation" name="debugger-compilation">*debugger-compilation*</a><br>
+<br>
+The debugger features were added explicitly for use with Sun's Visual<br>
+WorkShop Integrated Programming Environment (ipe).&nbsp;&nbsp;However, they were done<br>
+in as generic a manner as possible so that integration with other debuggers<br>
+could also use some or all of the tools used with Sun's ipe.<br>
+<br>
+The following compile time preprocessor variables control the features:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Alternate Command Input&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ALT_X_INPUT<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Debug Glyphs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FEAT_SIGNS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Debug Highlights&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FEAT_SIGNS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Message Footer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FEAT_FOOTER<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Balloon Evaluation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FEAT_BEVAL<br>
+<br>
+The first integration with a full IPE/IDE was with Sun Visual WorkShop.&nbsp;&nbsp;To<br>
+compile a gvim which interfaces with VWS set the following flag, which sets<br>
+all the above flags:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Sun Visual WorkShop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FEAT_SUN_WORKSHOP<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Integrated Debuggers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debugger.html#debugger-integration" name="debugger-integration">*debugger-integration*</a><br>
+<br>
+One fully integrated debugger/IPE/IDE is Sun's Visual WorkShop Integrated<br>
+Programming Environment.<br>
+<br>
+For Sun NetBeans support see&nbsp;<a class="Identifier" href="netbeans.html#netbeans">|netbeans|</a>.<br>
+<br>
+&nbsp;vim:tw=78:sw=4:ts=8:ft=help:norl:<br>
+</div>

@@ -1,0 +1,505 @@
+---
+layout: vimdoc
+helpname: 'usr_21'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_21.html" name="usr_21.txt">*usr_21.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2012 Nov 02<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Go away and come back<br>
+<br>
+<br>
+This chapter goes into mixing the use of other programs with Vim.&nbsp;&nbsp;Either by<br>
+executing program from inside Vim or by leaving Vim and coming back later.<br>
+Furthermore, this is about the ways to remember the state of Vim and restore<br>
+it later.<br>
+<br>
+<a class="Identifier" href="usr_21.html#21.1">|21.1|</a>&nbsp;&nbsp;Suspend and resume<br>
+<a class="Identifier" href="usr_21.html#21.2">|21.2|</a>&nbsp;&nbsp;Executing shell commands<br>
+<a class="Identifier" href="usr_21.html#21.3">|21.3|</a>&nbsp;&nbsp;Remembering information; viminfo<br>
+<a class="Identifier" href="usr_21.html#21.4">|21.4|</a>&nbsp;&nbsp;Sessions<br>
+<a class="Identifier" href="usr_21.html#21.5">|21.5|</a>&nbsp;&nbsp;Views<br>
+<a class="Identifier" href="usr_21.html#21.6">|21.6|</a>&nbsp;&nbsp;Modelines<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_22.html">|usr_22.txt|</a>&nbsp;&nbsp;Finding the file to edit<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_20.html">|usr_20.txt|</a>&nbsp;&nbsp;Typing command-line commands quickly<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_21.html#21.1" name="21.1">*21.1*</a>&nbsp;&nbsp;Suspend and resume<br>
+<br>
+Like most Unix programs Vim can be suspended by pressing&nbsp;<span class="Special">CTRL-Z</span>.&nbsp;&nbsp;This stops<br>
+Vim and takes you back to the shell it was started in.&nbsp;&nbsp;You can then do any<br>
+other commands until you are bored with them.&nbsp;&nbsp;Then bring back Vim with the<br>
+&quot;fg&quot; command.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTRL-Z<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{any sequence of shell commands}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fg</div>
+<br>
+You are right back where you left Vim, nothing has changed.<br>
+&nbsp;&nbsp; In case pressing&nbsp;<span class="Special">CTRL-Z</span>&nbsp;doesn't work, you can also use &quot;:suspend&quot;.<br>
+Don't forget to bring Vim back to the foreground, you would lose any changes<br>
+that you made!<br>
+<br>
+Only Unix has support for this.&nbsp;&nbsp;On other systems Vim will start a shell for<br>
+you.&nbsp;&nbsp;This also has the functionality of being able to execute shell commands.<br>
+But it's a new shell, not the one that you started Vim from.<br>
+&nbsp;&nbsp; When you are running the GUI you can't go back to the shell where Vim was<br>
+started.&nbsp;&nbsp;<span class="Special">CTRL-Z</span>&nbsp;will minimize the Vim window instead.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_21.html#21.2" name="21.2">*21.2*</a>&nbsp;&nbsp;Executing shell commands<br>
+<br>
+To execute a single shell command from Vim use &quot;:!<span class="Special">{command}</span>&quot;.&nbsp;&nbsp;For example, to<br>
+see a directory listing:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!ls<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!dir</div>
+<br>
+The first one is for Unix, the second one for MS-Windows.<br>
+&nbsp;&nbsp; Vim will execute the program.&nbsp;&nbsp;When it ends you will get a prompt to hit<br>
+<span class="Special">&lt;Enter&gt;</span>.&nbsp;&nbsp;This allows you to have a look at the output from the command before<br>
+returning to the text you were editing.<br>
+&nbsp;&nbsp; The &quot;!&quot; is also used in other places where a program is run.&nbsp;&nbsp;Let's take<br>
+a look at an overview:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!<span class="Special">{program}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; execute&nbsp;<span class="Special">{program}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:r !<span class="Special">{program}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; execute&nbsp;<span class="Special">{program}</span>&nbsp;and read its output<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:w !<span class="Special">{program}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; execute&nbsp;<span class="Special">{program}</span>&nbsp;and send text to its input<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:<span class="Special">[range]</span>!<span class="Special">{program}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter text through&nbsp;<span class="Special">{program}</span><br>
+<br>
+Notice that the presence of a range before &quot;!<span class="Special">{program}</span>&quot; makes a big<br>
+difference.&nbsp;&nbsp;Without it executes the program normally, with the range a number<br>
+of text lines is filtered through the program.<br>
+<br>
+Executing a whole row of programs this way is possible.&nbsp;&nbsp;But a shell is much<br>
+better at it.&nbsp;&nbsp;You can start a new shell this way:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:shell</div>
+<br>
+This is similar to using&nbsp;<span class="Special">CTRL-Z</span>&nbsp;to suspend Vim.&nbsp;&nbsp;The difference is that a new<br>
+shell is started.<br>
+<br>
+When using the GUI the shell will be using the Vim window for its input and<br>
+output.&nbsp;&nbsp;Since Vim is not a terminal emulator, this will not work perfectly.<br>
+If you have trouble, try toggling the&nbsp;<a class="Type" href="options.html#'guipty'">'guipty'</a>&nbsp;option.&nbsp;&nbsp;If this still doesn't<br>
+work well enough, start a new terminal to run the shell in.&nbsp;&nbsp;For example with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!xterm&amp;</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_21.html#21.3" name="21.3">*21.3*</a>&nbsp;&nbsp;Remembering information; viminfo<br>
+<br>
+After editing for a while you will have text in registers, marks in various<br>
+files, a command line history filled with carefully crafted commands.&nbsp;&nbsp;When<br>
+you exit Vim all of this is lost.&nbsp;&nbsp;But you can get it back!<br>
+<br>
+The viminfo file is designed to store status information:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Command-line and Search pattern history<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Text in registers<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marks for various files<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The buffer list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Global variables<br>
+<br>
+Each time you exit Vim it will store this information in a file, the viminfo<br>
+file.&nbsp;&nbsp;When Vim starts again, the viminfo file is read and the information<br>
+restored.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'viminfo'">'viminfo'</a>&nbsp;option is set by default to restore a limited number of items.<br>
+You might want to set it to remember more information.&nbsp;&nbsp;This is done through<br>
+the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set viminfo=string</div>
+<br>
+The string specifies what to save.&nbsp;&nbsp;The syntax of this string is an option<br>
+character followed by an argument.&nbsp;&nbsp;The option/argument pairs are separated by<br>
+commas.<br>
+&nbsp;&nbsp; Take a look at how you can build up your own viminfo string.&nbsp;&nbsp;First, the '<br>
+option is used to specify how many files for which you save marks (a-z).&nbsp;&nbsp;Pick<br>
+a nice even number for this option (1000, for instance).&nbsp;&nbsp;Your command now<br>
+looks like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set viminfo='1000</div>
+<br>
+The f option controls whether global marks (A-Z and 0-9) are stored.&nbsp;&nbsp;If this<br>
+option is 0, none are stored.&nbsp;&nbsp;If it is 1 or you do not specify an f option,<br>
+the marks are stored.&nbsp;&nbsp;You want this feature, so now you have this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set viminfo='1000,f1</div>
+<br>
+The &lt; option controls how many lines are saved for each of the registers.&nbsp;&nbsp;By<br>
+default, all the lines are saved.&nbsp;&nbsp;If 0, nothing is saved.&nbsp;&nbsp;To avoid adding<br>
+thousands of lines to your viminfo file (which might never get used and makes<br>
+starting Vim slower) you use a maximum of 500 lines:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set viminfo='1000,f1,&lt;500</div>
+<br>
+Other options you might want to use:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; number of lines to save from the command line history<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; number of lines to save from the input line history<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; number of lines to save from the search history<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; removable media, for which no marks will be stored (can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used several times)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; global variables that start with an uppercase letter and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;don't contain lowercase letters<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; disable&nbsp;<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;highlighting when starting<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the buffer list (only restored when starting Vim without file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arguments)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; convert the text using&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name used for the viminfo file (must be the last option)<br>
+<br>
+See the&nbsp;<a class="Type" href="options.html#'viminfo'">'viminfo'</a>&nbsp;option and&nbsp;<a class="Identifier" href="starting.html#viminfo-file">|viminfo-file|</a>&nbsp;for more information.<br>
+<br>
+When you run Vim multiple times, the last one exiting will store its<br>
+information.&nbsp;&nbsp;This may cause information that previously exiting Vims stored<br>
+to be lost.&nbsp;&nbsp;Each item can be remembered only once.<br>
+<br>
+<br>
+GETTING BACK TO WHERE YOU STOPPED VIM<br>
+<br>
+You are halfway editing a file and it's time to leave for holidays.&nbsp;&nbsp;You exit<br>
+Vim and go enjoy yourselves, forgetting all about your work.&nbsp;&nbsp;After a couple<br>
+of weeks you start Vim, and type:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'0</div>
+<br>
+And you are right back where you left Vim.&nbsp;&nbsp;So you can get on with your work.<br>
+&nbsp;&nbsp; Vim creates a mark each time you exit Vim.&nbsp;&nbsp;The last one is '0.&nbsp;&nbsp;The<br>
+position that '0 pointed to is made '1.&nbsp;&nbsp;And '1 is made to '2, and so forth.<br>
+Mark '9 is lost.<br>
+&nbsp;&nbsp; The&nbsp;<a class="Identifier" href="motion.html#:marks">|:marks|</a>&nbsp;command is useful to find out where '0 to '9 will take you.<br>
+<br>
+<br>
+GETTING BACK TO SOME FILE<br>
+<br>
+If you want to go back to a file that you edited recently, but not when<br>
+exiting Vim, there is a slightly more complicated way.&nbsp;&nbsp;You can see a list of<br>
+files by typing the command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:oldfiles</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">1: ~/.viminfo</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">2: ~/text/resume.txt</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">3: /tmp/draft</span><br>
+<br>
+Now you would like to edit the second file, which is in the list preceded by<br>
+&quot;2:&quot;.&nbsp;&nbsp;You type:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:e #&lt;2</div>
+<br>
+Instead of &quot;:e&quot; you can use any command that has a file name argument, the<br>
+&quot;#&lt;2&quot; item works in the same place as &quot;%&quot; (current file name) and &quot;#&quot;<br>
+(alternate file name).&nbsp;&nbsp;So you can also split the window to edit the third<br>
+file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:split #&lt;3</div>
+<br>
+That #&lt;123 thing is a bit complicated when you just want to edit a file.<br>
+Fortunately there is a simpler way:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:browse oldfiles</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">1: ~/.viminfo</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">2: ~/text/resume.txt</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">3: /tmp/draft</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- More --<br>
+<br>
+You get the same list of files as with&nbsp;<a class="Identifier" href="starting.html#:oldfiles">|:oldfiles|</a>.&nbsp;&nbsp;If you want to edit<br>
+&quot;resume.txt&quot; first press &quot;q&quot; to stop the listing.&nbsp;&nbsp;You will get a prompt:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Type number and &lt;Enter&gt; (empty cancels):</span><br>
+<br>
+Type &quot;2&quot; and press&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;to edit the second file.<br>
+<br>
+More info at&nbsp;<a class="Identifier" href="starting.html#:oldfiles">|:oldfiles|</a>,&nbsp;<a class="Identifier" href="eval.html#v:oldfiles">|v:oldfiles|</a>&nbsp;and&nbsp;<a class="Identifier" href="cmdline.html#c_#<">|c_#&lt;|</a>.<br>
+<br>
+<br>
+MOVE INFO FROM ONE VIM TO ANOTHER<br>
+<br>
+You can use the &quot;:wviminfo&quot; and &quot;:rviminfo&quot; commands to save and restore the<br>
+information while still running Vim.&nbsp;&nbsp;This is useful for exchanging register<br>
+contents between two instances of Vim, for example.&nbsp;&nbsp;In the first Vim do:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:wviminfo! ~/tmp/viminfo</div>
+<br>
+And in the second Vim do:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:rviminfo! ~/tmp/viminfo</div>
+<br>
+Obviously, the &quot;w&quot; stands for &quot;write&quot; and the &quot;r&quot; for &quot;read&quot;.<br>
+&nbsp;&nbsp; The ! character is used by &quot;:wviminfo&quot; to forcefully overwrite an existing<br>
+file.&nbsp;&nbsp;When it is omitted, and the file exists, the information is merged into<br>
+the file.<br>
+&nbsp;&nbsp; The ! character used for &quot;:rviminfo&quot; means that all the information is<br>
+used, this may overwrite existing information.&nbsp;&nbsp;Without the ! only information<br>
+that wasn't set is used.<br>
+&nbsp;&nbsp; These commands can also be used to store info and use it again later.&nbsp;&nbsp;You<br>
+could make a directory full of viminfo files, each containing info for a<br>
+different purpose.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_21.html#21.4" name="21.4">*21.4*</a>&nbsp;&nbsp;Sessions<br>
+<br>
+Suppose you are editing along, and it is the end of the day.&nbsp;&nbsp;You want to quit<br>
+work and pick up where you left off the next day.&nbsp;&nbsp;You can do this by saving<br>
+your editing session and restoring it the next day.<br>
+&nbsp;&nbsp; A Vim session contains all the information about what you are editing.<br>
+This includes things such as the file list, window layout, global variables,<br>
+options and other information.&nbsp;&nbsp;(Exactly what is remembered is controlled by<br>
+the&nbsp;<a class="Type" href="options.html#'sessionoptions'">'sessionoptions'</a>&nbsp;option, described below.)<br>
+&nbsp;&nbsp; The following command creates a session file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mksession vimbook.vim</div>
+<br>
+Later if you want to restore this session, you can use this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:source vimbook.vim</div>
+<br>
+If you want to start Vim and restore a specific session, you can use the<br>
+following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -S vimbook.vim</div>
+<br>
+This tells Vim to read a specific file on startup.&nbsp;&nbsp;The 'S' stands for<br>
+session (actually, you can source any Vim script with -S, thus it might as<br>
+well stand for &quot;source&quot;).<br>
+<br>
+The windows that were open are restored, with the same position and size as<br>
+before.&nbsp;&nbsp;Mappings and option values are like before.<br>
+&nbsp;&nbsp; What exactly is restored depends on the&nbsp;<a class="Type" href="options.html#'sessionoptions'">'sessionoptions'</a>&nbsp;option.&nbsp;&nbsp;The<br>
+default value is &quot;blank,buffers,curdir,folds,help,options,winsize&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;blank&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; keep empty windows<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buffers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; all buffers, not only the ones in a window<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;curdir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the current directory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folds&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; folds, also manually created ones<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the help window<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; all options and mappings<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;winsize&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; window sizes<br>
+<br>
+Change this to your liking.&nbsp;&nbsp;To also restore the size of the Vim window, for<br>
+example, use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set sessionoptions+=resize</div>
+<br>
+<br>
+SESSION HERE, SESSION THERE<br>
+<br>
+The obvious way to use sessions is when working on different projects.<br>
+Suppose you store your session files in the directory &quot;~/.vim&quot;.&nbsp;&nbsp;You are<br>
+currently working on the &quot;secret&quot; project and have to switch to the &quot;boring&quot;<br>
+project:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:wall<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mksession! ~/.vim/secret.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:source ~/.vim/boring.vim</div>
+<br>
+This first uses &quot;:wall&quot; to write all modified files.&nbsp;&nbsp;Then the current session<br>
+is saved, using &quot;:mksession!&quot;.&nbsp;&nbsp;This overwrites the previous session.&nbsp;&nbsp;The<br>
+next time you load the secret session you can continue where you were at this<br>
+point.&nbsp;&nbsp;And finally you load the new &quot;boring&quot; session.<br>
+<br>
+If you open help windows, split and close various windows, and generally mess<br>
+up the window layout, you can go back to the last saved session:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:source ~/.vim/boring.vim</div>
+<br>
+Thus you have complete control over whether you want to continue next time<br>
+where you are now, by saving the current setup in a session, or keep the<br>
+session file as a starting point.<br>
+&nbsp;&nbsp; Another way of using sessions is to create a window layout that you like to<br>
+use, and save this in a session.&nbsp;&nbsp;Then you can go back to this layout whenever<br>
+you want.<br>
+&nbsp;&nbsp; For example, this is a nice layout to use:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+----------------------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIM - main help file&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Move around:&nbsp;&nbsp;Use the cursor keys, or &quot;h|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|help.txt================================|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|explorer&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|~/=========|[No File]===================|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+----------------------------------------+<br>
+<br>
+This has a help window at the top, so that you can read this text.&nbsp;&nbsp;The narrow<br>
+vertical window on the left contains a file explorer.&nbsp;&nbsp;This is a Vim plugin<br>
+that lists the contents of a directory.&nbsp;&nbsp;You can select files to edit there.<br>
+More about this in the next chapter.<br>
+&nbsp;&nbsp; Create this from a just started Vim with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:help<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTRL-W w<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:vertical split ~/</div>
+<br>
+You can resize the windows a bit to your liking.&nbsp;&nbsp;Then save the session with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mksession ~/.vim/mine.vim</div>
+<br>
+Now you can start Vim with this layout:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -S ~/.vim/mine.vim</div>
+<br>
+Hint: To open a file you see listed in the explorer window in the empty<br>
+window, move the cursor to the filename and press &quot;O&quot;.&nbsp;&nbsp;Double clicking with<br>
+the mouse will also do this.<br>
+<br>
+<br>
+UNIX AND MS-WINDOWS<br>
+<br>
+Some people have to do work on MS-Windows systems one day and on Unix another<br>
+day.&nbsp;&nbsp;If you are one of them, consider adding &quot;slash&quot; and &quot;unix&quot; to<br>
+<a class="Type" href="options.html#'sessionoptions'">'sessionoptions'</a>.&nbsp;&nbsp;The session files will then be written in a format that can<br>
+be used on both systems.&nbsp;&nbsp;This is the command to put in your vimrc file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set sessionoptions+=unix,slash</div>
+<br>
+Vim will use the Unix format then, because the MS-Windows Vim can read and<br>
+write Unix files, but Unix Vim can't read MS-Windows format session files.<br>
+Similarly, MS-Windows Vim understands file names with / to separate names, but<br>
+Unix Vim doesn't understand \.<br>
+<br>
+<br>
+SESSIONS AND VIMINFO<br>
+<br>
+Sessions store many things, but not the position of marks, contents of<br>
+registers and the command line history.&nbsp;&nbsp;You need to use the viminfo feature<br>
+for these things.<br>
+&nbsp;&nbsp; In most situations you will want to use sessions separately from viminfo.<br>
+This can be used to switch to another session, but keep the command line<br>
+history.&nbsp;&nbsp;And yank text into registers in one session, and paste it back in<br>
+another session.<br>
+&nbsp;&nbsp; You might prefer to keep the info with the session.&nbsp;&nbsp;You will have to do<br>
+this yourself then.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mksession! ~/.vim/secret.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:wviminfo! ~/.vim/secret.viminfo</div>
+<br>
+And to restore this again:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:source ~/.vim/secret.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:rviminfo! ~/.vim/secret.viminfo</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_21.html#21.5" name="21.5">*21.5*</a>&nbsp;&nbsp;Views<br>
+<br>
+A session stores the looks of the whole of Vim.&nbsp;&nbsp;When you want to store the<br>
+properties for one window only, use a view.<br>
+&nbsp;&nbsp; The use of a view is for when you want to edit a file in a specific way.<br>
+For example, you have line numbers enabled with the&nbsp;<a class="Type" href="options.html#'number'">'number'</a>&nbsp;option and<br>
+defined a few folds.&nbsp;&nbsp;Just like with sessions, you can remember this view on<br>
+the file and restore it later.&nbsp;&nbsp;Actually, when you store a session, it stores<br>
+the view of each window.<br>
+&nbsp;&nbsp; There are two basic ways to use views.&nbsp;&nbsp;The first is to let Vim pick a name<br>
+for the view file.&nbsp;&nbsp;You can restore the view when you later edit the same<br>
+file.&nbsp;&nbsp;To store the view for the current window:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mkview</div>
+<br>
+Vim will decide where to store the view.&nbsp;&nbsp;When you later edit the same file<br>
+you get the view back with this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:loadview</div>
+<br>
+That's easy, isn't it?<br>
+&nbsp;&nbsp; Now you want to view the file without the&nbsp;<a class="Type" href="options.html#'number'">'number'</a>&nbsp;option on, or with all<br>
+folds open, you can set the options to make the window look that way.&nbsp;&nbsp;Then<br>
+store this view with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mkview 1</div>
+<br>
+Obviously, you can get this back with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:loadview 1</div>
+<br>
+Now you can switch between the two views on the file by using &quot;:loadview&quot; with<br>
+and without the &quot;1&quot; argument.<br>
+&nbsp;&nbsp; You can store up to ten views for the same file this way, one unnumbered<br>
+and nine numbered 1 to 9.<br>
+<br>
+<br>
+A VIEW WITH A NAME<br>
+<br>
+The second basic way to use views is by storing the view in a file with a name<br>
+you choose.&nbsp;&nbsp;This view can be loaded while editing another file.&nbsp;&nbsp;Vim will<br>
+then switch to editing the file specified in the view.&nbsp;&nbsp;Thus you can use this<br>
+to quickly switch to editing another file, with all its options set as you<br>
+saved them.<br>
+&nbsp;&nbsp; For example, to save the view of the current file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:mkview ~/.vim/main.vim</div>
+<br>
+You can restore it with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:source ~/.vim/main.vim</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_21.html#21.6" name="21.6">*21.6*</a>&nbsp;&nbsp;Modelines<br>
+<br>
+When editing a specific file, you might set options specifically for that<br>
+file.&nbsp;&nbsp;Typing these commands each time is boring.&nbsp;&nbsp;Using a session or view for<br>
+editing a file doesn't work when sharing the file between several people.<br>
+&nbsp;&nbsp; The solution for this situation is adding a modeline to the file.&nbsp;&nbsp;This is<br>
+a line of text that tells Vim the values of options, to be used in this file<br>
+only.<br>
+&nbsp;&nbsp; A typical example is a C program where you make indents by a multiple of 4<br>
+spaces.&nbsp;&nbsp;This requires setting the&nbsp;<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;option to 4.&nbsp;&nbsp;This modeline<br>
+will do that:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">/* vim&#0058;set shiftwidth=4: */</span><br>
+<br>
+Put this line as one of the first or last five lines in the file.&nbsp;&nbsp;When<br>
+editing the file, you will notice that&nbsp;<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;will have been set to<br>
+four.&nbsp;&nbsp;When editing another file, it's set back to the default value of eight.<br>
+&nbsp;&nbsp; For some files the modeline fits well in the header, thus it can be put at<br>
+the top of the file.&nbsp;&nbsp;For text files and other files where the modeline gets<br>
+in the way of the normal contents, put it at the end of the file.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'modelines'">'modelines'</a>&nbsp;option specifies how many lines at the start and end of the<br>
+file are inspected for containing a modeline.&nbsp;&nbsp;To inspect ten lines:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set modelines=10</div>
+<br>
+The&nbsp;<a class="Type" href="options.html#'modeline'">'modeline'</a>&nbsp;option can be used to switch this off.&nbsp;&nbsp;Do this when you are<br>
+working as root on Unix or Administrator on MS-Windows, or when you don't<br>
+trust the files you are editing:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nomodeline</div>
+<br>
+Use this format for the modeline:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">any-text vim&#0058;set {option}={value} ... : any-text</span><br>
+<br>
+The &quot;any-text&quot; indicates that you can put any text before and after the part<br>
+that Vim will use.&nbsp;&nbsp;This allows making it look like a comment, like what was<br>
+done above with /* and */.<br>
+&nbsp;&nbsp; The &quot; vim&#0058;&quot; part is what makes Vim recognize this line.&nbsp;&nbsp;There must be<br>
+white space before &quot;vim&quot;, or &quot;vim&quot; must be at the start of the line.&nbsp;&nbsp;Thus<br>
+using something like &quot;gvim:&quot; will not work.<br>
+&nbsp;&nbsp; The part between the colons is a &quot;:set&quot; command.&nbsp;&nbsp;It works the same way as<br>
+typing the &quot;:set&quot; command, except that you need to insert a backslash before a<br>
+colon (otherwise it would be seen as the end of the modeline).<br>
+<br>
+Another example:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">// vim&#0058;set textwidth=72 dir=c\:\tmp:&nbsp;&nbsp;use c:\tmp here</span><br>
+<br>
+There is an extra backslash before the first colon, so that it's included in<br>
+the &quot;:set&quot; command.&nbsp;&nbsp;The text after the second colon is ignored, thus a remark<br>
+can be placed there.<br>
+<br>
+For more details see&nbsp;<a class="Identifier" href="options.html#modeline">|modeline|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_22.html">|usr_22.txt|</a>&nbsp;&nbsp;Finding the file to edit<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

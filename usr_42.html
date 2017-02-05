@@ -1,0 +1,371 @@
+---
+layout: vimdoc
+helpname: 'usr_42'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_42.html" name="usr_42.txt">*usr_42.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2008 May 05<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add new menus<br>
+<br>
+<br>
+By now you know that Vim is very flexible.&nbsp;&nbsp;This includes the menus used in<br>
+the GUI.&nbsp;&nbsp;You can define your own menu entries to make certain commands easily<br>
+accessible.&nbsp;&nbsp;This is for mouse-happy users only.<br>
+<br>
+<a class="Identifier" href="usr_42.html#42.1">|42.1|</a>&nbsp;&nbsp;Introduction<br>
+<a class="Identifier" href="usr_42.html#42.2">|42.2|</a>&nbsp;&nbsp;Menu commands<br>
+<a class="Identifier" href="usr_42.html#42.3">|42.3|</a>&nbsp;&nbsp;Various<br>
+<a class="Identifier" href="usr_42.html#42.4">|42.4|</a>&nbsp;&nbsp;Toolbar and popup menus<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_43.html">|usr_43.txt|</a>&nbsp;&nbsp;Using filetypes<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_41.html">|usr_41.txt|</a>&nbsp;&nbsp;Write a Vim script<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_42.html#42.1" name="42.1">*42.1*</a>&nbsp;&nbsp;Introduction<br>
+<br>
+The menus that Vim uses are defined in the file &quot;$VIMRUNTIME/menu.vim&quot;.&nbsp;&nbsp;If<br>
+you want to write your own menus, you might first want to look through that<br>
+file.<br>
+&nbsp;&nbsp; To define a menu item, use the &quot;:menu&quot; command.&nbsp;&nbsp;The basic form of this<br>
+command is as follows:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:menu {menu-item} {keys}</div>
+<br>
+The&nbsp;<span class="Special">{menu-item}</span>&nbsp;describes where on the menu to put the item.&nbsp;&nbsp;A typical<br>
+<span class="Special">{menu-item}</span>&nbsp;is &quot;File.Save&quot;, which represents the item &quot;Save&quot; under the<br>
+&quot;File&quot; menu.&nbsp;&nbsp;A dot is used to separate the names.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:menu File.Save&nbsp;&nbsp;:update&lt;CR&gt;</div>
+<br>
+The &quot;:update&quot; command writes the file when it was modified.<br>
+&nbsp;&nbsp; You can add another level: &quot;Edit.Settings.Shiftwidth&quot; defines a submenu<br>
+&quot;Settings&quot; under the &quot;Edit&quot; menu, with an item &quot;Shiftwidth&quot;.&nbsp;&nbsp;You could use<br>
+even deeper levels.&nbsp;&nbsp;Don't use this too much, you need to move the mouse quite<br>
+a bit to use such an item.<br>
+&nbsp;&nbsp; The &quot;:menu&quot; command is very similar to the &quot;:map&quot; command: the left side<br>
+specifies how the item is triggered and the right hand side defines the<br>
+characters that are executed.&nbsp;&nbsp;<span class="Special">{keys}</span>&nbsp;are characters, they are used just like<br>
+you would have typed them.&nbsp;&nbsp;Thus in Insert mode, when&nbsp;<span class="Special">{keys}</span>&nbsp;is plain text,<br>
+that text is inserted.<br>
+<br>
+<br>
+ACCELERATORS<br>
+<br>
+The ampersand character (&amp;) is used to indicate an accelerator.&nbsp;&nbsp;For instance,<br>
+you can use Alt-F to select &quot;File&quot; and S to select &quot;Save&quot;.&nbsp;&nbsp;(The&nbsp;<a class="Type" href="options.html#'winaltkeys'">'winaltkeys'</a><br>
+option may disable this though!).&nbsp;&nbsp;Therefore, the&nbsp;<span class="Special">{menu-item}</span>&nbsp;looks like<br>
+&quot;&amp;File.&amp;Save&quot;.&nbsp;&nbsp;The accelerator characters will be underlined in the menu.<br>
+&nbsp;&nbsp; You must take care that each key is used only once in each menu.&nbsp;&nbsp;Otherwise<br>
+you will not know which of the two will actually be used.&nbsp;&nbsp;Vim doesn't warn<br>
+you for this.<br>
+<br>
+<br>
+PRIORITIES<br>
+<br>
+The actual definition of the File.Save menu item is as follows:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:menu 10.340 &amp;File.&amp;Save&lt;Tab&gt;:w&nbsp;&nbsp;:confirm w&lt;CR&gt;</div>
+<br>
+The number 10.340 is called the priority number.&nbsp;&nbsp;It is used by the editor to<br>
+decide where it places the menu item.&nbsp;&nbsp;The first number (10) indicates the<br>
+position on the menu bar.&nbsp;&nbsp;Lower numbered menus are positioned to the left,<br>
+higher numbers to the right.<br>
+&nbsp;&nbsp; These are the priorities used for the standard menus:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;20&nbsp;&nbsp;&nbsp;&nbsp; 40&nbsp;&nbsp;&nbsp;&nbsp; 50&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;60&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 70&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9999<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+------------------------------------------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| File&nbsp;&nbsp;Edit&nbsp;&nbsp;Tools&nbsp;&nbsp;Syntax&nbsp;&nbsp;Buffers&nbsp;&nbsp;Window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Help |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+------------------------------------------------------------+<br>
+<br>
+Notice that the Help menu is given a very high number, to make it appear on<br>
+the far right.<br>
+&nbsp;&nbsp; The second number (340) determines the location of the item within the<br>
+pull-down menu.&nbsp;&nbsp;Lower numbers go on top, higher number on the bottom.&nbsp;&nbsp;These<br>
+are the priorities in the File menu:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-----------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.310&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Open...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.320&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Split-Open...&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.325&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|New&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.330&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Close&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.335&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|---------------- |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.340&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Save&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.350&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Save As...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.400&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|---------------- |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.410&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Split Diff with&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.420&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Split Patched By |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.500&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|---------------- |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.510&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Print&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.600&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|---------------- |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.610&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Save-Exit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10.620&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Exit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-----------------+<br>
+<br>
+Notice that there is room in between the numbers.&nbsp;&nbsp;This is where you can<br>
+insert your own items, if you really want to (it's often better to leave the<br>
+standard menus alone and add a new menu for your own items).<br>
+&nbsp;&nbsp; When you create a submenu, you can add another &quot;.number&quot; to the priority.<br>
+Thus each name in&nbsp;<span class="Special">{menu-item}</span>&nbsp;has its priority number.<br>
+<br>
+<br>
+SPECIAL CHARACTERS<br>
+<br>
+The&nbsp;<span class="Special">{menu-item}</span>&nbsp;in this example is &quot;&amp;File.&amp;Save<span class="Special">&lt;Tab&gt;</span>:w&quot;.&nbsp;&nbsp;This brings up an<br>
+important point:&nbsp;<span class="Special">{menu-item}</span>&nbsp;must be one word.&nbsp;&nbsp;If you want to put a dot,<br>
+space or tabs in the name, you either use the &lt;&gt; notation (<span class="Special">&lt;Space&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;Tab&gt;</span>,<br>
+for instance) or use the backslash (\) escape.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:menu 10.305 &amp;File.&amp;Do\ It\.\.\. :exit&lt;CR&gt;</div>
+<br>
+In this example, the name of the menu item &quot;Do It...&quot; contains a space and the<br>
+command is &quot;:exit<span class="Special">&lt;CR&gt;</span>&quot;.<br>
+<br>
+The&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;character in a menu name is used to separate the part that defines<br>
+the menu name from the part that gives a hint to the user.&nbsp;&nbsp;The part after the<br>
+<span class="Special">&lt;Tab&gt;</span>&nbsp;is displayed right aligned in the menu.&nbsp;&nbsp;In the File.Save menu the name<br>
+used is &quot;&amp;File.&amp;Save<span class="Special">&lt;Tab&gt;</span>:w&quot;.&nbsp;&nbsp;Thus the menu name is &quot;File.Save&quot; and the hint<br>
+is &quot;:w&quot;.<br>
+<br>
+<br>
+SEPARATORS<br>
+<br>
+The separator lines, used to group related menu items together, can be defined<br>
+by using a name that starts and ends in a '-'.&nbsp;&nbsp;For example &quot;-sep-&quot;.&nbsp;&nbsp;When<br>
+using several separators the names must be different.&nbsp;&nbsp;Otherwise the names<br>
+don't matter.<br>
+&nbsp;&nbsp; The command from a separator will never be executed, but you have to define<br>
+one anyway.&nbsp;&nbsp;A single colon will do.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:amenu 20.510 Edit.-sep3- :</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_42.html#42.2" name="42.2">*42.2*</a>&nbsp;&nbsp;Menu commands<br>
+<br>
+You can define menu items that exist for only certain modes.&nbsp;&nbsp;This works just<br>
+like the variations on the &quot;:map&quot; command:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:menu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Normal, Visual and Operator-pending mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:nmenu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normal mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:vmenu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visual mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:omenu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Operator-pending mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:menu!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Insert and Command-line mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:imenu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Insert mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:cmenu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Command-line mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:amenu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;All modes<br>
+<br>
+To avoid that the commands of a menu item are being mapped, use the command<br>
+&quot;:noremenu&quot;, &quot;:nnoremenu&quot;, &quot;:anoremenu&quot;, etc.<br>
+<br>
+<br>
+USING :AMENU<br>
+<br>
+The &quot;:amenu&quot; command is a bit different.&nbsp;&nbsp;It assumes that the&nbsp;<span class="Special">{keys}</span>&nbsp;you<br>
+give are to be executed in Normal mode.&nbsp;&nbsp;When Vim is in Visual or Insert mode<br>
+when the menu is used, Vim first has to go back to Normal mode.&nbsp;&nbsp;&quot;:amenu&quot;<br>
+inserts a&nbsp;<span class="Special">CTRL-C</span>&nbsp;or&nbsp;<span class="Special">CTRL-O</span>&nbsp;for you.&nbsp;&nbsp;For example, if you use this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:amenu&nbsp;&nbsp;90.100 Mine.Find\ Word&nbsp;&nbsp;*</div>
+<br>
+Then the resulting menu commands will be:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normal mode:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visual mode:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-C</span>&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Operator-pending mode:&nbsp;&nbsp;<span class="Special">CTRL-C</span>&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Insert mode:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-O</span>&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Command-line mode:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-C</span>&nbsp;*<br>
+<br>
+When in Command-line mode the&nbsp;<span class="Special">CTRL-C</span>&nbsp;will abandon the command typed so far.<br>
+In Visual and Operator-pending mode&nbsp;<span class="Special">CTRL-C</span>&nbsp;will stop the mode.&nbsp;&nbsp;The&nbsp;<span class="Special">CTRL-O</span>&nbsp;in<br>
+Insert mode will execute the command and then return to Insert mode.<br>
+&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-O</span>&nbsp;only works for one command.&nbsp;&nbsp;If you need to use two or more<br>
+commands, put them in a function and call that function.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:amenu&nbsp;&nbsp;Mine.Next\ File&nbsp;&nbsp;:call &lt;SID&gt;NextFile()&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function &lt;SID&gt;NextFile()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;next<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;1/^Code<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:endfunction</div>
+<br>
+This menu entry goes to the next file in the argument list with &quot;:next&quot;.&nbsp;&nbsp;Then<br>
+it searches for the line that starts with &quot;Code&quot;.<br>
+&nbsp;&nbsp; The&nbsp;<span class="Special">&lt;SID&gt;</span>&nbsp;before the function name is the script ID.&nbsp;&nbsp;This makes the<br>
+function local to the current Vim script file.&nbsp;&nbsp;This avoids problems when a<br>
+function with the same name is defined in another script file.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="map.html#<SID>">|&lt;SID&gt;|</a>.<br>
+<br>
+<br>
+SILENT MENUS<br>
+<br>
+The menu executes the&nbsp;<span class="Special">{keys}</span>&nbsp;as if you typed them.&nbsp;&nbsp;For a &quot;:&quot; command this<br>
+means you will see the command being echoed on the command line.&nbsp;&nbsp;If it's a<br>
+long command, the hit-Enter prompt will appear.&nbsp;&nbsp;That can be very annoying!<br>
+&nbsp;&nbsp; To avoid this, make the menu silent.&nbsp;&nbsp;This is done with the&nbsp;<span class="Special">&lt;silent&gt;</span><br>
+argument.&nbsp;&nbsp;For example, take the call to NextFile() in the previous example.<br>
+When you use this menu, you will see this on the command line:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">:call &lt;SNR&gt;34_NextFile()</span><br>
+<br>
+To avoid this text on the command line, insert &quot;<span class="Special">&lt;silent&gt;</span>&quot; as the first<br>
+argument:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:amenu &lt;silent&gt; Mine.Next\ File :call &lt;SID&gt;NextFile()&lt;CR&gt;</div>
+<br>
+Don't use &quot;<span class="Special">&lt;silent&gt;</span>&quot; too often.&nbsp;&nbsp;It is not needed for short commands.&nbsp;&nbsp;If you<br>
+make a menu for someone else, being able the see the executed command will<br>
+give him a hint about what he could have typed, instead of using the mouse.<br>
+<br>
+<br>
+LISTING MENUS<br>
+<br>
+When a menu command is used without a&nbsp;<span class="Special">{keys}</span>&nbsp;part, it lists the already<br>
+defined menus.&nbsp;&nbsp;You can specify a&nbsp;<span class="Special">{menu-item}</span>, or part of it, to list specific<br>
+menus.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:amenu</div>
+<br>
+This lists all menus.&nbsp;&nbsp;That's a long list!&nbsp;&nbsp;Better specify the name of a menu<br>
+to get a shorter list:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:amenu Edit</div>
+<br>
+This lists only the &quot;Edit&quot; menu items for all modes.&nbsp;&nbsp;To list only one<br>
+specific menu item for Insert mode:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:imenu Edit.Undo</div>
+<br>
+Take care that you type exactly the right name.&nbsp;&nbsp;Case matters here.&nbsp;&nbsp;But the<br>
+'&amp;' for accelerators can be omitted.&nbsp;&nbsp;The&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;and what comes after it can be<br>
+left out as well.<br>
+<br>
+<br>
+DELETING MENUS<br>
+<br>
+To delete a menu, the same command is used as for listing, but with &quot;menu&quot;<br>
+changed to &quot;unmenu&quot;.&nbsp;&nbsp;Thus &quot;:menu&quot; becomes, &quot;:unmenu&quot;, &quot;:nmenu&quot; becomes<br>
+&quot;:nunmenu&quot;, etc.&nbsp;&nbsp;To delete the &quot;Tools.Make&quot; item for Insert mode:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:iunmenu Tools.Make</div>
+<br>
+You can delete a whole menu, with all its items, by using the menu name.<br>
+Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:aunmenu Syntax</div>
+<br>
+This deletes the Syntax menu and all the items in it.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_42.html#42.3" name="42.3">*42.3*</a>&nbsp;&nbsp;Various<br>
+<br>
+You can change the appearance of the menus with flags in&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a>.&nbsp;&nbsp;In the<br>
+default value they are all included, except &quot;M&quot;.&nbsp;&nbsp;You can remove a flag with a<br>
+command like:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set guioptions-=m</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When removed the menubar is not displayed.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When added the default menus are not loaded.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When removed the inactive menu items are not made grey<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;but are completely removed.&nbsp;&nbsp;(Does not work on all<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;systems.)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When removed the tearoff feature is not enabled.<br>
+<br>
+The dotted line at the top of a menu is not a separator line.&nbsp;&nbsp;When you select<br>
+this item, the menu is &quot;teared-off&quot;: It is displayed in a separate window.<br>
+This is called a tearoff menu.&nbsp;&nbsp;This is useful when you use the same menu<br>
+often.<br>
+<br>
+For translating menu items, see&nbsp;<a class="Identifier" href="mlang.html#:menutrans">|:menutrans|</a>.<br>
+<br>
+Since the mouse has to be used to select a menu item, it is a good idea to use<br>
+the &quot;:browse&quot; command for selecting a file.&nbsp;&nbsp;And &quot;:confirm&quot; to get a dialog<br>
+instead of an error message, e.g., when the current buffer contains changes.<br>
+These two can be combined:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:amenu File.Open&nbsp;&nbsp;:browse confirm edit&lt;CR&gt;</div>
+<br>
+The &quot;:browse&quot; makes a file browser appear to select the file to edit.&nbsp;&nbsp;The<br>
+&quot;:confirm&quot; will pop up a dialog when the current buffer has changes.&nbsp;&nbsp;You can<br>
+then select to save the changes, throw them away or cancel the command.<br>
+&nbsp;&nbsp; For more complicated items, the confirm() and inputdialog() functions can<br>
+be used.&nbsp;&nbsp;The default menus contain a few examples.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_42.html#42.4" name="42.4">*42.4*</a>&nbsp;&nbsp;Toolbar and popup menus<br>
+<br>
+There are two special menus: ToolBar and PopUp.&nbsp;&nbsp;Items that start with these<br>
+names do not appear in the normal menu bar.<br>
+<br>
+<br>
+TOOLBAR<br>
+<br>
+The toolbar appears only when the &quot;T&quot; flag is included in the&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a><br>
+option.<br>
+&nbsp;&nbsp; The toolbar uses icons rather than text to represent the command.&nbsp;&nbsp;For<br>
+example, the&nbsp;<span class="Special">{menu-item}</span>&nbsp;named &quot;ToolBar.New&quot; causes the &quot;New&quot; icon to appear<br>
+on the toolbar.<br>
+&nbsp;&nbsp; The Vim editor has 28 built-in icons.&nbsp;&nbsp;You can find a table here:<br>
+<a class="Identifier" href="gui.html#builtin-tools">|builtin-tools|</a>.&nbsp;&nbsp;Most of them are used in the default toolbar.&nbsp;&nbsp;You can<br>
+redefine what these items do (after the default menus are setup).<br>
+&nbsp;&nbsp; You can add another bitmap for a toolbar item.&nbsp;&nbsp;Or define a new toolbar<br>
+item with a bitmap.&nbsp;&nbsp;For example, define a new toolbar item with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tmenu ToolBar.Compile&nbsp;&nbsp;Compile the current file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:amenu ToolBar.Compile&nbsp;&nbsp;:!cc %:S -o %:r:S&lt;CR&gt;</div>
+<br>
+Now you need to create the icon.&nbsp;&nbsp;For MS-Windows it must be in bitmap format,<br>
+with the name &quot;Compile.bmp&quot;.&nbsp;&nbsp;For Unix XPM format is used, the file name is<br>
+&quot;Compile.xpm&quot;.&nbsp;&nbsp;The size must be 18 by 18 pixels.&nbsp;&nbsp;On MS-Windows other sizes<br>
+can be used as well, but it will look ugly.<br>
+&nbsp;&nbsp; Put the bitmap in the directory &quot;bitmaps&quot; in one of the directories from<br>
+<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;E.g., for Unix &quot;~/.vim/bitmaps/Compile.xpm&quot;.<br>
+<br>
+You can define tooltips for the items in the toolbar.&nbsp;&nbsp;A tooltip is a short<br>
+text that explains what a toolbar item will do.&nbsp;&nbsp;For example &quot;Open file&quot;.&nbsp;&nbsp;It<br>
+appears when the mouse pointer is on the item, without moving for a moment.<br>
+This is very useful if the meaning of the picture isn't that obvious.<br>
+Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tmenu ToolBar.Make&nbsp;&nbsp;Run make in the current directory</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pay attention to the case used.&nbsp;&nbsp;&quot;Toolbar&quot; and &quot;toolbar&quot; are different<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from &quot;ToolBar&quot;!<br>
+<br>
+To remove a tooltip, use the&nbsp;<a class="Identifier" href="gui.html#:tunmenu">|:tunmenu|</a>&nbsp;command.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'toolbar'">'toolbar'</a>&nbsp;option can be used to display text instead of a bitmap, or both<br>
+text and a bitmap.&nbsp;&nbsp;Most people use just the bitmap, since the text takes<br>
+quite a bit of space.<br>
+<br>
+<br>
+POPUP MENU<br>
+<br>
+The popup menu pops up where the mouse pointer is.&nbsp;&nbsp;On MS-Windows you activate<br>
+it by clicking the right mouse button.&nbsp;&nbsp;Then you can select an item with the<br>
+left mouse button.&nbsp;&nbsp;On Unix the popup menu is used by pressing and holding the<br>
+right mouse button.<br>
+&nbsp;&nbsp; The popup menu only appears when the&nbsp;<a class="Type" href="options.html#'mousemodel'">'mousemodel'</a>&nbsp;has been set to &quot;popup&quot;<br>
+or &quot;popup_setpos&quot;.&nbsp;&nbsp;The difference between the two is that &quot;popup_setpos&quot;<br>
+moves the cursor to the mouse pointer position.&nbsp;&nbsp;When clicking inside a<br>
+selection, the selection will be used unmodified.&nbsp;&nbsp;When there is a selection<br>
+but you click outside of it, the selection is removed.<br>
+&nbsp;&nbsp; There is a separate popup menu for each mode.&nbsp;&nbsp;Thus there are never grey<br>
+items like in the normal menus.<br>
+<br>
+What is the meaning of life, the universe and everything?&nbsp;&nbsp;<a class="Constant" href="usr_42.html#42" name="42">*42*</a><br>
+Douglas Adams, the only person who knew what this question really was about is<br>
+now dead, unfortunately.&nbsp;&nbsp;So now you might wonder what the meaning of death<br>
+is...<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_43.html">|usr_43.txt|</a>&nbsp;&nbsp;Using filetypes<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

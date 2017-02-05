@@ -1,0 +1,490 @@
+---
+layout: vimdoc
+helpname: 'gui_w32'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="gui_w32.html" name="gui_w32.txt">*gui_w32.txt*</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2014 Dec 20<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+Vim's Win32 Graphical User Interface&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#gui-w32" name="gui-w32">*gui-w32*</a>&nbsp;<a class="Constant" href="gui_w32.html#win32-gui" name="win32-gui">*win32-gui*</a><br>
+<br>
+1. Starting the GUI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui_w32.html#gui-w32-start">|gui-w32-start|</a><br>
+2. Vim as default editor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui_w32.html#vim-default-editor">|vim-default-editor|</a><br>
+3. Using the clipboard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui_w32.html#gui-clipboard">|gui-clipboard|</a><br>
+4. Shell Commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui_w32.html#gui-shell-win32">|gui-shell-win32|</a><br>
+5. Special colors&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui_w32.html#win32-colors">|win32-colors|</a><br>
+6. Windows dialogs &amp; browsers&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui_w32.html#gui-w32-dialogs">|gui-w32-dialogs|</a><br>
+7. Command line arguments&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui_w32.html#gui-w32-cmdargs">|gui-w32-cmdargs|</a><br>
+8. Various&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui_w32.html#gui-w32-various">|gui-w32-various|</a><br>
+<br>
+Other relevant documentation:<br>
+<a class="Identifier" href="gui.html">|gui.txt|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For generic items of the GUI.<br>
+<a class="Identifier" href="os_win32.html">|os_win32.txt|</a>&nbsp;&nbsp;For Win32 specific items.<br>
+<br>
+<span class="Special">{Vi does not have a Windows GUI}</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Starting the GUI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#gui-w32-start" name="gui-w32-start">*gui-w32-start*</a><br>
+<br>
+The Win32 GUI version of Vim will always start the GUI, no matter how you<br>
+start it or what it's called.<br>
+<br>
+The GUI will always run in the Windows subsystem.&nbsp;&nbsp;Mostly shells automatically<br>
+return with a command prompt after starting gvim.&nbsp;&nbsp;If not, you should use the<br>
+&quot;start&quot; command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start gvim [options] file ..</div>
+<br>
+<span class="Todo">Note</span>: All fonts (bold, italic) must be of the same size!!!&nbsp;&nbsp;If you don't do<br>
+this, text will disappear or mess up the display.&nbsp;&nbsp;Vim does not check the font<br>
+sizes.&nbsp;&nbsp;It's the size in screen pixels that must be the same.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that some<br>
+fonts that have the same point size don't have the same pixel size!<br>
+Additionally, the positioning of the fonts must be the same (ascent and<br>
+descent).<br>
+<br>
+The Win32 GUI has an extra menu item:&nbsp;&nbsp;&quot;Edit/Select Font&quot;.&nbsp;&nbsp;It brings up the<br>
+standard Windows font selector.<br>
+<br>
+Setting the menu height doesn't work for the Win32 GUI.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#gui-win32-maximized" name="gui-win32-maximized">*gui-win32-maximized*</a><br>
+If you want Vim to start with a maximized window, add this command to your<br>
+vimrc or gvimrc file:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au GUIEnter * simalt ~x</div>
+<br>
+<br>
+Using Vim as a plugin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#gui-w32-windowid" name="gui-w32-windowid">*gui-w32-windowid*</a><br>
+<br>
+When gvim starts up normally, it creates its own top level window.&nbsp;&nbsp;If you<br>
+pass Vim the command-line option&nbsp;<a class="Identifier" href="starting.html#--windowid">|--windowid|</a>&nbsp;with a decimal or hexadecimal<br>
+value, Vim will create a window that is a child of the window with the given<br>
+ID.&nbsp;&nbsp;This enables Vim to act as a plugin in another application.&nbsp;&nbsp;This really<br>
+is a programmer's interface, and is of no use without a supporting application<br>
+to spawn Vim correctly.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Vim as default editor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#vim-default-editor" name="vim-default-editor">*vim-default-editor*</a><br>
+<br>
+To set Vim as the default editor for a file type:<br>
+1. Start a Windows Explorer<br>
+2. Choose View/Options -&gt; File Types<br>
+3. Select the path to gvim for every file type that you want to use it for.<br>
+&nbsp;&nbsp; (you can also use three spaces in the file type field, for files without an<br>
+&nbsp;&nbsp; extension).<br>
+&nbsp;&nbsp; In the &quot;open&quot; action, use:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gvim &quot;%1&quot;</div>
+&nbsp;&nbsp;&nbsp;The quotes are required for using file names with embedded spaces.<br>
+&nbsp;&nbsp; You can also use this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gvim &quot;%L&quot;</div>
+&nbsp;&nbsp;&nbsp;This should avoid short (8.3 character) file names in some situations.&nbsp;&nbsp;But<br>
+&nbsp;&nbsp; I'm not sure if this works everywhere.<br>
+<br>
+When you open a file in Vim by double clicking it, Vim changes to that<br>
+file's directory.<br>
+<br>
+If you want Vim to start full-screen, use this for the Open action:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gvim -c &quot;simalt ~x&quot; &quot;%1&quot;</div>
+<br>
+Another method, which also works when you put Vim in another directory (e.g.,<br>
+when you have got a new version):<br>
+1. select a file you want to use Vim with<br>
+2.&nbsp;<span class="Special">&lt;Shift-F10&gt;</span><br>
+3. select &quot;Open With...&quot; menu entry<br>
+4. click &quot;Other...&quot;<br>
+5. browse to the (new) location of Vim and click &quot;Open&quot;<br>
+6. make &quot;Always Use this program...&quot; checked<br>
+7.&nbsp;<span class="Special">&lt;OK&gt;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#send-to-menu" name="send-to-menu">*send-to-menu*</a>&nbsp;<a class="Constant" href="gui_w32.html#sendto" name="sendto">*sendto*</a><br>
+You can also install Vim in the &quot;Send To&quot; menu:<br>
+1. Start a Windows Explorer<br>
+2. Navigate to your sendto directory:<br>
+&nbsp;&nbsp; Windows NT: %windir%\profiles\%user%\sendto (e.g.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;c:\winnt\profiles\mattha\sendto&quot;)<br>
+&nbsp;&nbsp; Windows XP: C:\Documents and Settings\%user%\SendTo<br>
+&nbsp;&nbsp; Windows Vista: C:\Users\%user%\AppData\Roaming\Microsoft\Windows\SendTo .<br>
+3. Right-click in the file pane and select New-&gt;Shortcut<br>
+4. Follow the shortcut wizard, using the full path to VIM/GVIM.<br>
+<br>
+When you 'send a file to Vim', Vim changes to that file's directory.&nbsp;&nbsp;<span class="Todo">Note</span>,<br>
+however, that any long directory names will appear in their short (MS-DOS)<br>
+form.&nbsp;&nbsp;This is a limitation of the Windows &quot;Send To&quot; mechanism.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#notepad" name="notepad">*notepad*</a><br>
+You could replace notepad.exe with gvim.exe, but that has a few side effects.<br>
+Some programs rely on notepad arguments, which are not recognized by Vim.&nbsp;&nbsp;For<br>
+example &quot;notepad -p&quot; is used by some applications to print a file.&nbsp;&nbsp;It's<br>
+better to leave notepad where it is and use another way to start Vim.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#win32-popup-menu" name="win32-popup-menu">*win32-popup-menu*</a><br>
+A more drastic approach is to install an &quot;Edit with Vim&quot; entry in the popup<br>
+menu for the right mouse button.&nbsp;&nbsp;With this you can edit any file with Vim.<br>
+<br>
+This can co-exist with the file associations mentioned above.&nbsp;&nbsp;The difference<br>
+is that the file associations will make starting Vim the default action.&nbsp;&nbsp;With<br>
+the &quot;Edit with Vim&quot; menu entry you can keep the existing file association for<br>
+double clicking on the file, and edit the file with Vim when you want.&nbsp;&nbsp;For<br>
+example, you can associate &quot;*.mak&quot; with your make program.&nbsp;&nbsp;You can execute<br>
+the makefile by double clicking it and use the &quot;Edit with Vim&quot; entry to edit<br>
+the makefile.<br>
+<br>
+You can select any files and right-click to see a menu option called &quot;Edit<br>
+with gvim&quot;.&nbsp;&nbsp;Choosing this menu option will invoke gvim with the file you have<br>
+selected.&nbsp;&nbsp;If you select multiple files, you will find two gvim-related menu<br>
+options:<br>
+&quot;Edit with multiple gvims&quot;&nbsp;&nbsp;-- one gvim for each file in the selection<br>
+&quot;Edit with single gvim&quot;&nbsp;&nbsp;&nbsp;&nbsp; -- one gvim for all the files in the selection<br>
+And if there already is a gvim running:<br>
+&quot;Edit with existing gvim&quot;&nbsp;&nbsp; -- edit the file with the running gvim<br>
+<br>
+The &quot;edit with existing Vim&quot; entries can be disabled by adding an entry in the<br>
+registry under HKLM\Software\Vim\Gvim, named DisableEditWithExisting, and with<br>
+any value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#install-registry" name="install-registry">*install-registry*</a><br>
+You can add the &quot;Edit with Vim&quot; menu entry in an easy way by using the<br>
+&quot;install.exe&quot; program.&nbsp;&nbsp;It will add several registry entries for you.<br>
+<br>
+You can also do this by hand.&nbsp;&nbsp;This is complicated!&nbsp;&nbsp;Use the install.exe if<br>
+you can.<br>
+<br>
+1. Start the registry editor with &quot;regedit&quot;.<br>
+2. Add these keys:<br>
+&nbsp;&nbsp;&nbsp;<span class="PreProc">key&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value</span><br>
+&nbsp;&nbsp; HKEY_CLASSES_ROOT\CLSID\<span class="Special">{51EEE242-AD87-11d3-9C1E-0090278BBD99}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{default}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim Shell Extension<br>
+&nbsp;&nbsp; HKEY_CLASSES_ROOT\CLSID\<span class="Special">{51EEE242-AD87-11d3-9C1E-0090278BBD99}</span>\InProcServer32<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{default}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{path}</span>\gvimext.dll<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ThreadingModel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Apartment<br>
+&nbsp;&nbsp; HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\gvim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{default}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{51EEE242-AD87-11d3-9C1E-0090278BBD99}</span><br>
+&nbsp;&nbsp; HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{51EEE242-AD87-11d3-9C1E-0090278BBD99}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim Shell Extension<br>
+&nbsp;&nbsp; HKEY_LOCAL_MACHINE\Software\Vim\Gvim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{path}</span>\gvim.exe<br>
+&nbsp;&nbsp; HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\vim 5.6<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DisplayName&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim 5.6: Edit with Vim popup menu entry<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UninstallString&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{path}</span>\uninstal.exe<br>
+<br>
+&nbsp;&nbsp; Replace&nbsp;<span class="Special">{path}</span>&nbsp;with the path that leads to the executable.<br>
+&nbsp;&nbsp; Don't type&nbsp;<span class="Special">{default}</span>, this is the value for the key itself.<br>
+<br>
+To remove &quot;Edit with Vim&quot; from the popup menu, just remove the registry<br>
+entries mentioned above.&nbsp;&nbsp;The &quot;uninstal.exe&quot; program can do this for you.&nbsp;&nbsp;You<br>
+can also use the entry in the Windows standard &quot;Add/Remove Programs&quot; list.<br>
+<br>
+If you notice that this entry overrules other file type associations, set<br>
+those associations again by hand (using Windows Explorer, see above).&nbsp;&nbsp;This<br>
+only seems to happen on some Windows NT versions (Windows bug?).&nbsp;&nbsp;Procedure:<br>
+1. Find the name of the file type.&nbsp;&nbsp;This can be done by starting the registry<br>
+&nbsp;&nbsp; editor, and searching for the extension in \\HKEY_CLASSES_ROOT<br>
+2. In a Windows Explorer, use View/Options/File Types.&nbsp;&nbsp;Search for the file<br>
+&nbsp;&nbsp; type in the list and click &quot;Edit&quot;.&nbsp;&nbsp;In the actions list, you can select on<br>
+&nbsp;&nbsp; to be used as the default (normally the &quot;open&quot; action) and click on the<br>
+&nbsp;&nbsp; &quot;Set Default&quot; button.<br>
+<br>
+<br>
+Vim in the &quot;Open With...&quot; context menu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#win32-open-with-menu" name="win32-open-with-menu">*win32-open-with-menu*</a><br>
+<br>
+If you use the Vim install program you have the choice to add Vim to the &quot;Open<br>
+With...&quot; menu.&nbsp;&nbsp;This means you can use Vim to edit many files.&nbsp;&nbsp;Not every file<br>
+(for unclear reasons...), thus the &quot;Edit with Vim&quot; menu entry is still useful.<br>
+<br>
+One reason to add this is to be able to edit HTML files directly from Internet<br>
+Explorer.&nbsp;&nbsp;To enable this use the &quot;Tools&quot; menu, &quot;Internet Options...&quot; entry.<br>
+In the dialog select the &quot;Programs&quot; tab and select Vim in the &quot;HTML editor&quot;<br>
+choice.&nbsp;&nbsp;If it's not there than installing didn't work properly.<br>
+<br>
+Doing this manually can be done with this script:<br>
+<br>
+<span class="PreProc">----------------------------------------------------------</span><br>
+REGEDIT4<br>
+<br>
+[HKEY_CLASSES_ROOT\Applications\gvim.exe]<br>
+<br>
+[HKEY_CLASSES_ROOT\Applications\gvim.exe\shell]<br>
+<br>
+[HKEY_CLASSES_ROOT\Applications\gvim.exe\shell\edit]<br>
+<br>
+[HKEY_CLASSES_ROOT\Applications\gvim.exe\shell\edit\command]<br>
+@=&quot;c:\\vim\\vim62\\gvim.exe \&quot;%1\&quot;&quot;<br>
+<br>
+[HKEY_CLASSES_ROOT\.htm\OpenWithList\gvim.exe]<br>
+<br>
+[HKEY_CLASSES_ROOT\*\OpenWithList\gvim.exe]<br>
+<br>
+<span class="PreProc">----------------------------------------------------------</span><br>
+<br>
+Change the &quot;c:\\vim\\vim62&quot; bit to where gvim.exe is actually located.<br>
+<br>
+To uninstall this run the Vim uninstall program or manually delete the<br>
+registry entries with &quot;regedit&quot;.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Using the clipboard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#gui-clipboard" name="gui-clipboard">*gui-clipboard*</a><br>
+<br>
+Windows has a clipboard, where you can copy text to, and paste text from.&nbsp;&nbsp;Vim<br>
+supports this in several ways.&nbsp;&nbsp;For other systems see&nbsp;<a class="Identifier" href="gui.html#gui-selections">|gui-selections|</a>.<br>
+<br>
+The &quot;* register reflects the contents of the clipboard.&nbsp;&nbsp;<a class="Identifier" href="gui.html#quotestar">|quotestar|</a><br>
+<br>
+When the &quot;unnamed&quot; string is included in the&nbsp;<a class="Type" href="options.html#'clipboard'">'clipboard'</a>&nbsp;option, the unnamed<br>
+register is the same.&nbsp;&nbsp;Thus you can yank to and paste from the clipboard<br>
+without prepending &quot;* to commands.<br>
+<br>
+The 'a' flag in&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a>&nbsp;is not included by default.&nbsp;&nbsp;This means that text<br>
+is only put on the clipboard when an operation is performed on it.&nbsp;&nbsp;Just<br>
+Visually selecting text doesn't put it on the clipboard.&nbsp;&nbsp;When the 'a' flag is<br>
+included, the text is copied to the clipboard even when it is not operated<br>
+upon.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#mswin.vim" name="mswin.vim">*mswin.vim*</a><br>
+To use the standard MS-Windows way of&nbsp;<span class="Special">CTRL-X</span>,&nbsp;<span class="Special">CTRL-C</span>&nbsp;and&nbsp;<span class="Special">CTRL-V</span>, use the<br>
+$VIMRUNTIME/mswin.vim script.&nbsp;&nbsp;You could add this line to your _vimrc file:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source $VIMRUNTIME/mswin.vim</div>
+<br>
+Since&nbsp;<span class="Special">CTRL-C</span>&nbsp;is used to copy the text to the clipboard, it can't be used to<br>
+cancel an operation.&nbsp;&nbsp;Use&nbsp;<span class="Special">CTRL-Break</span>&nbsp;for that.<br>
+<br>
+<span class="Special">CTRL-Z</span>&nbsp;is used for undo.&nbsp;&nbsp;This means you can't suspend Vim with this key, use<br>
+<a class="Identifier" href="starting.html#:suspend">|:suspend|</a>&nbsp;instead (if it's supported at all).<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#CTRL-V-alternative" name="CTRL-V-alternative">*CTRL-V-alternative*</a>&nbsp;<a class="Constant" href="gui_w32.html#CTRL-Q" name="CTRL-Q">*CTRL-Q*</a><br>
+Since&nbsp;<span class="Special">CTRL-V</span>&nbsp;is used to paste, you can't use it to start a blockwise Visual<br>
+selection.&nbsp;&nbsp;You can use&nbsp;<span class="Special">CTRL-Q</span>&nbsp;instead.&nbsp;&nbsp;You can also use&nbsp;<span class="Special">CTRL-Q</span>&nbsp;in Insert<br>
+mode and Command-line mode to get the old meaning of&nbsp;<span class="Special">CTRL-V</span>.&nbsp;&nbsp;But&nbsp;<span class="Special">CTRL-Q</span><br>
+doesn't work for terminals when it's used for control flow.<br>
+<br>
+<span class="Todo">NOTE</span>: The clipboard support still has a number of bugs.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="todo.html#todo">|todo|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. Shell Commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#gui-shell-win32" name="gui-shell-win32">*gui-shell-win32*</a><br>
+<br>
+Vim uses another window for external commands, to make it possible to run any<br>
+command.&nbsp;&nbsp;The external command gets its own environment for running, just like<br>
+it was started from a DOS prompt.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#win32-vimrun" name="win32-vimrun">*win32-vimrun*</a><br>
+Executing an external command is done indirectly by the &quot;vimrun&quot; command.&nbsp;&nbsp;The<br>
+&quot;vimrun.exe&quot; must be in the path for this to work.&nbsp;&nbsp;Or it must be in the same<br>
+directory as the Vim executable.&nbsp;&nbsp;If &quot;vimrun&quot; cannot be found, the command is<br>
+executed directly, but then the DOS window closes immediately after the<br>
+external command has finished.<br>
+WARNING: If you close this window with the &quot;X&quot; button, and confirm the<br>
+question if you really want to kill the application, Vim may be killed too!<br>
+(This does not apply to commands run asynchronously with &quot;:!start&quot;.)<br>
+<br>
+The window in which the commands are executed will be the default you have set<br>
+up for &quot;Console&quot; in Control Panel.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#win32-!start" name="win32-!start">*win32-!start*</a><br>
+Normally, Vim waits for a command to complete before continuing (this makes<br>
+sense for most shell commands which produce output for Vim to use).&nbsp;&nbsp;If you<br>
+want Vim to start a program and return immediately, you can use the following<br>
+syntax:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!start [/min] {command}</div>
+The optional &quot;/min&quot; causes the window to be minimized.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+5. Special colors&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#win32-colors" name="win32-colors">*win32-colors*</a><br>
+<br>
+On Win32, the normal DOS colors can be used.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="os_dos.html#dos-colors">|dos-colors|</a>.<br>
+<br>
+Additionally the system configured colors can also be used.&nbsp;&nbsp;These are known<br>
+by the names Sys_XXX, where XXX is the appropriate system color name, from the<br>
+following list (see the Win32 documentation for full descriptions).&nbsp;&nbsp;Case is<br>
+ignored.<br>
+<br>
+Sys_3DDKShadow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_3DFace&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_BTNFace<br>
+Sys_3DHilight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sys_3DHighlight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sys_BTNHilight<br>
+Sys_BTNHighlight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_3DLight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sys_3DShadow<br>
+Sys_BTNShadow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sys_ActiveBorder&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_ActiveCaption<br>
+Sys_AppWorkspace&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_Background&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_Desktop<br>
+Sys_BTNText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sys_CaptionText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sys_GrayText<br>
+Sys_Highlight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sys_HighlightText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sys_InactiveBorder<br>
+Sys_InactiveCaption&nbsp;&nbsp;&nbsp;&nbsp; Sys_InactiveCaptionText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sys_InfoBK<br>
+Sys_InfoText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_Menu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_MenuText<br>
+Sys_ScrollBar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sys_Window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_WindowFrame<br>
+Sys_WindowText<br>
+<br>
+Probably the most useful values are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_Window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normal window background<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_WindowText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normal window text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_Highlight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Highlighted background<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sys_HighlightText&nbsp;&nbsp; Highlighted text<br>
+<br>
+These extra colors are also available:<br>
+Gray, Grey, LightYellow, SeaGreen, Orange, Purple, SlateBlue, Violet,<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html" name="rgb.txt">*rgb.txt*</a><br>
+Additionally, colors defined by a &quot;rgb.txt&quot; file can be used.&nbsp;&nbsp;This file is<br>
+well known from X11.&nbsp;&nbsp;A few lines from it:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;255 218 185&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;peach puff<br>
+&nbsp;&nbsp;205 133&nbsp;&nbsp;63&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;peru<br>
+&nbsp;&nbsp;255 181 197&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pink</div>
+<br>
+This shows the layout of the file:&nbsp;&nbsp;First the R, G and B value as a decimal<br>
+number, followed by the name of the color.&nbsp;&nbsp;The four fields are separated by<br>
+spaces.<br>
+<br>
+You can get an rgb.txt file from any X11 distribution.&nbsp;&nbsp;It is located in a<br>
+directory like &quot;/usr/X11R6/lib/X11/&quot;.&nbsp;&nbsp;For Vim it must be located in the<br>
+$VIMRUNTIME directory.&nbsp;&nbsp;Thus the file can be found with &quot;$VIMRUNTIME/rgb.txt&quot;.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#gui-w32-dialogs" name="gui-w32-dialogs">*gui-w32-dialogs*</a>&nbsp;<a class="Constant" href="gui_w32.html#dialog" name="dialog">*dialog*</a><br>
+6. Windows dialogs &amp; browsers<br>
+<br>
+The Win32 GUI can use familiar Windows components for some operations, as well<br>
+as the traditional interface shared with the console version.<br>
+<br>
+<br>
+6.1 Dialogs<br>
+<br>
+The dialogs displayed by the &quot;confirm&quot; family (i.e. the&nbsp;<a class="Type" href="options.html#'confirm'">'confirm'</a>&nbsp;option,<br>
+<a class="Identifier" href="editing.html#:confirm">|:confirm|</a>&nbsp;command and&nbsp;<a class="Identifier" href="eval.html#confirm()">|confirm()|</a>&nbsp;function) are GUI-based rather than the<br>
+console-based ones used by other versions.&nbsp;&nbsp;The 'c' flag in&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a><br>
+changes this.<br>
+<br>
+<br>
+6.2 File Browsers<br>
+<br>
+When prepending &quot;:browse&quot; before file editing commands, a file requester is<br>
+used to allow you to select an existing file.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="editing.html#:browse">|:browse|</a>.<br>
+<br>
+<br>
+6.3 Tearoff Menus<br>
+<br>
+The Win32 GUI emulates Motif's tear-off menus.&nbsp;&nbsp;At the top of each menu you<br>
+will see a small graphic &quot;rip here&quot; sign.&nbsp;&nbsp;Selecting it will cause a floating<br>
+window to be created with the same menu entries on it.&nbsp;&nbsp;The floating menu can<br>
+then be accessed just as if it was the original (including sub-menus), but<br>
+without having to go to the menu bar each time.<br>
+This is most useful if you find yourself using a command buried in a sub-menu<br>
+over and over again.<br>
+The tearoff menus can be positioned where you like, and always stay just above<br>
+the Main Vim window.&nbsp;&nbsp;You can get rid of them by closing them as usual; they<br>
+also of course close when you exit Vim.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#:tearoff" name=":tearoff">*:tearoff*</a>&nbsp;<a class="Constant" href="gui_w32.html#:te" name=":te">*:te*</a><br>
+:te[aroff]&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tear-off the menu&nbsp;<span class="Special">{name}</span>.&nbsp;&nbsp;The menu named must have at<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;least one subentry, but need not appear on the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menu-bar (see&nbsp;<a class="Identifier" href="gui.html#win32-hidden-menus">|win32-hidden-menus|</a>).<br>
+<br>
+Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tearoff File</div>
+will make the &quot;File&quot; menu (if there is one) appear as a tearoff menu.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:amenu ]Toolbar.Make&nbsp;&nbsp;&nbsp;&nbsp;:make&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tearoff ]Toolbar</div>
+This creates a floating menu that doesn't exist on the main menu-bar.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that a menu that starts with ']' will not be displayed.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+7. Command line arguments&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#gui-w32-cmdargs" name="gui-w32-cmdargs">*gui-w32-cmdargs*</a><br>
+<br>
+Analysis of a command line into parameters is not standardised in MS Windows.<br>
+Gvim has to provide logic to analyse a command line.&nbsp;&nbsp;This logic is likely to<br>
+be different from the default logic provided by a compilation system used to<br>
+build vim.&nbsp;&nbsp;The differences relate to unusual double quote (&quot;) usage.<br>
+The arguments &quot;C:\My Music\freude.txt&quot; and &quot;+/Sch\&quot;iller&quot; are handled in the<br>
+same way.&nbsp;&nbsp;The argument &quot;+/Sch&quot;&quot;iller&quot; may be handled different by gvim and<br>
+vim, depending what it was compiled with.<br>
+<br>
+The rules are:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a) A parameter is a sequence of graphic characters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b) Parameters are separated by white space.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c) A parameter can be enclosed in double quotes to include white space.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d) A sequence of zero or more backslashes (\) and a double quote (&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is special.&nbsp;&nbsp;The effective number of backslashes is halved, rounded<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;down.&nbsp;&nbsp;An even number of backslashes reverses the acceptability of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;spaces and tabs, an odd number of backslashes produces a literal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double quote.<br>
+<br>
+So:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is a special double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is a literal double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\&quot;&nbsp;&nbsp;&nbsp;&nbsp; is a literal backslash and a special double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\\&quot;&nbsp;&nbsp;&nbsp;&nbsp;is a literal backslash and a literal double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\\\&quot;&nbsp;&nbsp; is 2 literal backslashes and a special double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\\\\&quot;&nbsp;&nbsp;is 2 literal backslashes and a literal double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etc.<br>
+<br>
+Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gvim &quot;C:\My Music\freude&quot; +&quot;set ignorecase&quot; +/&quot;\&quot;foo\\&quot; +\&quot;bar\\\&quot;</div>
+<br>
+opens &quot;C:\My Music\freude&quot; and executes the line mode commands:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set ignorecase; /&quot;foo\ and /bar\&quot;</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+8. Various&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#gui-w32-various" name="gui-w32-various">*gui-w32-various*</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#gui-w32-printing" name="gui-w32-printing">*gui-w32-printing*</a><br>
+The &quot;File/Print&quot; menu prints the text with syntax highlighting, see<br>
+<a class="Identifier" href="print.html#:hardcopy">|:hardcopy|</a>.&nbsp;&nbsp;If you just want to print the raw text and have a default<br>
+printer installed this should also work:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:w &gt;&gt;prn</div>
+<br>
+Vim supports a number of standard MS Windows features.&nbsp;&nbsp;Some of these are<br>
+detailed elsewhere: see&nbsp;<a class="Identifier" href="options.html#'mouse'">|'mouse'|</a>,&nbsp;<a class="Identifier" href="gui.html#win32-hidden-menus">|win32-hidden-menus|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#drag-n-drop-win32" name="drag-n-drop-win32">*drag-n-drop-win32*</a><br>
+You can drag and drop one or more files into the Vim window, where they will<br>
+be opened as normal.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="gui.html#drag-n-drop">|drag-n-drop|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#:simalt" name=":simalt">*:simalt*</a>&nbsp;<a class="Constant" href="gui_w32.html#:sim" name=":sim">*:sim*</a><br>
+:sim[alt]&nbsp;<span class="Special">{key}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; simulate pressing&nbsp;<span class="Special">{key}</span>&nbsp;while holding Alt pressed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not in Vi}</span>&nbsp;<span class="Special">{only for Win32 versions}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>: &quot;:si&quot; means &quot;:s&quot; with the &quot;i&quot; flag.<br>
+<br>
+Normally, Vim takes control of all Alt-<span class="Special">&lt;Key&gt;</span>&nbsp;combinations, to increase the<br>
+number of possible mappings.&nbsp;&nbsp;This clashes with the standard use of Alt as the<br>
+key for accessing menus.<br>
+The quick way of getting standard behavior is to set the&nbsp;<a class="Type" href="options.html#'winaltkeys'">'winaltkeys'</a>&nbsp;option<br>
+to &quot;yes&quot;.&nbsp;&nbsp;This however prevents you from mapping Alt keys at all.<br>
+Another way is to set&nbsp;<a class="Type" href="options.html#'winaltkeys'">'winaltkeys'</a>&nbsp;to &quot;menu&quot;.&nbsp;&nbsp;Menu shortcut keys are then<br>
+handled by windows, other ALT keys can be mapped.&nbsp;&nbsp;This doesn't allow a<br>
+dependency on the current state though.<br>
+To get round this, the :simalt command allows Vim (when&nbsp;<a class="Type" href="options.html#'winaltkeys'">'winaltkeys'</a>&nbsp;is not<br>
+&quot;yes&quot;) to fake a Windows-style Alt keypress.&nbsp;&nbsp;You can use this to map Alt key<br>
+combinations (or anything else for that matter) to produce standard Windows<br>
+actions.&nbsp;&nbsp;Here are some examples:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:map &lt;M-f&gt; :simalt f&lt;CR&gt;</div>
+This makes Alt-F pop down the 'File' menu (with the stock Menu.vim) by<br>
+simulating the keystrokes Alt, F.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:map &lt;M-Space&gt; :simalt ~&lt;CR&gt;</div>
+This maps Alt-Space to pop down the system menu for the Vim window.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that<br>
+~ is used by simalt to represent the&nbsp;<span class="Special">&lt;Space&gt;</span>&nbsp;character.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:map &lt;C-n&gt; :simalt ~n&lt;CR&gt;</div>
+Maps Control-<span class="Special">N</span>&nbsp;to produce the keys Alt-Space followed by&nbsp;<span class="Special">N</span>.&nbsp;&nbsp;This minimizes the<br>
+Vim window via the system menu.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that the key changes depending on the language you are using.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#intellimouse-wheel-problems" name="intellimouse-wheel-problems">*intellimouse-wheel-problems*</a><br>
+When using the Intellimouse mouse wheel causes Vim to stop accepting input, go<br>
+to:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ControlPanel - Mouse - Wheel - UniversalScrolling - Exceptions<br>
+<br>
+And add gvim to the list of applications.&nbsp;&nbsp;This problem only appears to happen<br>
+with the Intellimouse driver 2.2 and when &quot;Universal Scrolling&quot; is turned on.<br>
+<br>
+<br>
+XPM support&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#w32-xpm-support" name="w32-xpm-support">*w32-xpm-support*</a><br>
+<br>
+Gvim can be build on MS-Windows with support for XPM files.&nbsp;&nbsp;<a class="Identifier" href="various.html#+xpm_w32">|+xpm_w32|</a><br>
+See the Make_mvc.mak file for instructions, search for XPM.<br>
+<br>
+To try out if XPM support works do this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:help<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:exe 'sign define vimxpm icon=' . $VIMRUNTIME . '\\vim16x16.xpm'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:exe 'sign place 1 line=1 name=vimxpm file=' . expand('%:p')</div>
+<br>
+<br>
+&nbsp;vim:tw=78:sw=4:ts=8:ft=help:norl:<br>
+</div>

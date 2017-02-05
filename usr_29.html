@@ -1,0 +1,617 @@
+---
+layout: vimdoc
+helpname: 'usr_29'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_29.html" name="usr_29.txt">*usr_29.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2016 Feb 27<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Moving through programs<br>
+<br>
+<br>
+The creator of Vim is a computer programmer.&nbsp;&nbsp;It's no surprise that Vim<br>
+contains many features to aid in writing programs.&nbsp;&nbsp;Jump around to find where<br>
+identifiers are defined and used.&nbsp;&nbsp;Preview declarations in a separate window.<br>
+There is more in the next chapter.<br>
+<br>
+<a class="Identifier" href="usr_29.html#29.1">|29.1|</a>&nbsp;&nbsp;Using tags<br>
+<a class="Identifier" href="usr_29.html#29.2">|29.2|</a>&nbsp;&nbsp;The preview window<br>
+<a class="Identifier" href="usr_29.html#29.3">|29.3|</a>&nbsp;&nbsp;Moving through a program<br>
+<a class="Identifier" href="usr_29.html#29.4">|29.4|</a>&nbsp;&nbsp;Finding global identifiers<br>
+<a class="Identifier" href="usr_29.html#29.5">|29.5|</a>&nbsp;&nbsp;Finding local identifiers<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_30.html">|usr_30.txt|</a>&nbsp;&nbsp;Editing programs<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_28.html">|usr_28.txt|</a>&nbsp;&nbsp;Folding<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_29.html#29.1" name="29.1">*29.1*</a>&nbsp;&nbsp;Using tags<br>
+<br>
+What is a tag?&nbsp;&nbsp;It is a location where an identifier is defined.&nbsp;&nbsp;An example<br>
+is a function definition in a C or C++ program.&nbsp;&nbsp;A list of tags is kept in a<br>
+tags file.&nbsp;&nbsp;This can be used by Vim to directly jump from any place to the<br>
+tag, the place where an identifier is defined.<br>
+&nbsp;&nbsp; To generate the tags file for all C files in the current directory, use the<br>
+following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctags *.c</div>
+<br>
+&quot;ctags&quot; is a separate program.&nbsp;&nbsp;Most Unix systems already have it installed.<br>
+If you do not have it yet, you can find Exuberant ctags here:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://ctags.sf.net">http://ctags.sf.net</a></span>&nbsp;<br>
+<br>
+Now when you are in Vim and you want to go to a function definition, you can<br>
+jump to it by using the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tag startlist</div>
+<br>
+This command will find the function &quot;startlist&quot; even if it is in another file.<br>
+&nbsp;&nbsp; The&nbsp;<span class="Special">CTRL-]</span>&nbsp;command jumps to the tag of the word that is under the cursor.<br>
+This makes it easy to explore a tangle of C code.&nbsp;&nbsp;Suppose, for example, that<br>
+you are in the function &quot;write_block&quot;.&nbsp;&nbsp;You can see that it calls<br>
+&quot;write_line&quot;.&nbsp;&nbsp;But what does &quot;write_line&quot; do?&nbsp;&nbsp;By placing the cursor on the<br>
+call to &quot;write_line&quot; and pressing&nbsp;<span class="Special">CTRL-]</span>, you jump to the definition of this<br>
+function.<br>
+&nbsp;&nbsp; The &quot;write_line&quot; function calls &quot;write_char&quot;.&nbsp;&nbsp;You need to figure out what<br>
+it does.&nbsp;&nbsp;So you position the cursor over the call to &quot;write_char&quot; and press<br>
+<span class="Special">CTRL-]</span>.&nbsp;&nbsp;Now you are at the definition of &quot;write_char&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-------------------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|void write_block(char **s; int cnt)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; int i;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; for (i = 0; i &lt; cnt; ++i)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write_line(s[i]);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-----------|-------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-]</span>&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+----------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+--&gt; |void write_line(char *s)&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp; while (*s != 0)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write_char(*s++);&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +--------|-------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-]</span>&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+------------------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+--&gt; |void write_char(char c)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;putchar((int)(unsigned char)c); |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +------------------------------------+<br>
+<br>
+The &quot;:tags&quot; command shows the list of tags that you traversed through:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tags<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc"># TO tag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FROM line&nbsp;&nbsp;in file/text</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">1&nbsp;&nbsp;1 write_line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;write_block.c</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">2&nbsp;&nbsp;1 write_char&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;write_line.c</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&gt;</span><br>
+<br>
+Now to go back.&nbsp;&nbsp;The&nbsp;<span class="Special">CTRL-T</span>&nbsp;command goes to the preceding tag.&nbsp;&nbsp;In the example<br>
+above you get back to the &quot;write_line&quot; function, in the call to &quot;write_char&quot;.<br>
+&nbsp;&nbsp; This command takes a count argument that indicates how many tags to jump<br>
+back.&nbsp;&nbsp;You have gone forward, and now back.&nbsp;&nbsp;Let's go forward again.&nbsp;&nbsp;The<br>
+following command goes to the tag on top of the list:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tag</div>
+<br>
+You can prefix it with a count and jump forward that many tags.&nbsp;&nbsp;For example:<br>
+&quot;:3tag&quot;.&nbsp;&nbsp;<span class="Special">CTRL-T</span>&nbsp;also can be preceded with a count.<br>
+&nbsp;&nbsp; These commands thus allow you to go down a call tree with&nbsp;<span class="Special">CTRL-]</span>&nbsp;and back<br>
+up again with&nbsp;<span class="Special">CTRL-T</span>.&nbsp;&nbsp;Use &quot;:tags&quot; to find out where you are.<br>
+<br>
+<br>
+SPLIT WINDOWS<br>
+<br>
+The &quot;:tag&quot; command replaces the file in the current window with the one<br>
+containing the new function.&nbsp;&nbsp;But suppose you want to see not only the old<br>
+function but also the new one?&nbsp;&nbsp;You can split the window using the &quot;:split&quot;<br>
+command followed by the &quot;:tag&quot; command.&nbsp;&nbsp;Vim has a shorthand command that does<br>
+both:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:stag tagname</div>
+<br>
+To split the current window and jump to the tag under the cursor use this<br>
+command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTRL-W ]</div>
+<br>
+If a count is specified, the new window will be that many lines high.<br>
+<br>
+<br>
+MORE TAGS FILES<br>
+<br>
+When you have files in many directories, you can create a tags file in each of<br>
+them.&nbsp;&nbsp;Vim will then only be able to jump to tags within that directory.<br>
+&nbsp;&nbsp; To find more tags files, set the&nbsp;<a class="Type" href="options.html#'tags'">'tags'</a>&nbsp;option to include all the relevant<br>
+tags files.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set tags=./tags,./../tags,./*/tags</div>
+<br>
+This finds a tags file in the same directory as the current file, one<br>
+directory level higher and in all subdirectories.<br>
+&nbsp;&nbsp; This is quite a number of tags files, but it may still not be enough.&nbsp;&nbsp;For<br>
+example, when editing a file in &quot;~/proj/src&quot;, you will not find the tags file<br>
+&quot;~/proj/sub/tags&quot;.&nbsp;&nbsp;For this situation Vim offers to search a whole directory<br>
+tree for tags files.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set tags=~/proj/**/tags</div>
+<br>
+<br>
+ONE TAGS FILE<br>
+<br>
+When Vim has to search many places for tags files, you can hear the disk<br>
+rattling.&nbsp;&nbsp;It may get a bit slow.&nbsp;&nbsp;In that case it's better to spend this<br>
+time while generating one big tags file.&nbsp;&nbsp;You might do this overnight.<br>
+&nbsp;&nbsp; This requires the Exuberant ctags program, mentioned above.&nbsp;&nbsp;It offers an<br>
+argument to search a whole directory tree:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd ~/proj<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctags -R .</div>
+<br>
+The nice thing about this is that Exuberant ctags recognizes various file<br>
+types.&nbsp;&nbsp;Thus this doesn't work just for C and C++ programs, also for Eiffel<br>
+and even Vim scripts.&nbsp;&nbsp;See the ctags documentation to tune this.<br>
+&nbsp;&nbsp; Now you only need to tell Vim where your big tags file is:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set tags=~/proj/tags</div>
+<br>
+<br>
+MULTIPLE MATCHES<br>
+<br>
+When a function is defined multiple times (or a method in several classes),<br>
+the &quot;:tag&quot; command will jump to the first one.&nbsp;&nbsp;If there is a match in the<br>
+current file, that one is used first.<br>
+&nbsp;&nbsp; You can now jump to other matches for the same tag with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tnext</div>
+<br>
+Repeat this to find further matches.&nbsp;&nbsp;If there are many, you can select which<br>
+one to jump to:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tselect tagname</div>
+<br>
+Vim will present you with a list of choices:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc"># pri kind tag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; file</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">1 F&nbsp;&nbsp; f&nbsp;&nbsp;&nbsp;&nbsp;mch_init&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;os_amiga.c</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">mch_init()</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">2 F&nbsp;&nbsp; f&nbsp;&nbsp;&nbsp;&nbsp;mch_init&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;os_mac.c</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">mch_init()</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">3 F&nbsp;&nbsp; f&nbsp;&nbsp;&nbsp;&nbsp;mch_init&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;os_msdos.c</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">mch_init(void)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">4 F&nbsp;&nbsp; f&nbsp;&nbsp;&nbsp;&nbsp;mch_init&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;os_riscos.c</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">mch_init()</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Enter nr of choice (&lt;CR&gt; to abort):&nbsp;</span><br>
+<br>
+You can now enter the number (in the first column) of the match that you would<br>
+like to jump to.&nbsp;&nbsp;The information in the other columns give you a good idea of<br>
+where the match is defined.<br>
+<br>
+To move between the matching tags, these commands can be used:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tfirst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; go to first match<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:<span class="Special">[count]</span>tprevious&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; go to&nbsp;<span class="Special">[count]</span>&nbsp;previous match<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:<span class="Special">[count]</span>tnext&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; go to&nbsp;<span class="Special">[count]</span>&nbsp;next match<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tlast&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;go to last match<br>
+<br>
+If&nbsp;<span class="Special">[count]</span>&nbsp;is omitted then one is used.<br>
+<br>
+<br>
+GUESSING TAG NAMES<br>
+<br>
+Command line completion is a good way to avoid typing a long tag name.&nbsp;&nbsp;Just<br>
+type the first bit and press&nbsp;<span class="Special">&lt;Tab&gt;</span>:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tag write_&lt;Tab&gt;</div>
+<br>
+You will get the first match.&nbsp;&nbsp;If it's not the one you want, press&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;until<br>
+you find the right one.<br>
+&nbsp;&nbsp; Sometimes you only know part of the name of a function.&nbsp;&nbsp;Or you have many<br>
+tags that start with the same string, but end differently.&nbsp;&nbsp;Then you can tell<br>
+Vim to use a pattern to find the tag.<br>
+&nbsp;&nbsp; Suppose you want to jump to a tag that contains &quot;block&quot;.&nbsp;&nbsp;First type<br>
+this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tag /block</div>
+<br>
+Now use command line completion: press&nbsp;<span class="Special">&lt;Tab&gt;</span>.&nbsp;&nbsp;Vim will find all tags that<br>
+contain &quot;block&quot; and use the first match.<br>
+&nbsp;&nbsp; The &quot;/&quot; before a tag name tells Vim that what follows is not a literal tag<br>
+name, but a pattern.&nbsp;&nbsp;You can use all the items for search patterns here.&nbsp;&nbsp;For<br>
+example, suppose you want to select a tag that starts with &quot;write_&quot;:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:tselect /^write_</div>
+<br>
+The &quot;^&quot; specifies that the tag starts with &quot;write_&quot;.&nbsp;&nbsp;Otherwise it would also<br>
+be found halfway a tag name.&nbsp;&nbsp;Similarly &quot;$&quot; at the end makes sure the pattern<br>
+matches until the end of a tag.<br>
+<br>
+<br>
+A TAGS BROWSER<br>
+<br>
+Since&nbsp;<span class="Special">CTRL-]</span>&nbsp;takes you to the definition of the identifier under the cursor,<br>
+you can use a list of identifier names as a table of contents.&nbsp;&nbsp;Here is an<br>
+example.<br>
+&nbsp;&nbsp; First create a list of identifiers (this requires Exuberant ctags):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctags --c-types=f -f functions *.c</div>
+<br>
+Now start Vim without a file, and edit this file in Vim, in a vertically split<br>
+window:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:vsplit functions</div>
+<br>
+The window contains a list of all the functions.&nbsp;&nbsp;There is some more stuff,<br>
+but you can ignore that.&nbsp;&nbsp;Do &quot;:setlocal ts=99&quot; to clean it up a bit.<br>
+&nbsp;&nbsp; In this window, define a mapping:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:nnoremap &lt;buffer&gt; &lt;CR&gt; 0ye&lt;C-W&gt;w:tag &lt;C-R&gt;&quot;&lt;CR&gt;</div>
+<br>
+Move the cursor to the line that contains the function you want to go to.<br>
+Now press&nbsp;<span class="Special">&lt;Enter&gt;</span>.&nbsp;&nbsp;Vim will go to the other window and jump to the selected<br>
+function.<br>
+<br>
+<br>
+RELATED ITEMS<br>
+<br>
+To make case in tag names be ignored, you can set&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>&nbsp;while leaving<br>
+<a class="Type" href="options.html#'tagcase'">'tagcase'</a>&nbsp;as &quot;followic&quot;, or set&nbsp;<a class="Type" href="options.html#'tagcase'">'tagcase'</a>&nbsp;to &quot;ignore&quot;.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'tagbsearch'">'tagbsearch'</a>&nbsp;option tells if the tags file is sorted or not.&nbsp;&nbsp;The default<br>
+is to assume a sorted tags file, which makes a tags search a lot faster, but<br>
+doesn't work if the tags file isn't sorted.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'taglength'">'taglength'</a>&nbsp;option can be used to tell Vim the number of significant<br>
+characters in a tag.<br>
+<br>
+Cscope is a free program.&nbsp;&nbsp;It does not only find places where an identifier is<br>
+declared, but also where it is used.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="if_cscop.html#cscope">|cscope|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_29.html#29.2" name="29.2">*29.2*</a>&nbsp;&nbsp;The preview window<br>
+<br>
+When you edit code that contains a function call, you need to use the correct<br>
+arguments.&nbsp;&nbsp;To know what values to pass you can look at how the function is<br>
+defined.&nbsp;&nbsp;The tags mechanism works very well for this.&nbsp;&nbsp;Preferably the<br>
+definition is displayed in another window.&nbsp;&nbsp;For this the preview window can be<br>
+used.<br>
+&nbsp;&nbsp; To open a preview window to display the function &quot;write_char&quot;:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:ptag write_char</div>
+<br>
+Vim will open a window, and jumps to the tag &quot;write_char&quot;.&nbsp;&nbsp;Then it takes you<br>
+back to the original position.&nbsp;&nbsp;Thus you can continue typing without the need<br>
+to use a&nbsp;<span class="Special">CTRL-W</span>&nbsp;command.<br>
+&nbsp;&nbsp; If the name of a function appears in the text, you can get its definition<br>
+in the preview window with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTRL-W }</div>
+<br>
+There is a script that automatically displays the text where the word under<br>
+the cursor was defined.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="windows.html#CursorHold-example">|CursorHold-example|</a>.<br>
+<br>
+To close the preview window use this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:pclose</div>
+<br>
+To edit a specific file in the preview window, use &quot;:pedit&quot;.&nbsp;&nbsp;This can be<br>
+useful to edit a header file, for example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:pedit defs.h</div>
+<br>
+Finally, &quot;:psearch&quot; can be used to find a word in the current file and any<br>
+included files and display the match in the preview window.&nbsp;&nbsp;This is<br>
+especially useful when using library functions, for which you do not have a<br>
+tags file.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:psearch popen</div>
+<br>
+This will show the &quot;stdio.h&quot; file in the preview window, with the function<br>
+prototype for popen():<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">FILE&nbsp;&nbsp;&nbsp;&nbsp;*popen __P((const char *, const char *));</span><br>
+<br>
+You can specify the height of the preview window, when it is opened, with the<br>
+<a class="Type" href="options.html#'previewheight'">'previewheight'</a>&nbsp;option.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_29.html#29.3" name="29.3">*29.3*</a>&nbsp;&nbsp;Moving through a program<br>
+<br>
+Since a program is structured, Vim can recognize items in it.&nbsp;&nbsp;Specific<br>
+commands can be used to move around.<br>
+&nbsp;&nbsp; C programs often contain constructs like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#ifdef USE_POPEN</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">fd = popen(&quot;ls&quot;, &quot;r&quot;)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#else</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">fd = fopen(&quot;tmp&quot;, &quot;w&quot;)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#endif</span><br>
+<br>
+But then much longer, and possibly nested.&nbsp;&nbsp;Position the cursor on the<br>
+&quot;#ifdef&quot; and press %.&nbsp;&nbsp;Vim will jump to the &quot;#else&quot;.&nbsp;&nbsp;Pressing % again takes<br>
+you to the &quot;#endif&quot;.&nbsp;&nbsp;Another % takes you to the &quot;#ifdef&quot; again.<br>
+&nbsp;&nbsp; When the construct is nested, Vim will find the matching items.&nbsp;&nbsp;This is a<br>
+good way to check if you didn't forget an &quot;#endif&quot;.<br>
+&nbsp;&nbsp; When you are somewhere inside a &quot;#if&quot; - &quot;#endif&quot;, you can jump to the start<br>
+of it with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[#</div>
+<br>
+If you are not after a &quot;#if&quot; or &quot;#ifdef&quot; Vim will beep.&nbsp;&nbsp;To jump forward to<br>
+the next &quot;#else&quot; or &quot;#endif&quot; use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]#</div>
+<br>
+These two commands skip any &quot;#if&quot; - &quot;#endif&quot; blocks that they encounter.<br>
+Example:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#if defined(HAS_INC_H)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">a = a + inc();</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc"># ifdef USE_THEME</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">a += 3;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc"># endif</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">set_width(a);</span><br>
+<br>
+With the cursor in the last line, &quot;[#&quot; moves to the first line.&nbsp;&nbsp;The &quot;#ifdef&quot;<br>
+- &quot;#endif&quot; block in the middle is skipped.<br>
+<br>
+<br>
+MOVING IN CODE BLOCKS<br>
+<br>
+In C code blocks are enclosed in {}.&nbsp;&nbsp;These can get pretty long.&nbsp;&nbsp;To move to<br>
+the start of the outer block use the &quot;[[&quot; command.&nbsp;&nbsp;Use &quot;][&quot; to find the end.<br>
+This assumes that the &quot;{&quot; and &quot;}&quot; are in the first column.<br>
+&nbsp;&nbsp; The &quot;[{&quot; command moves to the start of the current block.&nbsp;&nbsp;It skips over<br>
+pairs of {} at the same level.&nbsp;&nbsp;&quot;]}&quot; jumps to the end.<br>
+&nbsp;&nbsp; An overview:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function(int a)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (a)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[[ |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (;;)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-&gt;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;[{ |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; foo(32);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp; --+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp; [{ |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (bar(a))&nbsp;&nbsp;--+&nbsp;&nbsp;&nbsp;&nbsp; | ]}&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +--&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break;&nbsp;&nbsp;&nbsp;&nbsp; | ]}&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-+&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | ][<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foobar(a)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-+<br>
+<br>
+When writing C++ or Java, the outer {} block is for the class.&nbsp;&nbsp;The next level<br>
+of {} is for a method.&nbsp;&nbsp;When somewhere inside a class use &quot;[m&quot; to find the<br>
+previous start of a method.&nbsp;&nbsp;&quot;]m&quot; finds the next start of a method.<br>
+<br>
+Additionally, &quot;[]&quot; moves backward to the end of a function and &quot;]]&quot; moves<br>
+forward to the start of the next function.&nbsp;&nbsp;The end of a function is defined<br>
+by a &quot;}&quot; in the first column.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int func1(void)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+----------&gt;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int func2(void)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-&gt;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;[[&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (flag)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start&nbsp;&nbsp;&nbsp;&nbsp; +--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return flag;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;][&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-&gt;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]]&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int func3(void)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+----------&gt;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+Don't forget you can also use &quot;%&quot; to move between matching (), {} and [].<br>
+That also works when they are many lines apart.<br>
+<br>
+<br>
+MOVING IN BRACES<br>
+<br>
+The &quot;[(&quot; and &quot;])&quot; commands work similar to &quot;[{&quot; and &quot;]}&quot;, except that they<br>
+work on () pairs instead of {} pairs.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[(</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;--------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">if (a == b &amp;&amp; (c == d || (e &gt; f)) &amp;&amp; x &gt; y)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------------&gt;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ])</div>
+<br>
+MOVING IN COMMENTS<br>
+<br>
+To move back to the start of a comment use &quot;[/&quot;.&nbsp;&nbsp;Move forward to the end of a<br>
+comment with &quot;]/&quot;.&nbsp;&nbsp;This only works for /* - */ comments.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-&gt;&nbsp;&nbsp;&nbsp;&nbsp; +-&gt; /*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;[/ |&nbsp;&nbsp;&nbsp;&nbsp;* A comment about&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [/ |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +--&nbsp;&nbsp;* wonderful life.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| ]/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;-+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foo = bar * 3;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| ]/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* a short comment */&nbsp;&nbsp;&lt;-+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_29.html#29.4" name="29.4">*29.4*</a>&nbsp;&nbsp;Finding global identifiers<br>
+<br>
+You are editing a C program and wonder if a variable is declared as &quot;int&quot; or<br>
+&quot;unsigned&quot;.&nbsp;&nbsp;A quick way to find this is with the &quot;[I&quot; command.<br>
+&nbsp;&nbsp; Suppose the cursor is on the word &quot;column&quot;.&nbsp;&nbsp;Type:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[I</div>
+<br>
+Vim will list the matching lines it can find.&nbsp;&nbsp;Not only in the current file,<br>
+but also in all included files (and files included in them, etc.).&nbsp;&nbsp;The result<br>
+looks like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">structs.h</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">1:&nbsp;&nbsp; 29&nbsp;&nbsp;&nbsp;&nbsp; unsigned&nbsp;&nbsp;&nbsp;&nbsp; column;&nbsp;&nbsp;&nbsp;&nbsp;/* column number */</span><br>
+<br>
+The advantage over using tags or the preview window is that included files are<br>
+searched.&nbsp;&nbsp;In most cases this results in the right declaration to be found.<br>
+Also when the tags file is out of date.&nbsp;&nbsp;Also when you don't have tags for the<br>
+included files.<br>
+&nbsp;&nbsp; However, a few things must be right for &quot;[I&quot; to do its work.&nbsp;&nbsp;First of all,<br>
+the&nbsp;<a class="Type" href="options.html#'include'">'include'</a>&nbsp;option must specify how a file is included.&nbsp;&nbsp;The default value<br>
+works for C and C++.&nbsp;&nbsp;For other languages you will have to change it.<br>
+<br>
+<br>
+LOCATING INCLUDED FILES<br>
+<br>
+&nbsp;&nbsp; Vim will find included files in the places specified with the&nbsp;<a class="Type" href="options.html#'path'">'path'</a><br>
+option.&nbsp;&nbsp;If a directory is missing, some include files will not be found.&nbsp;&nbsp;You<br>
+can discover this with this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:checkpath</div>
+<br>
+It will list the include files that could not be found.&nbsp;&nbsp;Also files included<br>
+by the files that could be found.&nbsp;&nbsp;An example of the output:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">--- Included files not found in path ---</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&lt;io.h&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">vim.h --&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&lt;functions.h&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&lt;clib/exec_protos.h&gt;</span><br>
+<br>
+The &quot;io.h&quot; file is included by the current file and can't be found.&nbsp;&nbsp;&quot;vim.h&quot;<br>
+can be found, thus &quot;:checkpath&quot; goes into this file and checks what it<br>
+includes.&nbsp;&nbsp;The &quot;functions.h&quot; and &quot;clib/exec_protos.h&quot; files, included by<br>
+&quot;vim.h&quot; are not found.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim is not a compiler.&nbsp;&nbsp;It does not recognize &quot;#ifdef&quot; statements.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This means every &quot;#include&quot; statement is used, also when it comes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;after &quot;#if NEVER&quot;.<br>
+<br>
+To fix the files that could not be found, add a directory to the&nbsp;<a class="Type" href="options.html#'path'">'path'</a><br>
+option.&nbsp;&nbsp;A good place to find out about this is the Makefile.&nbsp;&nbsp;Look out for<br>
+lines that contain &quot;-I&quot; items, like &quot;-I/usr/local/X11&quot;.&nbsp;&nbsp;To add this directory<br>
+use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set path+=/usr/local/X11</div>
+<br>
+When there are many subdirectories, you can use the &quot;*&quot; wildcard.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set path+=/usr/*/include</div>
+<br>
+This would find files in &quot;/usr/local/include&quot; as well as &quot;/usr/X11/include&quot;.<br>
+<br>
+When working on a project with a whole nested tree of included files, the &quot;**&quot;<br>
+items is useful.&nbsp;&nbsp;This will search down in all subdirectories.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set path+=/projects/invent/**/include</div>
+<br>
+This will find files in the directories:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">/projects/invent/include</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">/projects/invent/main/include</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">/projects/invent/main/os/include</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etc.<br>
+<br>
+There are even more possibilities.&nbsp;&nbsp;Check out the&nbsp;<a class="Type" href="options.html#'path'">'path'</a>&nbsp;option for info.<br>
+&nbsp;&nbsp; If you want to see which included files are actually found, use this<br>
+command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:checkpath!</div>
+<br>
+You will get a (very long) list of included files, the files they include, and<br>
+so on.&nbsp;&nbsp;To shorten the list a bit, Vim shows &quot;(Already listed)&quot; for files that<br>
+were found before and doesn't list the included files in there again.<br>
+<br>
+<br>
+JUMPING TO A MATCH<br>
+<br>
+&quot;[I&quot; produces a list with only one line of text.&nbsp;&nbsp;When you want to have a<br>
+closer look at the first item, you can jump to that line with the command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&lt;Tab&gt;</div>
+<br>
+You can also use &quot;[&nbsp;<span class="Special">CTRL-I</span>&quot;, since&nbsp;<span class="Special">CTRL-I</span>&nbsp;is the same as pressing&nbsp;<span class="Special">&lt;Tab&gt;</span>.<br>
+<br>
+The list that &quot;[I&quot; produces has a number at the start of each line.&nbsp;&nbsp;When you<br>
+want to jump to another item than the first one, type the number first:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3[&lt;Tab&gt;</div>
+<br>
+Will jump to the third item in the list.&nbsp;&nbsp;Remember that you can use&nbsp;<span class="Special">CTRL-O</span>&nbsp;to<br>
+jump back to where you started from.<br>
+<br>
+<br>
+RELATED COMMANDS<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only lists the first match<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only lists items below the cursor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only lists the first item below the cursor<br>
+<br>
+<br>
+FINDING DEFINED IDENTIFIERS<br>
+<br>
+The &quot;[I&quot; command finds any identifier.&nbsp;&nbsp;To find only macros, defined with<br>
+&quot;#define&quot; use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[D</div>
+<br>
+Again, this searches in included files.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'define'">'define'</a>&nbsp;option specifies what a<br>
+line looks like that defines the items for &quot;[D&quot;.&nbsp;&nbsp;You could change it to make<br>
+it work with other languages than C or C++.<br>
+&nbsp;&nbsp; The commands related to &quot;[D&quot; are:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only lists the first match<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only lists items below the cursor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only lists the first item below the cursor<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_29.html#29.5" name="29.5">*29.5*</a>&nbsp;&nbsp;Finding local identifiers<br>
+<br>
+The &quot;[I&quot; command searches included files.&nbsp;&nbsp;To search in the current file only,<br>
+and jump to the first place where the word under the cursor is used:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gD</div>
+<br>
+Hint: Goto Definition.&nbsp;&nbsp;This command is very useful to find a variable or<br>
+function that was declared locally (&quot;static&quot;, in C terms).&nbsp;&nbsp;Example (cursor on<br>
+&quot;counter&quot;):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +-&gt;&nbsp;&nbsp; static int counter = 0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp; int get_counter(void)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gD |&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ++counter;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return counter;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+<br>
+To restrict the search even further, and look only in the current function,<br>
+use this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gd</div>
+<br>
+This will go back to the start of the current function and find the first<br>
+occurrence of the word under the cursor.&nbsp;&nbsp;Actually, it searches backwards to<br>
+an empty line above a &quot;{&quot; in the first column.&nbsp;&nbsp;From there it searches forward<br>
+for the identifier.&nbsp;&nbsp;Example (cursor on &quot;idx&quot;):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int find_entry(char *name)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int idx;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gd |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (idx = 0; idx &lt; table_len; ++idx)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (strcmp(table[idx].name, name) == 0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return idx;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_30.html">|usr_30.txt|</a>&nbsp;&nbsp;Editing programs<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

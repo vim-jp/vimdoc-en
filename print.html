@@ -1,0 +1,761 @@
+---
+layout: vimdoc
+helpname: 'print'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="print.html" name="print.txt">*print.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2010 Jul 20<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+Printing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#printing" name="printing">*printing*</a><br>
+<br>
+1. Introduction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="print.html#print-intro">|print-intro|</a><br>
+2. Print options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="print.html#print-options">|print-options|</a><br>
+3. PostScript Printing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="print.html#postscript-printing">|postscript-printing|</a><br>
+4. PostScript Printing Encoding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="print.html#postscript-print-encoding">|postscript-print-encoding|</a><br>
+5. PostScript CJK Printing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="print.html#postscript-cjk-printing">|postscript-cjk-printing|</a><br>
+6. PostScript Printing Troubleshooting&nbsp;&nbsp;<a class="Identifier" href="print.html#postscript-print-trouble">|postscript-print-trouble|</a><br>
+7. PostScript Utilities&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="print.html#postscript-print-util">|postscript-print-util|</a><br>
+8. Formfeed Characters&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="print.html#printing-formfeed">|printing-formfeed|</a><br>
+<br>
+<span class="Special">{Vi has None of this}</span><br>
+<span class="Special">{only available when compiled with the&nbsp;</span><a class="Identifier" href="various.html#+printer">|+printer|</a><span class="Special">&nbsp;feature}</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Introduction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#print-intro" name="print-intro">*print-intro*</a><br>
+<br>
+On MS-Windows Vim can print your text on any installed printer.&nbsp;&nbsp;On other<br>
+systems a PostScript file is produced.&nbsp;&nbsp;This can be directly sent to a<br>
+PostScript printer.&nbsp;&nbsp;For other printers a program like ghostscript needs to be<br>
+used.<br>
+<br>
+<span class="Todo">Note</span>: If you have problems printing with&nbsp;<a class="Identifier" href="print.html#:hardcopy">|:hardcopy|</a>, an alternative is to use<br>
+<a class="Identifier" href="syntax.html#:TOhtml">|:TOhtml|</a>&nbsp;and print the resulting html file from a browser.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#:ha" name=":ha">*:ha*</a>&nbsp;<a class="Constant" href="print.html#:hardcopy" name=":hardcopy">*:hardcopy*</a>&nbsp;<a class="Constant" href="print.html#E237" name="E237">*E237*</a>&nbsp;<a class="Constant" href="print.html#E238" name="E238">*E238*</a>&nbsp;<a class="Constant" href="print.html#E324" name="E324">*E324*</a><br>
+:<span class="Special">[range]</span>ha[rdcopy][!]&nbsp;<span class="Special">[arguments]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Send&nbsp;<span class="Special">[range]</span>&nbsp;lines (default whole file) to the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printer.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;On MS-Windows a dialog is displayed to allow selection<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of printer, paper size etc.&nbsp;&nbsp;To skip the dialog, use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the [!].&nbsp;&nbsp;In this case the printer defined by<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'printdevice'">'printdevice'</a>&nbsp;is used, or, if&nbsp;<a class="Type" href="options.html#'printdevice'">'printdevice'</a>&nbsp;is empty,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the system default printer.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For systems other than MS-Windows, PostScript is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;written in a temp file and&nbsp;<a class="Type" href="options.html#'printexpr'">'printexpr'</a>&nbsp;is used to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;actually print it.&nbsp;&nbsp;Then&nbsp;<span class="Special">[arguments]</span>&nbsp;can be used by<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'printexpr'">'printexpr'</a>&nbsp;through&nbsp;<a class="Identifier" href="eval.html#v:cmdarg">|v:cmdarg|</a>.&nbsp;&nbsp;Otherwise&nbsp;<span class="Special">[arguments]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is ignored.&nbsp;&nbsp;<a class="Type" href="options.html#'printoptions'">'printoptions'</a>&nbsp;can be used to specify<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;paper size, duplex, etc.<br>
+<br>
+:<span class="Special">[range]</span>ha[rdcopy][!] &gt;<span class="Special">{filename}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As above, but write the resulting PostScript in file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{filename}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Things like &quot;%&quot; are expanded&nbsp;<a class="Identifier" href="cmdline.html#cmdline-special">|cmdline-special|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Careful: An existing file is silently overwritten.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{only available when compiled with the&nbsp;</span><a class="Identifier" href="various.html#+postscript">|+postscript|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;On MS-Windows use the &quot;print to file&quot; feature of the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printer driver.<br>
+<br>
+Progress is displayed during printing as a page number and a percentage.&nbsp;&nbsp;To<br>
+abort printing use the interrupt key (<span class="Special">CTRL-C</span>&nbsp;or, on MS-systems,&nbsp;<span class="Special">CTRL-Break</span>).<br>
+<br>
+Printer output is controlled by the&nbsp;<a class="Type" href="options.html#'printfont'">'printfont'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'printoptions'">'printoptions'</a>&nbsp;options.<br>
+<a class="Type" href="options.html#'printheader'">'printheader'</a>&nbsp;specifies the format of a page header.<br>
+<br>
+The printed file is always limited to the selected margins, irrespective of<br>
+the current window's&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;or&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;settings.&nbsp;&nbsp;The &quot;wrap&quot; item in<br>
+<a class="Type" href="options.html#'printoptions'">'printoptions'</a>&nbsp;can be used to switch wrapping off.<br>
+The current highlighting colors are used in the printout, with the following<br>
+considerations:<br>
+1) The normal background is always rendered as white (i.e. blank paper).<br>
+2) White text or the default foreground is rendered as black, so that it shows<br>
+&nbsp;&nbsp; up!<br>
+3) If&nbsp;<a class="Type" href="options.html#'background'">'background'</a>&nbsp;is &quot;dark&quot;, then the colours are darkened to compensate for<br>
+&nbsp;&nbsp; the fact that otherwise they would be too bright to show up clearly on<br>
+&nbsp;&nbsp; white paper.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Print options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#print-options" name="print-options">*print-options*</a><br>
+<br>
+Here are the details for the options that change the way printing is done.<br>
+For generic info about setting options see&nbsp;<a class="Identifier" href="options.html">|options.txt|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#pdev-option" name="pdev-option">*pdev-option*</a><br>
+<a class="Type" href="options.html#'printdevice'">'printdevice'</a>&nbsp;<a class="Type" href="options.html#'pdev'">'pdev'</a>&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;&nbsp;(default empty)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
+This defines the name of the printer to be used when the&nbsp;<a class="Identifier" href="print.html#:hardcopy">|:hardcopy|</a>&nbsp;command<br>
+is issued with a bang (!) to skip the printer selection dialog.&nbsp;&nbsp;On Win32, it<br>
+should be the printer name exactly as it appears in the standard printer<br>
+dialog.<br>
+If the option is empty, then vim will use the system default printer for<br>
+&quot;:hardcopy!&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#penc-option" name="penc-option">*penc-option*</a>&nbsp;<a class="Constant" href="print.html#E620" name="E620">*E620*</a><br>
+<a class="Type" href="options.html#'printencoding'">'printencoding'</a>&nbsp;<a class="Type" href="options.html#'penc'">'penc'</a>&nbsp;&nbsp;String&nbsp;&nbsp;(default empty, except for:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Windows, OS/2: cp1252,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Macintosh: mac-roman,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VMS: dec-mcs,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HPUX: hp-roman8,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EBCDIC: ebcdic-uk)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
+Sets the character encoding used when printing.&nbsp;&nbsp;This option tells VIM which<br>
+print character encoding file from the &quot;print&quot; directory in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;to<br>
+use.<br>
+<br>
+This option will accept any value from&nbsp;<a class="Identifier" href="mbyte.html#encoding-names">|encoding-names|</a>.&nbsp;&nbsp;Any recognized names<br>
+are converted to VIM standard names - see&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;for more details.&nbsp;&nbsp;Names<br>
+not recognized by VIM will just be converted to lower case and underscores<br>
+replaced with '-' signs.<br>
+<br>
+If&nbsp;<a class="Type" href="options.html#'printencoding'">'printencoding'</a>&nbsp;is empty or VIM cannot find the file then it will use<br>
+<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;(if VIM is compiled with&nbsp;<a class="Identifier" href="various.html#+multi_byte">|+multi_byte|</a>&nbsp;and it is set an 8-bit<br>
+encoding) to find the print character encoding file.&nbsp;&nbsp;If VIM is unable to find<br>
+a character encoding file then it will use the &quot;latin1&quot; print character<br>
+encoding file.<br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is set to a multi-byte encoding, VIM will try to convert<br>
+characters to the printing encoding for printing (if&nbsp;<a class="Type" href="options.html#'printencoding'">'printencoding'</a>&nbsp;is empty<br>
+then the conversion will be to latin1).&nbsp;&nbsp;Conversion to a printing encoding<br>
+other than latin1 will require VIM to be compiled with the&nbsp;<a class="Identifier" href="various.html#+iconv">|+iconv|</a>&nbsp;feature.<br>
+If no conversion is possible then printing will fail.&nbsp;&nbsp;Any characters that<br>
+cannot be converted will be replaced with upside down question marks.<br>
+<br>
+Four print character encoding files are provided to support default Mac, VMS,<br>
+HPUX, and EBCDIC character encodings and are used by default on these<br>
+platforms.&nbsp;&nbsp;Code page 1252 print character encoding is used by default on<br>
+Windows and OS/2 platforms.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#pexpr-option" name="pexpr-option">*pexpr-option*</a><br>
+<a class="Type" href="options.html#'printexpr'">'printexpr'</a>&nbsp;<a class="Type" href="options.html#'pexpr'">'pexpr'</a>&nbsp;&nbsp;&nbsp;&nbsp; String&nbsp;&nbsp;(default: see below)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
+Expression that is evaluated to print the PostScript produced with<br>
+<a class="Identifier" href="print.html#:hardcopy">|:hardcopy|</a>.<br>
+The file name to be printed is in&nbsp;<a class="Identifier" href="eval.html#v:fname_in">|v:fname_in|</a>.<br>
+The arguments to the &quot;:hardcopy&quot; command are in&nbsp;<a class="Identifier" href="eval.html#v:cmdarg">|v:cmdarg|</a>.<br>
+The expression must take care of deleting the file after printing it.<br>
+When there is an error, the expression must return a non-zero number.<br>
+If there is no error, return zero or an empty string.<br>
+The default for non MS-Windows or VMS systems is to simply use &quot;lpr&quot; to print<br>
+the file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;system('lpr' . (&amp;printdevice == '' ? '' : ' -P' . &amp;printdevice)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. ' ' . v:fname_in) . delete(v:fname_in) + v:shell_error</div>
+<br>
+On MS-Dos, MS-Windows and OS/2 machines the default is to copy the file to the<br>
+currently specified printdevice:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;system('copy' . ' ' . v:fname_in . (&amp;printdevice == ''<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;? ' LPT1:' : (' \&quot;' . &amp;printdevice . '\&quot;')))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. delete(v:fname_in)</div>
+<br>
+On VMS machines the default is to send the file to either the default or<br>
+currently specified printdevice:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;system('print' . (&amp;printdevice == '' ? '' : ' /queue=' .<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;printdevice) . ' ' . v:fname_in) . delete(v:fname_in)</div>
+<br>
+If you change this option, using a function is an easy way to avoid having to<br>
+escape all the spaces.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set printexpr=PrintFile(v:fname_in)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:function PrintFile(fname)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;call system(&quot;ghostview &quot; . a:fname)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;call delete(a:fname)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;return v:shell_error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:endfunc</div>
+<br>
+Be aware that some print programs return control before they have read the<br>
+file.&nbsp;&nbsp;If you delete the file too soon it will not be printed.&nbsp;&nbsp;These programs<br>
+usually offer an option to have them remove the file when printing is done.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#E365" name="E365">*E365*</a><br>
+If evaluating the expression fails or it results in a non-zero number, you get<br>
+an error message.&nbsp;&nbsp;In that case Vim will delete the file.&nbsp;&nbsp;In the default<br>
+value for non-MS-Windows a trick is used: Adding &quot;v:shell_error&quot; will result<br>
+in a non-zero number when the system() call fails.<br>
+<br>
+This option cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">|modeline|</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">|sandbox|</a>, for security<br>
+reasons.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#pfn-option" name="pfn-option">*pfn-option*</a>&nbsp;<a class="Constant" href="print.html#E613" name="E613">*E613*</a><br>
+<a class="Type" href="options.html#'printfont'">'printfont'</a>&nbsp;<a class="Type" href="options.html#'pfn'">'pfn'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string&nbsp;&nbsp;(default &quot;courier&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
+This is the name of the font that will be used for the&nbsp;<a class="Identifier" href="print.html#:hardcopy">|:hardcopy|</a>&nbsp;command's<br>
+output.&nbsp;&nbsp;It has the same format as the&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;option, except that only one<br>
+font may be named, and the special &quot;guifont=*&quot; syntax is not available.<br>
+<br>
+In the Win32 GUI version this specifies a font name with its extra attributes,<br>
+as with the&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;option.<br>
+<br>
+For other systems, only &quot;:h11&quot; is recognized, where &quot;11&quot; is the point size of<br>
+the font.&nbsp;&nbsp;When omitted, the point size is 10.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#pheader-option" name="pheader-option">*pheader-option*</a><br>
+<a class="Type" href="options.html#'printheader'">'printheader'</a>&nbsp;<a class="Type" href="options.html#'pheader'">'pheader'</a>&nbsp;&nbsp;string&nbsp;&nbsp;(default &quot;%&lt;%f%h%m%=Page %<span class="Special">N</span>&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; global<br>
+This defines the format of the header produced in&nbsp;<a class="Identifier" href="print.html#:hardcopy">|:hardcopy|</a>&nbsp;output.&nbsp;&nbsp;The<br>
+option is defined in the same way as the&nbsp;<a class="Type" href="options.html#'statusline'">'statusline'</a>&nbsp;option.&nbsp;&nbsp;If Vim has not<br>
+been compiled with the&nbsp;<a class="Identifier" href="various.html#+statusline">|+statusline|</a>&nbsp;feature, this option has no effect and a<br>
+simple default header is used, which shows the page number.&nbsp;&nbsp;The same simple<br>
+header is used when this option is empty.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#pmbcs-option" name="pmbcs-option">*pmbcs-option*</a><br>
+<a class="Type" href="options.html#'printmbcharset'">'printmbcharset'</a>&nbsp;<a class="Type" href="options.html#'pmbcs'">'pmbcs'</a>&nbsp;&nbsp;string (default &quot;&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
+Sets the CJK character set to be used when generating CJK output from<br>
+<a class="Identifier" href="print.html#:hardcopy">|:hardcopy|</a>.&nbsp;&nbsp;The following predefined values are currently recognised by VIM:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Description</span><br>
+&nbsp;&nbsp;Chinese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GB_2312-80<br>
+&nbsp;&nbsp;(Simplified)&nbsp;&nbsp;GBT_12345-90<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MAC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Apple Mac Simplified Chinese<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GBT-90_MAC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GB/T 12345-90 Apple Mac Simplified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chinese<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GBK&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GBK (GB 13000.1-93)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO10646&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO 10646-1:1993<br>
+<br>
+&nbsp;&nbsp;Chinese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CNS_1993&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNS 11643-1993, Planes 1 &amp; 2<br>
+&nbsp;&nbsp;(Traditional) BIG5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ETEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Big5 with ETen extensions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO10646&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO 10646-1:1993<br>
+<br>
+&nbsp;&nbsp;Japanese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JIS_C_1978<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JIS_X_1983<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JIS_X_1990<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MSWINDOWS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Win3.1/95J (JIS X 1997 + NEC +<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IBM extensions)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KANJITALK6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Apple Mac KanjiTalk V6.x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KANJITALK7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Apple Mac KanjiTalk V7.x<br>
+<br>
+&nbsp;&nbsp;Korean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KS_X_1992<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MAC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Apple Macintosh Korean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MSWINDOWS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; KS X 1992 with MS extensions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO10646&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO 10646-1:1993<br>
+<br>
+Only certain combinations of the above values and&nbsp;<a class="Type" href="options.html#'printencoding'">'printencoding'</a>&nbsp;are<br>
+possible.&nbsp;&nbsp;The following tables show the valid combinations:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">euc-cn&nbsp;&nbsp; gbk&nbsp;&nbsp;&nbsp;&nbsp;ucs-2&nbsp;&nbsp; utf-8</span><br>
+&nbsp;&nbsp;Chinese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GB_2312-80&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+&nbsp;&nbsp;(Simplified)&nbsp;&nbsp;GBT_12345-90&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MAC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GBT-90_MAC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GBK&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO10646&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">euc-tw&nbsp;&nbsp; big5&nbsp;&nbsp; ucs-2&nbsp;&nbsp; utf-8</span><br>
+&nbsp;&nbsp;Chinese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CNS_1993&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+&nbsp;&nbsp;(Traditional) BIG5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ETEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO10646&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">euc-jp&nbsp;&nbsp; sjis&nbsp;&nbsp; ucs-2&nbsp;&nbsp; utf-8</span><br>
+&nbsp;&nbsp;Japanese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JIS_C_1978&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JIS_X_1983&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JIS_X_1990&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MSWINDOWS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KANJITALK6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KANJITALK7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">euc-kr&nbsp;&nbsp; cp949&nbsp;&nbsp;ucs-2&nbsp;&nbsp; utf-8</span><br>
+&nbsp;&nbsp;Korean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KS_X_1992&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MAC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MSWINDOWS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO10646&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<br>
+<br>
+To set up the correct encoding and character set for printing some<br>
+Japanese text you would do the following;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set printencoding=euc-jp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set printmbcharset=JIS_X_1983</div>
+<br>
+If&nbsp;<a class="Type" href="options.html#'printmbcharset'">'printmbcharset'</a>&nbsp;is not one of the above values then it is assumed to<br>
+specify a custom multi-byte character set and no check will be made that it is<br>
+compatible with the value for&nbsp;<a class="Type" href="options.html#'printencoding'">'printencoding'</a>.&nbsp;&nbsp;VIM will look for a file<br>
+defining the character set in the &quot;print&quot; directory in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#pmbfn-option" name="pmbfn-option">*pmbfn-option*</a><br>
+<a class="Type" href="options.html#'printmbfont'">'printmbfont'</a>&nbsp;<a class="Type" href="options.html#'pmbfn'">'pmbfn'</a>&nbsp;&nbsp; string (default &quot;&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
+This is a comma-separated list of fields for font names to be used when<br>
+generating CJK output from&nbsp;<a class="Identifier" href="print.html#:hardcopy">|:hardcopy|</a>.&nbsp;&nbsp;Each font name has to be preceded<br>
+with a letter indicating the style the font is to be used for as follows:<br>
+<br>
+&nbsp;&nbsp;r:<span class="Special">{font-name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; font to use for normal characters<br>
+&nbsp;&nbsp;b:<span class="Special">{font-name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; font to use for bold characters<br>
+&nbsp;&nbsp;i:<span class="Special">{font-name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; font to use for italic characters<br>
+&nbsp;&nbsp;o:<span class="Special">{font-name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; font to use for bold-italic characters<br>
+<br>
+A field with the r: prefix must be specified when doing CJK printing.&nbsp;&nbsp;The<br>
+other fontname specifiers are optional.&nbsp;&nbsp;If a specifier is missing then<br>
+another font will be used as follows:<br>
+<br>
+&nbsp;&nbsp;if b: is missing, then use r:<br>
+&nbsp;&nbsp;if i: is missing, then use r:<br>
+&nbsp;&nbsp;if o: is missing, then use b:<br>
+<br>
+Some CJK fonts do not contain characters for codes in the ASCII code range.<br>
+Also, some characters in the CJK ASCII code ranges differ in a few code points<br>
+from traditional ASCII characters.&nbsp;&nbsp;There are two additional fields to control<br>
+printing of characters in the ASCII code range.<br>
+<br>
+&nbsp;&nbsp;c:yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Use Courier font for characters in the ASCII<br>
+&nbsp;&nbsp;c:no (default)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code range.<br>
+<br>
+&nbsp;&nbsp;a:yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Use ASCII character set for codes in the ASCII<br>
+&nbsp;&nbsp;a:no (default)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code range.<br>
+<br>
+The following is an example of specifying two multi-byte fonts, one for normal<br>
+and italic printing and one for bold and bold-italic printing, and using<br>
+Courier to print codes in the ASCII code range but using the national<br>
+character set:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set printmbfont=r:WadaMin-Regular,b:WadaMin-Bold,c:yes</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#popt-option" name="popt-option">*popt-option*</a><br>
+<a class="Type" href="options.html#'printoptions'">'printoptions'</a>&nbsp;<a class="Type" href="options.html#'popt'">'popt'</a>&nbsp;&nbsp; string (default &quot;&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
+This is a comma-separated list of items that control the format of the output<br>
+of&nbsp;<a class="Identifier" href="print.html#:hardcopy">|:hardcopy|</a>:<br>
+<br>
+&nbsp;&nbsp;left:<span class="Special">{spec}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; left margin (default: 10pc)<br>
+&nbsp;&nbsp;right:<span class="Special">{spec}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;right margin (default: 5pc)<br>
+&nbsp;&nbsp;top:<span class="Special">{spec}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;top margin (default: 5pc)<br>
+&nbsp;&nbsp;bottom:<span class="Special">{spec}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bottom margin (default: 5pc)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{spec}</span>&nbsp;is a number followed by &quot;in&quot; for inches, &quot;pt&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for points (1 point is 1/72 of an inch), &quot;mm&quot; for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;millimeters or &quot;pc&quot; for a percentage of the media<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Weird example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;left:2in,top:30pt,right:16mm,bottom:3pc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the unit is not recognized there is no error and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the default value is used.<br>
+<br>
+&nbsp;&nbsp;header:<span class="Special">{nr}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Number of lines to reserve for the header.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only the first line is actually filled, thus when&nbsp;<span class="Special">{nr}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is 2 there is one empty line.&nbsp;&nbsp;The header is formatted<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;according to&nbsp;<a class="Type" href="options.html#'printheader'">'printheader'</a>.<br>
+&nbsp;&nbsp;header:0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Do not print a header.<br>
+&nbsp;&nbsp;header:2&nbsp;&nbsp;(default)&nbsp;&nbsp; Use two lines for the header<br>
+<br>
+&nbsp;&nbsp;syntax:n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Do not use syntax highlighting.&nbsp;&nbsp;This is faster and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;thus useful when printing large files.<br>
+&nbsp;&nbsp;syntax:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Do syntax highlighting.<br>
+&nbsp;&nbsp;syntax:a&nbsp;&nbsp;(default)&nbsp;&nbsp; Use syntax highlighting if the printer appears to be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;able to print color or grey.<br>
+<br>
+&nbsp;&nbsp;number:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Include line numbers in the printed output.<br>
+&nbsp;&nbsp;number:n&nbsp;&nbsp;(default)&nbsp;&nbsp; No line numbers.<br>
+<br>
+&nbsp;&nbsp;wrap:y&nbsp;&nbsp;&nbsp;&nbsp;(default)&nbsp;&nbsp; Wrap long lines.<br>
+&nbsp;&nbsp;wrap:n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Truncate long lines.<br>
+<br>
+&nbsp;&nbsp;duplex:off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Print on one side.<br>
+&nbsp;&nbsp;duplex:long (default) Print on both sides (when possible), bind on long<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;side.<br>
+&nbsp;&nbsp;duplex:short&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Print on both sides (when possible), bind on short<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;side.<br>
+<br>
+&nbsp;&nbsp;collate:y&nbsp;&nbsp;(default)&nbsp;&nbsp;Collating: 1 2 3, 1 2 3, 1 2 3<br>
+&nbsp;&nbsp;collate:n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No collating: 1 1 1, 2 2 2, 3 3 3<br>
+<br>
+&nbsp;&nbsp;jobsplit:n (default)&nbsp;&nbsp;Do all copies in one print job<br>
+&nbsp;&nbsp;jobsplit:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Do each copy as a separate print job.&nbsp;&nbsp;Useful when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doing&nbsp;<span class="Special">N</span>-up postprocessing.<br>
+<br>
+&nbsp;&nbsp;portrait:y (default)&nbsp;&nbsp;Orientation is portrait.<br>
+&nbsp;&nbsp;portrait:n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orientation is landscape.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#a4" name="a4">*a4*</a>&nbsp;<a class="Constant" href="print.html#letter" name="letter">*letter*</a><br>
+&nbsp;&nbsp;paper:A4&nbsp;&nbsp; (default)&nbsp;&nbsp;Paper size: A4<br>
+&nbsp;&nbsp;paper:<span class="Special">{name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Paper size from this table:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">size in cm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; size in inch</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10x14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 25.4&nbsp;&nbsp;x 35.57&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;x 14<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;29.7&nbsp;&nbsp;x 42&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11.69 x 16.54<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp;x 29.7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.27 x 11.69<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14.8&nbsp;&nbsp;x 21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.83 x&nbsp;&nbsp;8.27<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;25&nbsp;&nbsp;&nbsp;&nbsp;x 35.3&nbsp;&nbsp;&nbsp;&nbsp; 10.12 x 14.33<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17.6&nbsp;&nbsp;x 25&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7.17 x 10.12<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;executive&nbsp;&nbsp; 18.42 x 26.67&nbsp;&nbsp;&nbsp;&nbsp; 7.25 x 10.5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folio&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 21&nbsp;&nbsp;&nbsp;&nbsp;x 33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.27 x 13<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ledger&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;43.13 x 27.96&nbsp;&nbsp;&nbsp;&nbsp;17&nbsp;&nbsp;&nbsp;&nbsp;x 11<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 21.59 x 35.57&nbsp;&nbsp;&nbsp;&nbsp; 8.5&nbsp;&nbsp;x 14<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;letter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21.59 x 27.96&nbsp;&nbsp;&nbsp;&nbsp; 8.5&nbsp;&nbsp;x 11<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quarto&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21.59 x 27.5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.5&nbsp;&nbsp;x 10.83<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statement&nbsp;&nbsp; 13.97 x 21.59&nbsp;&nbsp;&nbsp;&nbsp; 5.5&nbsp;&nbsp;x&nbsp;&nbsp;8.5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tabloid&nbsp;&nbsp;&nbsp;&nbsp; 27.96 x 43.13&nbsp;&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;&nbsp;x 17<br>
+<br>
+&nbsp;&nbsp;formfeed:n (default)&nbsp;&nbsp;Treat form feed characters (0x0c) as a normal print<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;character.<br>
+&nbsp;&nbsp;formfeed:y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When a form feed character is encountered, continue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printing of the current line at the beginning of the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first line on a new page.<br>
+<br>
+The item indicated with (default) is used when the item is not present.&nbsp;&nbsp;The<br>
+values are not always used, especially when using a dialog to select the<br>
+printer and options.<br>
+Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set printoptions=paper:letter,duplex:off</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. PostScript Printing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#postscript-printing" name="postscript-printing">*postscript-printing*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#E455" name="E455">*E455*</a>&nbsp;<a class="Constant" href="print.html#E456" name="E456">*E456*</a>&nbsp;<a class="Constant" href="print.html#E457" name="E457">*E457*</a>&nbsp;<a class="Constant" href="print.html#E624" name="E624">*E624*</a><br>
+Provided you have enough disk space there should be no problems generating a<br>
+PostScript file.&nbsp;&nbsp;You need to have the runtime files correctly installed (if<br>
+you can find the help files, they probably are).<br>
+<br>
+There are currently a number of limitations with PostScript printing:<br>
+<br>
+-&nbsp;<a class="Type" href="options.html#'printfont'">'printfont'</a>&nbsp;- The font name is ignored (the Courier family is always used -<br>
+&nbsp;&nbsp;it should be available on all PostScript printers) but the font size is<br>
+&nbsp;&nbsp;used.<br>
+<br>
+-&nbsp;<a class="Type" href="options.html#'printoptions'">'printoptions'</a>&nbsp;- The duplex setting is used when generating PostScript<br>
+&nbsp;&nbsp;output, but it is up to the printer to take notice of the setting.&nbsp;&nbsp;If the<br>
+&nbsp;&nbsp;printer does not support duplex printing then it should be silently ignored.<br>
+&nbsp;&nbsp;Some printers, however, don't print at all.<br>
+<br>
+- 8-bit support - While a number of 8-bit print character encodings are<br>
+&nbsp;&nbsp;supported it is possible that some characters will not print.&nbsp;&nbsp;Whether a<br>
+&nbsp;&nbsp;character will print depends on the font in the printer knowing the<br>
+&nbsp;&nbsp;character.&nbsp;&nbsp;Missing characters will be replaced with an upside down question<br>
+&nbsp;&nbsp;mark, or a space if that character is also not known by the font.&nbsp;&nbsp;It may be<br>
+&nbsp;&nbsp;possible to get all the characters in an encoding to print by installing a<br>
+&nbsp;&nbsp;new version of the Courier font family.<br>
+<br>
+- Multi-byte support - Currently VIM will try to convert multi-byte characters<br>
+&nbsp;&nbsp;to the 8-bit encoding specified by&nbsp;<a class="Type" href="options.html#'printencoding'">'printencoding'</a>&nbsp;(or latin1 if it is<br>
+&nbsp;&nbsp;empty).&nbsp;&nbsp;Any characters that are not successfully converted are shown as<br>
+&nbsp;&nbsp;unknown characters.&nbsp;&nbsp;Printing will fail if VIM cannot convert the multi-byte<br>
+&nbsp;&nbsp;to the 8-bit encoding.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. Custom 8-bit Print Character Encodings&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#postscript-print-encoding" name="postscript-print-encoding">*postscript-print-encoding*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#E618" name="E618">*E618*</a>&nbsp;<a class="Constant" href="print.html#E619" name="E619">*E619*</a><br>
+To use your own print character encoding when printing 8-bit character data<br>
+you need to define your own PostScript font encoding vector.&nbsp;&nbsp;Details on how<br>
+to define a font encoding vector is beyond the scope of this help file, but<br>
+you can find details in the PostScript Language Reference Manual, 3rd Edition,<br>
+published by Addison-Wesley and available in PDF form at<br>
+<span class="Constant"><a href="http://www.adobe.com/">http://www.adobe.com/</a></span>.&nbsp;&nbsp;The following describes what you need to do for VIM to<br>
+locate and use your print character encoding.<br>
+<br>
+i.&nbsp;&nbsp; Decide on a unique name for your encoding vector, one that does not clash<br>
+&nbsp;&nbsp;&nbsp;&nbsp; with any of the recognized or standard encoding names that VIM uses (see<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#encoding-names">|encoding-names|</a>&nbsp;for a list), and that no one else is likely to use.<br>
+ii.&nbsp;&nbsp;Copy $VIMRUNTIME/print/latin1.ps to the print subdirectory in your<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;and rename it with your unique name.<br>
+iii. Edit your renamed copy of latin1.ps, replacing all occurrences of latin1<br>
+&nbsp;&nbsp;&nbsp;&nbsp; with your unique name (don't forget the line starting %%Title:), and<br>
+&nbsp;&nbsp;&nbsp;&nbsp; modify the array of glyph names to define your new encoding vector.&nbsp;&nbsp;The<br>
+&nbsp;&nbsp;&nbsp;&nbsp; array must have exactly 256 entries or you will not be able to print!<br>
+iv.&nbsp;&nbsp;Within VIM, set&nbsp;<a class="Type" href="options.html#'printencoding'">'printencoding'</a>&nbsp;to your unique encoding name and then<br>
+&nbsp;&nbsp;&nbsp;&nbsp; print your file.&nbsp;&nbsp;VIM will now use your custom print character encoding.<br>
+<br>
+VIM will report an error with the resource file if you change the order or<br>
+content of the first 3 lines, other than the name of the encoding on the line<br>
+starting %%Title: or the version number on the line starting %%Version:.<br>
+<br>
+[Technical explanation for those that know PostScript - VIM looks for a file<br>
+with the same name as the encoding it will use when printing.&nbsp;&nbsp;The file<br>
+defines a new PostScript Encoding resource called /VIM-name, where name is the<br>
+print character encoding VIM will use.]<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+5. PostScript CJK Printing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#postscript-cjk-printing" name="postscript-cjk-printing">*postscript-cjk-printing*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#E673" name="E673">*E673*</a>&nbsp;<a class="Constant" href="print.html#E674" name="E674">*E674*</a>&nbsp;<a class="Constant" href="print.html#E675" name="E675">*E675*</a><br>
+<br>
+VIM supports printing of Chinese, Japanese, and Korean files.&nbsp;&nbsp;Setting up VIM<br>
+to correctly print CJK files requires setting up a few more options.<br>
+<br>
+Each of these countries has many standard character sets and encodings which<br>
+require that both be specified when printing.&nbsp;&nbsp;In addition, CJK fonts normally<br>
+do not have the concept of italic glyphs and use different weight or stroke<br>
+style to achieve emphasis when printing.&nbsp;&nbsp;This in turn requires a different<br>
+approach to specifying fonts to use when printing.<br>
+<br>
+The encoding and character set are specified with the&nbsp;<a class="Type" href="options.html#'printencoding'">'printencoding'</a>&nbsp;and<br>
+<a class="Type" href="options.html#'printmbcharset'">'printmbcharset'</a>&nbsp;options.&nbsp;&nbsp;If&nbsp;<a class="Type" href="options.html#'printencoding'">'printencoding'</a>&nbsp;is not specified then&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a><br>
+is used as normal.&nbsp;&nbsp;If&nbsp;<a class="Type" href="options.html#'printencoding'">'printencoding'</a>&nbsp;is specified then characters will be<br>
+translated to this encoding for printing.&nbsp;&nbsp;You should ensure that the encoding<br>
+is compatible with the character set needed for the file contents or some<br>
+characters may not appear when printed.<br>
+<br>
+The fonts to use for CJK printing are specified with&nbsp;<a class="Type" href="options.html#'printmbfont'">'printmbfont'</a>.&nbsp;&nbsp;This<br>
+option allows you to specify different fonts to use when printing characters<br>
+which are syntax highlighted with the font styles normal, italic, bold and<br>
+bold-italic.<br>
+<br>
+No CJK fonts are supplied with VIM.&nbsp;&nbsp;There are some free Korean, Japanese, and<br>
+Traditional Chinese fonts available at:<br>
+<br>
+&nbsp;&nbsp;<span class="Constant"><a href="http://examples.oreilly.com/cjkvinfo/adobe/samples/">http://examples.oreilly.com/cjkvinfo/adobe/samples/</a></span><br>
+<br>
+You can find descriptions of the various fonts in the read me file at<br>
+<br>
+&nbsp;&nbsp;<span class="Constant"><a href="http://examples.oreilly.de/english_examples/cjkvinfo/adobe/00README">http://examples.oreilly.de/english_examples/cjkvinfo/adobe/00README</a></span><br>
+<br>
+Please read your printer documentation on how to install new fonts.<br>
+<br>
+CJK fonts can be large containing several thousand glyphs, and it is not<br>
+uncommon to find that they only contain a subset of a national standard.&nbsp;&nbsp;It<br>
+is not unusual to find the fonts to not include characters for codes in the<br>
+ASCII code range.&nbsp;&nbsp;If you find half-width Roman characters are not appearing<br>
+in your printout then you should configure VIM to use the Courier font the<br>
+half-width ASCII characters with&nbsp;<a class="Type" href="options.html#'printmbfont'">'printmbfont'</a>.&nbsp;&nbsp;If your font does not include<br>
+other characters then you will need to find another font that does.<br>
+<br>
+Another issue with ASCII characters, is that the various national character<br>
+sets specify a couple of different glyphs in the ASCII code range.&nbsp;&nbsp;If you<br>
+print ASCII text using the national character set you may see some unexpected<br>
+characters.&nbsp;&nbsp;If you want true ASCII code printing then you need to configure<br>
+VIM to output ASCII characters for the ASCII code range with&nbsp;<a class="Type" href="options.html#'printmbfont'">'printmbfont'</a>.<br>
+<br>
+It is possible to define your own multi-byte character set although this<br>
+should not be attempted lightly.&nbsp;&nbsp;A discussion on the process if beyond the<br>
+scope of these help files.&nbsp;&nbsp;You can find details on CMap (character map) files<br>
+in the document 'Adobe CMap and CIDFont Files Specification, Version 1.0',<br>
+available from&nbsp;<span class="Constant"><a href="http://www.adobe.com">http://www.adobe.com</a></span>&nbsp;as a PDF file.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+6. PostScript Printing Troubleshooting&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#postscript-print-trouble" name="postscript-print-trouble">*postscript-print-trouble*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#E621" name="E621">*E621*</a><br>
+Usually the only sign of a problem when printing with PostScript is that your<br>
+printout does not appear.&nbsp;&nbsp;If you are lucky you may get a printed page that<br>
+tells you the PostScript operator that generated the error that prevented the<br>
+print job completing.<br>
+<br>
+There are a number of possible causes as to why the printing may have failed:<br>
+<br>
+- Wrong version of the prolog resource file.&nbsp;&nbsp;The prolog resource file<br>
+&nbsp;&nbsp;contains some PostScript that VIM needs to be able to print.&nbsp;&nbsp;Each version<br>
+&nbsp;&nbsp;of VIM needs one particular version.&nbsp;&nbsp;Make sure you have correctly installed<br>
+&nbsp;&nbsp;the runtime files, and don't have any old versions of a file called prolog<br>
+&nbsp;&nbsp;in the print directory in your&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;directory.<br>
+<br>
+- Paper size.&nbsp;&nbsp;Some PostScript printers will abort printing a file if they do<br>
+&nbsp;&nbsp;not support the requested paper size.&nbsp;&nbsp;By default VIM uses A4 paper.&nbsp;&nbsp;Find<br>
+&nbsp;&nbsp;out what size paper your printer normally uses and set the appropriate paper<br>
+&nbsp;&nbsp;size with&nbsp;<a class="Type" href="options.html#'printoptions'">'printoptions'</a>.&nbsp;&nbsp;If you cannot find the name of the paper used,<br>
+&nbsp;&nbsp;measure a sheet and compare it with the table of supported paper sizes listed<br>
+&nbsp;&nbsp;for&nbsp;<a class="Type" href="options.html#'printoptions'">'printoptions'</a>, using the paper that is closest in both width AND height.<br>
+&nbsp;&nbsp;<span class="Todo">Note</span>: The dimensions of actual paper may vary slightly from the ones listed.<br>
+&nbsp;&nbsp;If there is no paper listed close enough, then you may want to try psresize<br>
+&nbsp;&nbsp;from PSUtils, discussed below.<br>
+<br>
+- Two-sided printing (duplex).&nbsp;&nbsp;Normally a PostScript printer that does not<br>
+&nbsp;&nbsp;support two-sided printing will ignore any request to do it.&nbsp;&nbsp;However, some<br>
+&nbsp;&nbsp;printers may abort the job altogether.&nbsp;&nbsp;Try printing with duplex turned off.<br>
+&nbsp;&nbsp;<span class="Todo">Note</span>: Duplex prints can be achieved manually using PS utils - see below.<br>
+<br>
+- Collated printing.&nbsp;&nbsp;As with Duplex printing, most PostScript printers that<br>
+&nbsp;&nbsp;do not support collating printouts will ignore a request to do so.&nbsp;&nbsp;Some may<br>
+&nbsp;&nbsp;not.&nbsp;&nbsp;Try printing with collation turned off.<br>
+<br>
+- Syntax highlighting.&nbsp;&nbsp;Some print management code may prevent the generated<br>
+&nbsp;&nbsp;PostScript file from being printed on a black and white printer when syntax<br>
+&nbsp;&nbsp;highlighting is turned on, even if solid black is the only color used.&nbsp;&nbsp;Try<br>
+&nbsp;&nbsp;printing with syntax highlighting turned off.<br>
+<br>
+A safe printoptions setting to try is:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set printoptions=paper:A4,duplex:off,collate:n,syntax:n</div>
+<br>
+Replace &quot;A4&quot; with the paper size that best matches your printer paper.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+7. PostScript Utilities&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#postscript-print-util" name="postscript-print-util">*postscript-print-util*</a><br>
+<br>
+7.1 Ghostscript<br>
+<br>
+Ghostscript is a PostScript and PDF interpreter that can be used to display<br>
+and print on non-PostScript printers PostScript and PDF files.&nbsp;&nbsp;It can also<br>
+generate PDF files from PostScript.<br>
+<br>
+Ghostscript will run on a wide variety of platforms.<br>
+<br>
+There are three available versions:<br>
+<br>
+- AFPL Ghostscript (formerly Aladdin Ghostscript) which is free for<br>
+&nbsp;&nbsp;non-commercial use.&nbsp;&nbsp;It can be obtained from:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.cs.wisc.edu/~ghost/">http://www.cs.wisc.edu/~ghost/</a></span><br>
+<br>
+- GNU Ghostscript which is available under the GNU General Public License.&nbsp;&nbsp;It<br>
+&nbsp;&nbsp;can be obtained from:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant">ftp://mirror.cs.wisc.edu/pub/mirrors/ghost/gnu/</span><br>
+<br>
+- A commercial version for inclusion in commercial products.<br>
+<br>
+Additional information on Ghostscript can also be found at:<br>
+<br>
+&nbsp;&nbsp;<span class="Constant"><a href="http://www.ghostscript.com/">http://www.ghostscript.com/</a></span><br>
+<br>
+Support for a number of non PostScript printers is provided in the<br>
+distribution as standard, but if you cannot find support for your printer<br>
+check the Ghostscript site for other printers not included by default.<br>
+<br>
+<br>
+7.2 Ghostscript Previewers.<br>
+<br>
+The interface to Ghostscript is very primitive so a number of graphical front<br>
+ends have been created.&nbsp;&nbsp;These allow easier PostScript file selection,<br>
+previewing at different zoom levels, and printing.&nbsp;&nbsp;Check supplied<br>
+documentation for full details.<br>
+<br>
+X11<br>
+<br>
+- Ghostview.&nbsp;&nbsp;Obtainable from:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.cs.wisc.edu/~ghost/gv/">http://www.cs.wisc.edu/~ghost/gv/</a></span><br>
+<br>
+- gv.&nbsp;&nbsp;Derived from Ghostview.&nbsp;&nbsp;Obtainable from:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://wwwthep.physik.uni-mainz.de/~plass/gv/">http://wwwthep.physik.uni-mainz.de/~plass/gv/</a></span><br>
+<br>
+&nbsp;&nbsp;Copies (possibly not the most recent) can be found at:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.cs.wisc.edu/~ghost/gv/">http://www.cs.wisc.edu/~ghost/gv/</a></span><br>
+<br>
+OpenVMS<br>
+<br>
+- Is apparently supported in the main code now (untested).&nbsp;&nbsp;See:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://wwwthep.physik.uni-mainz.de/~plass/gv/">http://wwwthep.physik.uni-mainz.de/~plass/gv/</a></span><br>
+<br>
+Windows and OS/2<br>
+<br>
+- GSview.&nbsp;&nbsp;Obtainable from:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.cs.wisc.edu/~ghost/gsview/">http://www.cs.wisc.edu/~ghost/gsview/</a></span><br>
+<br>
+DOS<br>
+<br>
+- ps_view.&nbsp;&nbsp;Obtainable from:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant">ftp://ftp.pg.gda.pl/pub/TeX/support/ps_view/</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant">ftp://ftp.dante.de/tex-archive/support/ps_view/</span><br>
+<br>
+Linux<br>
+<br>
+- GSview.&nbsp;&nbsp;Linux version of the popular Windows and OS/2 previewer.<br>
+&nbsp;&nbsp;Obtainable from:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.cs.wisc.edu/~ghost/gsview/">http://www.cs.wisc.edu/~ghost/gsview/</a></span><br>
+<br>
+- BMV.&nbsp;&nbsp;Different from Ghostview and gv in that it doesn't use X but svgalib.<br>
+&nbsp;&nbsp;Obtainable from:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant">ftp://sunsite.unc.edu/pub/Linux/apps/graphics/viewers/svga/bmv-1.2.tgz</span><br>
+<br>
+<br>
+7.3 PSUtils<br>
+<br>
+PSUtils is a collection of utility programs for manipulating PostScript<br>
+documents.&nbsp;&nbsp;Binary distributions are available for many platforms, as well as<br>
+the full source.&nbsp;&nbsp;PSUtils can be found at:<br>
+<br>
+&nbsp;&nbsp;<span class="Constant"><a href="http://knackered.org/angus/psutils">http://knackered.org/angus/psutils</a></span><br>
+<br>
+The utilities of interest include:<br>
+<br>
+- psnup.&nbsp;&nbsp;&nbsp;&nbsp; Convert PS files for&nbsp;<span class="Special">N</span>-up printing.<br>
+- psselect.&nbsp;&nbsp;Select page range and order of printing.<br>
+- psresize.&nbsp;&nbsp;Change the page size.<br>
+- psbook.&nbsp;&nbsp;&nbsp;&nbsp;Reorder and lay out pages ready for making a book.<br>
+<br>
+The output of one program can be used as the input to the next, allowing for<br>
+complex print document creation.<br>
+<br>
+<br>
+<span class="Special">N</span>-UP PRINTING<br>
+<br>
+The psnup utility takes an existing PostScript file generated from VIM and<br>
+convert it to an n-up version.&nbsp;&nbsp;The simplest way to create a 2-up printout is<br>
+to first create a PostScript file with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:hardcopy &gt; test.ps</div>
+<br>
+Then on your command line execute:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;psnup -n 2 test.ps final.ps</div>
+<br>
+<span class="Todo">Note</span>: You may get warnings from some Ghostscript previewers for files produced<br>
+by psnup - these may safely be ignored.<br>
+<br>
+Finally print the file final.ps to your PostScript printer with your<br>
+platform's print command.&nbsp;&nbsp;(You will need to delete the two PostScript files<br>
+afterwards yourself.)&nbsp;&nbsp;<a class="Type" href="options.html#'printexpr'">'printexpr'</a>&nbsp;could be modified to perform this extra<br>
+step before printing.<br>
+<br>
+<br>
+ALTERNATE DUPLEX PRINTING<br>
+<br>
+It is possible to achieve a poor man's version of duplex printing using the PS<br>
+utility psselect.&nbsp;&nbsp;This utility has options -e and -o for printing just the<br>
+even or odd pages of a PS file respectively.<br>
+<br>
+First generate a PS file with the&nbsp;<span class="MissingTag">'hardcopy'</span>&nbsp;command, then generate new<br>
+files with all the odd and even numbered pages with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;psselect -o test.ps odd.ps<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;psselect -e test.ps even.ps</div>
+<br>
+Next print odd.ps with your platform's normal print command.&nbsp;&nbsp;Then take the<br>
+print output, turn it over and place it back in the paper feeder.&nbsp;&nbsp;Now print<br>
+even.ps with your platform's print command.&nbsp;&nbsp;All the even pages should now<br>
+appear on the back of the odd pages.<br>
+<br>
+There are a couple of points to bear in mind:<br>
+<br>
+1. Position of the first page.&nbsp;&nbsp;If the first page is on top of the printout<br>
+&nbsp;&nbsp; when printing the odd pages then you need to reverse the order that the odd<br>
+&nbsp;&nbsp; pages are printed.&nbsp;&nbsp;This can be done with the -r option to psselect.&nbsp;&nbsp;This<br>
+&nbsp;&nbsp; will ensure page 2 is printed on the back of page 1.<br>
+&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>: it is better to reverse the odd numbered pages rather than the even<br>
+&nbsp;&nbsp; numbered in case there are an odd number of pages in the original PS file.<br>
+<br>
+2. Paper flipping.&nbsp;&nbsp;When turning over the paper with the odd pages printed on<br>
+&nbsp;&nbsp; them you may have to either flip them horizontally (along the long edge) or<br>
+&nbsp;&nbsp; vertically (along the short edge), as well as possibly rotating them 180<br>
+&nbsp;&nbsp; degrees.&nbsp;&nbsp;All this depends on the printer - it will be more obvious for<br>
+&nbsp;&nbsp; desktop ink jets than for small office laser printers where the paper path<br>
+&nbsp;&nbsp; is hidden from view.<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+8. Formfeed Characters&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="print.html#printing-formfeed" name="printing-formfeed">*printing-formfeed*</a><br>
+<br>
+By default VIM does not do any special processing of&nbsp;<a class="Identifier" href="intro.html#formfeed">|formfeed|</a>&nbsp;control<br>
+characters.&nbsp;&nbsp;Setting the&nbsp;<a class="Type" href="options.html#'printoptions'">'printoptions'</a>&nbsp;formfeed item will make VIM recognize<br>
+formfeed characters and continue printing the current line at the beginning<br>
+of the first line on a new page.&nbsp;&nbsp;The use of formfeed characters provides<br>
+rudimentary print control but there are certain things to be aware of.<br>
+<br>
+VIM will always start printing a line (including a line number if enabled)<br>
+containing a formfeed character, even if it is the first character on the<br>
+line.&nbsp;&nbsp;This means if a line starting with a formfeed character is the first<br>
+line of a page then VIM will print a blank page.<br>
+<br>
+Since the line number is printed at the start of printing the line containing<br>
+the formfeed character, the remainder of the line printed on the new page<br>
+will not have a line number printed for it (in the same way as the wrapped<br>
+lines of a long line when wrap in&nbsp;<a class="Type" href="options.html#'printoptions'">'printoptions'</a>&nbsp;is enabled).<br>
+<br>
+If the formfeed character is the last character on a line, then printing will<br>
+continue on the second line of the new page, not the first.&nbsp;&nbsp;This is due to<br>
+VIM processing the end of the line after the formfeed character and moving<br>
+down a line to continue printing.<br>
+<br>
+Due to the points made above it is recommended that when formfeed character<br>
+processing is enabled, printing of line numbers is disabled, and that form<br>
+feed characters are not the last character on a line.&nbsp;&nbsp;Even then you may need<br>
+to adjust the number of lines before a formfeed character to prevent<br>
+accidental blank pages.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

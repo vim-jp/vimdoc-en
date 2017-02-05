@@ -1,0 +1,693 @@
+---
+layout: vimdoc
+helpname: 'filetype'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="filetype.html" name="filetype.txt">*filetype.txt*</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Jan 04<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+Filetypes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#filetype" name="filetype">*filetype*</a>&nbsp;<a class="Constant" href="filetype.html#file-type" name="file-type">*file-type*</a><br>
+<br>
+1. Filetypes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="filetype.html#filetypes">|filetypes|</a><br>
+2. Filetype plugin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="filetype.html#filetype-plugins">|filetype-plugins|</a><br>
+3. Docs for the default filetype plugins.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="filetype.html#ftplugin-docs">|ftplugin-docs|</a><br>
+<br>
+Also see&nbsp;<a class="Identifier" href="autocmd.html">|autocmd.txt|</a>.<br>
+<br>
+<span class="Special">{Vi does not have any of these commands}</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Filetypes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#filetypes" name="filetypes">*filetypes*</a>&nbsp;<a class="Constant" href="filetype.html#file-types" name="file-types">*file-types*</a><br>
+<br>
+Vim can detect the type of file that is edited.&nbsp;&nbsp;This is done by checking the<br>
+file name and sometimes by inspecting the contents of the file for specific<br>
+text.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#:filetype" name=":filetype">*:filetype*</a>&nbsp;<a class="Constant" href="filetype.html#:filet" name=":filet">*:filet*</a><br>
+To enable file type detection, use this command in your vimrc:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:filetype on</div>
+Each time a new or existing file is edited, Vim will try to recognize the type<br>
+of the file and set the&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>&nbsp;option.&nbsp;&nbsp;This will trigger the FileType<br>
+event, which can be used to set the syntax highlighting, set options, etc.<br>
+<br>
+<span class="Todo">NOTE</span>: Filetypes and&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;don't work together well, since being Vi<br>
+compatible means options are global.&nbsp;&nbsp;Resetting&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;is recommended,<br>
+if you didn't do that already.<br>
+<br>
+Detail: The &quot;:filetype on&quot; command will load one of these files:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Amiga&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $VIMRUNTIME/filetype.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mac&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $VIMRUNTIME:filetype.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MS-DOS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$VIMRUNTIME\filetype.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RiscOS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim:Filetype<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$VIMRUNTIME/filetype.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VMS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $VIMRUNTIME/filetype.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file is a Vim script that defines autocommands for the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufNewFile and BufRead events.&nbsp;&nbsp;If the file type is not found by the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name, the file $VIMRUNTIME/scripts.vim is used to detect it from the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contents of the file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When the GUI is running or will start soon, the menu.vim script is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;also sourced.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="options.html#'go-M'">|'go-M'|</a>&nbsp;about avoiding that.<br>
+<br>
+To add your own file types, see&nbsp;<a class="Identifier" href="filetype.html#new-filetype">|new-filetype|</a>&nbsp;below.&nbsp;&nbsp;To search for help on a<br>
+filetype prepend &quot;ft-&quot; and optionally append &quot;-syntax&quot;, &quot;-indent&quot; or<br>
+&quot;-plugin&quot;.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:help ft-vim-indent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:help ft-vim-syntax<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:help ft-man-plugin</div>
+<br>
+If the file type is not detected automatically, or it finds the wrong type,<br>
+you can either set the&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>&nbsp;option manually, or add a modeline to your<br>
+file.&nbsp;&nbsp;Example, for an IDL file use the command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set filetype=idl</div>
+<br>
+or add this&nbsp;<a class="Identifier" href="options.html#modeline">|modeline|</a>&nbsp;to the file:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">/* vim&#0058; set filetype=idl : */</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#:filetype-plugin-on" name=":filetype-plugin-on">*:filetype-plugin-on*</a><br>
+You can enable loading the plugin files for specific file types with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:filetype plugin on</div>
+If filetype detection was not switched on yet, it will be as well.<br>
+This actually loads the file &quot;ftplugin.vim&quot; in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.<br>
+The result is that when a file is edited its plugin file is loaded (if there<br>
+is one for the detected filetype).&nbsp;<a class="Identifier" href="usr_43.html#filetype-plugin">|filetype-plugin|</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#:filetype-plugin-off" name=":filetype-plugin-off">*:filetype-plugin-off*</a><br>
+You can disable it again with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:filetype plugin off</div>
+The filetype detection is not switched off then.&nbsp;&nbsp;But if you do switch off<br>
+filetype detection, the plugins will not be loaded either.<br>
+This actually loads the file &quot;ftplugof.vim&quot; in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#:filetype-indent-on" name=":filetype-indent-on">*:filetype-indent-on*</a><br>
+You can enable loading the indent file for specific file types with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:filetype indent on</div>
+If filetype detection was not switched on yet, it will be as well.<br>
+This actually loads the file &quot;indent.vim&quot; in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.<br>
+The result is that when a file is edited its indent file is loaded (if there<br>
+is one for the detected filetype).&nbsp;<a class="Identifier" href="indent.html#indent-expression">|indent-expression|</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#:filetype-indent-off" name=":filetype-indent-off">*:filetype-indent-off*</a><br>
+You can disable it again with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:filetype indent off</div>
+The filetype detection is not switched off then.&nbsp;&nbsp;But if you do switch off<br>
+filetype detection, the indent files will not be loaded either.<br>
+This actually loads the file &quot;indoff.vim&quot; in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.<br>
+This disables auto-indenting for files you will open.&nbsp;&nbsp;It will keep working in<br>
+already opened files.&nbsp;&nbsp;Reset&nbsp;<a class="Type" href="options.html#'autoindent'">'autoindent'</a>,&nbsp;<a class="Type" href="options.html#'cindent'">'cindent'</a>,&nbsp;<a class="Type" href="options.html#'smartindent'">'smartindent'</a>&nbsp;and/or<br>
+<a class="Type" href="options.html#'indentexpr'">'indentexpr'</a>&nbsp;to disable indenting in an opened file.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#:filetype-off" name=":filetype-off">*:filetype-off*</a><br>
+To disable file type detection, use this command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:filetype off</div>
+This will keep the flags for &quot;plugin&quot; and &quot;indent&quot;, but since no file types<br>
+are being detected, they won't work until the next &quot;:filetype on&quot;.<br>
+<br>
+<br>
+Overview:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#:filetype-overview" name=":filetype-overview">*:filetype-overview*</a><br>
+<br>
+<span class="PreProc">command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; detection&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indent</span><br>
+:filetype on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unchanged&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unchanged<br>
+:filetype off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unchanged&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unchanged<br>
+:filetype plugin on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unchanged<br>
+:filetype plugin off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unchanged&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unchanged<br>
+:filetype indent on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unchanged&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; on<br>
+:filetype indent off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unchanged&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unchanged&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; off<br>
+:filetype plugin indent on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on<br>
+:filetype plugin indent off&nbsp;&nbsp;&nbsp;&nbsp; unchanged&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; off<br>
+<br>
+To see the current status, type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:filetype</div>
+The output looks something like this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filetype detection:ON&nbsp;&nbsp;plugin:ON&nbsp;&nbsp;indent:OFF</div>
+<br>
+The file types are also used for syntax highlighting.&nbsp;&nbsp;If the &quot;:syntax on&quot;<br>
+command is used, the file type detection is installed too.&nbsp;&nbsp;There is no need<br>
+to do &quot;:filetype on&quot; after &quot;:syntax on&quot;.<br>
+<br>
+To disable one of the file types, add a line in your filetype file, see<br>
+<a class="Identifier" href="filetype.html#remove-filetype">|remove-filetype|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#filetype-detect" name="filetype-detect">*filetype-detect*</a><br>
+To detect the file type again:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:filetype detect</div>
+Use this if you started with an empty file and typed text that makes it<br>
+possible to detect the file type.&nbsp;&nbsp;For example, when you entered this in a<br>
+shell script: &quot;#!/bin/csh&quot;.<br>
+&nbsp;&nbsp; When filetype detection was off, it will be enabled first, like the &quot;on&quot;<br>
+argument was used.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#filetype-overrule" name="filetype-overrule">*filetype-overrule*</a><br>
+When the same extension is used for two filetypes, Vim tries to guess what<br>
+kind of file it is.&nbsp;&nbsp;This doesn't always work.&nbsp;&nbsp;A number of global variables<br>
+can be used to overrule the filetype used for certain extensions:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">file name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; variable</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.asa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g:filetype_asa&nbsp;&nbsp;<a class="Identifier" href="syntax.html#ft-aspvbs-syntax">|ft-aspvbs-syntax|</a>&nbsp;<a class="Identifier" href="syntax.html#ft-aspperl-syntax">|ft-aspperl-syntax|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.asp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g:filetype_asp&nbsp;&nbsp;<a class="Identifier" href="syntax.html#ft-aspvbs-syntax">|ft-aspvbs-syntax|</a>&nbsp;<a class="Identifier" href="syntax.html#ft-aspperl-syntax">|ft-aspperl-syntax|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.asm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g:asmsyntax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="syntax.html#ft-asm-syntax">|ft-asm-syntax|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.prg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g:filetype_prg<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.pl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:filetype_pl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.inc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g:filetype_inc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g:filetype_w&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="syntax.html#ft-cweb-syntax">|ft-cweb-syntax|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g:filetype_i&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="syntax.html#ft-progress-syntax">|ft-progress-syntax|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g:filetype_p&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="syntax.html#ft-pascal-syntax">|ft-pascal-syntax|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.sh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:bash_is_sh&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="syntax.html#ft-sh-syntax">|ft-sh-syntax|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.tex&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g:tex_flavor&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="filetype.html#ft-tex-plugin">|ft-tex-plugin|</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#filetype-ignore" name="filetype-ignore">*filetype-ignore*</a><br>
+To avoid that certain files are being inspected, the g:ft_ignore_pat variable<br>
+is used.&nbsp;&nbsp;The default value is set like this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let g:ft_ignore_pat = '\.\(Z\|gz\|bz2\|zip\|tgz\)$'</div>
+This means that the contents of compressed files are not inspected.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#new-filetype" name="new-filetype">*new-filetype*</a><br>
+If a file type that you want to use is not detected yet, there are four ways<br>
+to add it.&nbsp;&nbsp;In any way, it's better not to modify the $VIMRUNTIME/filetype.vim<br>
+file.&nbsp;&nbsp;It will be overwritten when installing a new version of Vim.<br>
+<br>
+A. If you want to overrule all default file type checks.<br>
+&nbsp;&nbsp; This works by writing one file for each filetype.&nbsp;&nbsp;The disadvantage is that<br>
+&nbsp;&nbsp; means there can be many files.&nbsp;&nbsp;The advantage is that you can simply drop<br>
+&nbsp;&nbsp; this file in the right directory to make it work.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#ftdetect" name="ftdetect">*ftdetect*</a><br>
+&nbsp;&nbsp; 1. Create your user runtime directory.&nbsp;&nbsp;You would normally use the first<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;item of the&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;option.&nbsp;&nbsp;Then create the directory &quot;ftdetect&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inside it.&nbsp;&nbsp;Example for Unix:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!mkdir ~/.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!mkdir ~/.vim/ftdetect</div>
+<br>
+&nbsp;&nbsp; 2. Create a file that contains an autocommand to detect the file type.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au BufRead,BufNewFile *.mine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set filetype=mine</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that there is no &quot;augroup&quot; command, this has already been done<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when sourcing your file.&nbsp;&nbsp;You could also use the pattern &quot;*&quot; and then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check the contents of the file to recognize it.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write this file as &quot;mine.vim&quot; in the &quot;ftdetect&quot; directory in your user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runtime directory.&nbsp;&nbsp;For example, for Unix:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:w ~/.vim/ftdetect/mine.vim</div>
+<br>
+&nbsp;&nbsp;&nbsp;3. To use the new filetype detection you must restart Vim.<br>
+<br>
+&nbsp;&nbsp; The files in the &quot;ftdetect&quot; directory are used after all the default<br>
+&nbsp;&nbsp; checks, thus they can overrule a previously detected file type.&nbsp;&nbsp;But you<br>
+&nbsp;&nbsp; can also use&nbsp;<a class="Identifier" href="options.html#:setfiletype">|:setfiletype|</a>&nbsp;to keep a previously detected filetype.<br>
+<br>
+B. If you want to detect your file after the default file type checks.<br>
+<br>
+&nbsp;&nbsp; This works like A above, but instead of setting&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>&nbsp;unconditionally<br>
+&nbsp;&nbsp; use &quot;:setfiletype&quot;.&nbsp;&nbsp;This will only set&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>&nbsp;if no file type was<br>
+&nbsp;&nbsp; detected yet.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au BufRead,BufNewFile *.txt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; setfiletype text</div>
+<br>
+&nbsp;&nbsp; You can also use the already detected file type in your command.&nbsp;&nbsp;For<br>
+&nbsp;&nbsp; example, to use the file type &quot;mypascal&quot; when &quot;pascal&quot; has been detected:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au BufRead,BufNewFile *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if &amp;ft == 'pascal' | set ft=mypascal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | endif</div>
+<br>
+C. If your file type can be detected by the file name.<br>
+&nbsp;&nbsp; 1. Create your user runtime directory.&nbsp;&nbsp;You would normally use the first<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;item of the&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;option.&nbsp;&nbsp;Example for Unix:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!mkdir ~/.vim</div>
+<br>
+&nbsp;&nbsp; 2. Create a file that contains autocommands to detect the file type.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; my filetype file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if exists(&quot;did_load_filetypes&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;augroup filetypedetect<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au! BufRead,BufNewFile *.mine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; setfiletype mine<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au! BufRead,BufNewFile *.xyz&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setfiletype drawing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;augroup END</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Write this file as &quot;filetype.vim&quot; in your user runtime directory.&nbsp;&nbsp;For<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;example, for Unix:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:w ~/.vim/filetype.vim</div>
+<br>
+&nbsp;&nbsp;&nbsp;3. To use the new filetype detection you must restart Vim.<br>
+<br>
+&nbsp;&nbsp; Your filetype.vim will be sourced before the default FileType autocommands<br>
+&nbsp;&nbsp; have been installed.&nbsp;&nbsp;Your autocommands will match first, and the<br>
+&nbsp;&nbsp; &quot;:setfiletype&quot; command will make sure that no other autocommands will set<br>
+&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>&nbsp;after this.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#new-filetype-scripts" name="new-filetype-scripts">*new-filetype-scripts*</a><br>
+D. If your filetype can only be detected by inspecting the contents of the<br>
+&nbsp;&nbsp; file.<br>
+<br>
+&nbsp;&nbsp; 1. Create your user runtime directory.&nbsp;&nbsp;You would normally use the first<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;item of the&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;option.&nbsp;&nbsp;Example for Unix:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!mkdir ~/.vim</div>
+<br>
+&nbsp;&nbsp; 2. Create a vim script file for doing this.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if did_filetype()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; filetype already set..<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; ..don't do these checks<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if getline(1) =~ '^#!.*\&lt;mine\&gt;'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setfiletype mine<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif getline(1) =~? '\&lt;drawing\&gt;'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setfiletype drawing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; See $VIMRUNTIME/scripts.vim for more examples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write this file as &quot;scripts.vim&quot; in your user runtime directory.&nbsp;&nbsp;For<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;example, for Unix:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:w ~/.vim/scripts.vim</div>
+<br>
+&nbsp;&nbsp; 3. The detection will work right away, no need to restart Vim.<br>
+<br>
+&nbsp;&nbsp; Your scripts.vim is loaded before the default checks for file types, which<br>
+&nbsp;&nbsp; means that your rules override the default rules in<br>
+&nbsp;&nbsp; $VIMRUNTIME/scripts.vim.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#remove-filetype" name="remove-filetype">*remove-filetype*</a><br>
+If a file type is detected that is wrong for you, install a filetype.vim or<br>
+scripts.vim to catch it (see above).&nbsp;&nbsp;You can set&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>&nbsp;to a non-existing<br>
+name to avoid that it will be set later anyway:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set filetype=ignored</div>
+<br>
+If you are setting up a system with many users, and you don't want each user<br>
+to add/remove the same filetypes, consider writing the filetype.vim and<br>
+scripts.vim files in a runtime directory that is used for everybody.&nbsp;&nbsp;Check<br>
+the&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;for a directory to use.&nbsp;&nbsp;If there isn't one, set<br>
+<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;in the&nbsp;<a class="Identifier" href="starting.html#system-vimrc">|system-vimrc|</a>.&nbsp;&nbsp;Be careful to keep the default<br>
+directories!<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#autocmd-osfiletypes" name="autocmd-osfiletypes">*autocmd-osfiletypes*</a><br>
+<span class="Todo">NOTE</span>: this code is currently disabled, as the RISC OS implementation was<br>
+removed.&nbsp;&nbsp;In the future this will use the&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>&nbsp;option.<br>
+<br>
+On operating systems which support storing a file type with the file, you can<br>
+specify that an autocommand should only be executed if the file is of a<br>
+certain type.<br>
+<br>
+The actual type checking depends on which platform you are running Vim<br>
+on; see your system's documentation for details.<br>
+<br>
+To use osfiletype checking in an autocommand you should put a list of types to<br>
+match in angle brackets in place of a pattern, like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:au BufRead *.html,&lt;&amp;faf;HTML&gt;&nbsp;&nbsp;runtime! syntax/html.vim</div>
+<br>
+This will match:<br>
+<br>
+- Any file whose name ends in &quot;.html&quot;<br>
+- Any file whose type is &quot;&amp;faf&quot; or &quot;HTML&quot;, where the meaning of these types<br>
+&nbsp;&nbsp;depends on which version of Vim you are using.<br>
+&nbsp;&nbsp;Unknown types are considered NOT to match.<br>
+<br>
+You can also specify a type and a pattern at the same time (in which case they<br>
+must both match):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:au BufRead &lt;&amp;fff&gt;diff*</div>
+<br>
+This will match files of type &quot;&amp;fff&quot; whose names start with &quot;diff&quot;.<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#plugin-details" name="plugin-details">*plugin-details*</a><br>
+The &quot;plugin&quot; directory can be in any of the directories in the&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a><br>
+option.&nbsp;&nbsp;All of these directories will be searched for plugins and they are<br>
+all loaded.&nbsp;&nbsp;For example, if this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set runtimepath</div>
+<br>
+produces this output:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">runtimepath=/etc/vim,~/.vim,/usr/local/share/vim/vim60</span><br>
+<br>
+then Vim will load all plugins in these directories and below:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">/etc/vim/plugin/&nbsp;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">~/.vim/plugin/&nbsp;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">/usr/local/share/vim/vim60/plugin/&nbsp;</span><br>
+<br>
+<span class="Todo">Note</span>&nbsp;that the last one is the value of $VIMRUNTIME which has been expanded.<br>
+<br>
+What if it looks like your plugin is not being loaded?&nbsp;&nbsp;You can find out what<br>
+happens when Vim starts up by using the&nbsp;<a class="Identifier" href="starting.html#-V">|-V|</a>&nbsp;argument:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -V2</div>
+<br>
+You will see a lot of messages, in between them is a remark about loading the<br>
+plugins.&nbsp;&nbsp;It starts with:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Searching for &quot;plugin/**/*.vim&quot; in</span><br>
+<br>
+There you can see where Vim looks for your plugin scripts.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Filetype plugin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#filetype-plugins" name="filetype-plugins">*filetype-plugins*</a><br>
+<br>
+When loading filetype plugins has been enabled&nbsp;<a class="Identifier" href="filetype.html#:filetype-plugin-on">|:filetype-plugin-on|</a>, options<br>
+will be set and mappings defined.&nbsp;&nbsp;These are all local to the buffer, they<br>
+will not be used for other files.<br>
+<br>
+Defining mappings for a filetype may get in the way of the mappings you<br>
+define yourself.&nbsp;&nbsp;There are a few ways to avoid this:<br>
+1. Set the &quot;maplocalleader&quot; variable to the key sequence you want the mappings<br>
+&nbsp;&nbsp; to start with.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let maplocalleader = &quot;,&quot;</div>
+&nbsp;&nbsp;&nbsp;All mappings will then start with a comma instead of the default, which<br>
+&nbsp;&nbsp; is a backslash.&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="map.html#<LocalLeader>">|&lt;LocalLeader&gt;|</a>.<br>
+<br>
+2. Define your own mapping.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:map ,p &lt;Plug&gt;MailQuote</div>
+&nbsp;&nbsp;&nbsp;You need to check the description of the plugin file below for the<br>
+&nbsp;&nbsp; functionality it offers and the string to map to.<br>
+&nbsp;&nbsp; You need to define your own mapping before the plugin is loaded (before<br>
+&nbsp;&nbsp; editing a file of that type).&nbsp;&nbsp;The plugin will then skip installing the<br>
+&nbsp;&nbsp; default mapping.<br>
+<br>
+3. Disable defining mappings for a specific filetype by setting a variable,<br>
+&nbsp;&nbsp; which contains the name of the filetype.&nbsp;&nbsp;For the &quot;mail&quot; filetype this<br>
+&nbsp;&nbsp; would be:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let no_mail_maps = 1</div>
+<br>
+4. Disable defining mappings for all filetypes by setting a variable:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let no_plugin_maps = 1</div>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#ftplugin-overrule" name="ftplugin-overrule">*ftplugin-overrule*</a><br>
+If a global filetype plugin does not do exactly what you want, there are three<br>
+ways to change this:<br>
+<br>
+1. Add a few settings.<br>
+&nbsp;&nbsp; You must create a new filetype plugin in a directory early in<br>
+&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;For Unix, for example you could use this file:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim ~/.vim/ftplugin/fortran.vim</div>
+&nbsp;&nbsp;&nbsp;You can set those settings and mappings that you would like to add.&nbsp;&nbsp;<span class="Todo">Note</span><br>
+&nbsp;&nbsp; that the global plugin will be loaded after this, it may overrule the<br>
+&nbsp;&nbsp; settings that you do here.&nbsp;&nbsp;If this is the case, you need to use one of the<br>
+&nbsp;&nbsp; following two methods.<br>
+<br>
+2. Make a copy of the plugin and change it.<br>
+&nbsp;&nbsp; You must put the copy in a directory early in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;For Unix, for<br>
+&nbsp;&nbsp; example, you could do this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cp $VIMRUNTIME/ftplugin/fortran.vim ~/.vim/ftplugin/fortran.vim</div>
+&nbsp;&nbsp;&nbsp;Then you can edit the copied file to your liking.&nbsp;&nbsp;Since the b:did_ftplugin<br>
+&nbsp;&nbsp; variable will be set, the global plugin will not be loaded.<br>
+&nbsp;&nbsp; A disadvantage of this method is that when the distributed plugin gets<br>
+&nbsp;&nbsp; improved, you will have to copy and modify it again.<br>
+<br>
+3. Overrule the settings after loading the global plugin.<br>
+&nbsp;&nbsp; You must create a new filetype plugin in a directory from the end of<br>
+&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;For Unix, for example, you could use this file:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim ~/.vim/after/ftplugin/fortran.vim</div>
+&nbsp;&nbsp;&nbsp;In this file you can change just those settings that you want to change.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3.&nbsp;&nbsp;Docs for the default filetype plugins.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#ftplugin-docs" name="ftplugin-docs">*ftplugin-docs*</a><br>
+<br>
+<br>
+<span class="Statement">CHANGELOG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#ft-changelog-plugin" name="ft-changelog-plugin">*ft-changelog-plugin*</a><br>
+<br>
+Allows for easy entrance of Changelog entries in Changelog files.&nbsp;&nbsp;There are<br>
+some commands, mappings, and variables worth exploring:<br>
+<br>
+Options:<br>
+<a class="Type" href="options.html#'comments'">'comments'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is made empty to not mess up formatting.<br>
+<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is set to 78, which is standard.<br>
+<a class="Type" href="options.html#'formatoptions'">'formatoptions'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the 't' flag is added to wrap when inserting text.<br>
+<br>
+Commands:<br>
+NewChangelogEntry&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Adds a new Changelog entry in an intelligent fashion<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(see below).<br>
+<br>
+Local mappings:<br>
+<span class="Special">&lt;Leader&gt;</span>o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Starts a new Changelog entry in an equally intelligent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fashion (see below).<br>
+<br>
+Global mappings:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">NOTE</span>: The global mappings are accessed by sourcing the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ftplugin/changelog.vim file first, e.g. with<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runtime ftplugin/changelog.vim</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in your&nbsp;<a class="Identifier" href="starting.html#.vimrc">|.vimrc|</a>.<br>
+<span class="Special">&lt;Leader&gt;</span>o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Switches to the ChangeLog buffer opened for the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;current directory, or opens it in a new buffer if it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exists in the current directory.&nbsp;&nbsp;Then it does the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same as the local&nbsp;<span class="Special">&lt;Leader&gt;</span>o described above.<br>
+<br>
+Variables:<br>
+g:changelog_timeformat&nbsp;&nbsp;Deprecated; use g:changelog_dateformat instead.<br>
+g:changelog_dateformat&nbsp;&nbsp;The date (and time) format used in ChangeLog entries.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The format accepted is the same as for the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#strftime()">|strftime()|</a>&nbsp;function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The default is &quot;%Y-%m-%d&quot; which is the standard format<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for many ChangeLog layouts.<br>
+g:changelog_username&nbsp;&nbsp;&nbsp;&nbsp;The name and email address of the user.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The default is deduced from environment variables and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system files.&nbsp;&nbsp;It searches /etc/passwd for the comment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;part of the current user, which informally contains<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the real name of the user up to the first separating<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;comma.&nbsp;&nbsp;then it checks the $NAME environment variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and finally runs&nbsp;<span class="MissingTag">`whoami`</span>&nbsp;and&nbsp;<span class="MissingTag">`hostname`</span>&nbsp;to build an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email address.&nbsp;&nbsp;The final form is<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Full Name&nbsp;&nbsp;&lt;user@host&gt;</div>
+<br>
+g:changelog_new_date_format<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The format to use when creating a new date-entry.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The following table describes special tokens in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert a single '%' character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert the date from above<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert the user from above<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert result of b:changelog_entry_prefix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where to position cursor when done<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The default is &quot;%d&nbsp;&nbsp;%u\n\n\t* %p%c\n\n&quot;, which produces<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;something like (| is where cursor will be, unless at<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the start of the line where it denotes the beginning<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of the line)<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|2003-01-14&nbsp;&nbsp;Full Name&nbsp;&nbsp;&lt;user@host&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* prefix|</div>
+<br>
+g:changelog_new_entry_format<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The format used when creating a new entry.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The following table describes special tokens in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert result of b:changelog_entry_prefix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where to position cursor when done<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The default is &quot;\t*%c&quot;, which produces something<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;similar to<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* prefix|</div>
+<br>
+g:changelog_date_entry_search<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The search pattern to use when searching for a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;date-entry.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The same tokens that can be used for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:changelog_new_date_format can be used here as well.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The default is '^\s*%d\_s*%u' which finds lines<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matching the form<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|2003-01-14&nbsp;&nbsp;Full Name&nbsp;&nbsp;&lt;user@host&gt;</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and some similar formats.<br>
+<br>
+g:changelog_date_end_entry_search<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The search pattern to use when searching for the end<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of a date-entry.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The same tokens that can be used for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:changelog_new_date_format can be used here as well.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The default is '^\s*$' which finds lines that contain<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only whitespace or are completely empty.<br>
+<br>
+b:changelog_name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="filetype.html#b:changelog_name" name="b:changelog_name">*b:changelog_name*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the ChangeLog file to look for.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The default is 'ChangeLog'.<br>
+<br>
+b:changelog_path<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Path of the ChangeLog to use for the current buffer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The default is empty, thus looking for a file named<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="filetype.html#b:changelog_name">|b:changelog_name|</a>&nbsp;in the same directory as the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;current buffer.&nbsp;&nbsp;If not found, the parent directory of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the current buffer is searched.&nbsp;&nbsp;This continues<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;recursively until a file is found or there are no more<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parent directories to search.<br>
+<br>
+b:changelog_entry_prefix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of a function to call to generate a prefix to a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new entry.&nbsp;&nbsp;This function takes no arguments and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;should return a string containing the prefix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returning an empty prefix is fine.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The default generates the shortest path between the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChangeLog's pathname and the current buffers pathname.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In the future, it will also be possible to use other<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable contexts for this variable, for example, g:.<br>
+<br>
+The Changelog entries are inserted where they add the least amount of text.<br>
+After figuring out the current date and user, the file is searched for an<br>
+entry beginning with the current date and user and if found adds another item<br>
+under it.&nbsp;&nbsp;If not found, a new entry and item is prepended to the beginning of<br>
+the Changelog.<br>
+<br>
+<br>
+<span class="Statement">FORTRAN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#ft-fortran-plugin" name="ft-fortran-plugin">*ft-fortran-plugin*</a><br>
+<br>
+Options:<br>
+<a class="Type" href="options.html#'expandtab'">'expandtab'</a>&nbsp;&nbsp;&nbsp;&nbsp; is switched on to avoid tabs as required by the Fortran<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;standards unless the user has set fortran_have_tabs in .vimrc.<br>
+<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;&nbsp;&nbsp;&nbsp; is set to 72 for fixed source format as required by the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fortran standards and to 80 for free source format.<br>
+<a class="Type" href="options.html#'formatoptions'">'formatoptions'</a>&nbsp;is set to break code and comment lines and to preserve long<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lines.&nbsp;&nbsp;You can format comments with&nbsp;<a class="Identifier" href="change.html#gq">|gq|</a>.<br>
+For further discussion of fortran_have_tabs and the method used for the<br>
+detection of source format see&nbsp;<a class="Identifier" href="syntax.html#ft-fortran-syntax">|ft-fortran-syntax|</a>.<br>
+<br>
+<br>
+<span class="Statement">GIT COMMIT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#ft-gitcommit-plugin" name="ft-gitcommit-plugin">*ft-gitcommit-plugin*</a><br>
+<br>
+One command, :DiffGitCached, is provided to show a diff of the current commit<br>
+in the preview window.&nbsp;&nbsp;It is equivalent to calling &quot;git diff --cached&quot; plus<br>
+any arguments given to the command.<br>
+<br>
+<br>
+<span class="Statement">MAIL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#ft-mail-plugin" name="ft-mail-plugin">*ft-mail-plugin*</a><br>
+<br>
+Options:<br>
+<a class="Type" href="options.html#'modeline'">'modeline'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is switched off to avoid the danger of trojan horses, and to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;avoid that a Subject line with &quot;Vim:&quot; in it will cause an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error message.<br>
+<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;&nbsp;&nbsp;&nbsp; is set to 72.&nbsp;&nbsp;This is often recommended for e-mail.<br>
+<a class="Type" href="options.html#'formatoptions'">'formatoptions'</a>&nbsp;&nbsp;is set to break text lines and to repeat the comment leader<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in new lines, so that a leading &quot;&gt;&quot; for quotes is repeated.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can also format quoted text with&nbsp;<a class="Identifier" href="change.html#gq">|gq|</a>.<br>
+<br>
+Local mappings:<br>
+<span class="Special">&lt;LocalLeader&gt;</span>q&nbsp;&nbsp; or&nbsp;&nbsp; \\MailQuote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quotes the text selected in Visual mode, or from the cursor position<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to the end of the file in Normal mode.&nbsp;&nbsp;This means &quot;&gt; &quot; is inserted in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;each line.<br>
+<br>
+<span class="Statement">MAN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#ft-man-plugin" name="ft-man-plugin">*ft-man-plugin*</a>&nbsp;<a class="Constant" href="filetype.html#:Man" name=":Man">*:Man*</a>&nbsp;<a class="Constant" href="filetype.html#man.vim" name="man.vim">*man.vim*</a><br>
+<br>
+Displays a manual page in a nice way.&nbsp;&nbsp;Also see the user manual<br>
+<a class="Identifier" href="usr_12.html#find-manpage">|find-manpage|</a>.<br>
+<br>
+To start using the &quot;:Man&quot; command before any manual page was loaded, source<br>
+this script from your startup vimrc file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runtime ftplugin/man.vim</div>
+<br>
+Options:<br>
+<a class="Type" href="options.html#'iskeyword'">'iskeyword'</a>&nbsp;&nbsp;&nbsp;&nbsp; the '.' character is added to be able to use&nbsp;<span class="Special">CTRL-]</span>&nbsp;on the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manual page name.<br>
+<br>
+Commands:<br>
+Man&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display the manual page for&nbsp;<span class="Special">{name}</span>&nbsp;in a window.<br>
+Man&nbsp;<span class="Special">{number}</span>&nbsp;<span class="Special">{name}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display the manual page for&nbsp;<span class="Special">{name}</span>&nbsp;in a section&nbsp;<span class="Special">{number}</span>.<br>
+<br>
+Global mapping:<br>
+<span class="Special">&lt;Leader&gt;</span>K&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Displays the manual page for the word under the cursor.<br>
+<span class="Special">&lt;Plug&gt;</span>ManPreGetPage&nbsp;&nbsp;idem, allows for using a mapping:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;F1&gt; &lt;Plug&gt;ManPreGetPage&lt;CR&gt;</div>
+<br>
+Local mappings:<br>
+<span class="Special">CTRL-]</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jump to the manual page for the word under the cursor.<br>
+<span class="Special">CTRL-T</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jump back to the previous manual page.<br>
+q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Same as &quot;:quit&quot;<br>
+<br>
+To use a vertical split instead of horizontal:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:ft_man_open_mode = 'vert'</div>
+To use a new tab:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:ft_man_open_mode = 'tab'</div>
+<br>
+To enable folding use this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:ft_man_folding_enable = 1</div>
+If you do not like the default folding, use an autocommand to add your desired<br>
+folding style instead.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autocmd FileType man setlocal foldmethod=indent foldenable</div>
+<br>
+You may also want to set&nbsp;<a class="Type" href="options.html#'keywordprg'">'keywordprg'</a>&nbsp;to make the&nbsp;<a class="Identifier" href="various.html#K">|K|</a>&nbsp;command open a manual<br>
+page in a Vim window:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set keywordprg=:Man</div>
+<br>
+<br>
+<span class="Statement">MANPAGER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#manpager.vim" name="manpager.vim">*manpager.vim*</a><br>
+<br>
+The :Man command allows you to turn Vim into a manpager (that syntax highlights<br>
+manpages and follows linked manpages on hitting&nbsp;<span class="Special">CTRL-]</span>).<br>
+<br>
+Works on:<br>
+<br>
+&nbsp;&nbsp;- Linux<br>
+&nbsp;&nbsp;- Mac OS<br>
+&nbsp;&nbsp;- FreeBSD<br>
+&nbsp;&nbsp;- Cygwin<br>
+&nbsp;&nbsp;- Win 10 under Bash<br>
+<br>
+Untested:<br>
+<br>
+&nbsp;&nbsp;- Amiga OS<br>
+&nbsp;&nbsp;- BeOS<br>
+&nbsp;&nbsp;- OS/2<br>
+<br>
+For bash,zsh,ksh or dash by adding to the config file (.bashrc,.zshrc, ...)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export MANPAGER=&quot;env MAN_PN=1 vim -M +MANPAGER -&quot;<br>
+<br>
+For (t)csh by adding to the config file<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setenv MANPAGER &quot;env MAN_PN=1 vim -M +MANPAGER -&quot;<br>
+<br>
+For fish by adding to the config file<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set -x MANPAGER &quot;env MAN_PN=1 vim -M +MANPAGER -&quot;<br>
+<br>
+If man sets the $MAN_PN environment variable, like man-db, the most common<br>
+implementation on Linux and Mac OS, then the &quot;env MAN_PN=1 &quot; part above is<br>
+superfluous.<br>
+<br>
+<span class="Statement">PDF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#ft-pdf-plugin" name="ft-pdf-plugin">*ft-pdf-plugin*</a><br>
+<br>
+Two maps,&nbsp;<span class="Special">&lt;C-]&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;C-T&gt;</span>, are provided to simulate a tag stack for navigating<br>
+the PDF.&nbsp;&nbsp;The following are treated as tags:<br>
+<br>
+- The byte offset after &quot;startxref&quot; to the xref table<br>
+- The byte offset after the /Prev key in the trailer to an earlier xref table<br>
+- A line of the form &quot;0123456789 00000 n&quot; in the xref table<br>
+- An object reference like &quot;1 0 R&quot; anywhere in the PDF<br>
+<br>
+These maps can be disabled with<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let g:no_pdf_maps = 1</div>
+<br>
+<br>
+<span class="Statement">PYTHON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#ft-python-plugin" name="ft-python-plugin">*ft-python-plugin*</a>&nbsp;<a class="Constant" href="filetype.html#PEP8" name="PEP8">*PEP8*</a><br>
+<br>
+By default the following options are set, in accordance with PEP8:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setlocal expandtab shiftwidth=4 softtabstop=4 tabstop=8</div>
+<br>
+To disable this behaviour, set the following variable in your vimrc:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:python_recommended_style = 0</div>
+<br>
+<br>
+<span class="Statement">RPM SPEC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#ft-spec-plugin" name="ft-spec-plugin">*ft-spec-plugin*</a><br>
+<br>
+Since the text for this plugin is rather long it has been put in a separate<br>
+file:&nbsp;<a class="Identifier" href="pi_spec.html">|pi_spec.txt|</a>.<br>
+<br>
+<br>
+<span class="Statement">SQL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#ft-sql" name="ft-sql">*ft-sql*</a><br>
+<br>
+Since the text for this plugin is rather long it has been put in a separate<br>
+file:&nbsp;<a class="Identifier" href="ft_sql.html">|ft_sql.txt|</a>.<br>
+<br>
+<br>
+<span class="Statement">TEX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="filetype.html#ft-tex-plugin" name="ft-tex-plugin">*ft-tex-plugin*</a>&nbsp;<a class="Constant" href="filetype.html#g:tex_flavor" name="g:tex_flavor">*g:tex_flavor*</a><br>
+<br>
+If the first line of a *.tex file has the form<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%&amp;&lt;format&gt;</div>
+then this determined the file type:&nbsp;&nbsp;plaintex (for plain TeX), context (for<br>
+ConTeXt), or tex (for LaTeX).&nbsp;&nbsp;Otherwise, the file is searched for keywords to<br>
+choose context or tex.&nbsp;&nbsp;If no keywords are found, it defaults to plaintex.<br>
+You can change the default by defining the variable g:tex_flavor to the format<br>
+(not the file type) you use most.&nbsp;&nbsp;Use one of these:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:tex_flavor = &quot;plain&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:tex_flavor = &quot;context&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:tex_flavor = &quot;latex&quot;</div>
+Currently no other formats are recognized.<br>
+<br>
+<br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

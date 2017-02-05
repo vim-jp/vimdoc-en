@@ -1,0 +1,268 @@
+---
+layout: vimdoc
+helpname: 'os_win32'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="os_win32.html" name="os_win32.txt">*os_win32.txt*</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2016 Oct 12<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by George Reilly</span><br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32" name="win32">*win32*</a>&nbsp;<a class="Constant" href="os_win32.html#Win32" name="Win32">*Win32*</a>&nbsp;<a class="Constant" href="os_win32.html#MS-Windows" name="MS-Windows">*MS-Windows*</a><br>
+This file documents the idiosyncrasies of the Win32 version of Vim.<br>
+<br>
+The Win32 version of Vim works on Windows XP, Vista, 7, 8 and 10.&nbsp;&nbsp;There are<br>
+both console and GUI versions.<br>
+<br>
+The 32 bit version also runs on 64 bit MS-Windows systems.<br>
+<br>
+1. Known problems&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_win32.html#win32-problems">|win32-problems|</a><br>
+2. Startup&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_win32.html#win32-startup">|win32-startup|</a><br>
+3. Restore screen contents&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_win32.html#win32-restore">|win32-restore|</a><br>
+4. Using the mouse&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_win32.html#win32-mouse">|win32-mouse|</a><br>
+5. Running under Windows 95&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_win32.html#win32-win95">|win32-win95|</a><br>
+6. Running under Windows 3.1&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_win32.html#win32-win3.1">|win32-win3.1|</a><br>
+7. Win32 mini FAQ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_win32.html#win32-faq">|win32-faq|</a><br>
+<br>
+Additionally, there are a number of common Win32 and DOS items:<br>
+File locations&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-locations">|dos-locations|</a><br>
+Using backslashes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-backslash">|dos-backslash|</a><br>
+Standard mappings&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-standard-mappings">|dos-standard-mappings|</a><br>
+Screen output and colors&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-colors">|dos-colors|</a><br>
+File formats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-file-formats">|dos-file-formats|</a><br>
+:cd command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-:cd">|dos-:cd|</a><br>
+Interrupting&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-CTRL-Break">|dos-CTRL-Break|</a><br>
+Temp files&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-temp-files">|dos-temp-files|</a><br>
+Shell option default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-shell">|dos-shell|</a><br>
+<br>
+Win32 GUI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui_w32.html#gui-w32">|gui-w32|</a><br>
+<br>
+Credits:<br>
+The Win32 version was written by George V. Reilly &lt;george@reilly.org&gt;.<br>
+The original Windows NT port was done by Roger Knobbe &lt;RogerK@wonderware.com&gt;.<br>
+The GUI version was made by George V. Reilly and Robert Webb.<br>
+<br>
+For compiling see &quot;src/INSTALLpc.txt&quot;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-compiling" name="win32-compiling">*win32-compiling*</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Known problems&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-problems" name="win32-problems">*win32-problems*</a><br>
+<br>
+When doing file name completion, Vim also finds matches for the short file<br>
+name.&nbsp;&nbsp;But Vim will still find and use the corresponding long file name.&nbsp;&nbsp;For<br>
+example, if you have the long file name &quot;this_is_a_test&quot; with the short file<br>
+name &quot;this_i~1&quot;, the command &quot;:e *1&quot; will start editing &quot;this_is_a_test&quot;.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Startup&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-startup" name="win32-startup">*win32-startup*</a><br>
+<br>
+Current directory&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-curdir" name="win32-curdir">*win32-curdir*</a><br>
+<br>
+If Vim is started with a single file name argument, and it has a full path<br>
+(starts with &quot;x:\&quot;), Vim assumes it was started from the file explorer and<br>
+will set the current directory to where that file is.&nbsp;&nbsp;To avoid this when<br>
+typing a command to start Vim, use a forward slash instead of a backslash.<br>
+Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim c:\text\files\foo.txt</div>
+<br>
+Will change to the &quot;C:\text\files&quot; directory.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim c:/text\files\foo.txt</div>
+<br>
+Will use the current directory.<br>
+<br>
+<br>
+Term option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-term" name="win32-term">*win32-term*</a><br>
+<br>
+The only kind of terminal type that the Win32 version of Vim understands is<br>
+&quot;win32&quot;, which is built-in.&nbsp;&nbsp;If you set&nbsp;<a class="Type" href="options.html#'term'">'term'</a>&nbsp;to anything else, you will<br>
+probably get very strange behavior from Vim.&nbsp;&nbsp;Therefore Vim does not obtain<br>
+the default value of&nbsp;<a class="Type" href="options.html#'term'">'term'</a>&nbsp;from the environment variable &quot;TERM&quot;.<br>
+<br>
+$PATH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-PATH" name="win32-PATH">*win32-PATH*</a><br>
+<br>
+The directory of the Vim executable is appended to $PATH.&nbsp;&nbsp;This is mostly to<br>
+make &quot;!xxd&quot; work, as it is in the Tools menu.&nbsp;&nbsp;And it also means that when<br>
+executable() returns 1 the executable can actually be executed.<br>
+<br>
+Quotes in file names&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-quotes" name="win32-quotes">*win32-quotes*</a><br>
+<br>
+Quotes inside a file name (or any other command line argument) can be escaped<br>
+with a backslash.&nbsp;&nbsp;E.g.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -c &quot;echo 'foo\&quot;bar'&quot;</div>
+<br>
+Alternatively use three quotes to get one:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -c &quot;echo 'foo&quot;&quot;&quot;bar'&quot;</div>
+<br>
+The quotation rules are:<br>
+<br>
+1. A&nbsp;<span class="MissingTag">`&quot;`</span>&nbsp;starts quotation.<br>
+2. Another&nbsp;<span class="MissingTag">`&quot;`</span>&nbsp;or&nbsp;<span class="MissingTag">`&quot;&quot;`</span>&nbsp;ends quotation. If the quotation ends with&nbsp;<span class="MissingTag">`&quot;&quot;`</span>, a&nbsp;<span class="MissingTag">`&quot;`</span><br>
+&nbsp;&nbsp; is produced at the end of the quoted string.<br>
+<br>
+Examples, with [] around an argument:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foo&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt;&nbsp;<span class="Special">[foo]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foo&quot;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; [foo&quot;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foo&quot;bar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;<span class="Special">[foobar]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foo&quot; bar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt;&nbsp;<span class="Special">[foo]</span>,&nbsp;<span class="Special">[bar]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foo&quot;&quot;bar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; [foo&quot;bar]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foo&quot;&quot; bar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; [foo&quot;],&nbsp;<span class="Special">[bar]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foo&quot;&quot;&quot;bar&quot;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; [foo&quot;bar]<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Restore screen contents&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-restore" name="win32-restore">*win32-restore*</a><br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'restorescreen'">'restorescreen'</a>&nbsp;is set (which is the default), Vim will restore the<br>
+original contents of the console when exiting or when executing external<br>
+commands.&nbsp;&nbsp;If you don't want this, use &quot;:set nors&quot;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#'restorescreen'">|'restorescreen'|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. Using the mouse&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-mouse" name="win32-mouse">*win32-mouse*</a><br>
+<br>
+The Win32 version of Vim supports using the mouse.&nbsp;&nbsp;If you have a two-button<br>
+mouse, the middle button can be emulated by pressing both left and right<br>
+buttons simultaneously - but&nbsp;<span class="Todo">note</span>&nbsp;that in the Win32 GUI, if you have the right<br>
+mouse button pop-up menu enabled (see&nbsp;<a class="Type" href="options.html#'mouse'">'mouse'</a>), you should err on the side of<br>
+pressing the left button first.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="term.html#mouse-using">|mouse-using|</a><br>
+<br>
+When the mouse doesn't work, try disabling the &quot;Quick Edit Mode&quot; feature of<br>
+the console.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+5. Running under Windows 95&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-win95" name="win32-win95">*win32-win95*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#windows95" name="windows95">*windows95*</a>&nbsp;<a class="Constant" href="os_win32.html#windows98" name="windows98">*windows98*</a>&nbsp;<a class="Constant" href="os_win32.html#windowsme" name="windowsme">*windowsme*</a><br>
+Windows 95/98/ME support was removed in patch 8.0.0029&nbsp;&nbsp;If you want to use it<br>
+you will need to get a version older than that.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+6. Running under Windows 3.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-win3.1" name="win32-win3.1">*win32-win3.1*</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32s" name="win32s">*win32s*</a>&nbsp;<a class="Constant" href="os_win32.html#windows-3.1" name="windows-3.1">*windows-3.1*</a>&nbsp;<a class="Constant" href="os_win32.html#gui-w32s" name="gui-w32s">*gui-w32s*</a><br>
+There was a special version of Gvim that runs under Windows 3.1 and 3.11.<br>
+Support was removed in patch 7.4.1363.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+7. Win32 mini FAQ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-faq" name="win32-faq">*win32-faq*</a><br>
+<br>
+Q. How do I change the font?<br>
+A. In the GUI version, you can use the&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;option.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set guifont=Lucida_Console:h15:cDEFAULT</div>
+&nbsp;&nbsp;&nbsp;In the console version, you need to set the font of the console itself.<br>
+&nbsp;&nbsp; You cannot do this from within Vim.<br>
+<br>
+Q. How do I type dead keys on Windows NT?<br>
+A. Dead keys work on NT 3.51.&nbsp;&nbsp;Just type them as you would in any other<br>
+&nbsp;&nbsp; application.<br>
+&nbsp;&nbsp; On NT 4.0, you need to make sure that the default locale (set in the<br>
+&nbsp;&nbsp; Keyboard part of the Control Panel) is the same as the currently active<br>
+&nbsp;&nbsp; locale.&nbsp;&nbsp;Otherwise the NT code will get confused and crash!&nbsp;&nbsp;This is a NT<br>
+&nbsp;&nbsp; 4.0 problem, not really a Vim problem.<br>
+<br>
+Q. I'm using Vim to edit a symbolically linked file on a Unix NFS file server.<br>
+&nbsp;&nbsp; When I write the file, Vim does not &quot;write through&quot; the symlink.&nbsp;&nbsp;Instead,<br>
+&nbsp;&nbsp; it deletes the symbolic link and creates a new file in its place.&nbsp;&nbsp;Why?<br>
+A. On Unix, Vim is prepared for links (symbolic or hard).&nbsp;&nbsp;A backup copy of<br>
+&nbsp;&nbsp; the original file is made and then the original file is overwritten.&nbsp;&nbsp;This<br>
+&nbsp;&nbsp; assures that all properties of the file remain the same.&nbsp;&nbsp;On non-Unix<br>
+&nbsp;&nbsp; systems, the original file is renamed and a new file is written.&nbsp;&nbsp;Only the<br>
+&nbsp;&nbsp; protection bits are set like the original file.&nbsp;&nbsp;However, this doesn't work<br>
+&nbsp;&nbsp; properly when working on an NFS-mounted file system where links and other<br>
+&nbsp;&nbsp; things exist.&nbsp;&nbsp;The only way to fix this in the current version is not<br>
+&nbsp;&nbsp; making a backup file, by &quot;:set nobackup nowritebackup&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#'writebackup'">|'writebackup'|</a><br>
+<br>
+Q. I'm using Vim to edit a file on a Unix file server through Samba.&nbsp;&nbsp;When I<br>
+&nbsp;&nbsp; write the file, the owner of the file is changed.&nbsp;&nbsp;Why?<br>
+A. When writing a file Vim renames the original file, this is a backup (in<br>
+&nbsp;&nbsp; case writing the file fails halfway).&nbsp;&nbsp;Then the file is written as a new<br>
+&nbsp;&nbsp; file.&nbsp;&nbsp;Samba then gives it the default owner for the file system, which may<br>
+&nbsp;&nbsp; differ from the original owner.<br>
+&nbsp;&nbsp; To avoid this set the&nbsp;<a class="Type" href="options.html#'backupcopy'">'backupcopy'</a>&nbsp;option to &quot;yes&quot;.&nbsp;&nbsp;Vim will then make a<br>
+&nbsp;&nbsp; copy of the file for the backup, and overwrite the original file.&nbsp;&nbsp;The<br>
+&nbsp;&nbsp; owner isn't changed then.<br>
+<br>
+Q. How do I get to see the output of &quot;:make&quot; while it's running?<br>
+A. Basically what you need is to put a tee program that will copy its input<br>
+&nbsp;&nbsp; (the output from make) to both stdout and to the errorfile.&nbsp;&nbsp;You can find a<br>
+&nbsp;&nbsp; copy of tee (and a number of other GNU tools) at<br>
+&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://gnuwin32.sourceforge.net">http://gnuwin32.sourceforge.net</a></span>&nbsp;or&nbsp;<span class="Constant"><a href="http://unxutils.sourceforge.net">http://unxutils.sourceforge.net</a></span><br>
+&nbsp;&nbsp; Alternatively, try the more recent Cygnus version of the GNU tools at<br>
+&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.cygwin.com">http://www.cygwin.com</a></span>&nbsp;&nbsp;Other Unix-style tools for Win32 are listed at<br>
+&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://directory.google.com/Top/Computers/Software/Operating_Systems/Unix/Win32/">http://directory.google.com/Top/Computers/Software/Operating_Systems/Unix/Win32/</a></span><br>
+&nbsp;&nbsp; When you do get a copy of tee, you'll need to add<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set shellpipe=\|\ tee</div>
+&nbsp;&nbsp;&nbsp;to your _vimrc.<br>
+<br>
+Q. I'm storing files on a remote machine that works with VisionFS, and files<br>
+&nbsp;&nbsp; disappear!<br>
+A. VisionFS can't handle certain dot (.) three letter extension file names.<br>
+&nbsp;&nbsp; SCO declares this behavior required for backwards compatibility with 16bit<br>
+&nbsp;&nbsp; DOS/Windows environments.&nbsp;&nbsp;The two commands below demonstrate the behavior:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo Hello &gt; file.bat~&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dir &gt; file.bat</div>
+<br>
+&nbsp;&nbsp; The result is that the &quot;dir&quot; command updates the &quot;file.bat~&quot; file, instead<br>
+&nbsp;&nbsp; of creating a new &quot;file.bat&quot; file.&nbsp;&nbsp;This same behavior is exhibited in Vim<br>
+&nbsp;&nbsp; when editing an existing file named &quot;foo.bat&quot; because the default behavior<br>
+&nbsp;&nbsp; of Vim is to create a temporary file with a '~' character appended to the<br>
+&nbsp;&nbsp; name.&nbsp;&nbsp;When the file is written, it winds up being deleted.<br>
+<br>
+&nbsp;&nbsp; Solution: Add this command to your _vimrc file:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set backupext=.temporary</div>
+<br>
+Q. How do I change the blink rate of the cursor?<br>
+A. You can't!&nbsp;&nbsp;This is a limitation of the NT console.&nbsp;&nbsp;NT 5.0 is reported to<br>
+&nbsp;&nbsp; be able to set the blink rate for all console windows at the same time.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#:!start" name=":!start">*:!start*</a><br>
+Q. How can I run an external command or program asynchronously?<br>
+A. When using :! to run an external command, you can run it with &quot;start&quot;:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!start winfile.exe&lt;CR&gt;</div>
+&nbsp;&nbsp;&nbsp;Using &quot;start&quot; stops Vim switching to another screen, opening a new console,<br>
+&nbsp;&nbsp; or waiting for the program to complete; it indicates that you are running a<br>
+&nbsp;&nbsp; program that does not affect the files you are editing.&nbsp;&nbsp;Programs begun<br>
+&nbsp;&nbsp; with :!start do not get passed Vim's open file handles, which means they do<br>
+&nbsp;&nbsp; not have to be closed before Vim.<br>
+&nbsp;&nbsp; To avoid this special treatment, use &quot;:! start&quot;.<br>
+&nbsp;&nbsp; There are two optional arguments (see the next Q):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /min&nbsp;&nbsp;the window will be minimized<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /b&nbsp;&nbsp;&nbsp;&nbsp;no console window will be opened<br>
+&nbsp;&nbsp; You can use only one of these flags at a time.&nbsp;&nbsp;A second one will be<br>
+&nbsp;&nbsp; treated as the start of the command.<br>
+<br>
+Q. How do I avoid getting a window for programs that I run asynchronously?<br>
+A. You have two possible solutions depending on what you want:<br>
+&nbsp;&nbsp; 1) You may use the /min flag in order to run program in a minimized state<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with no other changes. It will work equally for console and GUI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;applications.<br>
+&nbsp;&nbsp; 2) You can use the /b flag to run console applications without creating a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console window for them (GUI applications are not affected). But you<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;should use this flag only if the application you run doesn't require any<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;input.&nbsp;&nbsp;Otherwise it will get an EOF error because its input stream<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(stdin) would be redirected to \\.\NUL (stdout and stderr too).<br>
+<br>
+&nbsp;&nbsp; Example for a console application, run Exuberant ctags:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!start /min ctags -R .</div>
+&nbsp;&nbsp;&nbsp;When it has finished you should see file named &quot;tags&quot; in your current<br>
+&nbsp;&nbsp; directory.&nbsp;&nbsp;You should notice the window title blinking on your taskbar.<br>
+&nbsp;&nbsp; This is more noticeable for commands that take longer.<br>
+&nbsp;&nbsp; Now delete the &quot;tags&quot; file and run this command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!start /b ctags -R .</div>
+&nbsp;&nbsp;&nbsp;You should have the same &quot;tags&quot; file, but this time there will be no<br>
+&nbsp;&nbsp; blinking on the taskbar.<br>
+&nbsp;&nbsp; Example for a GUI application:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!start /min notepad<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:!start /b notepad</div>
+&nbsp;&nbsp;&nbsp;The first command runs notepad minimized and the second one runs it<br>
+&nbsp;&nbsp; normally.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#windows-icon" name="windows-icon">*windows-icon*</a><br>
+Q. I don't like the Vim icon, can I change it?<br>
+A. Yes, place your favorite icon in bitmaps/vim.ico in a directory of<br>
+&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;For example ~/vimfiles/bitmaps/vim.ico.<br>
+<br>
+<br>
+&nbsp;vim:tw=78:fo=tcq2:ts=8:ft=help:norl:<br>
+</div>

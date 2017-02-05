@@ -1,0 +1,569 @@
+---
+layout: vimdoc
+helpname: 'usr_27'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_27.html" name="usr_27.txt">*usr_27.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2010 Mar 28<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Search commands and patterns<br>
+<br>
+<br>
+In chapter 3 a few simple search patterns were mentioned&nbsp;<a class="Identifier" href="usr_03.html#03.9">|03.9|</a>.&nbsp;&nbsp;Vim can do<br>
+much more complex searches.&nbsp;&nbsp;This chapter explains the most often used ones.<br>
+A detailed specification can be found here:&nbsp;<a class="Identifier" href="pattern.html#pattern">|pattern|</a><br>
+<br>
+<a class="Identifier" href="usr_27.html#27.1">|27.1|</a>&nbsp;&nbsp;Ignoring case<br>
+<a class="Identifier" href="usr_27.html#27.2">|27.2|</a>&nbsp;&nbsp;Wrapping around the file end<br>
+<a class="Identifier" href="usr_27.html#27.3">|27.3|</a>&nbsp;&nbsp;Offsets<br>
+<a class="Identifier" href="usr_27.html#27.4">|27.4|</a>&nbsp;&nbsp;Matching multiple times<br>
+<a class="Identifier" href="usr_27.html#27.5">|27.5|</a>&nbsp;&nbsp;Alternatives<br>
+<a class="Identifier" href="usr_27.html#27.6">|27.6|</a>&nbsp;&nbsp;Character ranges<br>
+<a class="Identifier" href="usr_27.html#27.7">|27.7|</a>&nbsp;&nbsp;Character classes<br>
+<a class="Identifier" href="usr_27.html#27.8">|27.8|</a>&nbsp;&nbsp;Matching a line break<br>
+<a class="Identifier" href="usr_27.html#27.9">|27.9|</a>&nbsp;&nbsp;Examples<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_28.html">|usr_28.txt|</a>&nbsp;&nbsp;Folding<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_26.html">|usr_26.txt|</a>&nbsp;&nbsp;Repeating<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_27.html#27.1" name="27.1">*27.1*</a>&nbsp;&nbsp;Ignoring case<br>
+<br>
+By default, Vim's searches are case sensitive.&nbsp;&nbsp;Therefore, &quot;include&quot;,<br>
+&quot;INCLUDE&quot;, and &quot;Include&quot; are three different words and a search will match<br>
+only one of them.<br>
+&nbsp;&nbsp; Now switch on the&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>&nbsp;option:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set ignorecase</div>
+<br>
+Search for &quot;include&quot; again, and now it will match &quot;Include&quot;, &quot;INCLUDE&quot; and<br>
+&quot;InClUDe&quot;.&nbsp;&nbsp;(Set the&nbsp;<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;option to quickly see where a pattern<br>
+matches.)<br>
+&nbsp;&nbsp; You can switch this off again with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set noignorecase</div>
+<br>
+But let's keep it set, and search for &quot;INCLUDE&quot;.&nbsp;&nbsp;It will match exactly the<br>
+same text as &quot;include&quot; did.&nbsp;&nbsp;Now set the&nbsp;<a class="Type" href="options.html#'smartcase'">'smartcase'</a>&nbsp;option:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set ignorecase smartcase</div>
+<br>
+If you have a pattern with at least one uppercase character, the search<br>
+becomes case sensitive.&nbsp;&nbsp;The idea is that you didn't have to type that<br>
+uppercase character, so you must have done it because you wanted case to<br>
+match.&nbsp;&nbsp;That's smart!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;With these two options set you find the following matches:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">pattern&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; matches</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;word&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;word, Word, WORD, WoRd, etc.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Word&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Word<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WORD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WORD<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WoRd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WoRd<br>
+<br>
+<br>
+CASE IN ONE PATTERN<br>
+<br>
+If you want to ignore case for one specific pattern, you can do this by<br>
+prepending the &quot;\c&quot; string.&nbsp;&nbsp;Using &quot;\C&quot; will make the pattern to match case.<br>
+This overrules the&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'smartcase'">'smartcase'</a>&nbsp;options, when &quot;\c&quot; or &quot;\C&quot; is<br>
+used their value doesn't matter.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">pattern&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; matches</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\Cword&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;word<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\CWord&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Word<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\cword&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;word, Word, WORD, WoRd, etc.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\cWord&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;word, Word, WORD, WoRd, etc.<br>
+<br>
+A big advantage of using &quot;\c&quot; and &quot;\C&quot; is that it sticks with the pattern.<br>
+Thus if you repeat a pattern from the search history, the same will happen, no<br>
+matter if&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>&nbsp;or&nbsp;<a class="Type" href="options.html#'smartcase'">'smartcase'</a>&nbsp;was changed.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The use of &quot;\&quot; items in search patterns depends on the&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;option.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In this chapter we will assume&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;is on, because that is the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;standard and recommended setting.&nbsp;&nbsp;If you would change&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>, many<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;search patterns would suddenly become invalid.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If your search takes much longer than you expected, you can interrupt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it with&nbsp;<span class="Special">CTRL-C</span>&nbsp;on Unix and&nbsp;&nbsp;<span class="Special">CTRL-Break</span>&nbsp;on MS-DOS and MS-Windows.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_27.html#27.2" name="27.2">*27.2*</a>&nbsp;&nbsp;Wrapping around the file end<br>
+<br>
+By default, a forward search starts searching for the given string at the<br>
+current cursor location.&nbsp;&nbsp;It then proceeds to the end of the file.&nbsp;&nbsp;If it has<br>
+not found the string by that time, it starts from the beginning and searches<br>
+from the start of the file to the cursor location.<br>
+&nbsp;&nbsp; Keep in mind that when repeating the &quot;n&quot; command to search for the next<br>
+match, you eventually get back to the first match.&nbsp;&nbsp;If you don't notice this<br>
+you keep searching forever!&nbsp;&nbsp;To give you a hint, Vim displays this message:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">search hit BOTTOM, continuing at TOP</span><br>
+<br>
+If you use the &quot;?&quot; command, to search in the other direction, you get this<br>
+message:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">search hit TOP, continuing at BOTTOM</span><br>
+<br>
+Still, you don't know when you are back at the first match.&nbsp;&nbsp;One way to see<br>
+this is by switching on the&nbsp;<a class="Type" href="options.html#'ruler'">'ruler'</a>&nbsp;option:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set ruler</div>
+<br>
+Vim will display the cursor position in the lower righthand corner of the<br>
+window (in the status line if there is one).&nbsp;&nbsp;It looks like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">101,29&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 84%</span><br>
+<br>
+The first number is the line number of the cursor.&nbsp;&nbsp;Remember the line number<br>
+where you started, so that you can check if you passed this position again.<br>
+<br>
+<br>
+NOT WRAPPING<br>
+<br>
+To turn off search wrapping, use the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nowrapscan</div>
+<br>
+Now when the search hits the end of the file, an error message displays:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">E385: search hit BOTTOM without match for: forever</span><br>
+<br>
+Thus you can find all matches by going to the start of the file with &quot;gg&quot; and<br>
+keep searching until you see this message.<br>
+&nbsp;&nbsp; If you search in the other direction, using &quot;?&quot;, you get:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">E384: search hit TOP without match for: forever</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_27.html#27.3" name="27.3">*27.3*</a>&nbsp;&nbsp;Offsets<br>
+<br>
+By default, the search command leaves the cursor positioned on the beginning<br>
+of the pattern.&nbsp;&nbsp;You can tell Vim to leave it some other place by specifying<br>
+an offset.&nbsp;&nbsp;For the forward search command &quot;/&quot;, the offset is specified by<br>
+appending a slash (/) and the offset:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/default/2</div>
+<br>
+This command searches for the pattern &quot;default&quot; and then moves to the<br>
+beginning of the second line past the pattern.&nbsp;&nbsp;Using this command on the<br>
+paragraph above, Vim finds the word &quot;default&quot; in the first line.&nbsp;&nbsp;Then the<br>
+cursor is moved two lines down and lands on &quot;an offset&quot;.<br>
+<br>
+If the offset is a simple number, the cursor will be placed at the beginning<br>
+of the line that many lines from the match.&nbsp;&nbsp;The offset number can be positive<br>
+or negative.&nbsp;&nbsp;If it is positive, the cursor moves down that many lines; if<br>
+negative, it moves up.<br>
+<br>
+<br>
+CHARACTER OFFSETS<br>
+<br>
+The &quot;e&quot; offset indicates an offset from the end of the match.&nbsp;&nbsp;It moves the<br>
+cursor onto the last character of the match.&nbsp;&nbsp;The command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/const/e</div>
+<br>
+puts the cursor on the &quot;t&quot; of &quot;const&quot;.<br>
+&nbsp;&nbsp; From that position, adding a number moves forward that many characters.<br>
+This command moves to the character just after the match:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/const/e+1</div>
+<br>
+A positive number moves the cursor to the right, a negative number moves it to<br>
+the left.&nbsp;&nbsp;For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/const/e-1</div>
+<br>
+moves the cursor to the &quot;s&quot; of &quot;const&quot;.<br>
+<br>
+If the offset begins with &quot;b&quot;, the cursor moves to the beginning of the<br>
+pattern.&nbsp;&nbsp;That's not very useful, since leaving out the &quot;b&quot; does the same<br>
+thing.&nbsp;&nbsp;It does get useful when a number is added or subtracted.&nbsp;&nbsp;The cursor<br>
+then goes forward or backward that many characters.&nbsp;&nbsp;For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/const/b+2</div>
+<br>
+Moves the cursor to the beginning of the match and then two characters to the<br>
+right.&nbsp;&nbsp;Thus it lands on the &quot;n&quot;.<br>
+<br>
+<br>
+REPEATING<br>
+<br>
+To repeat searching for the previously used search pattern, but with a<br>
+different offset, leave out the pattern:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//e</div>
+<br>
+Is equal to:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/that/e</div>
+<br>
+To repeat with the same offset:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/</div>
+<br>
+&quot;n&quot; does the same thing.&nbsp;&nbsp;To repeat while removing a previously used offset:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//</div>
+<br>
+<br>
+SEARCHING BACKWARDS<br>
+<br>
+The &quot;?&quot; command uses offsets in the same way, but you must use &quot;?&quot; to separate<br>
+the offset from the pattern, instead of &quot;/&quot;:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;?const?e-2</div>
+<br>
+The &quot;b&quot; and &quot;e&quot; keep their meaning, they don't change direction with the use<br>
+of &quot;?&quot;.<br>
+<br>
+<br>
+START POSITION<br>
+<br>
+When starting a search, it normally starts at the cursor position.&nbsp;&nbsp;When you<br>
+specify a line offset, this can cause trouble.&nbsp;&nbsp;For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/const/-2</div>
+<br>
+This finds the next word &quot;const&quot; and then moves two lines up.&nbsp;&nbsp;If you<br>
+use &quot;n&quot; to search again, Vim could start at the current position and find the same<br>
+&quot;const&quot; match.&nbsp;&nbsp;Then using the offset again, you would be back where you started.<br>
+You would be stuck!<br>
+&nbsp;&nbsp; It could be worse: Suppose there is another match with &quot;const&quot; in the next<br>
+line.&nbsp;&nbsp;Then repeating the forward search would find this match and move two<br>
+lines up.&nbsp;&nbsp;Thus you would actually move the cursor back!<br>
+<br>
+When you specify a character offset, Vim will compensate for this.&nbsp;&nbsp;Thus the<br>
+search starts a few characters forward or backward, so that the same match<br>
+isn't found again.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_27.html#27.4" name="27.4">*27.4*</a>&nbsp;&nbsp;Matching multiple times<br>
+<br>
+The &quot;*&quot; item specifies that the item before it can match any number of times.<br>
+Thus:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/a*</div>
+<br>
+matches &quot;a&quot;, &quot;aa&quot;, &quot;aaa&quot;, etc.&nbsp;&nbsp;But also &quot;&quot; (the empty string), because zero<br>
+times is included.<br>
+&nbsp;&nbsp; The &quot;*&quot; only applies to the item directly before it.&nbsp;&nbsp;Thus &quot;ab*&quot; matches<br>
+&quot;a&quot;, &quot;ab&quot;, &quot;abb&quot;, &quot;abbb&quot;, etc.&nbsp;&nbsp;To match a whole string multiple times, it<br>
+must be grouped into one item.&nbsp;&nbsp;This is done by putting &quot;\(&quot; before it and<br>
+&quot;\)&quot; after it.&nbsp;&nbsp;Thus this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/\(ab\)*</div>
+<br>
+Matches: &quot;ab&quot;, &quot;abab&quot;, &quot;ababab&quot;, etc.&nbsp;&nbsp;And also &quot;&quot;.<br>
+<br>
+To avoid matching the empty string, use &quot;\+&quot;.&nbsp;&nbsp;This makes the previous item<br>
+match one or more times.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ab\+</div>
+<br>
+Matches &quot;ab&quot;, &quot;abb&quot;, &quot;abbb&quot;, etc.&nbsp;&nbsp;It does not match &quot;a&quot; when no &quot;b&quot; follows.<br>
+<br>
+To match an optional item, use &quot;\=&quot;.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/folders\=</div>
+<br>
+Matches &quot;folder&quot; and &quot;folders&quot;.<br>
+<br>
+<br>
+SPECIFIC COUNTS<br>
+<br>
+To match a specific number of items use the form &quot;\<span class="Special">{n,m}</span>&quot;.&nbsp;&nbsp;&quot;n&quot; and &quot;m&quot; are<br>
+numbers.&nbsp;&nbsp;The item before it will be matched &quot;n&quot; to &quot;m&quot; times&nbsp;<a class="Identifier" href="motion.html#inclusive">|inclusive|</a>.<br>
+Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ab\{3,5}</div>
+<br>
+matches &quot;abbb&quot;, &quot;abbbb&quot; and &quot;abbbbb&quot;.<br>
+&nbsp;&nbsp;When &quot;n&quot; is omitted, it defaults to zero.&nbsp;&nbsp;When &quot;m&quot; is omitted it defaults<br>
+to infinity.&nbsp;&nbsp;When &quot;,m&quot; is omitted, it matches exactly &quot;n&quot; times.<br>
+Examples:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">pattern&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; match count</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<span class="Special">{,4}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0, 1, 2, 3 or 4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<span class="Special">{3,}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3, 4, 5, etc.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<span class="Special">{0,1}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 or 1, same as \=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<span class="Special">{0,}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 or more, same as *<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<span class="Special">{1,}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 or more, same as \+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<span class="Special">{3}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3<br>
+<br>
+<br>
+MATCHING AS LITTLE AS POSSIBLE<br>
+<br>
+The items so far match as many characters as they can find.&nbsp;&nbsp;To match as few<br>
+as possible, use &quot;\<span class="Special">{-n,m}</span>&quot;.&nbsp;&nbsp;It works the same as &quot;\<span class="Special">{n,m}</span>&quot;, except that the<br>
+minimal amount possible is used.<br>
+&nbsp;&nbsp; For example, use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ab\{-1,3}</div>
+<br>
+Will match &quot;ab&quot; in &quot;abbb&quot;.&nbsp;&nbsp;Actually, it will never match more than one b,<br>
+because there is no reason to match more.&nbsp;&nbsp;It requires something else to force<br>
+it to match more than the lower limit.<br>
+&nbsp;&nbsp; The same rules apply to removing &quot;n&quot; and &quot;m&quot;.&nbsp;&nbsp;It's even possible to remove<br>
+both of the numbers, resulting in &quot;\<span class="Special">{-}</span>&quot;.&nbsp;&nbsp;This matches the item before it<br>
+zero or more times, as few as possible.&nbsp;&nbsp;The item by itself always matches<br>
+zero times.&nbsp;&nbsp;It is useful when combined with something else.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/a.\{-}b</div>
+<br>
+This matches &quot;axb&quot; in &quot;axbxb&quot;.&nbsp;&nbsp;If this pattern would be used:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/a.*b</div>
+<br>
+It would try to match as many characters as possible with &quot;.*&quot;, thus it<br>
+matches &quot;axbxb&quot; as a whole.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_27.html#27.5" name="27.5">*27.5*</a>&nbsp;&nbsp;Alternatives<br>
+<br>
+The &quot;or&quot; operator in a pattern is &quot;\|&quot;.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/foo\|bar</div>
+<br>
+This matches &quot;foo&quot; or &quot;bar&quot;.&nbsp;&nbsp;More alternatives can be concatenated:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/one\|two\|three</div>
+<br>
+Matches &quot;one&quot;, &quot;two&quot; and &quot;three&quot;.<br>
+&nbsp;&nbsp; To match multiple times, the whole thing must be placed in &quot;\(&quot; and &quot;\)&quot;:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/\(foo\|bar\)\+</div>
+<br>
+This matches &quot;foo&quot;, &quot;foobar&quot;, &quot;foofoo&quot;, &quot;barfoobar&quot;, etc.<br>
+&nbsp;&nbsp; Another example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/end\(if\|while\|for\)</div>
+<br>
+This matches &quot;endif&quot;, &quot;endwhile&quot; and &quot;endfor&quot;.<br>
+<br>
+A related item is &quot;\&amp;&quot;.&nbsp;&nbsp;This requires that both alternatives match in the<br>
+same place.&nbsp;&nbsp;The resulting match uses the last alternative.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/forever\&amp;...</div>
+<br>
+This matches &quot;for&quot; in &quot;forever&quot;.&nbsp;&nbsp;It will not match &quot;fortuin&quot;, for example.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_27.html#27.6" name="27.6">*27.6*</a>&nbsp;&nbsp;Character ranges<br>
+<br>
+To match &quot;a&quot;, &quot;b&quot; or &quot;c&quot; you could use &quot;/a\|b\|c&quot;.&nbsp;&nbsp;When you want to match all<br>
+letters from &quot;a&quot; to &quot;z&quot; this gets very long.&nbsp;&nbsp;There is a shorter method:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/[a-z]</div>
+<br>
+The [] construct matches a single character.&nbsp;&nbsp;Inside you specify which<br>
+characters to match.&nbsp;&nbsp;You can include a list of characters, like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/[0123456789abcdef]</div>
+<br>
+This will match any of the characters included.&nbsp;&nbsp;For consecutive characters<br>
+you can specify the range.&nbsp;&nbsp;&quot;0-3&quot; stands for &quot;0123&quot;.&nbsp;&nbsp;&quot;w-z&quot; stands for &quot;wxyz&quot;.<br>
+Thus the same command as above can be shortened to:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/[0-9a-f]</div>
+<br>
+To match the &quot;-&quot; character itself make it the first or last one in the range.<br>
+These special characters are accepted to make it easier to use them inside a<br>
+[] range (they can actually be used anywhere in the search pattern):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Esc&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;CR&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;BS&gt;</span><br>
+<br>
+There are a few more special cases for [] ranges, see&nbsp;<a class="Identifier" href="pattern.html#/[]">|/[]|</a>&nbsp;for the whole<br>
+story.<br>
+<br>
+<br>
+COMPLEMENTED RANGE<br>
+<br>
+To avoid matching a specific character, use &quot;^&quot; at the start of the range.<br>
+The [] item then matches everything but the characters included.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&quot;[^&quot;]*&quot;</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[^&quot;]&nbsp;&nbsp;&nbsp;&nbsp;any character that is not a double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp; as many as possible<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;&nbsp;&nbsp;a double quote again<br>
+<br>
+This matches &quot;foo&quot; and &quot;3!x&quot;, including the double quotes.<br>
+<br>
+<br>
+PREDEFINED RANGES<br>
+<br>
+A number of ranges are used very often.&nbsp;&nbsp;Vim provides a shortcut for these.<br>
+For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/\a</div>
+<br>
+Finds alphabetic characters.&nbsp;&nbsp;This is equal to using &quot;/[a-zA-Z]&quot;.&nbsp;&nbsp;Here are a<br>
+few more of these:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">item&nbsp;&nbsp;&nbsp;&nbsp;matches&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; equivalent</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;digit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[0-9]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-digit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[^0-9]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hex digit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[0-9a-fA-F]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-hex digit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[^0-9a-fA-F]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;white space&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]&nbsp;&nbsp;&nbsp;&nbsp; (<span class="Special">&lt;Tab&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;Space&gt;</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\S&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-white characters&nbsp;&nbsp;&nbsp;&nbsp;[^&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp;&nbsp;&nbsp; (not&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;Space&gt;</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lowercase alpha&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[a-z]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-lowercase alpha&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[^a-z]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uppercase alpha&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[A-Z]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\U&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-uppercase alpha&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[^A-Z]</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Using these predefined ranges works a lot faster than the character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;range it stands for.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;These items can not be used inside [].&nbsp;&nbsp;Thus &quot;[\d\l]&quot; does NOT work to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;match a digit or lowercase alpha.&nbsp;&nbsp;Use &quot;\(\d\|\l\)&quot; instead.<br>
+<br>
+See&nbsp;<a class="Identifier" href="pattern.html#/\s">|/\s|</a>&nbsp;for the whole list of these ranges.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_27.html#27.7" name="27.7">*27.7*</a>&nbsp;&nbsp;Character classes<br>
+<br>
+The character range matches a fixed set of characters.&nbsp;&nbsp;A character class is<br>
+similar, but with an essential difference: The set of characters can be<br>
+redefined without changing the search pattern.<br>
+&nbsp;&nbsp; For example, search for this pattern:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/\f\+</div>
+<br>
+The &quot;\f&quot; items stands for file name characters.&nbsp;&nbsp;Thus this matches a sequence<br>
+of characters that can be a file name.<br>
+&nbsp;&nbsp; Which characters can be part of a file name depends on the system you are<br>
+using.&nbsp;&nbsp;On MS-Windows, the backslash is included, on Unix it is not.&nbsp;&nbsp;This is<br>
+specified with the&nbsp;<a class="Type" href="options.html#'isfname'">'isfname'</a>&nbsp;option.&nbsp;&nbsp;The default value for Unix is:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set isfname<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;isfname=@,48-57,/,.,-,_,+,,,#,$,%,~,=</div>
+<br>
+For other systems the default value is different.&nbsp;&nbsp;Thus you can make a search<br>
+pattern with &quot;\f&quot; to match a file name, and it will automatically adjust to<br>
+the system you are using it on.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Actually, Unix allows using just about any character in a file name,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;including white space.&nbsp;&nbsp;Including these characters in&nbsp;<a class="Type" href="options.html#'isfname'">'isfname'</a>&nbsp;would<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be theoretically correct.&nbsp;&nbsp;But it would make it impossible to find the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end of a file name in text.&nbsp;&nbsp;Thus the default value of&nbsp;<a class="Type" href="options.html#'isfname'">'isfname'</a>&nbsp;is a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;compromise.<br>
+<br>
+The character classes are:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">item&nbsp;&nbsp;&nbsp;&nbsp;matches&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; option</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;identifier characters&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'isident'">'isident'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;like \i, excluding digits<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\k&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;keyword characters&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'iskeyword'">'iskeyword'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\K&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;like \k, excluding digits<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printable characters&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'isprint'">'isprint'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\P&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;like \p, excluding digits<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file name characters&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'isfname'">'isfname'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\F&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;like \f, excluding digits<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_27.html#27.8" name="27.8">*27.8*</a>&nbsp;&nbsp;Matching a line break<br>
+<br>
+Vim can find a pattern that includes a line break.&nbsp;&nbsp;You need to specify where<br>
+the line break happens, because all items mentioned so far don't match a line<br>
+break.<br>
+&nbsp;&nbsp; To check for a line break in a specific place, use the &quot;\n&quot; item:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/the\nword</div>
+<br>
+This will match at a line that ends in &quot;the&quot; and the next line starts with<br>
+&quot;word&quot;.&nbsp;&nbsp;To match &quot;the word&quot; as well, you need to match a space or a line<br>
+break.&nbsp;&nbsp;The item to use for it is &quot;\_s&quot;:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/the\_sword</div>
+<br>
+To allow any amount of white space:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/the\_s\+word</div>
+<br>
+This also matches when &quot;the&nbsp;&nbsp;&quot; is at the end of a line and &quot;&nbsp;&nbsp; word&quot; at the<br>
+start of the next one.<br>
+<br>
+&quot;\s&quot; matches white space, &quot;\_s&quot; matches white space or a line break.<br>
+Similarly, &quot;\a&quot; matches an alphabetic character, and &quot;\_a&quot; matches an<br>
+alphabetic character or a line break.&nbsp;&nbsp;The other character classes and ranges<br>
+can be modified in the same way by inserting a &quot;_&quot;.<br>
+<br>
+Many other items can be made to match a line break by prepending &quot;\_&quot;.&nbsp;&nbsp;For<br>
+example: &quot;\_.&quot; matches any character or a line break.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\_.*&quot; matches everything until the end of the file.&nbsp;&nbsp;Be careful with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this, it can make a search command very slow.<br>
+<br>
+Another example is &quot;\_[]&quot;, a character range that includes a line break:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&quot;\_[^&quot;]*&quot;</div>
+<br>
+This finds a text in double quotes that may be split up in several lines.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_27.html#27.9" name="27.9">*27.9*</a>&nbsp;&nbsp;Examples<br>
+<br>
+Here are a few search patterns you might find useful.&nbsp;&nbsp;This shows how the<br>
+items mentioned above can be combined.<br>
+<br>
+<br>
+FINDING A CALIFORNIA LICENSE PLATE<br>
+<br>
+A sample license plate number is &quot;1MGU103&quot;.&nbsp;&nbsp;It has one digit, three uppercase<br>
+letters and three digits.&nbsp;&nbsp;Directly putting this into a search pattern:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/\d\u\u\u\d\d\d</div>
+<br>
+Another way is to specify that there are three digits and letters with a<br>
+count:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/\d\u\{3}\d\{3}</div>
+<br>
+Using [] ranges instead:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/[0-9][A-Z]\{3}[0-9]\{3}</div>
+<br>
+Which one of these you should use?&nbsp;&nbsp;Whichever one you can remember.&nbsp;&nbsp;The<br>
+simple way you can remember is much faster than the fancy way that you can't.<br>
+If you can remember them all, then avoid the last one, because it's both more<br>
+typing and slower to execute.<br>
+<br>
+<br>
+FINDING AN IDENTIFIER<br>
+<br>
+In C programs (and many other computer languages) an identifier starts with a<br>
+letter and further consists of letters and digits.&nbsp;&nbsp;Underscores can be used<br>
+too.&nbsp;&nbsp;This can be found with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/\&lt;\h\w*\&gt;</div>
+<br>
+&quot;\&lt;&quot; and &quot;\&gt;&quot; are used to find only whole words.&nbsp;&nbsp;&quot;\h&quot; stands for &quot;[A-Za-z_]&quot;<br>
+and &quot;\w&quot; for &quot;[0-9A-Za-z_]&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\&lt;&quot; and &quot;\&gt;&quot; depend on the&nbsp;<a class="Type" href="options.html#'iskeyword'">'iskeyword'</a>&nbsp;option.&nbsp;&nbsp;If it includes &quot;-&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for example, then &quot;ident-&quot; is not matched.&nbsp;&nbsp;In this situation use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/\w\@&lt;!\h\w*\w\@!</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This checks if &quot;\w&quot; does not match before or after the identifier.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="pattern.html#/\@<!">|/\@&lt;!|</a>&nbsp;and&nbsp;<a class="Identifier" href="pattern.html#/\@!">|/\@!|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_28.html">|usr_28.txt|</a>&nbsp;&nbsp;Folding<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

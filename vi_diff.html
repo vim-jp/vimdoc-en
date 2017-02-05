@@ -1,0 +1,1030 @@
+---
+layout: vimdoc
+helpname: 'vi_diff'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="vi_diff.html" name="vi_diff.txt">*vi_diff.txt*</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2016 Aug 16<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+Differences between Vim and Vi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#vi-differences" name="vi-differences">*vi-differences*</a><br>
+<br>
+Throughout the help files differences between Vim and Vi/Ex are given in<br>
+curly braces, like &quot;<span class="Special">{not in Vi}</span>&quot;.&nbsp;&nbsp;This file only lists what has not been<br>
+mentioned in other files and gives an overview.<br>
+<br>
+Vim is mostly POSIX 1003.2-1 compliant.&nbsp;&nbsp;The only command known to be missing<br>
+is &quot;:open&quot;.&nbsp;&nbsp;There are probably a lot of small differences (either because Vim<br>
+is missing something or because Posix is beside the mark).<br>
+<br>
+1. Simulated command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vi_diff.html#simulated-command">|simulated-command|</a><br>
+2. Missing options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vi_diff.html#missing-options">|missing-options|</a><br>
+3. Limits&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vi_diff.html#limits">|limits|</a><br>
+4. The most interesting additions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vi_diff.html#vim-additions">|vim-additions|</a><br>
+5. Other vim features&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vi_diff.html#other-features">|other-features|</a><br>
+6. Command-line arguments&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vi_diff.html#cmdline-arguments">|cmdline-arguments|</a><br>
+7. POSIX compliance&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vi_diff.html#posix-compliance">|posix-compliance|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Simulated command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#simulated-command" name="simulated-command">*simulated-command*</a><br>
+<br>
+This command is in Vi, but Vim only simulates it:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#:o" name=":o">*:o*</a>&nbsp;<a class="Constant" href="vi_diff.html#:op" name=":op">*:op*</a>&nbsp;<a class="Constant" href="vi_diff.html#:open" name=":open">*:open*</a><br>
+:<span class="Special">[range]</span>o[pen]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Works like&nbsp;<a class="Identifier" href="editing.html#:visual">|:visual|</a>: end Ex mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: start editing in open mode}</span><br>
+<br>
+:<span class="Special">[range]</span>o[pen] /pattern/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As above, additionally move the cursor to the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;column where &quot;pattern&quot; matches in the cursor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line.<br>
+<br>
+Vim does not support open mode, since it's not really useful.&nbsp;&nbsp;For those<br>
+situations where &quot;:open&quot; would start open mode Vim will leave Ex mode, which<br>
+allows executing the same commands, but updates the whole screen instead of<br>
+only one line.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Missing options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#missing-options" name="missing-options">*missing-options*</a><br>
+<br>
+These options are in the Unix Vi, but not in Vim.&nbsp;&nbsp;If you try to set one of<br>
+them you won't get an error message, but the value is not used and cannot be<br>
+printed.<br>
+<br>
+autoprint (ap)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default on)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'autoprint'" name="'autoprint'">*'autoprint'*</a>&nbsp;<a class="Constant" href="vi_diff.html#'ap'" name="'ap'">*'ap'*</a><br>
+beautify (bf)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boolean (default off)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'beautify'" name="'beautify'">*'beautify'*</a>&nbsp;<a class="Constant" href="vi_diff.html#'bf'" name="'bf'">*'bf'*</a><br>
+flash (fl)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default ??)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'flash'" name="'flash'">*'flash'*</a>&nbsp;<a class="Constant" href="vi_diff.html#'fl'" name="'fl'">*'fl'*</a><br>
+graphic (gr)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default off)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'graphic'" name="'graphic'">*'graphic'*</a>&nbsp;<a class="Constant" href="vi_diff.html#'gr'" name="'gr'">*'gr'*</a><br>
+hardtabs (ht)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; number&nbsp;&nbsp;(default 8)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'hardtabs'" name="'hardtabs'">*'hardtabs'*</a>&nbsp;<a class="Constant" href="vi_diff.html#'ht'" name="'ht'">*'ht'*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of spaces that a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;moves on the display<br>
+mesg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default on)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'mesg'" name="'mesg'">*'mesg'*</a><br>
+novice&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default off)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'novice'" name="'novice'">*'novice'*</a><br>
+open&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default on)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'open'" name="'open'">*'open'*</a><br>
+optimize (op)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boolean (default off)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'optimize'" name="'optimize'">*'optimize'*</a>&nbsp;<a class="Constant" href="vi_diff.html#'op'" name="'op'">*'op'*</a><br>
+redraw&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default off)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'redraw'" name="'redraw'">*'redraw'*</a><br>
+slowopen (slow)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boolean (default off)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'slowopen'" name="'slowopen'">*'slowopen'*</a>&nbsp;<a class="Constant" href="vi_diff.html#'slow'" name="'slow'">*'slow'*</a><br>
+sourceany&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boolean (default off)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'sourceany'" name="'sourceany'">*'sourceany'*</a><br>
+w300&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;&nbsp;(default 23)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'w300'" name="'w300'">*'w300'*</a><br>
+w1200&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; number&nbsp;&nbsp;(default 23)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'w1200'" name="'w1200'">*'w1200'*</a><br>
+w9600&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; number&nbsp;&nbsp;(default 23)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#'w9600'" name="'w9600'">*'w9600'*</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Limits&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#limits" name="limits">*limits*</a><br>
+<br>
+Vim has only a few limits for the files that can be edited&nbsp;<span class="Special">{Vi: can not handle</span><br>
+<span class="Special">&lt;Nul&gt; characters and characters above 128, has limited line length, many other</span><br>
+<span class="Special">limits}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#E340" name="E340">*E340*</a><br>
+Maximum line length&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;On machines with 16-bit ints (Amiga and MS-DOS real<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mode): 32767, otherwise 2147483647 characters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Longer lines are split.<br>
+Maximum number of lines&nbsp;&nbsp;&nbsp;&nbsp;2147483647 lines.<br>
+Maximum file size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2147483647 bytes (2 Gbyte) when a long integer is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32 bits.&nbsp;&nbsp;Much more for 64 bit longs.&nbsp;&nbsp;Also limited<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by available disk space for the&nbsp;<a class="Identifier" href="recover.html#swap-file">|swap-file|</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#E75" name="E75">*E75*</a><br>
+Length of a file path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unix and Win32: 1024 characters, otherwise 256<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; characters (or as much as the system supports).<br>
+Length of an expanded string option<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Unix and Win32: 1024 characters, otherwise 256<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; characters<br>
+Maximum display width&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unix and Win32: 1024 characters, otherwise 255<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; characters<br>
+Maximum lhs of a mapping&nbsp;&nbsp; 50 characters.<br>
+Number of different highlighting types: over 30000<br>
+Range of a Number variable:&nbsp;&nbsp;-2147483648 to 2147483647 (might be more on 64<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bit systems)<br>
+Maximum length of a line in a tags file: 512 bytes.<br>
+<br>
+Information for undo and text in registers is kept in memory, thus when making<br>
+(big) changes the amount of (virtual) memory available limits the number of<br>
+undo levels and the text that can be kept in registers.&nbsp;&nbsp;Other things are also<br>
+kept in memory:&nbsp;&nbsp;Command-line history, error messages for Quickfix mode, etc.<br>
+<br>
+Memory usage limits<br>
+<span class="PreProc">-------------------</span><br>
+<br>
+The option&nbsp;<a class="Type" href="options.html#'maxmem'">'maxmem'</a>&nbsp;(<a class="Type" href="options.html#'mm'">'mm'</a>) is used to set the maximum memory used for one<br>
+buffer (in kilobytes).&nbsp;&nbsp;<a class="Type" href="options.html#'maxmemtot'">'maxmemtot'</a>&nbsp;is used to set the maximum memory used for<br>
+all buffers (in kilobytes).&nbsp;&nbsp;The defaults depend on the system used.&nbsp;&nbsp;For the<br>
+Amiga and MS-DOS,&nbsp;<a class="Type" href="options.html#'maxmemtot'">'maxmemtot'</a>&nbsp;is set depending on the amount of memory<br>
+available.<br>
+These are not hard limits, but tell Vim when to move text into a swap file.<br>
+If you don't like Vim to swap to a file, set&nbsp;<a class="Type" href="options.html#'maxmem'">'maxmem'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'maxmemtot'">'maxmemtot'</a>&nbsp;to a<br>
+very large value.&nbsp;&nbsp;The swap file will then only be used for recovery.&nbsp;&nbsp;If you<br>
+don't want a swap file at all, set&nbsp;<a class="Type" href="options.html#'updatecount'">'updatecount'</a>&nbsp;to 0, or use the &quot;-n&quot;<br>
+argument when starting Vim.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. The most interesting additions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#vim-additions" name="vim-additions">*vim-additions*</a><br>
+<br>
+Vi compatibility.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#'compatible'">|'compatible'|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Although Vim is 99% Vi compatible, some things in Vi can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;considered to be a bug, or at least need improvement.&nbsp;&nbsp;But still, Vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;starts in a mode which behaves like the &quot;real&quot; Vi as much as possible.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To make Vim behave a little bit better, try resetting the&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;option:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nocompatible<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Or start Vim with the &quot;-<span class="Special">N</span>&quot; argument:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -<span class="Special">N</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim starts with&nbsp;<a class="Type" href="options.html#'nocompatible'">'nocompatible'</a>&nbsp;automatically if you have a .vimrc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="starting.html#startup">|startup|</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;option can be used to set Vi compatibility on/off for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a number of specific items.<br>
+<br>
+Support for different systems.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim can be used on:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- All Unix systems (it works on all systems it was tested on, although<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the GUI and Perl interface may not work everywhere).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Amiga (500, 1000, 1200, 2000, 3000, 4000, ...).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- MS-DOS in real-mode (no additional drivers required).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- In protected mode on Windows 3.1 and MS-DOS (DPMI driver required).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Windows 95 and Windows NT, with support for long file names.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- OS/2 (needs emx.dll)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Atari MiNT<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- VMS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- BeOS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Macintosh<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Risc OS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- IBM OS/390<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that on some systems features need to be disabled to reduce<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resource usage, esp. on MS-DOS.&nbsp;&nbsp;For some outdated systems you need to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;use an older Vim version.<br>
+<br>
+Multi level persistent undo.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="undo.html#undo">|undo|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'u' goes backward in time, '<span class="Special">CTRL-R</span>' goes forward again.&nbsp;&nbsp;Set option<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>&nbsp;to the number of changes to be remembered (default 1000).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>&nbsp;to 0 for a Vi-compatible one level undo.&nbsp;&nbsp;Set it to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1 for no undo at all.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When all changes in a buffer have been undone, the buffer is not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;considered changed anymore.&nbsp;&nbsp;You can exit it with :q, without &lt;!&gt;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When undoing a few changes and then making a new change Vim will<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a branch in the undo tree.&nbsp;&nbsp;This means you can go back to any<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state of the text, there is no risk of a change causing text to be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lost forever.&nbsp;<a class="Identifier" href="undo.html#undo-tree">|undo-tree|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The undo information is stored in a file when the&nbsp;<a class="Type" href="options.html#'undofile'">'undofile'</a>&nbsp;option is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set.&nbsp;&nbsp;This means you can exit Vim, start Vim on a previously edited<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file and undo changes that were made before exiting Vim.<br>
+<br>
+Graphical User Interface (GUI).&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui.html#gui">|gui|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Included support for GUI: menu's, mouse, scrollbars, etc.&nbsp;&nbsp;You can<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;define your own menus.&nbsp;&nbsp;Better support for CTRL/SHIFT/ALT keys in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;combination with special keys and mouse.&nbsp;&nbsp;Supported for various<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;platforms, such as X11 (with Motif and Athena interfaces), GTK, Win32<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Windows 95 and later), BeOS, Amiga and Macintosh.<br>
+<br>
+Multiple windows and buffers.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="windows.html">|windows.txt|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim can split the screen into several windows, each editing a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;different buffer or the same buffer at a different location.&nbsp;&nbsp;Buffers<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can still be loaded (and changed) but not displayed in a window.&nbsp;&nbsp;This<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is called a hidden buffer.&nbsp;&nbsp;Many commands and options have been added<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for this facility.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim can also use multiple tab pages, each with one or more windows.&nbsp;&nbsp;A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line with tab labels can be used to quickly switch between these pages.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="tabpage.html#tab-page">|tab-page|</a><br>
+<br>
+Syntax highlighting.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="syntax.html#:syntax">|:syntax|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim can highlight keywords, patterns and other things.&nbsp;&nbsp;This is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defined by a number of&nbsp;<a class="Identifier" href="syntax.html#:syntax">|:syntax|</a>&nbsp;commands, and can be made to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;highlight most languages and file types.&nbsp;&nbsp;A number of files are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;included for highlighting the most common languages, like C, C++,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Java, Pascal, Makefiles, shell scripts, etc.&nbsp;&nbsp;The colors used for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;highlighting can be defined for ordinary terminals, color terminals<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and the GUI with the&nbsp;<a class="Identifier" href="syntax.html#:highlight">|:highlight|</a>&nbsp;command.&nbsp;&nbsp;A convenient way to do<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this is using a&nbsp;<a class="Identifier" href="syntax.html#:colorscheme">|:colorscheme|</a>&nbsp;command.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The highlighted text can be exported as HTML.&nbsp;<a class="Identifier" href="syntax.html#convert-to-HTML">|convert-to-HTML|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other items that can be highlighted are matches with the search string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#'hlsearch'">|'hlsearch'|</a>, matching parens&nbsp;<a class="Identifier" href="pi_paren.html#matchparen">|matchparen|</a>&nbsp;and the cursor line and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;column&nbsp;<a class="Identifier" href="options.html#'cursorline'">|'cursorline'|</a>&nbsp;<a class="Identifier" href="options.html#'cursorcolumn'">|'cursorcolumn'|</a>.<br>
+<br>
+Spell checking.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="spell.html#spell">|spell|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When the&nbsp;<a class="Type" href="options.html#'spell'">'spell'</a>&nbsp;option is set Vim will highlight spelling mistakes.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;About 50 languages are currently supported, selected with the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'spelllang'">'spelllang'</a>&nbsp;option.&nbsp;&nbsp;In source code only comments and strings are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;checked for spelling.<br>
+<br>
+Folding.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="fold.html#folding">|folding|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A range of lines can be shown as one &quot;folded&quot; line.&nbsp;&nbsp;This allows<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;overviewing a file and moving blocks of text around quickly.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Folds can be created manually, from the syntax of the file, by indent,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etc.<br>
+<br>
+Diff mode.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="diff.html#diff">|diff|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim can show two versions of a file with the differences highlighted.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parts of the text that are equal are folded away.&nbsp;&nbsp;Commands can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used to move text from one version to the other.<br>
+<br>
+Plugins.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="usr_05.html#add-plugin">|add-plugin|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The functionality can be extended by dropping a plugin file in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;right directory.&nbsp;&nbsp;That's an easy way to start using Vim scripts<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;written by others.&nbsp;&nbsp;Plugins can be for all kind of files, or<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specifically for a filetype.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Packages make this even easier.&nbsp;<a class="Identifier" href="repeat.html#packages">|packages|</a><br>
+<br>
+Asynchronous communication and timers.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="channel.html#channel">|channel|</a>&nbsp;<a class="Identifier" href="channel.html#job">|job|</a>&nbsp;<a class="Identifier" href="eval.html#timer">|timer|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim can exchange messages with other processes in the background.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This makes it possible to have servers do work and send back the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;results to Vim.&nbsp;<a class="Identifier" href="channel.html#channel">|channel|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim can start a job, communicate with it and stop it.&nbsp;<a class="Identifier" href="channel.html#job">|job|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Timers can fire once or repeatedly and invoke a function to do any<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;work.&nbsp;<a class="Identifier" href="eval.html#timer">|timer|</a><br>
+<br>
+Repeat a series of commands.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="repeat.html#q">|q|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;q<span class="Special">{c}</span>&quot; starts recording typed characters into named register&nbsp;<span class="Special">{c}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A subsequent &quot;q&quot; stops recording.&nbsp;&nbsp;The register can then be executed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with the &quot;@<span class="Special">{c}</span>&quot; command.&nbsp;&nbsp;This is very useful to repeat a complex<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;action.<br>
+<br>
+Flexible insert mode.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#ins-special-special">|ins-special-special|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The arrow keys can be used in insert mode to move around in the file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This breaks the insert in two parts as far as undo and redo is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;concerned.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-O</span>&nbsp;can be used to execute a single Normal mode command.&nbsp;&nbsp;This is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;almost the same as hitting&nbsp;<span class="Special">&lt;Esc&gt;</span>, typing the command and doing&nbsp;<a class="Identifier" href="insert.html#a">|a|</a>.<br>
+<br>
+Visual mode.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="visual.html#Visual-mode">|Visual-mode|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visual mode can be used to first highlight a piece of text and then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;give a command to do something with it.&nbsp;&nbsp;This is an (easy to use)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alternative to first giving the operator and then moving to the end of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the text to be operated upon.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="visual.html#v">|v|</a>&nbsp;and&nbsp;<a class="Identifier" href="visual.html#V">|V|</a>&nbsp;are used to start Visual mode.&nbsp;&nbsp;<a class="Identifier" href="visual.html#v">|v|</a>&nbsp;works on characters<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;<a class="Identifier" href="visual.html#V">|V|</a>&nbsp;on lines.&nbsp;&nbsp;Move the cursor to extend the Visual area.&nbsp;&nbsp;It is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shown highlighted on the screen.&nbsp;&nbsp;By typing &quot;o&quot; the other end of the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visual area can be moved.&nbsp;&nbsp;The Visual area can be affected by an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;operator:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; change<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; yank<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt; or &lt;&nbsp;&nbsp;insert or delete indent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; filter through external program<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; filter through indent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; start&nbsp;<a class="Identifier" href="cmdline.html#:">|:|</a>&nbsp;command for the Visual lines.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gq&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;format text to&nbsp;<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;columns<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;J&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; join lines<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; swap case<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; make lowercase<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;U&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; make uppercase<br>
+<br>
+Block operators.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="visual.html#visual-block">|visual-block|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;With Visual mode a rectangular block of text can be selected.&nbsp;&nbsp;Start<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visual mode with&nbsp;<span class="Special">CTRL-V</span>.&nbsp;&nbsp;The block can be deleted (&quot;d&quot;), yanked (&quot;y&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or its case can be changed (&quot;~&quot;, &quot;u&quot; and &quot;U&quot;).&nbsp;&nbsp;A deleted or yanked<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;block can be put into the text with the &quot;p&quot; and &quot;P&quot; commands.<br>
+<br>
+Help system.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="helphelp.html#:help">|:help|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Help is displayed in a window.&nbsp;&nbsp;The usual commands can be used to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;move around, search for a string, etc.&nbsp;&nbsp;Tags can be used to jump<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;around in the help files, just like hypertext links.&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="helphelp.html#:help">|:help|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command takes an argument to quickly jump to the info on a subject.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;F1&gt;</span>&nbsp;is the quick access to the help system.&nbsp;&nbsp;The name of the help<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;index file can be set with the&nbsp;<a class="Type" href="options.html#'helpfile'">'helpfile'</a>&nbsp;option.<br>
+<br>
+Command-line editing and history.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="cmdline.html#cmdline-editing">|cmdline-editing|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can insert or delete at any place in the command-line using the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cursor keys.&nbsp;&nbsp;The right/left cursor keys can be used to move<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forward/backward one character.&nbsp;&nbsp;The shifted right/left cursor keys<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can be used to move forward/backward one word.&nbsp;&nbsp;<span class="Special">CTRL-B</span>/<span class="Special">CTRL-E</span>&nbsp;can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used to go to the begin/end of the command-line.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="cmdline.html#cmdline-history">|cmdline-history|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The command-lines are remembered.&nbsp;&nbsp;The up/down cursor keys can be used<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to recall previous command-lines.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'history'">'history'</a>&nbsp;option can be set to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the number of lines that will be remembered.&nbsp;&nbsp;There is a separate<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;history for commands and for search patterns.<br>
+<br>
+Command-line completion.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="cmdline.html#cmdline-completion">|cmdline-completion|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;While entering a command-line (on the bottom line of the screen)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;can be typed to complete<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">what&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example&nbsp;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :e<span class="Special">&lt;Tab&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- tag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :ta scr<span class="Special">&lt;Tab&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set sc<span class="Special">&lt;Tab&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- option value&nbsp;&nbsp;:set hf=<span class="Special">&lt;Tab&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- file name&nbsp;&nbsp;&nbsp;&nbsp; :e ve<span class="Special">&lt;Tab&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- etc.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there are multiple matches,&nbsp;<span class="Special">CTRL-N</span>&nbsp;(next) and&nbsp;<span class="Special">CTRL-P</span>&nbsp;(previous)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will walk through the matches.&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;works like&nbsp;<span class="Special">CTRL-N</span>, but wraps<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;around to the first match.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'wildchar'">'wildchar'</a>&nbsp;option can be set to the character for command-line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;completion,&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;is the default.&nbsp;&nbsp;<span class="Special">CTRL-D</span>&nbsp;can be typed after an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(incomplete) wildcard; all matches will be listed.&nbsp;&nbsp;<span class="Special">CTRL-A</span>&nbsp;will insert<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;all matches.&nbsp;&nbsp;<span class="Special">CTRL-L</span>&nbsp;will insert the longest common part of the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matches.<br>
+<br>
+Insert-mode completion.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#ins-completion">|ins-completion|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In Insert mode the&nbsp;<span class="Special">CTRL-N</span>&nbsp;and&nbsp;<span class="Special">CTRL-P</span>&nbsp;keys can be used to complete a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;word that appears elsewhere.&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-N">|i_CTRL-N|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;With&nbsp;<span class="Special">CTRL-X</span>&nbsp;another mode is entered, through which completion can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;done for:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-F">|i_CTRL-X_CTRL-F|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; file names<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-K">|i_CTRL-X_CTRL-K|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; words from&nbsp;<a class="Type" href="options.html#'dictionary'">'dictionary'</a>&nbsp;files<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-T">|i_CTRL-X_CTRL-T|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; words from&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;files<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-I">|i_CTRL-X_CTRL-I|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; words from included files<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-L">|i_CTRL-X_CTRL-L|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; whole lines<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-]">|i_CTRL-X_CTRL-]|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; words from the tags file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-D">|i_CTRL-X_CTRL-D|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; definitions or macros<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-O">|i_CTRL-X_CTRL-O|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Omni completion: clever completion<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specifically for a file type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etc.<br>
+<br>
+Long line support.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#'wrap'">|'wrap'|</a>&nbsp;<a class="Identifier" href="options.html#'linebreak'">|'linebreak'|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;option is off, long lines will not wrap and only part<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of them will be shown.&nbsp;&nbsp;When the cursor is moved to a part that is not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shown, the screen will scroll horizontally.&nbsp;&nbsp;The minimum number of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;columns to scroll can be set with the&nbsp;<a class="Type" href="options.html#'sidescroll'">'sidescroll'</a>&nbsp;option.&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="scroll.html#zh">|zh|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;<a class="Identifier" href="scroll.html#zl">|zl|</a>&nbsp;commands can be used to scroll sideways.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alternatively, long lines are broken in between words when the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;option is set.&nbsp;&nbsp;This allows editing a single-line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;paragraph conveniently (e.g. when the text is later read into a DTP<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;program).&nbsp;&nbsp;Move the cursor up/down with the&nbsp;<a class="Identifier" href="motion.html#gk">|gk|</a>&nbsp;and&nbsp;<a class="Identifier" href="motion.html#gj">|gj|</a>&nbsp;commands.<br>
+<br>
+Text formatting.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="change.html#formatting">|formatting|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;option can be used to automatically limit the line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;length.&nbsp;&nbsp;This supplements the&nbsp;<a class="Type" href="options.html#'wrapmargin'">'wrapmargin'</a>&nbsp;option of Vi, which was not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;very useful.&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="change.html#gq">|gq|</a>&nbsp;operator can be used to format a piece of text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(for example,&nbsp;<a class="Identifier" href="change.html#gqap">|gqap|</a>&nbsp;formats the current paragraph).&nbsp;&nbsp;Commands for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text alignment:&nbsp;<a class="Identifier" href="change.html#:center">|:center|</a>,&nbsp;<a class="Identifier" href="change.html#:left">|:left|</a>&nbsp;and&nbsp;<a class="Identifier" href="change.html#:right">|:right|</a>.<br>
+<br>
+Extended search patterns.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pattern.html#pattern">|pattern|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There are many extra items to match various text items.&nbsp;&nbsp;Examples:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A &quot;\n&quot; can be used in a search pattern to match a line break.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;x\<span class="Special">{2,4}</span>&quot; matches &quot;x&quot; 2 to 4 times.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\s&quot; matches a white space character.<br>
+<br>
+Directory, remote and archive browsing.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pi_netrw.html#netrw">|netrw|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim can browse the file system.&nbsp;&nbsp;Simply edit a directory.&nbsp;&nbsp;Move around<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in the list with the usual commands and press&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;to go to the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;directory or file under the cursor.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This also works for remote files over ftp, http, ssh, etc.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Zip and tar archives can also be browsed.&nbsp;<a class="Identifier" href="pi_tar.html#tar">|tar|</a>&nbsp;<a class="Identifier" href="pi_zip.html#zip">|zip|</a><br>
+<br>
+Edit-compile-edit speedup.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="quickfix.html#quickfix">|quickfix|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="quickfix.html#:make">|:make|</a>&nbsp;command can be used to run the compilation and jump to the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first error.&nbsp;&nbsp;A file with compiler error messages is interpreted.&nbsp;&nbsp;Vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jumps to the first error.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each line in the error file is scanned for the name of a file, line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number and error message.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'errorformat'">'errorformat'</a>&nbsp;option can be set to a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list of scanf-like strings to handle output from many compilers.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="quickfix.html#:cn">|:cn|</a>&nbsp;command can be used to jump to the next error.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="quickfix.html#:cl">|:cl|</a>&nbsp;lists all the error messages.&nbsp;&nbsp;Other commands are available.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'makeef'">'makeef'</a>&nbsp;option has the name of the file with error messages.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'makeprg'">'makeprg'</a>&nbsp;option contains the name of the program to be executed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with the&nbsp;<a class="Identifier" href="quickfix.html#:make">|:make|</a>&nbsp;command.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'shellpipe'">'shellpipe'</a>&nbsp;option contains the string to be used to put the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;output of the compiler into the errorfile.<br>
+<br>
+Finding matches in files.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="quickfix.html#:vimgrep">|:vimgrep|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim can search for a pattern in multiple files.&nbsp;&nbsp;This uses the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;advanced Vim regexp pattern, works on all systems and also works to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;search in compressed files.<br>
+<br>
+Improved indenting for programs.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#'cindent'">|'cindent'|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When the&nbsp;<a class="Type" href="options.html#'cindent'">'cindent'</a>&nbsp;option is on the indent of each line is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;automatically adjusted.&nbsp;&nbsp;C syntax is mostly recognized.&nbsp;&nbsp;The indent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for various styles can be set with&nbsp;<a class="Type" href="options.html#'cinoptions'">'cinoptions'</a>.&nbsp;&nbsp;The keys to trigger<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indenting can be set with&nbsp;<a class="Type" href="options.html#'cinkeys'">'cinkeys'</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Comments can be automatically formatted.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'comments'">'comments'</a>&nbsp;option can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set to the characters that start and end a comment.&nbsp;&nbsp;This works best<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for C code, but also works for e-mail (&quot;&gt;&quot; at start of the line) and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;other types of text.&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="change.html#=">|=|</a>&nbsp;operator can be used to re-indent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lines.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For many other languages an indent plugin is present to support<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;automatic indenting.&nbsp;<a class="Identifier" href="usr_30.html#30.3">|30.3|</a><br>
+<br>
+Searching for words in included files.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="tagsrch.html#include-search">|include-search|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="tagsrch.html#[i">|[i|</a>&nbsp;command can be used to search for a match of the word under<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the cursor in the current and included files.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'include'">'include'</a>&nbsp;option<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can be set to a pattern that describes a command to include a file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(the default is for C programs).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="tagsrch.html#[I">|[I|</a>&nbsp;command lists all matches, the&nbsp;<a class="Identifier" href="tagsrch.html#[_CTRL-I">|[_CTRL-I|</a>&nbsp;command jumps to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a match.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="tagsrch.html#[d">|[d|</a>,&nbsp;<a class="Identifier" href="tagsrch.html#[D">|[D|</a>&nbsp;and&nbsp;<a class="Identifier" href="tagsrch.html#[_CTRL-D">|[_CTRL-D|</a>&nbsp;commands do the same, but only for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lines where the pattern given with the&nbsp;<a class="Type" href="options.html#'define'">'define'</a>&nbsp;option matches.<br>
+<br>
+Automatic commands.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="autocmd.html#autocommand">|autocommand|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commands can be automatically executed when reading a file, writing a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file, jumping to another buffer, etc., depending on the file name.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is useful to set options and mappings for C programs,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;documentation, plain text, e-mail, etc.&nbsp;&nbsp;This also makes it possible<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to edit compressed files.<br>
+<br>
+Scripts and Expressions.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#expression">|expression|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commands have been added to form up a powerful script language.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#:if">|:if|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Conditional execution, which can be used for example<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to set options depending on the value of $TERM.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#:while">|:while|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Repeat a number of commands.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#:for">|:for|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loop over a list.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#:echo">|:echo|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Print the result of an expression.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#:let">|:let|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Assign a value to an internal variable, option, etc.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Variable types are Number, String, List and Dictionary.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#:execute">|:execute|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute a command formed by an expression.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#:try">|:try|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Catch exceptions.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etc., etc.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="eval.html#eval">|eval|</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Debugging and profiling are supported.&nbsp;<a class="Identifier" href="repeat.html#debug-scripts">|debug-scripts|</a>&nbsp;<a class="Identifier" href="repeat.html#profile">|profile|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If this is not enough, an interface is provided to&nbsp;<a class="Identifier" href="if_pyth.html#Python">|Python|</a>,&nbsp;<a class="Identifier" href="if_ruby.html#Ruby">|Ruby|</a>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="if_tcl.html#Tcl">|Tcl|</a>,&nbsp;<a class="Identifier" href="if_lua.html#Lua">|Lua|</a>,&nbsp;<a class="Identifier" href="if_perl.html#Perl">|Perl|</a>&nbsp;and&nbsp;<a class="Identifier" href="if_mzsch.html#MzScheme">|MzScheme|</a>.<br>
+<br>
+Viminfo.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="starting.html#viminfo-file">|viminfo-file|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The command-line history, marks and registers can be stored in a file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that is read on startup.&nbsp;&nbsp;This can be used to repeat a search command<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or command-line command after exiting and restarting Vim.&nbsp;&nbsp;It is also<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;possible to jump right back to where the last edit stopped with&nbsp;<a class="Identifier" href="motion.html#'0">|'0|</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'viminfo'">'viminfo'</a>&nbsp;option can be set to select which items to store in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.viminfo file.&nbsp;&nbsp;This is off by default.<br>
+<br>
+Printing.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="print.html#printing">|printing|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="print.html#:hardcopy">|:hardcopy|</a>&nbsp;command sends text to the printer.&nbsp;&nbsp;This can include<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;syntax highlighting.<br>
+<br>
+Mouse support.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="term.html#mouse-using">|mouse-using|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The mouse is supported in the GUI version, in an xterm for Unix, for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BSDs with sysmouse, for Linux with gpm, for MS-DOS, and Win32.&nbsp;&nbsp;It<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can be used to position the cursor, select the visual area, paste a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;register, etc.<br>
+<br>
+Usage of key names.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="intro.html#<>">|&lt;&gt;|</a>&nbsp;<a class="Identifier" href="intro.html#key-notation">|key-notation|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Special keys now all have a name like&nbsp;<span class="Special">&lt;Up&gt;</span>,&nbsp;<span class="Special">&lt;End&gt;</span>, etc.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This name can be used in mappings, to make it easy to edit them.<br>
+<br>
+Editing binary files.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="editing.html#edit-binary">|edit-binary|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim can edit binary files.&nbsp;&nbsp;You can change a few characters in an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;executable file, without corrupting it.&nbsp;&nbsp;Vim doesn't remove NUL<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;characters (they are represented as&nbsp;<span class="Special">&lt;NL&gt;</span>&nbsp;internally).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="starting.html#-b">|-b|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command-line argument to start editing a binary file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#'binary'">|'binary'|</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option set by&nbsp;<a class="Identifier" href="starting.html#-b">|-b|</a>.&nbsp;&nbsp;Prevents adding an&nbsp;<span class="Special">&lt;EOL&gt;</span>&nbsp;for the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;last line in the file.<br>
+<br>
+Multi-language support.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mlang.html#multi-lang">|multi-lang|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Files in double-byte or multi-byte encodings can be edited.&nbsp;&nbsp;There is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UTF-8 support to be able to edit various languages at the same time,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;without switching fonts.&nbsp;<a class="Identifier" href="mbyte.html#UTF-8">|UTF-8|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Messages and menus are available in different languages.<br>
+<br>
+Move cursor beyond lines.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When the&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;option is set the cursor can move all over the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screen, also where there is no text.&nbsp;&nbsp;This is useful to edit tables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and figures easily.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+5. Other vim features&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#other-features" name="other-features">*other-features*</a><br>
+<br>
+A random collection of nice extra features.<br>
+<br>
+<br>
+When Vim is started with &quot;-s scriptfile&quot;, the characters read from<br>
+&quot;scriptfile&quot; are treated as if you typed them.&nbsp;&nbsp;If end of file is reached<br>
+before the editor exits, further characters are read from the console.<br>
+<br>
+The &quot;-w&quot; option can be used to record all typed characters in a script file.<br>
+This file can then be used to redo the editing, possibly on another file or<br>
+after changing some commands in the script file.<br>
+<br>
+The &quot;-o&quot; option opens a window for each argument.&nbsp;&nbsp;&quot;-o4&quot; opens four windows.<br>
+<br>
+Vi requires several termcap entries to be able to work full-screen.&nbsp;&nbsp;Vim only<br>
+requires the &quot;cm&quot; entry (cursor motion).<br>
+<br>
+<br>
+In command mode:<br>
+<br>
+When the&nbsp;<a class="Type" href="options.html#'showcmd'">'showcmd'</a>&nbsp;option is set, the command characters are shown in the last<br>
+line of the screen.&nbsp;&nbsp;They are removed when the command is finished.<br>
+<br>
+If the&nbsp;<a class="Type" href="options.html#'ruler'">'ruler'</a>&nbsp;option is set, the current cursor position is shown in the<br>
+last line of the screen.<br>
+<br>
+&quot;U&quot; still works after having moved off the last changed line and after &quot;u&quot;.<br>
+<br>
+Characters with the 8th bit set are displayed.&nbsp;&nbsp;The characters between '~' and<br>
+0xa0 are displayed as &quot;~?&quot;, &quot;~@&quot;, &quot;~A&quot;, etc., unless they are included in the<br>
+<a class="Type" href="options.html#'isprint'">'isprint'</a>&nbsp;option.<br>
+<br>
+&quot;][&quot; goes to the next ending of a C function ('}' in column 1).<br>
+&quot;[]&quot; goes to the previous ending of a C function ('}' in column 1).<br>
+<br>
+&quot;]f&quot;, &quot;[f&quot; and &quot;gf&quot; start editing the file whose name is under the cursor.<br>
+<span class="Special">CTRL-W</span>&nbsp;f splits the window and starts editing the file whose name is under<br>
+the cursor.<br>
+<br>
+&quot;*&quot; searches forward for the identifier under the cursor, &quot;#&quot; backward.<br>
+&quot;K&quot; runs the program defined by the&nbsp;<a class="Type" href="options.html#'keywordprg'">'keywordprg'</a>&nbsp;option, with the identifier<br>
+under the cursor as argument.<br>
+<br>
+&quot;%&quot; can be preceded with a count.&nbsp;&nbsp;The cursor jumps to the line that<br>
+percentage down in the file.&nbsp;&nbsp;The normal &quot;%&quot; function to jump to the matching<br>
+brace skips braces inside quotes.<br>
+<br>
+With the&nbsp;<span class="Special">CTRL-]</span>&nbsp;command, the cursor may be in the middle of the identifier.<br>
+<br>
+The used tags are remembered.&nbsp;&nbsp;Commands that can be used with the tag stack<br>
+are&nbsp;<span class="Special">CTRL-T</span>, &quot;:pop&quot; and &quot;:tag&quot;.&nbsp;&nbsp;&quot;:tags&quot; lists the tag stack.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'tags'">'tags'</a>&nbsp;option can be set to a list of tag file names.&nbsp;&nbsp;Thus multiple<br>
+tag files can be used.&nbsp;&nbsp;For file names that start with &quot;./&quot;, the &quot;./&quot; is<br>
+replaced with the path of the current file.&nbsp;&nbsp;This makes it possible to use a<br>
+tags file in the same directory as the file being edited.<br>
+<br>
+Previously used file names are remembered in the alternate file name list.<br>
+<span class="Special">CTRL-^</span>&nbsp;accepts a count, which is an index in this list.<br>
+&quot;:files&quot; command shows the list of alternate file names.<br>
+&quot;#<span class="Special">&lt;N&gt;</span>&quot; is replaced with the&nbsp;<span class="Special">&lt;N&gt;</span>th alternate file name in the list.<br>
+&quot;#&lt;&quot; is replaced with the current file name without extension.<br>
+<br>
+Search patterns have more features.&nbsp;&nbsp;The&nbsp;<span class="Special">&lt;NL&gt;</span>&nbsp;character is seen as part of the<br>
+search pattern and the substitute string of &quot;:s&quot;.&nbsp;&nbsp;Vi sees it as the end of<br>
+the command.<br>
+<br>
+Searches can put the cursor on the end of a match and may include a character<br>
+offset.<br>
+<br>
+Count added to &quot;~&quot;, &quot;:next&quot;, &quot;:Next&quot;, &quot;n&quot; and &quot;<span class="Special">N</span>&quot;.<br>
+<br>
+The command &quot;:next!&quot; with&nbsp;<a class="Type" href="options.html#'autowrite'">'autowrite'</a>&nbsp;set does not write the file.&nbsp;&nbsp;In vi the<br>
+file was written, but this is considered to be a bug, because one does not<br>
+expect it and the file is not written with &quot;:rewind!&quot;.<br>
+<br>
+In Vi when entering a&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;in replace mode deletes a character only when&nbsp;<a class="Type" href="options.html#'ai'">'ai'</a><br>
+is set (but does not show it until you hit&nbsp;<span class="Special">&lt;Esc&gt;</span>).&nbsp;&nbsp;Vim always deletes a<br>
+character (and shows it immediately).<br>
+<br>
+Added :wnext command.&nbsp;&nbsp;Same as &quot;:write&quot; followed by &quot;:next&quot;.<br>
+<br>
+The &quot;:w!&quot; command always writes, also when the file is write protected.&nbsp;&nbsp;In Vi<br>
+you would have to do &quot;:!chmod +w %:S&quot; and &quot;:set noro&quot;.<br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'tildeop'">'tildeop'</a>&nbsp;has been set, &quot;~&quot; is an operator (must be followed by a<br>
+movement command).<br>
+<br>
+With the &quot;J&quot; (join) command you can reset the&nbsp;<a class="Type" href="options.html#'joinspaces'">'joinspaces'</a>&nbsp;option to have only<br>
+one space after a period (Vi inserts two spaces).<br>
+<br>
+&quot;cw&quot; can be used to change white space formed by several characters (Vi is<br>
+confusing: &quot;cw&quot; only changes one space, while &quot;dw&quot; deletes all white space).<br>
+<br>
+&quot;o&quot; and &quot;O&quot; accept a count for repeating the insert (Vi clears a part of<br>
+display).<br>
+<br>
+Flags after Ex commands not supported (no plans to include it).<br>
+<br>
+On non-UNIX systems &quot;:cd&quot; command shows current directory instead of going to<br>
+the home directory (there isn't one).&nbsp;&nbsp;&quot;:pwd&quot; prints the current directory on<br>
+all systems.<br>
+<br>
+After a &quot;:cd&quot; command the file names (in the argument list, opened files)<br>
+still point to the same files.&nbsp;&nbsp;In Vi &quot;:cd&quot; is not allowed in a changed file;<br>
+otherwise the meaning of file names change.<br>
+<br>
+&quot;:source!&quot; command reads Vi commands from a file.<br>
+<br>
+&quot;:mkexrc&quot; command writes current modified options and mappings to a &quot;.exrc&quot;<br>
+file.&nbsp;&nbsp;&quot;:mkvimrc&quot; writes to a &quot;.vimrc&quot; file.<br>
+<br>
+No check for &quot;tail recursion&quot; with mappings.&nbsp;&nbsp;This allows things like<br>
+&quot;:map! foo ^]foo&quot;.<br>
+<br>
+When a mapping starts with number, vi loses the count typed before it (e.g.<br>
+when using the mapping &quot;:map g 4G&quot; the command &quot;7g&quot; goes to line 4).&nbsp;&nbsp;This is<br>
+considered a vi bug.&nbsp;&nbsp;Vim concatenates the counts (in the example it becomes<br>
+&quot;74G&quot;), as most people would expect.<br>
+<br>
+The :put! command inserts the contents of a register above the current line.<br>
+<br>
+The &quot;p&quot; and &quot;P&quot; commands of vi cannot be repeated with &quot;.&quot; when the putted<br>
+text is less than a line.&nbsp;&nbsp;In Vim they can always be repeated.<br>
+<br>
+&quot;:noremap&quot; command can be used to enter a mapping that will not be remapped.<br>
+This is useful to exchange the meaning of two keys.&nbsp;&nbsp;&quot;:cmap&quot;, &quot;:cunmap&quot; and<br>
+&quot;:cnoremap&quot; can be used for mapping in command-line editing only.&nbsp;&nbsp;&quot;:imap&quot;,<br>
+&quot;:iunmap&quot; and &quot;:inoremap&quot; can be used for mapping in insert mode only.<br>
+Similar commands exist for abbreviations: &quot;:noreabbrev&quot;, &quot;:iabbrev&quot;<br>
+&quot;:cabbrev&quot;, &quot;:iunabbrev&quot;, &quot;:cunabbrev&quot;, &quot;:inoreabbrev&quot;, &quot;:cnoreabbrev&quot;.<br>
+<br>
+In Vi the command &quot;:map foo bar&quot; would remove a previous mapping<br>
+&quot;:map bug foo&quot;.&nbsp;&nbsp;This is considered a bug, so it is not included in Vim.<br>
+&quot;:unmap! foo&quot; does remove &quot;:map! bug foo&quot;, because unmapping would be very<br>
+difficult otherwise (this is vi compatible).<br>
+<br>
+The ':' register contains the last command-line.<br>
+The '%' register contains the current file name.<br>
+The '.' register contains the last inserted text.<br>
+<br>
+&quot;:dis&quot; command shows the contents of the yank registers.<br>
+<br>
+<span class="Special">CTRL-O</span>/<span class="Special">CTRL-I</span>&nbsp;can be used to jump to older/newer positions.&nbsp;&nbsp;These are the<br>
+same positions as used with the '' command, but may be in another file.&nbsp;&nbsp;The<br>
+&quot;:jumps&quot; command lists the older positions.<br>
+<br>
+If the&nbsp;<a class="Type" href="options.html#'shiftround'">'shiftround'</a>&nbsp;option is set, an indent is rounded to a multiple of<br>
+<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;with &quot;&gt;&quot; and &quot;&lt;&quot; commands.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'scrolljump'">'scrolljump'</a>&nbsp;option can be set to the minimum number of lines to scroll<br>
+when the cursor gets off the screen.&nbsp;&nbsp;Use this when scrolling is slow.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;option can be set to the minimum number of lines to keep<br>
+above and below the cursor.&nbsp;&nbsp;This gives some context to where you are<br>
+editing.&nbsp;&nbsp;When set to a large number the cursor line is always in the middle<br>
+of the window.<br>
+<br>
+Uppercase marks can be used to jump between files.&nbsp;&nbsp;The &quot;:marks&quot; command lists<br>
+all currently set marks.&nbsp;&nbsp;The commands &quot;']&quot; and &quot;`]&quot; jump to the end of the<br>
+previous operator or end of the text inserted with the put command.&nbsp;&nbsp;&quot;'[&quot; and<br>
+&quot;`[&quot; do jump to the start.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'shelltype'">'shelltype'</a>&nbsp;option can be set to reflect the type of shell used on the<br>
+Amiga.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'highlight'">'highlight'</a>&nbsp;option can be set for the highlight mode to be used for<br>
+several commands.<br>
+<br>
+The&nbsp;<span class="Special">CTRL-A</span>&nbsp;(add) and&nbsp;<span class="Special">CTRL-X</span>&nbsp;(subtract) commands are new.&nbsp;&nbsp;The count to the<br>
+command (default 1) is added to/subtracted from the number at or after the<br>
+cursor.&nbsp;&nbsp;That number may be decimal, octal (starts with a '0') or hexadecimal<br>
+(starts with '0x').&nbsp;&nbsp;Very useful in macros.<br>
+<br>
+With the :set command the prefix &quot;inv&quot; can be used to invert boolean options.<br>
+<br>
+In both Vi and Vim you can create a line break with the &quot;:substitute&quot; command<br>
+by using a&nbsp;<span class="Special">CTRL-M</span>.&nbsp;&nbsp;For Vi this means you cannot insert a real&nbsp;<span class="Special">CTRL-M</span>&nbsp;in the<br>
+text.&nbsp;&nbsp;With Vim you can put a real&nbsp;<span class="Special">CTRL-M</span>&nbsp;in the text by preceding it with a<br>
+<span class="Special">CTRL-V</span>.<br>
+<br>
+<br>
+In Insert mode:<br>
+<br>
+If the&nbsp;<a class="Type" href="options.html#'revins'">'revins'</a>&nbsp;option is set, insert happens backwards.&nbsp;&nbsp;This is for typing<br>
+Hebrew.&nbsp;&nbsp;When inserting normal characters the cursor will not be shifted and<br>
+the text moves rightwards.&nbsp;&nbsp;Backspace,&nbsp;<span class="Special">CTRL-W</span>&nbsp;and&nbsp;<span class="Special">CTRL-U</span>&nbsp;will also work in<br>
+the opposite direction.&nbsp;&nbsp;<span class="Special">CTRL-B</span>&nbsp;toggles the&nbsp;<a class="Type" href="options.html#'revins'">'revins'</a>&nbsp;option.&nbsp;&nbsp;In replace mode<br>
+<a class="Type" href="options.html#'revins'">'revins'</a>&nbsp;has no effect.&nbsp;&nbsp;Only when enabled at compile time.<br>
+<br>
+The backspace key can be used just like&nbsp;<span class="Special">CTRL-D</span>&nbsp;to remove auto-indents.<br>
+<br>
+You can backspace,&nbsp;<span class="Special">CTRL-U</span>&nbsp;and&nbsp;<span class="Special">CTRL-W</span>&nbsp;over line breaks if the&nbsp;<a class="Type" href="options.html#'backspace'">'backspace'</a>&nbsp;(bs)<br>
+option includes &quot;eol&quot;.&nbsp;&nbsp;You can backspace over the start of insert if the<br>
+<a class="Type" href="options.html#'backspace'">'backspace'</a>&nbsp;option includes &quot;start&quot;.<br>
+<br>
+When the&nbsp;<a class="Type" href="options.html#'paste'">'paste'</a>&nbsp;option is set, a few options are reset and mapping in insert<br>
+mode and abbreviation are disabled.&nbsp;&nbsp;This allows for pasting text in windowing<br>
+systems without unexpected results.&nbsp;&nbsp;When the&nbsp;<a class="Type" href="options.html#'paste'">'paste'</a>&nbsp;option is reset, the old<br>
+option values are restored.<br>
+<br>
+<span class="Special">CTRL-T</span>/<span class="Special">CTRL-D</span>&nbsp;always insert/delete an indent in the current line, no matter<br>
+what column the cursor is in.<br>
+<br>
+<span class="Special">CTRL-@</span>&nbsp;(insert previously inserted text) works always (Vi: only when typed as<br>
+first character).<br>
+<br>
+<span class="Special">CTRL-A</span>&nbsp;works like&nbsp;<span class="Special">CTRL-@</span>&nbsp;but does not leave insert mode.<br>
+<br>
+<span class="Special">CTRL-R</span>&nbsp;<span class="Special">{0-9a-z..}</span>&nbsp;can be used to insert the contents of a register.<br>
+<br>
+When the&nbsp;<a class="Type" href="options.html#'smartindent'">'smartindent'</a>&nbsp;option is set, C programs will be better auto-indented.<br>
+With&nbsp;<a class="Type" href="options.html#'cindent'">'cindent'</a>&nbsp;even more.<br>
+<br>
+<span class="Special">CTRL-Y</span>&nbsp;and&nbsp;<span class="Special">CTRL-E</span>&nbsp;can be used to copy a character from above/below the<br>
+current cursor position.<br>
+<br>
+After&nbsp;<span class="Special">CTRL-V</span>&nbsp;you can enter a three digit decimal number.&nbsp;&nbsp;This byte value is<br>
+inserted in the text as a single character.&nbsp;&nbsp;Useful for international<br>
+characters that are not on your keyboard.<br>
+<br>
+When the&nbsp;<a class="Type" href="options.html#'expandtab'">'expandtab'</a>&nbsp;(et) option is set, a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;is expanded to the<br>
+appropriate number of spaces.<br>
+<br>
+The window always reflects the contents of the buffer (Vi does not do this<br>
+when changing text and in some other cases).<br>
+<br>
+If Vim is compiled with DIGRAPHS defined, digraphs are supported.&nbsp;&nbsp;A set of<br>
+normal digraphs is included.&nbsp;&nbsp;They are shown with the &quot;:digraph&quot; command.<br>
+More can be added with &quot;:digraph&nbsp;<span class="Special">{char1}{char2}</span>&nbsp;<span class="Special">{number}</span>&quot;.&nbsp;&nbsp;A digraph is<br>
+entered with &quot;<span class="Special">CTRL-K</span>&nbsp;<span class="Special">{char1}</span>&nbsp;<span class="Special">{char2}</span>&quot; or &quot;<span class="Special">{char1}</span>&nbsp;BS&nbsp;<span class="Special">{char2}</span>&quot; (only when<br>
+<a class="Type" href="options.html#'digraph'">'digraph'</a>&nbsp;option is set).<br>
+<br>
+When repeating an insert, e.g. &quot;10atest&nbsp;<span class="Special">&lt;Esc&gt;</span>&quot; vi would only handle wrapmargin<br>
+for the first insert.&nbsp;&nbsp;Vim does it for all.<br>
+<br>
+A count to the &quot;i&quot; or &quot;a&quot; command is used for all the text.&nbsp;&nbsp;Vi uses the count<br>
+only for one line.&nbsp;&nbsp;&quot;3iabc<span class="Special">&lt;NL&gt;</span>def<span class="Special">&lt;Esc&gt;</span>&quot; would insert &quot;abcabcabc<span class="Special">&lt;NL&gt;</span>def&quot; in Vi<br>
+but &quot;abc<span class="Special">&lt;NL&gt;</span>defabc<span class="Special">&lt;NL&gt;</span>defabc<span class="Special">&lt;NL&gt;</span>def&quot; in Vim.<br>
+<br>
+<br>
+In Command-line mode:<br>
+<br>
+<span class="Special">&lt;Esc&gt;</span>&nbsp;terminates the command-line without executing it.&nbsp;&nbsp;In vi the command<br>
+line would be executed, which is not what most people expect (hitting&nbsp;<span class="Special">&lt;Esc&gt;</span><br>
+should always get you back to command mode).&nbsp;&nbsp;To avoid problems with some<br>
+obscure macros, an&nbsp;<span class="Special">&lt;Esc&gt;</span>&nbsp;in a macro will execute the command.&nbsp;&nbsp;If you want a<br>
+typed&nbsp;<span class="Special">&lt;Esc&gt;</span>&nbsp;to execute the command like vi does you can fix this with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;:cmap ^V<span class="Special">&lt;Esc&gt;</span>&nbsp;^V<span class="Special">&lt;CR&gt;</span>&quot;<br>
+<br>
+General:<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'ttimeout'">'ttimeout'</a>&nbsp;option is like&nbsp;<a class="Type" href="options.html#'timeout'">'timeout'</a>, but only works for cursor and<br>
+function keys, not for ordinary mapped characters.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'timeoutlen'">'timeoutlen'</a>&nbsp;option<br>
+gives the number of milliseconds that is waited for.&nbsp;&nbsp;If the&nbsp;<a class="Type" href="options.html#'esckeys'">'esckeys'</a>&nbsp;option<br>
+is not set, cursor and function keys that start with&nbsp;<span class="Special">&lt;Esc&gt;</span>&nbsp;are not recognized<br>
+in insert mode.<br>
+<br>
+There is an option for each terminal string.&nbsp;&nbsp;Can be used when termcap is not<br>
+supported or to change individual strings.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'fileformat'">'fileformat'</a>&nbsp;option can be set to select the&nbsp;<span class="Special">&lt;EOL&gt;</span>: &quot;dos&quot;&nbsp;<span class="Special">&lt;CR&gt;&lt;NL&gt;</span>, &quot;unix&quot;<br>
+<span class="Special">&lt;NL&gt;</span>&nbsp;or &quot;mac&quot;&nbsp;<span class="Special">&lt;CR&gt;</span>.<br>
+When the&nbsp;<a class="Type" href="options.html#'fileformats'">'fileformats'</a>&nbsp;option is not empty, Vim tries to detect the type of<br>
+<span class="Special">&lt;EOL&gt;</span>&nbsp;automatically.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'fileformat'">'fileformat'</a>&nbsp;option is set accordingly.<br>
+<br>
+On systems that have no job control (older Unix systems and non-Unix systems)<br>
+the&nbsp;<span class="Special">CTRL-Z</span>, &quot;:stop&quot; or &quot;:suspend&quot; command starts a new shell.<br>
+<br>
+If Vim is started on the Amiga without an interactive window for output, a<br>
+window is opened (and :sh still works).&nbsp;&nbsp;You can give a device to use for<br>
+editing with the&nbsp;<a class="Identifier" href="starting.html#-d">|-d|</a>&nbsp;argument, e.g. &quot;-d con:20/20/600/150&quot;.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'columns'">'columns'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'lines'">'lines'</a>&nbsp;options are used to set or get the width and height<br>
+of the display.<br>
+<br>
+Option settings are read from the first and last few lines of the file.<br>
+Option&nbsp;<a class="Type" href="options.html#'modelines'">'modelines'</a>&nbsp;determines how many lines are tried (default is 5).&nbsp;&nbsp;<span class="Todo">Note</span><br>
+that this is different from the Vi versions that can execute any Ex command<br>
+in a modeline (a major security problem).&nbsp;&nbsp;<a class="Identifier" href="starting.html#trojan-horse">|trojan-horse|</a><br>
+<br>
+If the&nbsp;<a class="Type" href="options.html#'insertmode'">'insertmode'</a>&nbsp;option is set (e.g. in .exrc), Vim starts in insert mode.<br>
+And it comes back there, when pressing&nbsp;<span class="Special">&lt;Esc&gt;</span>.<br>
+<br>
+Undo information is kept in memory.&nbsp;&nbsp;Available memory limits the number and<br>
+size of change that can be undone.&nbsp;&nbsp;This may be a problem with MS-DOS, is<br>
+hardly a problem on the Amiga and almost never with Unix and Win32.<br>
+<br>
+If the&nbsp;<a class="Type" href="options.html#'backup'">'backup'</a>&nbsp;or&nbsp;<a class="Type" href="options.html#'writebackup'">'writebackup'</a>&nbsp;option is set: Before a file is overwritten,<br>
+a backup file (.bak) is made.&nbsp;&nbsp;If the &quot;backup&quot; option is set it is left<br>
+behind.<br>
+<br>
+Vim creates a file ending in &quot;.swp&quot; to store parts of the file that have been<br>
+changed or that do not fit in memory.&nbsp;&nbsp;This file can be used to recover from<br>
+an aborted editing session with &quot;vim -r file&quot;.&nbsp;&nbsp;Using the swap file can be<br>
+switched off by setting the&nbsp;<a class="Type" href="options.html#'updatecount'">'updatecount'</a>&nbsp;option to 0 or starting Vim with<br>
+the &quot;-n&quot; option.&nbsp;&nbsp;Use the&nbsp;<a class="Type" href="options.html#'directory'">'directory'</a>&nbsp;option for placing the .swp file<br>
+somewhere else.<br>
+<br>
+Vim is able to work correctly on filesystems with 8.3 file names, also when<br>
+using messydos or crossdos filesystems on the Amiga, or any 8.3 mounted<br>
+filesystem under Unix.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="options.html#'shortname'">|'shortname'|</a>.<br>
+<br>
+Error messages are shown at least one second (Vi overwrites error messages).<br>
+<br>
+If Vim gives the&nbsp;<a class="Identifier" href="message.html#hit-enter">|hit-enter|</a>&nbsp;prompt, you can hit any key.&nbsp;&nbsp;Characters other<br>
+than&nbsp;<span class="Special">&lt;CR&gt;</span>,&nbsp;<span class="Special">&lt;NL&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;Space&gt;</span>&nbsp;are interpreted as the (start of) a command.&nbsp;&nbsp;(Vi<br>
+only accepts a command starting with ':').<br>
+<br>
+The contents of the numbered and unnamed registers is remembered when<br>
+changing files.<br>
+<br>
+The &quot;No lines in buffer&quot; message is a normal message instead of an error<br>
+message, since that may cause a mapping to be aborted.<br>
+<br>
+The AUX: device of the Amiga is supported.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+6. Command-line arguments&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#cmdline-arguments" name="cmdline-arguments">*cmdline-arguments*</a><br>
+<br>
+Different versions of Vi have different command-line arguments.&nbsp;&nbsp;This can be<br>
+confusing.&nbsp;&nbsp;To help you, this section gives an overview of the differences.<br>
+<br>
+Five variants of Vi will be considered here:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis&nbsp;&nbsp; Elvis version 2.1b<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nvi&nbsp;&nbsp;&nbsp;&nbsp; Nvi version 1.79<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posix&nbsp;&nbsp; Posix 1003.2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vi version 3.7 (for Sun 4.1.x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vile&nbsp;&nbsp;&nbsp;&nbsp;Vile version 7.4 (incomplete)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">Vim version 5.2</span><br>
+<br>
+Only Vim is able to accept options in between and after the file names.<br>
+<br>
++<span class="Special">{command}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis, Nvi, Posix, Vi, Vim&#0058; Same as &quot;-c&nbsp;<span class="Special">{command}</span>&quot;.<br>
+<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Nvi, Posix, Vi&#0058; Run Ex in batch mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Read file from stdin (use -s for batch mode).<br>
+<br>
+--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: End of options, only file names are following.<br>
+<br>
+--cmd&nbsp;<span class="Special">{command}</span>&nbsp;Vim: execute&nbsp;<span class="Special">{command}</span>&nbsp;before sourcing vimrc files.<br>
+<br>
+--echo-wid&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: GTK+ echoes the Window ID on stdout<br>
+<br>
+--help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: show help message and exit.<br>
+<br>
+--literal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; take file names literally, don't expand wildcards.<br>
+<br>
+--nofork&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: same as&nbsp;<a class="Identifier" href="starting.html#-f">|-f|</a><br>
+<br>
+--noplugin[s]&nbsp;&nbsp; Vim&#0058; Skip loading plugins.<br>
+<br>
+--remote&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: edit the files in another Vim server<br>
+<br>
+--remote-expr&nbsp;<span class="Special">{expr}</span>&nbsp;&nbsp;&nbsp;&nbsp;Vim: evaluate&nbsp;<span class="Special">{expr}</span>&nbsp;in another Vim server<br>
+<br>
+--remote-send&nbsp;<span class="Special">{keys}</span>&nbsp;&nbsp;&nbsp;&nbsp;Vim: send&nbsp;<span class="Special">{keys}</span>&nbsp;to a Vim server and exit<br>
+<br>
+--remote-silent&nbsp;<span class="Special">{file}</span>&nbsp;&nbsp;Vim: edit the files in another Vim server if possible<br>
+<br>
+--remote-wait&nbsp;&nbsp; Vim&#0058; edit the files in another Vim server and wait for it<br>
+<br>
+--remote-wait-silent&nbsp;&nbsp;&nbsp;&nbsp;Vim: like --remote-wait, no complaints if not possible<br>
+<br>
+--role&nbsp;<span class="Special">{role}</span>&nbsp;&nbsp; Vim&#0058; GTK+ 2: set role of main window<br>
+<br>
+--serverlist&nbsp;&nbsp;&nbsp;&nbsp;Vim: Output a list of Vim servers and exit<br>
+<br>
+--servername&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Specify Vim server name<br>
+<br>
+--socketid&nbsp;<span class="Special">{id}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; GTK window socket to run Vim in<br>
+<br>
+--windowid&nbsp;<span class="Special">{id}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Win32 window ID to run Vim in<br>
+<br>
+--version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; show version message and exit.<br>
+<br>
+-?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vile: print usage summary and exit.<br>
+<br>
+-a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis: Load all specified file names into a window (use -o for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim).<br>
+<br>
+-A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Start in Arabic mode (when compiled with Arabic).<br>
+<br>
+-b&nbsp;<span class="Special">{blksize}</span>&nbsp;&nbsp;&nbsp;&nbsp;Elvis: Use&nbsp;<span class="Special">{blksize}</span>&nbsp;blocksize for the session file.<br>
+-b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: set&nbsp;<a class="Type" href="options.html#'binary'">'binary'</a>&nbsp;mode.<br>
+<br>
+-C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Compatible mode.<br>
+<br>
+-c&nbsp;<span class="Special">{command}</span>&nbsp;&nbsp;&nbsp;&nbsp;Elvis, Nvi, Posix, Vim&#0058; run&nbsp;<span class="Special">{command}</span>&nbsp;as an Ex command after<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;loading the edit buffer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: allow up to 10 &quot;-c&quot; arguments<br>
+<br>
+-d&nbsp;<span class="Special">{device}</span>&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Use&nbsp;<span class="Special">{device}</span>&nbsp;for I/O (Amiga only).&nbsp;<span class="Special">{only when compiled</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">without the&nbsp;</span><a class="Identifier" href="various.html#+diff">|+diff|</a><span class="Special">&nbsp;feature}</span><br>
+-d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: start with&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;set.&nbsp;<a class="Identifier" href="diff.html#vimdiff">|vimdiff|</a><br>
+<br>
+-dev&nbsp;<span class="Special">{device}</span>&nbsp;&nbsp; Vim&#0058; Use&nbsp;<span class="Special">{device}</span>&nbsp;for I/O (Amiga only).<br>
+<br>
+-D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: debug mode.<br>
+<br>
+-e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis, Nvi, Vim&#0058; Start in Ex mode, as if the executable is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;called &quot;ex&quot;.<br>
+<br>
+-E&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Start in improved Ex mode&nbsp;<a class="Identifier" href="intro.html#gQ">|gQ|</a>, like &quot;exim&quot;.<br>
+<br>
+-f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Run GUI in foreground (Amiga: don't open new window).<br>
+-f&nbsp;<span class="Special">{session}</span>&nbsp;&nbsp;&nbsp;&nbsp;Elvis: Use&nbsp;<span class="Special">{session}</span>&nbsp;as the session file.<br>
+<br>
+-F&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Start in Farsi mode (when compiled with Farsi).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nvi: Fast start, don't read the entire file when editing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;starts.<br>
+<br>
+-G&nbsp;<span class="Special">{gui}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis: Use the&nbsp;<span class="Special">{gui}</span>&nbsp;as user interface.<br>
+<br>
+-g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Start GUI.<br>
+-g&nbsp;<span class="Special">N</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vile: start editing at line&nbsp;<span class="Special">N</span><br>
+<br>
+-h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Give help message.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vile: edit the help file<br>
+<br>
+-H&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: start Hebrew mode (when compiled with it).<br>
+<br>
+-i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis: Start each window in Insert mode.<br>
+-i&nbsp;<span class="Special">{viminfo}</span>&nbsp;&nbsp;&nbsp;&nbsp;Vim: Use&nbsp;<span class="Special">{viminfo}</span>&nbsp;for viminfo file.<br>
+<br>
+-L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Same as &quot;-r&quot; (also in some versions of Vi).<br>
+<br>
+-l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nvi, Vi, Vim&#0058; Set&nbsp;<a class="Type" href="options.html#'lisp'">'lisp'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showmatch'">'showmatch'</a>&nbsp;options.<br>
+<br>
+-m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Modifications not allowed to be written, resets&nbsp;<a class="Type" href="options.html#'write'">'write'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;option.<br>
+<br>
+-M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Modifications not allowed, resets&nbsp;<a class="Type" href="options.html#'modifiable'">'modifiable'</a>&nbsp;and the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'write'">'write'</a>&nbsp;option.<br>
+<br>
+-<span class="Special">N</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: No-compatible mode.<br>
+<br>
+-n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: No swap file used.<br>
+<br>
+-nb[args]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; open a NetBeans interface connection<br>
+<br>
+-O<span class="Special">[N]</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Like -o, but use vertically split windows.<br>
+<br>
+-o<span class="Special">[N]</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Open&nbsp;<span class="Special">[N]</span>&nbsp;windows, or one for each file.<br>
+<br>
+-p<span class="Special">[N]</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Open&nbsp;<span class="Special">[N]</span>&nbsp;tab pages, or one for each file.<br>
+<br>
+-P&nbsp;<span class="Special">{parent-title}</span>&nbsp;Win32 Vim&#0058; open Vim inside a parent application window<br>
+<br>
+-q&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Use&nbsp;<span class="Special">{name}</span>&nbsp;for quickfix error file.<br>
+-q<span class="Special">{name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Idem.<br>
+<br>
+-R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis, Nvi, Posix, Vile, Vim&#0058; Set the&nbsp;<a class="Type" href="options.html#'readonly'">'readonly'</a>&nbsp;option.<br>
+<br>
+-r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis, Nvi, Posix, Vi, Vim&#0058; Recovery mode.<br>
+<br>
+-S&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nvi: Set&nbsp;<a class="Type" href="options.html#'secure'">'secure'</a>&nbsp;option.<br>
+-S&nbsp;<span class="Special">{script}</span>&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; source script after starting up.<br>
+<br>
+-s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nvi, Posix, Vim&#0058; Same as &quot;-&quot; (silent mode), when in Ex mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis: Sets the&nbsp;<span class="MissingTag">'safer'</span>&nbsp;option.<br>
+-s&nbsp;<span class="Special">{scriptin}</span>&nbsp;&nbsp; Vim&#0058; Read from script file&nbsp;<span class="Special">{scriptin}</span>; only when not in Ex<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mode.<br>
+-s&nbsp;<span class="Special">{pattern}</span>&nbsp;&nbsp;&nbsp;&nbsp;Vile: search for&nbsp;<span class="Special">{pattern}</span><br>
+<br>
+-t&nbsp;<span class="Special">{tag}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis, Nvi, Posix, Vi, Vim&#0058; Edit the file containing&nbsp;<span class="Special">{tag}</span>.<br>
+-t<span class="Special">{tag}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Idem.<br>
+<br>
+-T&nbsp;<span class="Special">{term}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Set terminal name to&nbsp;<span class="Special">{term}</span>.<br>
+<br>
+-u&nbsp;<span class="Special">{vimrc}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Read initializations from&nbsp;<span class="Special">{vimrc}</span>&nbsp;file.<br>
+<br>
+-U&nbsp;<span class="Special">{gvimrc}</span>&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Read GUI initializations from&nbsp;<span class="Special">{gvimrc}</span>&nbsp;file.<br>
+<br>
+-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nvi, Posix, Vi, Vim&#0058; Begin in Normal mode (visual mode, in Vi<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;terms).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vile: View mode, no changes possible.<br>
+<br>
+-V&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Elvis, Vim&#0058; Verbose mode.<br>
+-V<span class="Special">{nr}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Verbose mode with specified level.<br>
+<br>
+-w&nbsp;<span class="Special">{size}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Elvis, Posix, Nvi, Vi, Vim&#0058; Set value of&nbsp;<a class="Type" href="options.html#'window'">'window'</a>&nbsp;to&nbsp;<span class="Special">{size}</span>.<br>
+-w<span class="Special">{size}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nvi, Vi&#0058; Same as &quot;-w&nbsp;<span class="Special">{size}</span>&quot;.<br>
+-w&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Write to script file&nbsp;<span class="Special">{name}</span>&nbsp;(must start with non-digit).<br>
+<br>
+-W&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim&#0058; Append to script file&nbsp;<span class="Special">{name}</span>.<br>
+<br>
+-x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vi, Vim&#0058; Ask for encryption key.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="editing.html#encryption">|encryption|</a>.<br>
+<br>
+-X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Don't connect to the X server.<br>
+<br>
+-y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: Start in easy mode, like&nbsp;<a class="Identifier" href="starting.html#evim">|evim|</a>.<br>
+<br>
+-Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim: restricted mode<br>
+<br>
+@<span class="Special">{cmdfile}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vile: use&nbsp;<span class="Special">{cmdfile}</span>&nbsp;as startup file.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+7. POSIX compliance&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#posix" name="posix">*posix*</a>&nbsp;<a class="Constant" href="vi_diff.html#posix-compliance" name="posix-compliance">*posix-compliance*</a><br>
+<br>
+In 2005 the POSIX test suite was run to check the compatibility of Vim.&nbsp;&nbsp;Most<br>
+of the test was executed properly.&nbsp;&nbsp;There are the few things where Vim<br>
+is not POSIX compliant, even when run in Vi compatibility mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#$VIM_POSIX" name="$VIM_POSIX">*$VIM_POSIX*</a><br>
+Set the $VIM_POSIX environment variable to have&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;include the POSIX<br>
+flags when Vim starts up.&nbsp;&nbsp;This makes Vim run as POSIX as it can.&nbsp;&nbsp;That's<br>
+a bit different from being Vi compatible.<br>
+<br>
+This is where Vim does not behave as POSIX specifies and why:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vi_diff.html#posix-screen-size" name="posix-screen-size">*posix-screen-size*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The $COLUMNS and $LINES environment variables are ignored by Vim if<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the size can be obtained from the terminal in a more reliable way.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add the '|' flag to&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;to have $COLUMNS and $LINES overrule<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sizes obtained in another way.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;{&quot; and &quot;}&quot; commands don't stop at a &quot;{&quot; in the original Vi, but<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POSIX specifies it does.&nbsp;&nbsp;Add the '{' flag to&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;if you want<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it the POSIX way.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;D&quot;, &quot;o&quot; and &quot;O&quot; commands accept a count.&nbsp;&nbsp;Also when repeated.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add the '#' flag to&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;if you want to ignore the count.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;:cd&quot; command fails if the current buffer is modified when the '.'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flag is present in&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There is no ATTENTION message, the &quot;A&quot; flag is added to&nbsp;<a class="Type" href="options.html#'shortmess'">'shortmess'</a>.<br>
+<br>
+These are remarks about running the POSIX test suite:<br>
+- vi test 33 sometimes fails for unknown reasons<br>
+- vi test 250 fails; behavior will be changed in a new revision<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.opengroup.org/austin/mailarchives/ag-review/msg01710.html">http://www.opengroup.org/austin/mailarchives/ag-review/msg01710.html</a></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;(link no longer works, perhaps it's now:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="https://www.opengroup.org/sophocles/show_mail.tpl?CALLER=show_archive.tpl&amp;source=L&amp;listname=austin-review-l&amp;id=1711">https://www.opengroup.org/sophocles/show_mail.tpl?CALLER=show_archive.tpl&amp;source=L&amp;listname=austin-review-l&amp;id=1711</a></span>)<br>
+- vi test 310 fails; exit code non-zero when any error occurred?<br>
+- ex test 24 fails because test is wrong.&nbsp;&nbsp;Changed between SUSv2 and SUSv3.<br>
+- ex tests 47, 48, 49, 72, 73 fail because .exrc file isn't read in silent<br>
+&nbsp;&nbsp;mode and $EXINIT isn't used.<br>
+- ex tests 76, 78 fail because echo is used instead of printf. (fixed)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Also: problem with \s not changed to space.<br>
+- ex test 355 fails because&nbsp;<a class="Type" href="options.html#'window'">'window'</a>&nbsp;isn't used for &quot;30z&quot;.<br>
+- ex test 368 fails because shell command isn't echoed in silent mode.<br>
+- ex test 394 fails because &quot;=&quot; command output isn't visible in silent mode.<br>
+- ex test 411 fails because test file is wrong, contains stray ':'.<br>
+- ex test 475 and 476 fail because reprint output isn't visible in silent mode.<br>
+- ex test 480 and 481 fail because the tags file has spaces instead of a tab.<br>
+- ex test 502 fails because .exrc isn't read in silent mode.<br>
+- ex test 509 fails because .exrc isn't read in silent mode. and exit code is<br>
+&nbsp;&nbsp;1 instead of 2.<br>
+- ex test 534 fails because .exrc isn't read in silent mode.<br>
+<br>
+<br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

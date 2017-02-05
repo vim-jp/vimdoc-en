@@ -1,0 +1,278 @@
+---
+layout: vimdoc
+helpname: 'usr_31'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_31.html" name="usr_31.txt">*usr_31.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2007 May 08<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exploiting the GUI<br>
+<br>
+<br>
+Vim works well in a terminal, but the GUI has a few extra items.&nbsp;&nbsp;A file<br>
+browser can be used for commands that use a file.&nbsp;&nbsp;A dialog to make a choice<br>
+between alternatives.&nbsp;&nbsp;Use keyboard shortcuts to access menu items quickly.<br>
+<br>
+<a class="Identifier" href="usr_31.html#31.1">|31.1|</a>&nbsp;&nbsp;The file browser<br>
+<a class="Identifier" href="usr_31.html#31.2">|31.2|</a>&nbsp;&nbsp;Confirmation<br>
+<a class="Identifier" href="usr_31.html#31.3">|31.3|</a>&nbsp;&nbsp;Menu shortcuts<br>
+<a class="Identifier" href="usr_31.html#31.4">|31.4|</a>&nbsp;&nbsp;Vim window position and size<br>
+<a class="Identifier" href="usr_31.html#31.5">|31.5|</a>&nbsp;&nbsp;Various<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_32.html">|usr_32.txt|</a>&nbsp;&nbsp;The undo tree<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_30.html">|usr_30.txt|</a>&nbsp;&nbsp;Editing programs<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_31.html#31.1" name="31.1">*31.1*</a>&nbsp;&nbsp;The file browser<br>
+<br>
+When using the File/Open... menu you get a file browser.&nbsp;&nbsp;This makes it easier<br>
+to find the file you want to edit.&nbsp;&nbsp;But what if you want to split a window to<br>
+edit another file?&nbsp;&nbsp;There is no menu entry for this.&nbsp;&nbsp;You could first use<br>
+Window/Split and then File/Open..., but that's more work.<br>
+&nbsp;&nbsp; Since you are typing most commands in Vim, opening the file browser with a<br>
+typed command is possible as well.&nbsp;&nbsp;To make the split command use the file<br>
+browser, prepend &quot;browse&quot;:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:browse split</div>
+<br>
+Select a file and then the &quot;:split&quot; command will be executed with it.&nbsp;&nbsp;If you<br>
+cancel the file dialog nothing happens, the window isn't split.<br>
+&nbsp;&nbsp; You can also specify a file name argument.&nbsp;&nbsp;This is used to tell the file<br>
+browser where to start.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:browse split /etc</div>
+<br>
+The file browser will pop up, starting in the directory &quot;/etc&quot;.<br>
+<br>
+The &quot;:browse&quot; command can be prepended to just about any command that opens a<br>
+file.<br>
+&nbsp;&nbsp; If no directory is specified, Vim will decide where to start the file<br>
+browser.&nbsp;&nbsp;By default it uses the same directory as the last time.&nbsp;&nbsp;Thus when<br>
+you used &quot;:browse split&quot; and selected a file in &quot;/usr/local/share&quot;, the next<br>
+time you use a &quot;:browse&quot; it will start in &quot;/usr/local/share&quot; again.<br>
+&nbsp;&nbsp; This can be changed with the&nbsp;<a class="Type" href="options.html#'browsedir'">'browsedir'</a>&nbsp;option.&nbsp;&nbsp;It can have one of three<br>
+values:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;last&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the last directory browsed (default)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buffer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the same directory as the current buffer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;current&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; use the current directory<br>
+<br>
+For example, when you are in the directory &quot;/usr&quot;, editing the file<br>
+&quot;/usr/local/share/readme&quot;, then the command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set browsedir=buffer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:browse edit</div>
+<br>
+Will start the browser in &quot;/usr/local/share&quot;.&nbsp;&nbsp;Alternatively:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set browsedir=current<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:browse edit</div>
+<br>
+Will start the browser in &quot;/usr&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To avoid using the mouse, most file browsers offer using key presses<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to navigate.&nbsp;&nbsp;Since this is different for every system, it is not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;explained here.&nbsp;&nbsp;Vim uses a standard browser when possible, your<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system documentation should contain an explanation on the keyboard<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shortcuts somewhere.<br>
+<br>
+When you are not using the GUI version, you could use the file explorer window<br>
+to select files like in a file browser.&nbsp;&nbsp;However, this doesn't work for the<br>
+&quot;:browse&quot; command.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="pi_netrw.html#netrw-browse">|netrw-browse|</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_31.html#31.2" name="31.2">*31.2*</a>&nbsp;&nbsp;Confirmation<br>
+<br>
+Vim protects you from accidentally overwriting a file and other ways to lose<br>
+changes.&nbsp;&nbsp;If you do something that might be a bad thing to do, Vim produces an<br>
+error message and suggests appending ! if you really want to do it.<br>
+&nbsp;&nbsp; To avoid retyping the command with the !, you can make Vim give you a<br>
+dialog.&nbsp;&nbsp;You can then press &quot;OK&quot; or &quot;Cancel&quot; to tell Vim what you want.<br>
+&nbsp;&nbsp; For example, you are editing a file and made changes to it.&nbsp;&nbsp;You start<br>
+editing another file with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:confirm edit foo.txt</div>
+<br>
+Vim will pop up a dialog that looks something like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-----------------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; ?&nbsp;&nbsp; Save changes to &quot;bar.txt&quot;?&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; YES&nbsp;&nbsp; NO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CANCEL&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-----------------------------------+<br>
+<br>
+Now make your choice.&nbsp;&nbsp;If you do want to save the changes, select &quot;YES&quot;.&nbsp;&nbsp;If<br>
+you want to lose the changes for ever: &quot;NO&quot;.&nbsp;&nbsp;If you forgot what you were<br>
+doing and want to check what really changed use &quot;CANCEL&quot;.&nbsp;&nbsp;You will be back in<br>
+the same file, with the changes still there.<br>
+<br>
+Just like &quot;:browse&quot;, the &quot;:confirm&quot; command can be prepended to most commands<br>
+that edit another file.&nbsp;&nbsp;They can also be combined:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:confirm browse edit</div>
+<br>
+This will produce a dialog when the current buffer was changed.&nbsp;&nbsp;Then it will<br>
+pop up a file browser to select the file to edit.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In the dialog you can use the keyboard to select the choice.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Typically the&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;key and the cursor keys change the choice.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pressing&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;selects the choice.&nbsp;&nbsp;This depends on the system<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;though.<br>
+<br>
+When you are not using the GUI, the &quot;:confirm&quot; command works as well.&nbsp;&nbsp;Instead<br>
+of popping up a dialog, Vim will print the message at the bottom of the Vim<br>
+window and ask you to press a key to make a choice.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:confirm edit main.c</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Save changes to &quot;Untitled&quot;?</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[Y]es, (N)o, (C)ancel:&nbsp;</span><br>
+<br>
+You can now press the single key for the choice.&nbsp;&nbsp;You don't have to press<br>
+<span class="Special">&lt;Enter&gt;</span>, unlike other typing on the command line.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_31.html#31.3" name="31.3">*31.3*</a>&nbsp;&nbsp;Menu shortcuts<br>
+<br>
+The keyboard is used for all Vim commands.&nbsp;&nbsp;The menus provide a simple way to<br>
+select commands, without knowing what they are called.&nbsp;&nbsp;But you have to move<br>
+your hand from the keyboard and grab the mouse.<br>
+&nbsp;&nbsp; Menus can often be selected with keys as well.&nbsp;&nbsp;This depends on your<br>
+system, but most often it works this way.&nbsp;&nbsp;Use the&nbsp;<span class="Special">&lt;Alt&gt;</span>&nbsp;key in combination<br>
+with the underlined letter of a menu.&nbsp;&nbsp;For example,&nbsp;<span class="Special">&lt;A-w&gt;</span>&nbsp;(<span class="Special">&lt;Alt&gt;</span>&nbsp;and w) pops<br>
+up the Window menu.<br>
+&nbsp;&nbsp; In the Window menu, the &quot;split&quot; item has the p underlined.&nbsp;&nbsp;To select it,<br>
+let go of the&nbsp;<span class="Special">&lt;Alt&gt;</span>&nbsp;key and press p.<br>
+<br>
+After the first selection of a menu with the&nbsp;<span class="Special">&lt;Alt&gt;</span>&nbsp;key, you can use the cursor<br>
+keys to move through the menus.&nbsp;&nbsp;<span class="Special">&lt;Right&gt;</span>&nbsp;selects a submenu and&nbsp;<span class="Special">&lt;left&gt;</span>&nbsp;closes<br>
+it.&nbsp;&nbsp;<span class="Special">&lt;Esc&gt;</span>&nbsp;also closes a menu.&nbsp;&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;selects a menu item.<br>
+<br>
+There is a conflict between using the&nbsp;<span class="Special">&lt;Alt&gt;</span>&nbsp;key to select menu items, and<br>
+using&nbsp;<span class="Special">&lt;Alt&gt;</span>&nbsp;key combinations for mappings.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'winaltkeys'">'winaltkeys'</a>&nbsp;option tells Vim<br>
+what it should do with the&nbsp;<span class="Special">&lt;Alt&gt;</span>&nbsp;key.<br>
+&nbsp;&nbsp; The default value &quot;menu&quot; is the smart choice: If the key combination is a<br>
+menu shortcut it can't be mapped.&nbsp;&nbsp;All other keys are available for mapping.<br>
+&nbsp;&nbsp; The value &quot;no&quot; doesn't use any&nbsp;<span class="Special">&lt;Alt&gt;</span>&nbsp;keys for the menus.&nbsp;&nbsp;Thus you must use<br>
+the mouse for the menus, and all&nbsp;<span class="Special">&lt;Alt&gt;</span>&nbsp;keys can be mapped.<br>
+&nbsp;&nbsp; The value &quot;yes&quot; means that Vim will use any&nbsp;<span class="Special">&lt;Alt&gt;</span>&nbsp;keys for the menus.&nbsp;&nbsp;Some<br>
+<span class="Special">&lt;Alt&gt;</span>&nbsp;key combinations may also do other things than selecting a menu.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_31.html#31.4" name="31.4">*31.4*</a>&nbsp;&nbsp;Vim window position and size<br>
+<br>
+To see the current Vim window position on the screen use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:winpos</div>
+<br>
+This will only work in the GUI.&nbsp;&nbsp;The output may look like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Window position: X 272, Y 103</span><br>
+<br>
+The position is given in screen pixels.&nbsp;&nbsp;Now you can use the numbers to move<br>
+Vim somewhere else.&nbsp;&nbsp;For example, to move it to the left a hundred pixels:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:winpos 172 103</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There may be a small offset between the reported position and where<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the window moves.&nbsp;&nbsp;This is because of the border around the window.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is added by the window manager.<br>
+<br>
+You can use this command in your startup script to position the window at a<br>
+specific position.<br>
+<br>
+The size of the Vim window is computed in characters.&nbsp;&nbsp;Thus this depends on<br>
+the size of the font being used.&nbsp;&nbsp;You can see the current size with this<br>
+command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set lines columns</div>
+<br>
+To change the size set the&nbsp;<a class="Type" href="options.html#'lines'">'lines'</a>&nbsp;and/or&nbsp;<a class="Type" href="options.html#'columns'">'columns'</a>&nbsp;options to a new value:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set lines=50<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set columns=80</div>
+<br>
+Obtaining the size works in a terminal just like in the GUI.&nbsp;&nbsp;Setting the size<br>
+is not possible in most terminals.<br>
+<br>
+You can start the X-Windows version of gvim with an argument to specify the<br>
+size and position of the window:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gvim -geometry {width}x{height}+{x_offset}+{y_offset}</div>
+<br>
+<span class="Special">{width}</span>&nbsp;and&nbsp;<span class="Special">{height}</span>&nbsp;are in characters, {x_offset} and {y_offset} are in<br>
+pixels.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gvim -geometry 80x25+100+300</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_31.html#31.5" name="31.5">*31.5*</a>&nbsp;&nbsp;Various<br>
+<br>
+You can use gvim to edit an e-mail message.&nbsp;&nbsp;In your e-mail program you must<br>
+select gvim to be the editor for messages.&nbsp;&nbsp;When you try that, you will<br>
+see that it doesn't work: The mail program thinks that editing is finished,<br>
+while gvim is still running!<br>
+&nbsp;&nbsp; What happens is that gvim disconnects from the shell it was started in.<br>
+That is fine when you start gvim in a terminal, so that you can do other work<br>
+in that terminal.&nbsp;&nbsp;But when you really want to wait for gvim to finish, you<br>
+must prevent it from disconnecting.&nbsp;&nbsp;The &quot;-f&quot; argument does this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gvim -f file.txt</div>
+<br>
+The &quot;-f&quot; stands for foreground.&nbsp;&nbsp;Now Vim will block the shell it was started<br>
+in until you finish editing and exit.<br>
+<br>
+<br>
+DELAYED START OF THE GUI<br>
+<br>
+On Unix it's possible to first start Vim in a terminal.&nbsp;&nbsp;That's useful if you<br>
+do various tasks in the same shell.&nbsp;&nbsp;If you are editing a file and decide you<br>
+want to use the GUI after all, you can start it with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:gui</div>
+<br>
+Vim will open the GUI window and no longer use the terminal.&nbsp;&nbsp;You can continue<br>
+using the terminal for something else.&nbsp;&nbsp;The &quot;-f&quot; argument is used here to run<br>
+the GUI in the foreground.&nbsp;&nbsp;You can also use &quot;:gui -f&quot;.<br>
+<br>
+<br>
+THE GVIM STARTUP FILE<br>
+<br>
+When gvim starts, it reads the gvimrc file.&nbsp;&nbsp;That's similar to the vimrc file<br>
+used when starting Vim.&nbsp;&nbsp;The gvimrc file can be used for settings and commands<br>
+that are only to be used when the GUI is going to be started.&nbsp;&nbsp;For example,<br>
+you can set the&nbsp;<a class="Type" href="options.html#'lines'">'lines'</a>&nbsp;option to set a different window size:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set lines=55</div>
+<br>
+You don't want to do this in a terminal, since its size is fixed (except for<br>
+an xterm that supports resizing).<br>
+&nbsp;&nbsp; The gvimrc file is searched for in the same locations as the vimrc file.<br>
+Normally its name is &quot;~/.gvimrc&quot; for Unix and &quot;$VIM/_gvimrc&quot; for MS-Windows.<br>
+The $MYGVIMRC environment variable is set to it, thus you can use this command<br>
+to edit the file, if you have one:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:edit $MYGVIMRC</div>
+<br>
+&nbsp;&nbsp; If for some reason you don't want to use the normal gvimrc file, you can<br>
+specify another one with the &quot;-U&quot; argument:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gvim -U thisrc ...</div>
+<br>
+That allows starting gvim for different kinds of editing.&nbsp;&nbsp;You could set<br>
+another font size, for example.<br>
+&nbsp;&nbsp; To completely skip reading a gvimrc file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gvim -U NONE ...</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_32.html">|usr_32.txt|</a>&nbsp;&nbsp;The undo tree<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

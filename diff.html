@@ -1,0 +1,447 @@
+---
+layout: vimdoc
+helpname: 'diff'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="diff.html" name="diff.txt">*diff.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2016 Aug 24<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#diff" name="diff">*diff*</a>&nbsp;<a class="Constant" href="diff.html#vimdiff" name="vimdiff">*vimdiff*</a>&nbsp;<a class="Constant" href="diff.html#gvimdiff" name="gvimdiff">*gvimdiff*</a>&nbsp;<a class="Constant" href="diff.html#diff-mode" name="diff-mode">*diff-mode*</a><br>
+This file describes the&nbsp;<a class="Identifier" href="various.html#+diff">|+diff|</a>&nbsp;feature: Showing differences between two to<br>
+eight versions of the same file.<br>
+<br>
+The basics are explained in section&nbsp;<a class="Identifier" href="usr_08.html#08.7">|08.7|</a>&nbsp;of the user manual.<br>
+<br>
+1. Starting diff mode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="diff.html#vimdiff">|vimdiff|</a><br>
+2. Viewing diffs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="diff.html#view-diffs">|view-diffs|</a><br>
+3. Jumping to diffs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="diff.html#jumpto-diffs">|jumpto-diffs|</a><br>
+4. Copying diffs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="diff.html#copy-diffs">|copy-diffs|</a><br>
+5. Diff options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="diff.html#diff-options">|diff-options|</a><br>
+<br>
+<span class="Special">{not in Vi}</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Starting diff mode<br>
+<br>
+The easiest way to start editing in diff mode is with the &quot;vimdiff&quot; command.<br>
+This starts Vim as usual, and additionally sets up for viewing the differences<br>
+between the arguments.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vimdiff file1 file2 [file3 [file4]]</div>
+<br>
+This is equivalent to:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -d file1 file2 [file3 [file4]]</div>
+<br>
+You may also use &quot;gvimdiff&quot; or &quot;vim -d -g&quot;.&nbsp;&nbsp;The GUI is started then.<br>
+You may also use &quot;viewdiff&quot; or &quot;gviewdiff&quot;.&nbsp;&nbsp;Vim starts in readonly mode then.<br>
+&quot;r&quot; may be prepended for restricted mode (see&nbsp;<a class="Identifier" href="starting.html#-Z">|-Z|</a>).<br>
+<br>
+The second and following arguments may also be a directory name.&nbsp;&nbsp;Vim will<br>
+then append the file name of the first argument to the directory name to find<br>
+the file.<br>
+<br>
+This only works when a standard &quot;diff&quot; command is available.&nbsp;&nbsp;See&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>.<br>
+<br>
+Diffs are local to the current tab page&nbsp;<a class="Identifier" href="tabpage.html#tab-page">|tab-page|</a>.&nbsp;&nbsp;You can't see diffs with<br>
+a window in another tab page.&nbsp;&nbsp;This does make it possible to have several<br>
+diffs at the same time, each in their own tab page.<br>
+<br>
+What happens is that Vim opens a window for each of the files.&nbsp;&nbsp;This is like<br>
+using the&nbsp;<a class="Identifier" href="starting.html#-O">|-O|</a>&nbsp;argument.&nbsp;&nbsp;This uses vertical splits.&nbsp;&nbsp;If you prefer horizontal<br>
+splits add the&nbsp;<a class="Identifier" href="starting.html#-o">|-o|</a>&nbsp;argument:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vimdiff -o file1 file2 [file3 [file4]]</div>
+<br>
+If you always prefer horizontal splits include &quot;horizontal&quot; in&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>.<br>
+<br>
+In each of the edited files these options are set:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'scrollbind'">'scrollbind'</a>&nbsp;&nbsp;&nbsp;&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'cursorbind'">'cursorbind'</a>&nbsp;&nbsp;&nbsp;&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'scrollopt'">'scrollopt'</a>&nbsp;&nbsp;&nbsp;&nbsp; includes &quot;hor&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;off<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;&nbsp;&nbsp;&nbsp;&quot;diff&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldcolumn'">'foldcolumn'</a>&nbsp;&nbsp;&nbsp;&nbsp;value from&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>, default is 2<br>
+<br>
+These options are set local to the window.&nbsp;&nbsp;When editing another file they are<br>
+reset to the global value.<br>
+The options can still be overruled from a modeline when re-editing the file.<br>
+However,&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;won't be set from a modeline when&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;is<br>
+set.<br>
+<br>
+The differences shown are actually the differences in the buffer.&nbsp;&nbsp;Thus if you<br>
+make changes after loading a file, these will be included in the displayed<br>
+diffs.&nbsp;&nbsp;You might have to do &quot;:diffupdate&quot; now and then, not all changes are<br>
+immediately taken into account.<br>
+<br>
+In your .vimrc file you could do something special when Vim was started in<br>
+diff mode.&nbsp;&nbsp;You could use a construct like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if &amp;diff<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; setup for diff mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; setup for non-diff mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+While already in Vim you can start diff mode in three ways.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#E98" name="E98">*E98*</a><br>
+:diffs[plit]&nbsp;<span class="Special">{filename}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#:diffs" name=":diffs">*:diffs*</a>&nbsp;<a class="Constant" href="diff.html#:diffsplit" name=":diffsplit">*:diffsplit*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Open a new window on the file&nbsp;<span class="Special">{filename}</span>.&nbsp;&nbsp;The options are set<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as for &quot;vimdiff&quot; for the current and the newly opened window.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#:difft" name=":difft">*:difft*</a>&nbsp;<a class="Constant" href="diff.html#:diffthis" name=":diffthis">*:diffthis*</a><br>
+:difft[his]&nbsp;&nbsp;&nbsp;&nbsp; Make the current window part of the diff windows.&nbsp;&nbsp;This sets<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the options like for &quot;vimdiff&quot;.<br>
+<br>
+:diffp[atch]&nbsp;<span class="Special">{patchfile}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#E816" name="E816">*E816*</a>&nbsp;<a class="Constant" href="diff.html#:diffp" name=":diffp">*:diffp*</a>&nbsp;<a class="Constant" href="diff.html#:diffpatch" name=":diffpatch">*:diffpatch*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the current buffer, patch it with the diff found in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{patchfile}</span>&nbsp;and open a buffer on the result.&nbsp;&nbsp;The options are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set as for &quot;vimdiff&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{patchfile}</span>&nbsp;can be in any format that the &quot;patch&quot; program<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;understands or&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>&nbsp;can handle.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that&nbsp;<span class="Special">{patchfile}</span>&nbsp;should only contain a diff for one file,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the current file.&nbsp;&nbsp;If&nbsp;<span class="Special">{patchfile}</span>&nbsp;contains diffs for other<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;files as well, the results are unpredictable.&nbsp;&nbsp;Vim changes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;directory to /tmp to avoid files in the current directory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;accidentally being patched.&nbsp;&nbsp;But it may still result in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;various &quot;.rej&quot; files to be created.&nbsp;&nbsp;And when absolute path<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;names are present these files may get patched anyway.<br>
+<br>
+To make these commands use a vertical split, prepend&nbsp;<a class="Identifier" href="windows.html#:vertical">|:vertical|</a>.&nbsp;&nbsp;Examples:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:vert diffsplit main.c~<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:vert diffpatch /tmp/diff</div>
+<br>
+If you always prefer a vertical split include &quot;vertical&quot; in&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#E96" name="E96">*E96*</a><br>
+There can be up to eight buffers with&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;set.<br>
+<br>
+Since the option values are remembered with the buffer, you can edit another<br>
+file for a moment and come back to the same file and be in diff mode again.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#:diffo" name=":diffo">*:diffo*</a>&nbsp;<a class="Constant" href="diff.html#:diffoff" name=":diffoff">*:diffoff*</a><br>
+:diffo[ff]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Switch off diff mode for the current window.&nbsp;&nbsp;Resets related<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;options also when&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;was not set.<br>
+<br>
+:diffo[ff]!&nbsp;&nbsp;&nbsp;&nbsp; Switch off diff mode for the current window and in all windows<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in the current tab page where&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;is set.&nbsp;&nbsp;Resetting<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;related options only happens in a window that has&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;set,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if the current window does not have&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;set then no options<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in it are changed.<br>
+<br>
+The&nbsp;<a class="Comment" href="diff.html#:diffoff">`:diffoff`</a>&nbsp;command resets the relevant options to the values they had when<br>
+using&nbsp;<a class="Comment" href="diff.html#:diffsplit">`:diffsplit`</a>,&nbsp;<a class="Comment" href="diff.html#:diffpatch">`:diffpatch`</a>&nbsp;,&nbsp;<a class="Comment" href="diff.html#:diffthis">`:diffthis`</a>. or starting Vim in diff mode.<br>
+When using&nbsp;<a class="Comment" href="diff.html#:diffoff">`:diffoff`</a>&nbsp;twice the last saved values are restored.<br>
+Otherwise they are set to their default value:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;off<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'scrollbind'">'scrollbind'</a>&nbsp;&nbsp;&nbsp;&nbsp;off<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'cursorbind'">'cursorbind'</a>&nbsp;&nbsp;&nbsp;&nbsp;off<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'scrollopt'">'scrollopt'</a>&nbsp;&nbsp;&nbsp;&nbsp; without &quot;hor&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;&nbsp;&nbsp;&nbsp;&quot;manual&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldcolumn'">'foldcolumn'</a>&nbsp;&nbsp;&nbsp;&nbsp;0<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. Viewing diffs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#view-diffs" name="view-diffs">*view-diffs*</a><br>
+<br>
+The effect is that the diff windows show the same text, with the differences<br>
+highlighted.&nbsp;&nbsp;When scrolling the text, the&nbsp;<a class="Type" href="options.html#'scrollbind'">'scrollbind'</a>&nbsp;option will make the<br>
+text in other windows to be scrolled as well.&nbsp;&nbsp;With vertical splits the text<br>
+should be aligned properly.<br>
+<br>
+The alignment of text will go wrong when:<br>
+-&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;is on, some lines will be wrapped and occupy two or more screen<br>
+&nbsp;&nbsp;lines<br>
+- folds are open in one window but not another<br>
+-&nbsp;<a class="Type" href="options.html#'scrollbind'">'scrollbind'</a>&nbsp;is off<br>
+- changes have been made to the text<br>
+- &quot;filler&quot; is not present in&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>, deleted/inserted lines makes the<br>
+&nbsp;&nbsp;alignment go wrong<br>
+<br>
+All the buffers edited in a window where the&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;option is set will join in<br>
+the diff.&nbsp;&nbsp;This is also possible for hidden buffers.&nbsp;&nbsp;They must have been<br>
+edited in a window first for this to be possible.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#:DiffOrig" name=":DiffOrig">*:DiffOrig*</a>&nbsp;<a class="Constant" href="diff.html#diff-original-file" name="diff-original-file">*diff-original-file*</a><br>
+Since&nbsp;<a class="Type" href="options.html#'diff'">'diff'</a>&nbsp;is a window-local option, it's possible to view the same buffer<br>
+in diff mode in one window and &quot;normal&quot; in another window.&nbsp;&nbsp;It is also<br>
+possible to view the changes you have made to a buffer since the file was<br>
+loaded.&nbsp;&nbsp;Since Vim doesn't allow having two buffers for the same file, you<br>
+need another buffer.&nbsp;&nbsp;This command is useful:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ | diffthis | wincmd p | diffthis</div>
+(this is in&nbsp;<a class="Identifier" href="usr_05.html#vimrc_example.vim">|vimrc_example.vim|</a>).&nbsp;&nbsp;Use &quot;:DiffOrig&quot; to see the differences<br>
+between the current buffer and the file it was loaded from.<br>
+<br>
+A buffer that is unloaded cannot be used for the diff.&nbsp;&nbsp;But it does work for<br>
+hidden buffers.&nbsp;&nbsp;You can use &quot;:hide&quot; to close a window without unloading the<br>
+buffer.&nbsp;&nbsp;If you don't want a buffer to remain used for the diff do &quot;:set<br>
+nodiff&quot; before hiding it.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#:dif" name=":dif">*:dif*</a>&nbsp;<a class="Constant" href="diff.html#:diffupdate" name=":diffupdate">*:diffupdate*</a><br>
+:dif[fupdate][!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Update the diff highlighting and folds.<br>
+<br>
+Vim attempts to keep the differences updated when you make changes to the<br>
+text.&nbsp;&nbsp;This mostly takes care of inserted and deleted lines.&nbsp;&nbsp;Changes within a<br>
+line and more complicated changes do not cause the differences to be updated.<br>
+To force the differences to be updated use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:diffupdate</div>
+<br>
+If the ! is included Vim will check if the file was changed externally and<br>
+needs to be reloaded.&nbsp;&nbsp;It will prompt for each changed file, like&nbsp;<a class="Comment" href="editing.html#:checktime">`:checktime`</a><br>
+was used.<br>
+<br>
+Vim will show filler lines for lines that are missing in one window but are<br>
+present in another.&nbsp;&nbsp;These lines were inserted in another file or deleted in<br>
+this file.&nbsp;&nbsp;Removing &quot;filler&quot; from the&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>&nbsp;option will make Vim not<br>
+display these filler lines.<br>
+<br>
+<br>
+Folds are used to hide the text that wasn't changed.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="fold.html#folding">|folding|</a>&nbsp;for all<br>
+the commands that can be used with folds.<br>
+<br>
+The context of lines above a difference that are not included in the fold can<br>
+be set with the&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>&nbsp;option.&nbsp;&nbsp;For example, to set the context to three<br>
+lines:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set diffopt=filler,context:3</div>
+<br>
+<br>
+The diffs are highlighted with these groups:<br>
+<br>
+<a class="Identifier" href="syntax.html#hl-DiffAdd">|hl-DiffAdd|</a>&nbsp;&nbsp;&nbsp;&nbsp;DiffAdd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Added (inserted) lines.&nbsp;&nbsp;These lines exist in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this buffer but not in another.<br>
+<a class="Identifier" href="syntax.html#hl-DiffChange">|hl-DiffChange|</a>&nbsp;DiffChange&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Changed lines.<br>
+<a class="Identifier" href="syntax.html#hl-DiffText">|hl-DiffText|</a>&nbsp;&nbsp; DiffText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Changed text inside a Changed line.&nbsp;&nbsp;Vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finds the first character that is different,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and the last character that is different<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(searching from the end of the line).&nbsp;&nbsp;The<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text in between is highlighted.&nbsp;&nbsp;This means<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that parts in the middle that are still the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same are highlighted anyway.&nbsp;&nbsp;Only &quot;iwhite&quot; of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>&nbsp;is used here.<br>
+<a class="Identifier" href="syntax.html#hl-DiffDelete">|hl-DiffDelete|</a>&nbsp;DiffDelete&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Deleted lines.&nbsp;&nbsp;Also called filler lines,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;because they don't really exist in this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buffer.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Jumping to diffs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#jumpto-diffs" name="jumpto-diffs">*jumpto-diffs*</a><br>
+<br>
+Two commands can be used to jump to diffs:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#[c" name="[c">*[c*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jump backwards to the previous start of a change.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When a count is used, do it that many times.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#]c" name="]c">*]c*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jump forwards to the next start of a change.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When a count is used, do it that many times.<br>
+<br>
+It is an error if there is no change for the cursor to move to.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. Diff copying&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#copy-diffs" name="copy-diffs">*copy-diffs*</a>&nbsp;<a class="Constant" href="diff.html#E99" name="E99">*E99*</a>&nbsp;<a class="Constant" href="diff.html#E100" name="E100">*E100*</a>&nbsp;<a class="Constant" href="diff.html#E101" name="E101">*E101*</a>&nbsp;<a class="Constant" href="diff.html#E102" name="E102">*E102*</a>&nbsp;<a class="Constant" href="diff.html#E103" name="E103">*E103*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#merge" name="merge">*merge*</a><br>
+There are two commands to copy text from one buffer to another.&nbsp;&nbsp;The result is<br>
+that the buffers will be equal within the specified range.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#:diffg" name=":diffg">*:diffg*</a>&nbsp;<a class="Constant" href="diff.html#:diffget" name=":diffget">*:diffget*</a><br>
+:<span class="Special">[range]</span>diffg[et]&nbsp;<span class="Special">[bufspec]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modify the current buffer to undo difference with another<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buffer.&nbsp;&nbsp;If&nbsp;<span class="Special">[bufspec]</span>&nbsp;is given, that buffer is used.&nbsp;&nbsp;If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[bufspec]</span>&nbsp;refers to the current buffer then nothing happens.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Otherwise this only works if there is one other buffer in diff<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See below for&nbsp;<span class="Special">[range]</span>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#:diffpu" name=":diffpu">*:diffpu*</a>&nbsp;<a class="Constant" href="diff.html#:diffput" name=":diffput">*:diffput*</a>&nbsp;<a class="Constant" href="diff.html#E793" name="E793">*E793*</a><br>
+:<span class="Special">[range]</span>diffpu[t]&nbsp;<span class="Special">[bufspec]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modify another buffer to undo difference with the current<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buffer.&nbsp;&nbsp;Just like &quot;:diffget&quot; but the other buffer is modified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instead of the current one.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">[bufspec]</span>&nbsp;is omitted and there is more than one other<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buffer in diff mode where&nbsp;<a class="Type" href="options.html#'modifiable'">'modifiable'</a>&nbsp;is set this fails.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See below for&nbsp;<span class="Special">[range]</span>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#do" name="do">*do*</a><br>
+<span class="Special">[count]</span>do&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Same as &quot;:diffget&quot; without range.&nbsp;&nbsp;The &quot;o&quot; stands for &quot;obtain&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&quot;dg&quot; can't be used, it could be the start of &quot;dgg&quot;!).&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this doesn't work in Visual mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you give a&nbsp;<span class="Special">[count]</span>, it is used as the&nbsp;<span class="Special">[bufspec]</span>&nbsp;argument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for &quot;:diffget&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#dp" name="dp">*dp*</a><br>
+<span class="Special">[count]</span>dp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Same as &quot;:diffput&quot; without range.&nbsp;&nbsp;<span class="Todo">Note</span>: this doesn't work in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visual mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you give a&nbsp;<span class="Special">[count]</span>, it is used as the&nbsp;<span class="Special">[bufspec]</span>&nbsp;argument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for &quot;:diffput&quot;.<br>
+<br>
+<br>
+When no&nbsp;<span class="Special">[range]</span>&nbsp;is given, the diff at the cursor position or just above it is<br>
+affected.&nbsp;&nbsp;When&nbsp;<span class="Special">[range]</span>&nbsp;is used, Vim tries to only put or get the specified<br>
+lines.&nbsp;&nbsp;When there are deleted lines, this may not always be possible.<br>
+<br>
+There can be deleted lines below the last line of the buffer.&nbsp;&nbsp;When the cursor<br>
+is on the last line in the buffer and there is no diff above this line, the<br>
+&quot;:diffget&quot; and &quot;do&quot; commands will obtain lines from the other buffer.<br>
+<br>
+To be able to get those lines from another buffer in a&nbsp;<span class="Special">[range]</span>&nbsp;it's allowed to<br>
+use the last line number plus one.&nbsp;&nbsp;This command gets all diffs from the other<br>
+buffer:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:1,$+1diffget</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that deleted lines are displayed, but not counted as text lines.&nbsp;&nbsp;You<br>
+can't move the cursor into them.&nbsp;&nbsp;To fill the deleted lines with the lines<br>
+from another buffer use &quot;:diffget&quot; on the line below them.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#E787" name="E787">*E787*</a><br>
+When the buffer that is about to be modified is read-only and the autocommand<br>
+that is triggered by&nbsp;<a class="Identifier" href="autocmd.html#FileChangedRO">|FileChangedRO|</a>&nbsp;changes buffers the command will fail.<br>
+The autocommand must not change buffers.<br>
+<br>
+The&nbsp;<span class="Special">[bufspec]</span>&nbsp;argument above can be a buffer number, a pattern for a buffer<br>
+name or a part of a buffer name.&nbsp;&nbsp;Examples:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:diffget&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the other buffer which is in diff mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:diffget 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use buffer 3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:diffget v2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Use the buffer which matches &quot;v2&quot; and is in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff mode (e.g., &quot;file.c.v2&quot;)<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+5. Diff options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#diff-options" name="diff-options">*diff-options*</a><br>
+<br>
+Also see&nbsp;<a class="Identifier" href="options.html#'diffopt'">|'diffopt'|</a>&nbsp;and the &quot;diff&quot; item of&nbsp;<a class="Identifier" href="options.html#'fillchars'">|'fillchars'|</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#diff-slow" name="diff-slow">*diff-slow*</a>&nbsp;<a class="Constant" href="diff.html#diff_translations" name="diff_translations">*diff_translations*</a><br>
+For very long lines, the diff syntax highlighting might be slow, especially<br>
+since it tries to match all different kind of localisations. To disable<br>
+localisations and speed up the syntax highlighting, set the global variable<br>
+g:diff_translations to zero:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let g:diff_translations = 0</div>
+<br>
+After setting this variable, Reload the syntax script:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;set syntax=diff</div>
+<br>
+<br>
+<br>
+<span class="Statement">FINDING THE DIFFERENCES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="diff.html#diff-diffexpr" name="diff-diffexpr">*diff-diffexpr*</a><br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;option can be set to use something else than the standard<br>
+&quot;diff&quot; program to compare two files and find the differences.<br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;is empty, Vim uses this command to find the differences<br>
+between file1 and file2:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff file1 file2 &gt; outfile</div>
+<br>
+The &quot;&gt;&quot; is replaced with the value of&nbsp;<a class="Type" href="options.html#'shellredir'">'shellredir'</a>.<br>
+<br>
+The output of &quot;diff&quot; must be a normal &quot;ed&quot; style diff.&nbsp;&nbsp;Do NOT use a context<br>
+diff.&nbsp;&nbsp;This example explains the format that Vim expects:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1a2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt; bbb<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4d4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt; 111<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7c7<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt; GGG<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt; ggg</div>
+<br>
+The &quot;1a2&quot; item appends the line &quot;bbb&quot;.<br>
+The &quot;4d4&quot; item deletes the line &quot;111&quot;.<br>
+The &quot;7c7&quot; item replaces the line &quot;GGG&quot; with &quot;ggg&quot;.<br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;is not empty, Vim evaluates it to obtain a diff file in the<br>
+format mentioned.&nbsp;&nbsp;These variables are set to the file names used:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:fname_in&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;original file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:fname_new&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; new version of the same file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:fname_out&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; resulting diff file<br>
+<br>
+Additionally,&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;should take care of &quot;icase&quot; and &quot;iwhite&quot; in the<br>
+<a class="Type" href="options.html#'diffopt'">'diffopt'</a>&nbsp;option.&nbsp;&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;cannot change the value of&nbsp;<a class="Type" href="options.html#'lines'">'lines'</a>&nbsp;and<br>
+<a class="Type" href="options.html#'columns'">'columns'</a>.<br>
+<br>
+Example (this does almost the same as&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;being empty):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set diffexpr=MyDiff()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function MyDiff()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let opt = &quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if &amp;diffopt =~ &quot;icase&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let opt = opt . &quot;-i &quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if &amp;diffopt =~ &quot;iwhite&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let opt = opt . &quot;-b &quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; silent execute &quot;!diff -a --binary &quot; . opt . v:fname_in . &quot; &quot; . v:fname_new .<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&quot; &gt; &quot; . v:fname_out<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunction</div>
+<br>
+The &quot;-a&quot; argument is used to force comparing the files as text, comparing as<br>
+binaries isn't useful.&nbsp;&nbsp;The &quot;--binary&quot; argument makes the files read in binary<br>
+mode, so that a&nbsp;<span class="Special">CTRL-Z</span>&nbsp;doesn't end the text on DOS.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="diff.html#E810" name="E810">*E810*</a>&nbsp;<a class="Constant" href="diff.html#E97" name="E97">*E97*</a><br>
+Vim will do a test if the diff output looks alright.&nbsp;&nbsp;If it doesn't, you will<br>
+get an error message.&nbsp;&nbsp;Possible causes:<br>
+-&nbsp;&nbsp;The &quot;diff&quot; program cannot be executed.<br>
+-&nbsp;&nbsp;The &quot;diff&quot; program doesn't produce normal &quot;ed&quot; style diffs (see above).<br>
+-&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>&nbsp;and associated options are not set correctly.&nbsp;&nbsp;Try if filtering<br>
+&nbsp;&nbsp; works with a command like &quot;:!sort&quot;.<br>
+-&nbsp;&nbsp;You are using&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;and it doesn't work.<br>
+If it's not clear what the problem is set the&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;option to one or more<br>
+to see more messages.<br>
+<br>
+The self-installing Vim for MS-Windows includes a diff program.&nbsp;&nbsp;If you don't<br>
+have it you might want to download a diff.exe.&nbsp;&nbsp;For example from<br>
+<span class="Constant"><a href="http://gnuwin32.sourceforge.net/packages/diffutils.htm">http://gnuwin32.sourceforge.net/packages/diffutils.htm</a></span>.<br>
+<br>
+<br>
+<span class="Statement">USING PATCHES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="diff.html#diff-patchexpr" name="diff-patchexpr">*diff-patchexpr*</a><br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>&nbsp;option can be set to use something else than the standard<br>
+&quot;patch&quot; program.<br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>&nbsp;is empty, Vim will call the &quot;patch&quot; program like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;patch -o outfile origfile &lt; patchfile</div>
+<br>
+This should work fine with most versions of the &quot;patch&quot; program.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that a<br>
+CR in the middle of a line may cause problems, it is seen as a line break.<br>
+<br>
+If the default doesn't work for you, set the&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>&nbsp;to an expression that<br>
+will have the same effect.&nbsp;&nbsp;These variables are set to the file names used:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:fname_in&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;original file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:fname_diff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;patch file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:fname_out&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; resulting patched file<br>
+<br>
+Example (this does the same as&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>&nbsp;being empty):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set patchexpr=MyPatch()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function MyPatch()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :call system(&quot;patch -o &quot; . v:fname_out . &quot; &quot; . v:fname_in .<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \&nbsp;&nbsp;&quot; &lt; &quot; . v:fname_diff)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunction</div>
+<br>
+Make sure that using the &quot;patch&quot; program doesn't have unwanted side effects.<br>
+For example, watch out for additionally generated files, which should be<br>
+deleted.&nbsp;&nbsp;It should just patch the file and nothing else.<br>
+&nbsp;&nbsp; Vim will change directory to &quot;/tmp&quot; or another temp directory before<br>
+evaluating&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>.&nbsp;&nbsp;This hopefully avoids that files in the current<br>
+directory are accidentally patched.&nbsp;&nbsp;Vim will also delete files starting with<br>
+v:fname_in and ending in &quot;.rej&quot; and &quot;.orig&quot;.<br>
+<br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

@@ -1,0 +1,124 @@
+---
+layout: vimdoc
+helpname: 'os_mac'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="os_mac.html" name="os_mac.txt">*os_mac.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2006 Apr 30<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar et al.</span><br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_mac.html#mac" name="mac">*mac*</a>&nbsp;<a class="Constant" href="os_mac.html#Mac" name="Mac">*Mac*</a>&nbsp;<a class="Constant" href="os_mac.html#macintosh" name="macintosh">*macintosh*</a>&nbsp;<a class="Constant" href="os_mac.html#Macintosh" name="Macintosh">*Macintosh*</a><br>
+<br>
+This file documents the particularities of the Macintosh version of Vim.<br>
+<br>
+<span class="Todo">NOTE</span>: This file is a bit outdated.&nbsp;&nbsp;You might find more useful info here:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://macvim.org/">http://macvim.org/</a></span><br>
+<br>
+1. Filename Convention&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_mac.html#mac-filename">|mac-filename|</a><br>
+2. .vimrc an .vim files&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_mac.html#mac-vimfile">|mac-vimfile|</a><br>
+3. FAQ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_mac.html#mac-faq">|mac-faq|</a><br>
+4. Known Lack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_mac.html#mac-lack">|mac-lack|</a><br>
+5. Mac Bug Report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_mac.html#mac-bug">|mac-bug|</a><br>
+6. Compiling Vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_mac.html#mac-compile">|mac-compile|</a><br>
+<br>
+There was a Mac port for version 3.0 of Vim.&nbsp;&nbsp;Here are the first few lines<br>
+from the old file:<br>
+<br>
+VIM Release&nbsp;<span class="Todo">Notes</span><br>
+Initial Macintosh release, VIM version 3.0<br>
+19 October 1994<br>
+<br>
+Eric Fischer<br>
+&lt;enf1@midway.uchicago.edu&gt;, &lt;eric@jcp.uchicago.edu&gt;, &lt;etaoin@uchicago.edu&gt;<br>
+5759&nbsp;<span class="Special">N</span>. Guilford Ave<br>
+Indianapolis IN 46220 USA<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Filename Convention&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_mac.html#mac-filename" name="mac-filename">*mac-filename*</a><br>
+<br>
+Starting with&nbsp;<span class="Identifier">Vim version 7</span>&nbsp;you can just use the unix path separators with<br>
+Vim. In order to determine if the specified filename is relative to the<br>
+current folder or absolute (i.e. relative to the &quot;Desktop&quot;), the following<br>
+algorithm is used:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the path start by a &quot;/&quot;, the path is absolute<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the path start by a &quot;:&quot;, the path is relative<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the path doesn't start by neither a &quot;/&quot; nor &quot;:&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and a &quot;:&quot; is found before a &quot;/&quot; then the path is absolute<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:e /HD/text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:e HD:text</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Edit the file &quot;text&quot; of the disk &quot;HD&quot;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:e :src:main.c<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:e src/main.c</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Edit the file &quot;main.c&quot; in the folder &quot;src&quot; in the current folder<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:e os_mac.c</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Edit the file &quot;os_mac.c&quot; in the current folder.<br>
+<br>
+You can use the&nbsp;<a class="Identifier" href="starting.html#$VIM">|$VIM|</a>&nbsp;and&nbsp;<a class="Identifier" href="starting.html#$VIMRUNTIME">|$VIMRUNTIME|</a>&nbsp;&nbsp;variable.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:so $VIMRUNTIME:syntax:syntax.vim</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2. .vimrc and .vim files&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_mac.html#mac-vimfile" name="mac-vimfile">*mac-vimfile*</a><br>
+<br>
+It is recommended to use Unix style line separators for Vim scripts, thus a<br>
+single newline character.<br>
+<br>
+When starting up Vim will load the $VIMRUNTIME/macmap.vim script to define<br>
+default command-key mappings.<br>
+<br>
+On older systems files starting with a dot &quot;.&quot; are discouraged, thus the rc<br>
+files are named &quot;vimrc&quot; or &quot;_vimrc&quot; and &quot;gvimrc&quot; or &quot;_gvimrc&quot;.&nbsp;&nbsp;These files<br>
+can be in any format (mac, dos or unix).&nbsp;&nbsp;Vim can handle any file format when<br>
+the&nbsp;<a class="Identifier" href="options.html#'nocompatible'">|'nocompatible'|</a>&nbsp;option is set, otherwise it will only handle mac format<br>
+files.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Mac FAQ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_mac.html#mac-faq" name="mac-faq">*mac-faq*</a><br>
+<br>
+On the internet:&nbsp;&nbsp;<span class="Constant"><a href="http://macvim.org/OSX/index.php#FAQ">http://macvim.org/OSX/index.php#FAQ</a></span><br>
+<br>
+Q: I can't enter non-ASCII character in Apple Terminal.<br>
+A: Under Window Settings, Emulation, make sure that &quot;Escape non-ASCII<br>
+&nbsp;&nbsp; characters&quot; is not checked.<br>
+<br>
+Q: How do I start the GUI from the command line?<br>
+A: Assuming that Vim.app is located in /Applications:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;open /Applications/Vim.app<br>
+&nbsp;&nbsp; Or:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/Applications/Vim.app/Contents/MacOS/Vim -g&nbsp;&nbsp;<span class="Special">{arguments}</span><br>
+<br>
+Q: How can I set $PATH to something reasonable when I start Vim.app from the<br>
+&nbsp;&nbsp; GUI or with open?<br>
+A: The following trick works with most shells.&nbsp;&nbsp;Put it in your vimrc file.<br>
+&nbsp;&nbsp; This is included in the system vimrc file included with the binaries<br>
+&nbsp;&nbsp; distributed at macvim.org .<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let s:path = system(&quot;echo echo VIMPATH'${PATH}' | $SHELL -l&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let $PATH = matchstr(s:path, 'VIMPATH\zs.\{-}\ze\n')</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. Mac Lack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_mac.html#mac-lack" name="mac-lack">*mac-lack*</a><br>
+<br>
+In a terminal&nbsp;<span class="Special">CTRL-^</span>&nbsp;needs to be entered as Shift-Control-6.&nbsp;&nbsp;<span class="Special">CTRL-@</span>&nbsp;as<br>
+Shift-Control-2.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+5. Mac Bug Report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_mac.html#mac-bug" name="mac-bug">*mac-bug*</a><br>
+<br>
+When reporting any Mac specific bug or feature change, please use the vim-mac<br>
+maillist&nbsp;<a class="Identifier" href="intro.html#vim-mac">|vim-mac|</a>.&nbsp;&nbsp;However, you need to be subscribed.&nbsp;&nbsp;An alternative is to<br>
+send a message to the current MacVim maintainers:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mac@vim.org<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+6. Compiling Vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_mac.html#mac-compile" name="mac-compile">*mac-compile*</a><br>
+<br>
+See the file &quot;src/INSTALLmac.txt&quot; that comes with the source files.<br>
+<br>
+<br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

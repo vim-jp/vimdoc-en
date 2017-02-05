@@ -1,0 +1,181 @@
+---
+layout: vimdoc
+helpname: 'debug'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="debug.html" name="debug.txt">*debug.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2012 Feb 11<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+Debugging Vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debug.html#debug-vim" name="debug-vim">*debug-vim*</a><br>
+<br>
+This is for debugging Vim itself, when it doesn't work properly.<br>
+For debugging Vim scripts, functions, etc. see&nbsp;<a class="Identifier" href="repeat.html#debug-scripts">|debug-scripts|</a><br>
+<br>
+1. Location of a crash, using gcc and gdb&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debug.html#debug-gcc">|debug-gcc|</a><br>
+2. Locating memory leaks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debug.html#debug-leaks">|debug-leaks|</a><br>
+3. Windows Bug Reporting&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="debug.html#debug-win32">|debug-win32|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+1. Location of a crash, using gcc and gdb&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debug.html#debug-gcc" name="debug-gcc">*debug-gcc*</a>&nbsp;<a class="Constant" href="debug.html#gdb" name="gdb">*gdb*</a><br>
+<br>
+When Vim crashes in one of the test files, and you are using gcc for<br>
+compilation, here is what you can do to find out exactly where Vim crashes.<br>
+This also applies when using the MingW tools.<br>
+<br>
+1. Compile Vim with the &quot;-g&quot; option (there is a line in the src/Makefile for<br>
+&nbsp;&nbsp; this, which you can uncomment).&nbsp;&nbsp;Also make sure &quot;strip&quot; is disabled (do not<br>
+&nbsp;&nbsp; install it, or use the line &quot;STRIP = /bin/true&quot;).<br>
+<br>
+2. Execute these commands (replace &quot;11&quot; with the test that fails):<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd testdir<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gdb ../vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run -u unix.vim -U NONE -s dotest.in test11.in</div>
+<br>
+3. Check where Vim crashes, gdb should give a message for this.<br>
+<br>
+4. Get a stack trace from gdb with this command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where</div>
+&nbsp;&nbsp;&nbsp;You can check out different places in the stack trace with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;frame 3</div>
+&nbsp;&nbsp;&nbsp;Replace &quot;3&quot; with one of the numbers in the stack trace.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+2. Locating memory leaks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debug.html#debug-leaks" name="debug-leaks">*debug-leaks*</a>&nbsp;<a class="Constant" href="debug.html#valgrind" name="valgrind">*valgrind*</a><br>
+<br>
+If you suspect Vim is leaking memory and you are using Linux, the valgrind<br>
+tool is very useful to pinpoint memory leaks.<br>
+<br>
+First of all, build Vim with EXITFREE defined.&nbsp;&nbsp;Search for this in MAKEFILE<br>
+and uncomment the line.<br>
+<br>
+Use this command to start Vim&#0058;<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valgrind --log-file=valgrind.log --leak-check=full ./vim</div>
+<br>
+<span class="Todo">Note</span>: Vim will run much slower.&nbsp;&nbsp;If your .vimrc is big or you have several<br>
+plugins you need to be patient for startup, or run with the &quot;-u NONE&quot;<br>
+argument.<br>
+<br>
+There are often a few leaks from libraries, such as getpwuid() and<br>
+XtVaAppCreateShell().&nbsp;&nbsp;Those are unavoidable.&nbsp;&nbsp;The number of bytes should be<br>
+very small a Kbyte or less.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+3. Windows Bug Reporting&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debug.html#debug-win32" name="debug-win32">*debug-win32*</a><br>
+<br>
+If the Windows version of Vim crashes in a reproducible manner, you can take<br>
+some steps to provide a useful bug report.<br>
+<br>
+<br>
+<span class="PreProc">3.1 GENERIC</span><br>
+<br>
+You must obtain the debugger symbols (PDB) file for your executable: gvim.pdb<br>
+for gvim.exe, or vim.pdb for vim.exe. The PDB should be available from the<br>
+same place that you obtained the executable. Be sure to use the PDB that<br>
+matches the EXE (same date).<br>
+<br>
+If you built the executable yourself with the Microsoft Visual C++ compiler,<br>
+then the PDB was built with the EXE.<br>
+<br>
+Alternatively, if you have the source files, you can import Make_ivc.mak into<br>
+Visual Studio as a workspace.&nbsp;&nbsp;Then select a debug configuration, build and<br>
+you can do all kinds of debugging (set breakpoints, watch variables, etc.).<br>
+<br>
+If you have Visual Studio, use that instead of the VC Toolkit and WinDbg.<br>
+<br>
+For other compilers, you should always use the corresponding debugger: TD for<br>
+a Vim executable compiled with the Borland compiler; gdb (see above<br>
+<a class="Identifier" href="debug.html#debug-gcc">|debug-gcc|</a>) for the Cygwin and MinGW compilers.<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debug.html#debug-vs2005" name="debug-vs2005">*debug-vs2005*</a><br>
+<span class="PreProc">3.2 Debugging Vim crashes with Visual Studio 2005/Visual C++ 2005 Express</span><br>
+<br>
+First launch vim.exe or gvim.exe and then launch Visual Studio.&nbsp;&nbsp;(If you don't<br>
+have Visual Studio, follow the instructions at&nbsp;<a class="Identifier" href="debug.html#get-ms-debuggers">|get-ms-debuggers|</a>&nbsp;to obtain a<br>
+free copy of Visual C++ 2005 Express Edition.)<br>
+<br>
+On the Tools menu, click Attach to Process.&nbsp;&nbsp;Choose the Vim process.<br>
+<br>
+In Vim, reproduce the crash.&nbsp;&nbsp;A dialog will appear in Visual Studio, telling<br>
+you about the unhandled exception in the Vim process.&nbsp;&nbsp;Click Break to break<br>
+into the process.<br>
+<br>
+Visual Studio will pop up another dialog, telling you that no symbols are<br>
+loaded and that the source code cannot be displayed.&nbsp;&nbsp;Click OK.<br>
+<br>
+Several windows will open.&nbsp;&nbsp;Right-click in the Call Stack window.&nbsp;&nbsp;Choose Load<br>
+Symbols.&nbsp;&nbsp;The Find Symbols dialog will open, looking for (g)vim.pdb.&nbsp;&nbsp;Navigate<br>
+to the directory where you have the PDB file and click Open.<br>
+<br>
+At this point, you should have a full call stack with vim function names and<br>
+line numbers.&nbsp;&nbsp;Double-click one of the lines and the Find Source dialog will<br>
+appear.&nbsp;&nbsp;Navigate to the directory where the Vim source is (if you have it.)<br>
+<br>
+If you don't know how to debug this any further, follow the instructions<br>
+at &quot;:help bug-reports&quot;.&nbsp;&nbsp;Paste the call stack into the bug report.<br>
+<br>
+If you have a non-free version of Visual Studio, you can save a minidump via<br>
+the Debug menu and send it with the bug report.&nbsp;&nbsp;A minidump is a small file<br>
+(&lt;100KB), which contains information about the state of your process.<br>
+Visual C++ 2005 Express Edition cannot save minidumps and it cannot be<br>
+installed as a just-in-time debugger. Use WinDbg,&nbsp;<a class="Identifier" href="debug.html#debug-windbg">|debug-windbg|</a>, if you<br>
+need to save minidumps or you want a just-in-time (postmortem) debugger.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debug.html#debug-windbg" name="debug-windbg">*debug-windbg*</a><br>
+<span class="PreProc">3.3 Debugging Vim crashes with WinDbg</span><br>
+<br>
+See&nbsp;<a class="Identifier" href="debug.html#get-ms-debuggers">|get-ms-debuggers|</a>&nbsp;to obtain a copy of WinDbg.<br>
+<br>
+As with the Visual Studio IDE, you can attach WinDbg to a running Vim process.<br>
+You can also have your system automatically invoke WinDbg as a postmortem<br>
+debugger. To set WinDbg as your postmortem debugger, run &quot;windbg -I&quot;.<br>
+<br>
+To attach WinDbg to a running Vim process, launch WinDbg. On the File menu,<br>
+choose Attach to a Process. Select the Vim process and click OK.<br>
+<br>
+At this point, choose Symbol File Path on the File menu, and add the folder<br>
+containing your Vim PDB to the sympath. If you have Vim source available,<br>
+use Source File Path on the File menu. You can now open source files in WinDbg<br>
+and set breakpoints, if you like. Reproduce your crash. WinDbg should open the<br>
+source file at the point of the crash. Using the View menu, you can examine<br>
+the call stack, local variables, watch windows, and so on.<br>
+<br>
+If WinDbg is your postmortem debugger, you do not need to attach WinDbg to<br>
+your Vim process. Simply reproduce the crash and WinDbg will launch<br>
+automatically. As above, set the Symbol File Path and the Source File Path.<br>
+<br>
+To save a minidump, type the following at the WinDbg command line:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.dump vim.dmp</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debug.html#debug-minidump" name="debug-minidump">*debug-minidump*</a><br>
+<span class="PreProc">3.4 Opening a Minidump</span><br>
+<br>
+If you have a minidump file, you can open it in Visual Studio or in WinDbg.<br>
+<br>
+In Visual Studio 2005: on the File menu, choose Open, then Project/Solution.<br>
+Navigate to the .dmp file and open it. Now press F5 to invoke the debugger.<br>
+Follow the instructions in&nbsp;<a class="Identifier" href="debug.html#debug-vs2005">|debug-vs2005|</a>&nbsp;to set the Symbol File Path.<br>
+<br>
+In WinDbg: choose Open Crash Dump on the File menu. Follow the instructions in<br>
+<a class="Identifier" href="debug.html#debug-windbg">|debug-windbg|</a>&nbsp;to set the Symbol File Path.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="debug.html#get-ms-debuggers" name="get-ms-debuggers">*get-ms-debuggers*</a><br>
+<span class="PreProc">3.5 Obtaining Microsoft Debugging Tools</span><br>
+<br>
+The Debugging Tools for Windows (including WinDbg) can be downloaded from<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.microsoft.com/whdc/devtools/debugging/default.mspx">http://www.microsoft.com/whdc/devtools/debugging/default.mspx</a></span><br>
+This includes the WinDbg debugger.<br>
+<br>
+Visual C++ 2005 Express Edition can be downloaded for free from:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://msdn.microsoft.com/vstudio/express/visualC/default.aspx">http://msdn.microsoft.com/vstudio/express/visualC/default.aspx</a></span><br>
+<br>
+<span class="PreProc">=========================================================================</span><br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

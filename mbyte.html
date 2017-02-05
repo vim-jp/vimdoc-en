@@ -1,0 +1,1444 @@
+---
+layout: vimdoc
+helpname: 'mbyte'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="mbyte.html" name="mbyte.txt">*mbyte.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2016 Jul 21<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar et al.</span><br>
+<br>
+<br>
+Multi-byte support&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#multibyte" name="multibyte">*multibyte*</a>&nbsp;<a class="Constant" href="mbyte.html#multi-byte" name="multi-byte">*multi-byte*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#Chinese" name="Chinese">*Chinese*</a>&nbsp;<a class="Constant" href="mbyte.html#Japanese" name="Japanese">*Japanese*</a>&nbsp;<a class="Constant" href="mbyte.html#Korean" name="Korean">*Korean*</a><br>
+This is about editing text in languages which have many characters that can<br>
+not be represented using one byte (one octet).&nbsp;&nbsp;Examples are Chinese, Japanese<br>
+and Korean.&nbsp;&nbsp;Unicode is also covered here.<br>
+<br>
+For an introduction to the most common features, see&nbsp;<a class="Identifier" href="usr_45.html">|usr_45.txt|</a>&nbsp;in the user<br>
+manual.<br>
+For changing the language of messages and menus see&nbsp;<a class="Identifier" href="mlang.html">|mlang.txt|</a>.<br>
+<br>
+<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+multi_byte">|+multi_byte|</a><span class="Special">&nbsp;feature}</span><br>
+<br>
+<br>
+1.&nbsp;&nbsp;Getting started&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-first">|mbyte-first|</a><br>
+2.&nbsp;&nbsp;Locale&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-locale">|mbyte-locale|</a><br>
+3.&nbsp;&nbsp;Encoding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-encoding">|mbyte-encoding|</a><br>
+4.&nbsp;&nbsp;Using a terminal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-terminal">|mbyte-terminal|</a><br>
+5.&nbsp;&nbsp;Fonts on X11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-fonts-X11">|mbyte-fonts-X11|</a><br>
+6.&nbsp;&nbsp;Fonts on MS-Windows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-fonts-MSwin">|mbyte-fonts-MSwin|</a><br>
+7.&nbsp;&nbsp;Input on X11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-XIM">|mbyte-XIM|</a><br>
+8.&nbsp;&nbsp;Input on MS-Windows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-IME">|mbyte-IME|</a><br>
+9.&nbsp;&nbsp;Input with a keymap&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-keymap">|mbyte-keymap|</a><br>
+10. Using UTF-8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-utf8">|mbyte-utf8|</a><br>
+11. Overview of options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#mbyte-options">|mbyte-options|</a><br>
+<br>
+<span class="Todo">NOTE</span>: This file contains UTF-8 characters.&nbsp;&nbsp;These may show up as strange<br>
+characters or boxes when using another encoding.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+1. Getting started&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-first" name="mbyte-first">*mbyte-first*</a><br>
+<br>
+This is a summary of the multibyte features in Vim.&nbsp;&nbsp;If you are lucky it works<br>
+as described and you can start using Vim without much trouble.&nbsp;&nbsp;If something<br>
+doesn't work you will have to read the rest.&nbsp;&nbsp;Don't be surprised if it takes<br>
+quite a bit of work and experimenting to make Vim use all the multi-byte<br>
+features.&nbsp;&nbsp;Unfortunately, every system has its own way to deal with multibyte<br>
+languages and it is quite complicated.<br>
+<br>
+<br>
+COMPILING<br>
+<br>
+If you already have a compiled Vim program, check if the&nbsp;<a class="Identifier" href="various.html#+multi_byte">|+multi_byte|</a>&nbsp;feature<br>
+is included.&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="various.html#:version">|:version|</a>&nbsp;command can be used for this.<br>
+<br>
+If +multi_byte is not included, you should compile Vim with &quot;normal&quot;, &quot;big&quot; or<br>
+&quot;huge&quot; features.&nbsp;&nbsp;You can further tune what features are included.&nbsp;&nbsp;See the<br>
+INSTALL files in the source directory.<br>
+<br>
+<br>
+LOCALE<br>
+<br>
+First of all, you must make sure your current locale is set correctly.&nbsp;&nbsp;If<br>
+your system has been installed to use the language, it probably works right<br>
+away.&nbsp;&nbsp;If not, you can often make it work by setting the $LANG environment<br>
+variable in your shell:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setenv LANG ja_JP.EUC</div>
+<br>
+Unfortunately, the name of the locale depends on your system.&nbsp;&nbsp;Japanese might<br>
+also be called &quot;ja_JP.EUCjp&quot; or just &quot;ja&quot;.&nbsp;&nbsp;To see what is currently used:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:language</div>
+<br>
+To change the locale inside Vim use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:language ja_JP.EUC</div>
+<br>
+Vim will give an error message if this doesn't work.&nbsp;&nbsp;This is a good way to<br>
+experiment and find the locale name you want to use.&nbsp;&nbsp;But it's always better<br>
+to set the locale in the shell, so that it is used right from the start.<br>
+<br>
+See&nbsp;<a class="Identifier" href="mbyte.html#mbyte-locale">|mbyte-locale|</a>&nbsp;for details.<br>
+<br>
+<br>
+ENCODING<br>
+<br>
+If your locale works properly, Vim will try to set the&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;option<br>
+accordingly.&nbsp;&nbsp;If this doesn't work you can overrule its value:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set encoding=utf-8</div>
+<br>
+See&nbsp;<a class="Identifier" href="mbyte.html#encoding-values">|encoding-values|</a>&nbsp;for a list of acceptable values.<br>
+<br>
+The result is that all the text that is used inside Vim will be in this<br>
+encoding.&nbsp;&nbsp;Not only the text in the buffers, but also in registers, variables,<br>
+etc.&nbsp;&nbsp;This also means that changing the value of&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;makes the existing<br>
+text invalid!&nbsp;&nbsp;The text doesn't change, but it will be displayed wrong.<br>
+<br>
+You can edit files in another encoding than what&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is set to.&nbsp;&nbsp;Vim<br>
+will convert the file when you read it and convert it back when you write it.<br>
+See&nbsp;<a class="Type" href="options.html#'fileencoding'">'fileencoding'</a>,&nbsp;<a class="Type" href="options.html#'fileencodings'">'fileencodings'</a>&nbsp;and&nbsp;<a class="Identifier" href="editing.html#++enc">|++enc|</a>.<br>
+<br>
+<br>
+DISPLAY AND FONTS<br>
+<br>
+If you are working in a terminal (emulator) you must make sure it accepts the<br>
+same encoding as which Vim is working with.&nbsp;&nbsp;If this is not the case, you can<br>
+use the&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;option to make Vim convert text automatically.<br>
+<br>
+For the GUI you must select fonts that work with the current&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>.&nbsp;&nbsp;This<br>
+is the difficult part.&nbsp;&nbsp;It depends on the system you are using, the locale and<br>
+a few other things.&nbsp;&nbsp;See the chapters on fonts:&nbsp;<a class="Identifier" href="mbyte.html#mbyte-fonts-X11">|mbyte-fonts-X11|</a>&nbsp;for<br>
+X-Windows and&nbsp;<a class="Identifier" href="mbyte.html#mbyte-fonts-MSwin">|mbyte-fonts-MSwin|</a>&nbsp;for MS-Windows.<br>
+<br>
+For GTK+ 2, you can skip most of this section.&nbsp;&nbsp;The option&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;does<br>
+no longer exist.&nbsp;&nbsp;You only need to set&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;and everything should &quot;just<br>
+work&quot;.&nbsp;&nbsp;If your system comes with Xft2 and fontconfig and the current font<br>
+does not contain a certain glyph, a different font will be used automatically<br>
+if available.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;option is still supported but usually you do<br>
+not need to set it.&nbsp;&nbsp;It is only necessary if the automatic font selection does<br>
+not suit your needs.<br>
+<br>
+For X11 you can set the&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;option to a list of fonts that together<br>
+cover the characters that are used.&nbsp;&nbsp;Example for Korean:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set guifontset=k12,r12</div>
+<br>
+Alternatively, you can set&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>.&nbsp;&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;is used for<br>
+the single-width characters,&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;for the double-width characters.<br>
+Thus the&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;font must be exactly twice as wide as&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>.<br>
+Example for UTF-8:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set guifont=-misc-fixed-medium-r-normal-*-18-120-100-100-c-90-iso10646-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set guifontwide=-misc-fixed-medium-r-normal-*-18-120-100-100-c-180-iso10646-1</div>
+<br>
+You can also set&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;alone, Vim will try to find a matching<br>
+<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;for you.<br>
+<br>
+<br>
+INPUT<br>
+<br>
+There are several ways to enter multi-byte characters:<br>
+- For X11 XIM can be used.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="mbyte.html#XIM">|XIM|</a>.<br>
+- For MS-Windows IME can be used.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="mbyte.html#IME">|IME|</a>.<br>
+- For all systems keymaps can be used.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="mbyte.html#mbyte-keymap">|mbyte-keymap|</a>.<br>
+<br>
+The options&nbsp;<a class="Type" href="options.html#'iminsert'">'iminsert'</a>,&nbsp;<a class="Type" href="options.html#'imsearch'">'imsearch'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'imcmdline'">'imcmdline'</a>&nbsp;can be used to chose<br>
+the different input methods or disable them temporarily.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+2.&nbsp;&nbsp;Locale&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-locale" name="mbyte-locale">*mbyte-locale*</a><br>
+<br>
+The easiest setup is when your whole system uses the locale you want to work<br>
+in.&nbsp;&nbsp;But it's also possible to set the locale for one shell you are working<br>
+in, or just use a certain locale inside Vim.<br>
+<br>
+<br>
+WHAT IS A LOCALE?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#locale" name="locale">*locale*</a><br>
+<br>
+There are many of languages in the world.&nbsp;&nbsp;And there are different cultures<br>
+and environments at least as much as the number of languages.&nbsp;&nbsp; A linguistic<br>
+environment corresponding to an area is called &quot;locale&quot;.&nbsp;&nbsp;This includes<br>
+information about the used language, the charset, collating order for sorting,<br>
+date format, currency format and so on.&nbsp;&nbsp;For Vim only the language and charset<br>
+really matter.<br>
+<br>
+You can only use a locale if your system has support for it.&nbsp;&nbsp;Some systems<br>
+have only a few locales, especially in the USA.&nbsp;&nbsp;The language which you want<br>
+to use may not be on your system.&nbsp;&nbsp;In that case you might be able to install<br>
+it as an extra package.&nbsp;&nbsp;Check your system documentation for how to do that.<br>
+<br>
+The location in which the locales are installed varies from system to system.<br>
+For example, &quot;/usr/share/locale&quot; or &quot;/usr/lib/locale&quot;.&nbsp;&nbsp;See your system's<br>
+setlocale() man page.<br>
+<br>
+Looking in these directories will show you the exact name of each locale.<br>
+Mostly upper/lowercase matters, thus &quot;ja_JP.EUC&quot; and &quot;ja_jp.euc&quot; are<br>
+different.&nbsp;&nbsp;Some systems have a locale.alias file, which allows translation<br>
+from a short name like &quot;nl&quot; to the full name &quot;nl_NL.ISO_8859-1&quot;.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that X-windows has its own locale stuff.&nbsp;&nbsp;And unfortunately uses locale<br>
+names different from what is used elsewhere.&nbsp;&nbsp;This is confusing!&nbsp;&nbsp;For Vim it<br>
+matters what the setlocale() function uses, which is generally NOT the<br>
+X-windows stuff.&nbsp;&nbsp;You might have to do some experiments to find out what<br>
+really works.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#locale-name" name="locale-name">*locale-name*</a><br>
+The (simplified) format of&nbsp;<a class="Identifier" href="mbyte.html#locale">|locale|</a>&nbsp;name is:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;language<br>
+or&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;language_territory<br>
+or&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;language_territory.codeset<br>
+<br>
+Territory means the country (or part of it), codeset means the&nbsp;<a class="Identifier" href="mbyte.html#charset">|charset|</a>.&nbsp;&nbsp;For<br>
+example, the locale name &quot;ja_JP.eucJP&quot; means:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ja&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the language is Japanese<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the country is Japan<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eucJP&nbsp;&nbsp; the codeset is EUC-JP<br>
+But it also could be &quot;ja&quot;, &quot;ja_JP.EUC&quot;, &quot;ja_JP.ujis&quot;, etc.&nbsp;&nbsp;And unfortunately,<br>
+the locale name for a specific language, territory and codeset is not unified<br>
+and depends on your system.<br>
+<br>
+Examples of locale name:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">charset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; language&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;locale name</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;GB2312&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chinese (simplified)&nbsp;&nbsp;zh_CN.EUC, zh_CN.GB2312<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Big5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chinese (traditional) zh_TW.BIG5, zh_TW.Big5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CNS-11643&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Chinese (traditional) zh_TW<br>
+&nbsp;&nbsp;&nbsp;&nbsp;EUC-JP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Japanese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ja, ja_JP.EUC, ja_JP.ujis, ja_JP.eucJP<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Shift_JIS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Japanese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ja_JP.SJIS, ja_JP.Shift_JIS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;EUC-KR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Korean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ko, ko_KR.EUC<br>
+<br>
+<br>
+USING A LOCALE<br>
+<br>
+To start using a locale for the whole system, see the documentation of your<br>
+system.&nbsp;&nbsp;Mostly you need to set it in a configuration file in &quot;/etc&quot;.<br>
+<br>
+To use a locale in a shell, set the $LANG environment value.&nbsp;&nbsp;When you want to<br>
+use Korean and the&nbsp;<a class="Identifier" href="mbyte.html#locale">|locale|</a>&nbsp;name is &quot;ko&quot;, do this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sh:&nbsp;&nbsp;&nbsp;&nbsp;export LANG=ko<br>
+&nbsp;&nbsp;&nbsp;&nbsp;csh:&nbsp;&nbsp; setenv LANG ko<br>
+<br>
+You can put this in your ~/.profile or ~/.cshrc file to always use it.<br>
+<br>
+To use a locale in Vim only, use the&nbsp;<a class="Identifier" href="mlang.html#:language">|:language|</a>&nbsp;command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:language ko</div>
+<br>
+Put this in your ~/.vimrc file to use it always.<br>
+<br>
+Or specify $LANG when starting Vim&#0058;<br>
+<br>
+&nbsp;&nbsp; sh:&nbsp;&nbsp;&nbsp;&nbsp;LANG=ko vim&nbsp;<span class="Special">{vim-arguments}</span><br>
+&nbsp;&nbsp; csh:&nbsp;&nbsp; env LANG=ko vim&nbsp;<span class="Special">{vim-arguments}</span><br>
+<br>
+You could make a small shell script for this.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3.&nbsp;&nbsp;Encoding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-encoding" name="mbyte-encoding">*mbyte-encoding*</a><br>
+<br>
+Vim uses the&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;option to specify how characters are identified and<br>
+encoded when they are used inside Vim.&nbsp;&nbsp;This applies to all the places where<br>
+text is used, including buffers (files loaded into memory), registers and<br>
+variables.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#charset" name="charset">*charset*</a>&nbsp;<a class="Constant" href="mbyte.html#codeset" name="codeset">*codeset*</a><br>
+Charset is another name for encoding.&nbsp;&nbsp;There are subtle differences, but these<br>
+don't matter when using Vim.&nbsp;&nbsp;&quot;codeset&quot; is another similar name.<br>
+<br>
+Each character is encoded as one or more bytes.&nbsp;&nbsp;When all characters are<br>
+encoded with one byte, we call this a single-byte encoding.&nbsp;&nbsp;The most often<br>
+used one is called &quot;latin1&quot;.&nbsp;&nbsp;This limits the number of characters to 256.<br>
+Some of these are control characters, thus even fewer can be used for text.<br>
+<br>
+When some characters use two or more bytes, we call this a multi-byte<br>
+encoding.&nbsp;&nbsp;This allows using much more than 256 characters, which is required<br>
+for most East Asian languages.<br>
+<br>
+Most multi-byte encodings use one byte for the first 127 characters.&nbsp;&nbsp;These<br>
+are equal to ASCII, which makes it easy to exchange plain-ASCII text, no<br>
+matter what language is used.&nbsp;&nbsp;Thus you might see the right text even when the<br>
+encoding was set wrong.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#encoding-names" name="encoding-names">*encoding-names*</a><br>
+Vim can use many different character encodings.&nbsp;&nbsp;There are three major groups:<br>
+<br>
+1&nbsp;&nbsp; 8bit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Single-byte encodings, 256 different characters.&nbsp;&nbsp;Mostly used<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in USA and Europe.&nbsp;&nbsp;Example: ISO-8859-1 (Latin1).&nbsp;&nbsp;All<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;characters occupy one screen cell only.<br>
+<br>
+2&nbsp;&nbsp; 2byte&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Double-byte encodings, over 10000 different characters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mostly used in Asian countries.&nbsp;&nbsp;Example: euc-kr (Korean)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The number of screen cells is equal to the number of bytes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(except for euc-jp when the first byte is 0x8e).<br>
+<br>
+u&nbsp;&nbsp; Unicode&nbsp;&nbsp;&nbsp;&nbsp; Universal encoding, can replace all others.&nbsp;&nbsp;ISO 10646.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Millions of different characters.&nbsp;&nbsp;Example: UTF-8.&nbsp;&nbsp;The<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;relation between bytes and screen cells is complex.<br>
+<br>
+Other encodings cannot be used by Vim internally.&nbsp;&nbsp;But files in other<br>
+encodings can be edited by using conversion, see&nbsp;<a class="Type" href="options.html#'fileencoding'">'fileencoding'</a>.<br>
+<span class="Todo">Note</span>&nbsp;that all encodings must use ASCII for the characters up to 128 (except<br>
+when compiled for EBCDIC).<br>
+<br>
+Supported&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;values are:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#encoding-values" name="encoding-values">*encoding-values*</a><br>
+1&nbsp;&nbsp; latin1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8-bit characters (ISO 8859-1, also used for cp1252)<br>
+1&nbsp;&nbsp; iso-8859-n&nbsp;&nbsp;ISO_8859 variant (n = 2 to 15)<br>
+1&nbsp;&nbsp; koi8-r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Russian<br>
+1&nbsp;&nbsp; koi8-u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ukrainian<br>
+1&nbsp;&nbsp; macroman&nbsp;&nbsp;&nbsp;&nbsp;MacRoman (Macintosh encoding)<br>
+1&nbsp;&nbsp; 8bit-<span class="Special">{name}</span>&nbsp;any 8-bit encoding (Vim specific name)<br>
+1&nbsp;&nbsp; cp437&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-1<br>
+1&nbsp;&nbsp; cp737&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-7<br>
+1&nbsp;&nbsp; cp775&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Baltic<br>
+1&nbsp;&nbsp; cp850&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-4<br>
+1&nbsp;&nbsp; cp852&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-1<br>
+1&nbsp;&nbsp; cp855&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-2<br>
+1&nbsp;&nbsp; cp857&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-5<br>
+1&nbsp;&nbsp; cp860&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-9<br>
+1&nbsp;&nbsp; cp861&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-1<br>
+1&nbsp;&nbsp; cp862&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-1<br>
+1&nbsp;&nbsp; cp863&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-8<br>
+1&nbsp;&nbsp; cp865&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-1<br>
+1&nbsp;&nbsp; cp866&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-5<br>
+1&nbsp;&nbsp; cp869&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to iso-8859-7<br>
+1&nbsp;&nbsp; cp874&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Thai<br>
+1&nbsp;&nbsp; cp1250&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Czech, Polish, etc.<br>
+1&nbsp;&nbsp; cp1251&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cyrillic<br>
+1&nbsp;&nbsp; cp1253&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Greek<br>
+1&nbsp;&nbsp; cp1254&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Turkish<br>
+1&nbsp;&nbsp; cp1255&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hebrew<br>
+1&nbsp;&nbsp; cp1256&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arabic<br>
+1&nbsp;&nbsp; cp1257&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Baltic<br>
+1&nbsp;&nbsp; cp1258&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vietnamese<br>
+1&nbsp;&nbsp; cp<span class="Special">{number}</span>&nbsp;&nbsp;MS-Windows: any installed single-byte codepage<br>
+2&nbsp;&nbsp; cp932&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Japanese (Windows only)<br>
+2&nbsp;&nbsp; euc-jp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Japanese (Unix only)<br>
+2&nbsp;&nbsp; sjis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Japanese (Unix only)<br>
+2&nbsp;&nbsp; cp949&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Korean (Unix and Windows)<br>
+2&nbsp;&nbsp; euc-kr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Korean (Unix only)<br>
+2&nbsp;&nbsp; cp936&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; simplified Chinese (Windows only)<br>
+2&nbsp;&nbsp; euc-cn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;simplified Chinese (Unix only)<br>
+2&nbsp;&nbsp; cp950&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; traditional Chinese (on Unix alias for big5)<br>
+2&nbsp;&nbsp; big5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;traditional Chinese (on Windows alias for cp950)<br>
+2&nbsp;&nbsp; euc-tw&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;traditional Chinese (Unix only)<br>
+2&nbsp;&nbsp; 2byte-<span class="Special">{name}</span>&nbsp;Unix: any double-byte encoding (Vim specific name)<br>
+2&nbsp;&nbsp; cp<span class="Special">{number}</span>&nbsp;&nbsp;MS-Windows: any installed double-byte codepage<br>
+u&nbsp;&nbsp; utf-8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32 bit UTF-8 encoded Unicode (ISO/IEC 10646-1)<br>
+u&nbsp;&nbsp; ucs-2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16 bit UCS-2 encoded Unicode (ISO/IEC 10646-1)<br>
+u&nbsp;&nbsp; ucs-2le&nbsp;&nbsp;&nbsp;&nbsp; like ucs-2, little endian<br>
+u&nbsp;&nbsp; utf-16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ucs-2 extended with double-words for more characters<br>
+u&nbsp;&nbsp; utf-16le&nbsp;&nbsp;&nbsp;&nbsp;like utf-16, little endian<br>
+u&nbsp;&nbsp; ucs-4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32 bit UCS-4 encoded Unicode (ISO/IEC 10646-1)<br>
+u&nbsp;&nbsp; ucs-4le&nbsp;&nbsp;&nbsp;&nbsp; like ucs-4, little endian<br>
+<br>
+The&nbsp;<span class="Special">{name}</span>&nbsp;can be any encoding name that your system supports.&nbsp;&nbsp;It is passed<br>
+to iconv() to convert between the encoding of the file and the current locale.<br>
+For MS-Windows &quot;cp<span class="Special">{number}</span>&quot; means using codepage&nbsp;<span class="Special">{number}</span>.<br>
+Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set encoding=8bit-cp1252<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set encoding=2byte-cp932</div>
+<br>
+The MS-Windows codepage 1252 is very similar to latin1.&nbsp;&nbsp;For practical reasons<br>
+the same encoding is used and it's called latin1.&nbsp;&nbsp;<a class="Type" href="options.html#'isprint'">'isprint'</a>&nbsp;can be used to<br>
+display the characters 0x80 - 0xA0 or not.<br>
+<br>
+Several aliases can be used, they are translated to one of the names above.<br>
+An incomplete list:<br>
+<br>
+1&nbsp;&nbsp; ansi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same as latin1 (obsolete, for backward compatibility)<br>
+2&nbsp;&nbsp; japan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Japanese: on Unix &quot;euc-jp&quot;, on MS-Windows cp932<br>
+2&nbsp;&nbsp; korea&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Korean: on Unix &quot;euc-kr&quot;, on MS-Windows cp949<br>
+2&nbsp;&nbsp; prc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; simplified Chinese: on Unix &quot;euc-cn&quot;, on MS-Windows cp936<br>
+2&nbsp;&nbsp; chinese&nbsp;&nbsp;&nbsp;&nbsp; same as &quot;prc&quot;<br>
+2&nbsp;&nbsp; taiwan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;traditional Chinese: on Unix &quot;euc-tw&quot;, on MS-Windows cp950<br>
+u&nbsp;&nbsp; utf8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same as utf-8<br>
+u&nbsp;&nbsp; unicode&nbsp;&nbsp;&nbsp;&nbsp; same as ucs-2<br>
+u&nbsp;&nbsp; ucs2be&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same as ucs-2 (big endian)<br>
+u&nbsp;&nbsp; ucs-2be&nbsp;&nbsp;&nbsp;&nbsp; same as ucs-2 (big endian)<br>
+u&nbsp;&nbsp; ucs-4be&nbsp;&nbsp;&nbsp;&nbsp; same as ucs-4 (big endian)<br>
+u&nbsp;&nbsp; utf-32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same as ucs-4<br>
+u&nbsp;&nbsp; utf-32le&nbsp;&nbsp;&nbsp;&nbsp;same as ucs-4le<br>
+&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;&nbsp;&nbsp;&nbsp; stands for the default value of&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>, depends on the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;environment<br>
+<br>
+For the UCS codes the byte order matters.&nbsp;&nbsp;This is tricky, use UTF-8 whenever<br>
+you can.&nbsp;&nbsp;The default is to use big-endian (most significant byte comes<br>
+first):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bytes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; char</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ucs-2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11 22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1122<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ucs-2le&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 22 11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1122<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ucs-4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11 22 33 44&nbsp;&nbsp;&nbsp;&nbsp; 11223344<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ucs-4le&nbsp;&nbsp;&nbsp;&nbsp; 44 33 22 11&nbsp;&nbsp;&nbsp;&nbsp; 11223344<br>
+<br>
+On MS-Windows systems you often want to use &quot;ucs-2le&quot;, because it uses little<br>
+endian UCS-2.<br>
+<br>
+There are a few encodings which are similar, but not exactly the same.&nbsp;&nbsp;Vim<br>
+treats them as if they were different encodings, so that conversion will be<br>
+done when needed.&nbsp;&nbsp;You might want to use the similar name to avoid conversion<br>
+or when conversion is not possible:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cp932, shift-jis, sjis<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cp936, euc-cn<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#encoding-table" name="encoding-table">*encoding-table*</a><br>
+Normally&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is equal to your current locale and&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;is<br>
+empty.&nbsp;&nbsp;This means that your keyboard and display work with characters encoded<br>
+in your current locale, and Vim uses the same characters internally.<br>
+<br>
+You can make Vim use characters in a different encoding by setting the<br>
+<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;option to a different value.&nbsp;&nbsp;Since the keyboard and display still<br>
+use the current locale, conversion needs to be done.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;then<br>
+takes over the value of the current locale, so Vim converts between&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a><br>
+and&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let &amp;termencoding = &amp;encoding<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set encoding=utf-8</div>
+<br>
+However, not all combinations of values are possible.&nbsp;&nbsp;The table below tells<br>
+you how each of the nine combinations works.&nbsp;&nbsp;This is further restricted by<br>
+not all conversions being possible, iconv() being present, etc.&nbsp;&nbsp;Since this<br>
+depends on the system used, no detailed list can be given.<br>
+<br>
+(<a class="Type" href="options.html#'tenc'">'tenc'</a>&nbsp;is the short name for&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'enc'">'enc'</a>&nbsp;short for&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>)<br>
+<br>
+<span class="PreProc">'tenc'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'enc'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; remark</span><br>
+<br>
+&nbsp;8bit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8bit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Works.&nbsp;&nbsp;When&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;is different from<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;typing and displaying may be wrong for some<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;characters, Vim does NOT perform conversion (set<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;to &quot;utf-8&quot; to get this).<br>
+&nbsp;8bit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2byte&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MS-Windows: works for all codepages installed on your<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system; you can only type 8bit characters;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other systems: does NOT work.<br>
+&nbsp;8bit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unicode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Works, but only 8bit characters can be typed directly<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(others through digraphs, keymaps, etc.); in a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;terminal you can only see 8bit characters; the GUI can<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show all characters that the&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;supports.<br>
+<br>
+&nbsp;2byte&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8bit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Works, but typing non-ASCII characters might<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be a problem.<br>
+&nbsp;2byte&nbsp;&nbsp;&nbsp;&nbsp; 2byte&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MS-Windows: works for all codepages installed on your<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system; typing characters might be a problem when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;locale is different from&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other systems: Only works when&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;is equal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>, you might as well leave it empty.<br>
+&nbsp;2byte&nbsp;&nbsp;&nbsp;&nbsp; Unicode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;works, Vim will translate typed characters.<br>
+<br>
+&nbsp;Unicode&nbsp;&nbsp;&nbsp;&nbsp;8bit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;works (unusual)<br>
+&nbsp;Unicode&nbsp;&nbsp;&nbsp;&nbsp;2byte&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; does NOT work<br>
+&nbsp;Unicode&nbsp;&nbsp; Unicode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;works very well (leaving&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;empty works<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the same way, because all Unicode is handled<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;internally as UTF-8)<br>
+<br>
+<span class="Statement">CONVERSION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="mbyte.html#charset-conversion" name="charset-conversion">*charset-conversion*</a><br>
+<br>
+Vim will automatically convert from one to another encoding in several places:<br>
+- When reading a file and&nbsp;<a class="Type" href="options.html#'fileencoding'">'fileencoding'</a>&nbsp;is different from&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a><br>
+- When writing a file and&nbsp;<a class="Type" href="options.html#'fileencoding'">'fileencoding'</a>&nbsp;is different from&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a><br>
+- When displaying characters and&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;is different from&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a><br>
+- When reading input and&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;is different from&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a><br>
+- When displaying messages and the encoding used for LC_MESSAGES differs from<br>
+&nbsp;&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;(requires a gettext version that supports this).<br>
+- When reading a Vim script where&nbsp;<a class="Identifier" href="repeat.html#:scriptencoding">|:scriptencoding|</a>&nbsp;is different from<br>
+&nbsp;&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>.<br>
+- When reading or writing a&nbsp;<a class="Identifier" href="starting.html#viminfo">|viminfo|</a>&nbsp;file.<br>
+Most of these require the&nbsp;<a class="Identifier" href="various.html#+iconv">|+iconv|</a>&nbsp;feature.&nbsp;&nbsp;Conversion for reading and<br>
+writing files may also be specified with the&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>&nbsp;option.<br>
+<br>
+Useful utilities for converting the charset:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;All:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iconv<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GNU iconv can convert most encodings.&nbsp;&nbsp;Unicode is used as the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;intermediate encoding, which allows conversion from and to all other<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;encodings.&nbsp;&nbsp;See&nbsp;<span class="Constant"><a href="http://www.gnu.org/directory/libiconv.html">http://www.gnu.org/directory/libiconv.html</a></span>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Japanese:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nkf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nkf is &quot;Network Kanji code conversion Filter&quot;.&nbsp;&nbsp;One of the most unique<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;facility of nkf is the guess of the input Kanji code.&nbsp;&nbsp;So, you don't<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;need to know what the inputting file's&nbsp;<a class="Identifier" href="mbyte.html#charset">|charset|</a>&nbsp;is.&nbsp;&nbsp;When convert to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EUC-JP from ISO-2022-JP or Shift_JIS, simply do the following command<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in Vim&#0058;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%!nkf -e<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nkf can be found at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.sfc.wide.ad.jp/~max/FreeBSD/ports/distfiles/nkf-1.62.tar.gz">http://www.sfc.wide.ad.jp/~max/FreeBSD/ports/distfiles/nkf-1.62.tar.gz</a></span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Chinese:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hc is &quot;Hanzi Converter&quot;.&nbsp;&nbsp;Hc convert a GB file to a Big5 file, or Big5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file to GB file.&nbsp;&nbsp;Hc can be found at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant">ftp://ftp.cuhk.hk/pub/chinese/ifcss/software/unix/convert/hc-30.tar.gz</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Korean:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hmconv<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hmconv is Korean code conversion utility especially for E-mail.&nbsp;&nbsp;It can<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;convert between EUC-KR and ISO-2022-KR.&nbsp;&nbsp;Hmconv can be found at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant">ftp://ftp.kaist.ac.kr/pub/hangul/code/hmconv/</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Multilingual:&nbsp;&nbsp; lv<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lv is a Powerful Multilingual File Viewer.&nbsp;&nbsp;And it can be worked as<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#charset">|charset|</a>&nbsp;converter.&nbsp;&nbsp;Supported&nbsp;<a class="Identifier" href="mbyte.html#charset">|charset|</a>: ISO-2022-CN, ISO-2022-JP,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO-2022-KR, EUC-CN, EUC-JP, EUC-KR, EUC-TW, UTF-7, UTF-8, ISO-8859<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;series, Shift_JIS, Big5 and HZ.&nbsp;&nbsp;Lv can be found at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.ff.iij4u.or.jp/~nrt/lv/index.html">http://www.ff.iij4u.or.jp/~nrt/lv/index.html</a></span><br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-conversion" name="mbyte-conversion">*mbyte-conversion*</a><br>
+When reading and writing files in an encoding different from&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>,<br>
+conversion needs to be done.&nbsp;&nbsp;These conversions are supported:<br>
+- All conversions between Latin-1 (ISO-8859-1), UTF-8, UCS-2 and UCS-4 are<br>
+&nbsp;&nbsp;handled internally.<br>
+- For MS-Windows, when&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is a Unicode encoding, conversion from and<br>
+&nbsp;&nbsp;to any codepage should work.<br>
+- Conversion specified with&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a><br>
+- Conversion with the iconv library, if it is available.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Old versions of GNU iconv() may cause the conversion to fail (they<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;request a very large buffer, more than Vim is willing to provide).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Try getting another iconv() implementation.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#iconv-dynamic" name="iconv-dynamic">*iconv-dynamic*</a><br>
+On MS-Windows Vim can be compiled with the&nbsp;<a class="Identifier" href="various.html#+iconv/dyn">|+iconv/dyn|</a>&nbsp;feature.&nbsp;&nbsp;This means<br>
+Vim will search for the &quot;iconv.dll&quot; and &quot;libiconv.dll&quot; libraries.&nbsp;&nbsp;When<br>
+neither of them can be found Vim will still work but some conversions won't be<br>
+possible.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+4. Using a terminal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-terminal" name="mbyte-terminal">*mbyte-terminal*</a><br>
+<br>
+The GUI fully supports multi-byte characters.&nbsp;&nbsp;It is also possible in a<br>
+terminal, if the terminal supports the same encoding that Vim uses.&nbsp;&nbsp;Thus this<br>
+is less flexible.<br>
+<br>
+For example, you can run Vim in a xterm with added multi-byte support and/or<br>
+<a class="Identifier" href="mbyte.html#XIM">|XIM|</a>.&nbsp;&nbsp;Examples are kterm (Kanji term) and hanterm (for Korean), Eterm<br>
+(Enlightened terminal) and rxvt.<br>
+<br>
+If your terminal does not support the right encoding, you can set the<br>
+<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;option.&nbsp;&nbsp;Vim will then convert the typed characters from<br>
+<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;to&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>.&nbsp;&nbsp;And displayed text will be converted from<br>
+<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;to&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>.&nbsp;&nbsp;If the encoding supported by the terminal<br>
+doesn't include all the characters that Vim uses, this leads to lost<br>
+characters.&nbsp;&nbsp;This may mess up the display.&nbsp;&nbsp;If you use a terminal that<br>
+supports Unicode, such as the xterm mentioned below, it should work just fine,<br>
+since nearly every character set can be converted to Unicode without loss of<br>
+information.<br>
+<br>
+<br>
+<span class="Statement">UTF-8 IN XFREE86 XTERM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="mbyte.html#UTF8-xterm" name="UTF8-xterm">*UTF8-xterm*</a><br>
+<br>
+This is a short explanation of how to use UTF-8 character encoding in the<br>
+xterm that comes with XFree86 by Thomas Dickey (text by Markus Kuhn).<br>
+<br>
+Get the latest xterm version which has now UTF-8 support:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://invisible-island.net/xterm/xterm.html">http://invisible-island.net/xterm/xterm.html</a></span><br>
+<br>
+Compile it with &quot;./configure --enable-wide-chars ; make&quot;<br>
+<br>
+Also get the ISO 10646-1 version of various fonts, which is available on<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://www.cl.cam.ac.uk/~mgk25/download/ucs-fonts.tar.gz">http://www.cl.cam.ac.uk/~mgk25/download/ucs-fonts.tar.gz</a></span><br>
+<br>
+and install the font as described in the README file.<br>
+<br>
+Now start xterm with<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;xterm -u8 -fn -misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso10646-1</div>
+or, for bigger character:<br>
+<div class="helpExample">&nbsp;&nbsp;xterm -u8 -fn -misc-fixed-medium-r-normal--15-140-75-75-c-90-iso10646-1</div>
+<br>
+and you will have a working UTF-8 terminal emulator.&nbsp;&nbsp;Try both<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp; cat utf-8-demo.txt<br>
+&nbsp;&nbsp; vim utf-8-demo.txt</div>
+<br>
+with the demo text that comes with ucs-fonts.tar.gz in order to see<br>
+whether there are any problems with UTF-8 in your xterm.<br>
+<br>
+For Vim you may need to set&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;to &quot;utf-8&quot;.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+5.&nbsp;&nbsp;Fonts on X11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-fonts-X11" name="mbyte-fonts-X11">*mbyte-fonts-X11*</a><br>
+<br>
+Unfortunately, using fonts in X11 is complicated.&nbsp;&nbsp;The name of a single-byte<br>
+font is a long string.&nbsp;&nbsp;For multi-byte fonts we need several of these...<br>
+<br>
+<span class="Todo">Note</span>: Most of this is no longer relevant for GTK+ 2.&nbsp;&nbsp;Selecting a font via<br>
+its XLFD is not supported; see&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;for an example of how to<br>
+set the font.&nbsp;&nbsp;Do yourself a favor and ignore the&nbsp;<a class="Identifier" href="mbyte.html#XLFD">|XLFD|</a>&nbsp;and&nbsp;<a class="Identifier" href="mbyte.html#xfontset">|xfontset|</a><br>
+sections below.<br>
+<br>
+First of all, Vim only accepts fixed-width fonts for displaying text.&nbsp;&nbsp;You<br>
+cannot use proportionally spaced fonts.&nbsp;&nbsp;This excludes many of the available<br>
+(and nicer looking) fonts.&nbsp;&nbsp;However, for menus and tooltips any font can be<br>
+used.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that Display and Input are independent.&nbsp;&nbsp;It is possible to see your<br>
+language even though you have no input method for it.<br>
+<br>
+You should get a default font for menus and tooltips that works, but it might<br>
+be ugly.&nbsp;&nbsp;Read the following to find out how to select a better font.<br>
+<br>
+<br>
+X LOGICAL FONT DESCRIPTION (XLFD)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#XLFD" name="XLFD">*XLFD*</a><br>
+XLFD is the X font name and contains the information about the font size,<br>
+charset, etc.&nbsp;&nbsp;The name is in this format:<br>
+<br>
+FOUNDRY-FAMILY-WEIGHT-SLANT-WIDTH-STYLE-PIXEL-POINT-X-Y-SPACE-AVE-CR-CE<br>
+<br>
+Each field means:<br>
+<br>
+- FOUNDRY:&nbsp;&nbsp;FOUNDRY field.&nbsp;&nbsp;The company that created the font.<br>
+- FAMILY:&nbsp;&nbsp; FAMILY_NAME field.&nbsp;&nbsp;Basic font family name.&nbsp;&nbsp;(helvetica, gothic,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;times, etc)<br>
+- WEIGHT:&nbsp;&nbsp; WEIGHT_NAME field.&nbsp;&nbsp;How thick the letters are.&nbsp;&nbsp;(light, medium,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bold, etc)<br>
+- SLANT:&nbsp;&nbsp;&nbsp;&nbsp;SLANT field.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r:&nbsp;&nbsp;Roman (no slant)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i:&nbsp;&nbsp;Italic<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o:&nbsp;&nbsp;Oblique<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ri: Reverse Italic<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ro: Reverse Oblique<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ot: Other<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number: Scaled font<br>
+- WIDTH:&nbsp;&nbsp;&nbsp;&nbsp;SETWIDTH_NAME field.&nbsp;&nbsp;Width of characters.&nbsp;&nbsp;(normal, condensed,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;narrow, double wide)<br>
+- STYLE:&nbsp;&nbsp;&nbsp;&nbsp;ADD_STYLE_NAME field.&nbsp;&nbsp;Extra info to describe font.&nbsp;&nbsp;(Serif, Sans<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serif, Informal, Decorated, etc)<br>
+- PIXEL:&nbsp;&nbsp;&nbsp;&nbsp;PIXEL_SIZE field.&nbsp;&nbsp;Height, in pixels, of characters.<br>
+- POINT:&nbsp;&nbsp;&nbsp;&nbsp;POINT_SIZE field.&nbsp;&nbsp;Ten times height of characters in points.<br>
+- X:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RESOLUTION_X field.&nbsp;&nbsp;X resolution (dots per inch).<br>
+- Y:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RESOLUTION_Y field.&nbsp;&nbsp;Y resolution (dots per inch).<br>
+- SPACE:&nbsp;&nbsp;&nbsp;&nbsp;SPACING field.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p:&nbsp;&nbsp;Proportional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m:&nbsp;&nbsp;Monospaced<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c:&nbsp;&nbsp;CharCell<br>
+- AVE:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AVERAGE_WIDTH field.&nbsp;&nbsp;Ten times average width in pixels.<br>
+- CR:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CHARSET_REGISTRY field.&nbsp;&nbsp;The name of the charset group.<br>
+- CE:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CHARSET_ENCODING field.&nbsp;&nbsp;The rest of the charset name.&nbsp;&nbsp;For some<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;charsets, such as JIS X 0208, if this field is 0, code points has<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the same value as GL, and GR if 1.<br>
+<br>
+For example, in case of a 16 dots font corresponding to JIS X 0208, it is<br>
+written like:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-misc-fixed-medium-r-normal--16-110-100-100-c-160-jisx0208.1990-0<br>
+<br>
+<br>
+X FONTSET<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#fontset" name="fontset">*fontset*</a>&nbsp;<a class="Constant" href="mbyte.html#xfontset" name="xfontset">*xfontset*</a><br>
+A single-byte charset is typically associated with one font.&nbsp;&nbsp;For multi-byte<br>
+charsets a combination of fonts is often used.&nbsp;&nbsp;This means that one group of<br>
+characters are used from one font and another group from another font (which<br>
+might be double wide).&nbsp;&nbsp;This collection of fonts is called a fontset.<br>
+<br>
+Which fonts are required in a fontset depends on the current locale.&nbsp;&nbsp;X<br>
+windows maintains a table of which groups of characters are required for a<br>
+locale.&nbsp;&nbsp;You have to specify all the fonts that a locale requires in the<br>
+<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;option.<br>
+<br>
+<span class="Todo">NOTE</span>: The fontset always uses the current locale, even though&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;may<br>
+be set to use a different charset.&nbsp;&nbsp;In that situation you might want to use<br>
+<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;instead of&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>.<br>
+<br>
+Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">|charset| language&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;groups of characters&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;GB2312&nbsp;&nbsp;&nbsp;&nbsp;Chinese (simplified)&nbsp;&nbsp;ISO-8859-1 and GB 2312<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Big5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chinese (traditional) ISO-8859-1 and Big5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CNS-11643 Chinese (traditional) ISO-8859-1, CNS 11643-1 and CNS 11643-2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;EUC-JP&nbsp;&nbsp;&nbsp;&nbsp;Japanese&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JIS X 0201 and JIS X 0208<br>
+&nbsp;&nbsp;&nbsp;&nbsp;EUC-KR&nbsp;&nbsp;&nbsp;&nbsp;Korean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ISO-8859-1 and KS C 5601 (KS X 1001)<br>
+<br>
+You can search for fonts using the xlsfonts command.&nbsp;&nbsp;For example, when you're<br>
+searching for a font for KS C 5601:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;xlsfonts | grep ksc5601</div>
+<br>
+This is complicated and confusing.&nbsp;&nbsp;You might want to consult the X-Windows<br>
+documentation if there is something you don't understand.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#base_font_name_list" name="base_font_name_list">*base_font_name_list*</a><br>
+When you have found the names of the fonts you want to use, you need to set<br>
+the&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;option.&nbsp;&nbsp;You specify the list by concatenating the font names<br>
+and putting a comma in between them.<br>
+<br>
+For example, when you use the ja_JP.eucJP locale, this requires JIS X 0201<br>
+and JIS X 0208.&nbsp;&nbsp;You could supply a list of fonts that explicitly specifies<br>
+the charsets, like:<br>
+<br>
+<div class="helpExample">&nbsp;:set guifontset=-misc-fixed-medium-r-normal--14-130-75-75-c-140-jisx0208.1983-0,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\-misc-fixed-medium-r-normal--14-130-75-75-c-70-jisx0201.1976-0</div>
+<br>
+Alternatively, you can supply a base font name list that omits the charset<br>
+name, letting X-Windows select font characters required for the locale.&nbsp;&nbsp;For<br>
+example:<br>
+<br>
+<div class="helpExample">&nbsp;:set guifontset=-misc-fixed-medium-r-normal--14-130-75-75-c-140,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\-misc-fixed-medium-r-normal--14-130-75-75-c-70</div>
+<br>
+Alternatively, you can supply a single base font name that allows X-Windows to<br>
+select from all available fonts.&nbsp;&nbsp;For example:<br>
+<br>
+<div class="helpExample">&nbsp;:set guifontset=-misc-fixed-medium-r-normal--14-*</div>
+<br>
+Alternatively, you can specify alias names.&nbsp;&nbsp;See the fonts.alias file in the<br>
+fonts directory (e.g., /usr/X11R6/lib/X11/fonts/).&nbsp;&nbsp;For example:<br>
+<br>
+<div class="helpExample">&nbsp;:set guifontset=k14,r14</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#E253" name="E253">*E253*</a><br>
+<span class="Todo">Note</span>&nbsp;that in East Asian fonts, the standard character cell is square.&nbsp;&nbsp;When<br>
+mixing a Latin font and an East Asian font, the East Asian font width should<br>
+be twice the Latin font width.<br>
+<br>
+If&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;is not empty, the &quot;font&quot; argument of the&nbsp;<a class="Identifier" href="syntax.html#:highlight">|:highlight|</a>&nbsp;command<br>
+is also interpreted as a fontset.&nbsp;&nbsp;For example, you should use for<br>
+highlighting:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:hi Comment font=english_font,your_font</div>
+If you use a wrong &quot;font&quot; argument you will get an error message.<br>
+Also make sure that you set&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;before setting fonts for highlight<br>
+groups.<br>
+<br>
+<br>
+USING RESOURCE FILES<br>
+<br>
+Instead of specifying&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>, you can set X11 resources and Vim will<br>
+pick them up.&nbsp;&nbsp;This is only for people who know how X resource files work.<br>
+<br>
+For Motif and Athena insert these three lines in your $HOME/.Xdefaults file:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim.font:&nbsp;<a class="Identifier" href="mbyte.html#base_font_name_list">|base_font_name_list|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim*fontSet:&nbsp;<a class="Identifier" href="mbyte.html#base_font_name_list">|base_font_name_list|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim*fontList: your_language_font<br>
+<br>
+<span class="Todo">Note</span>: Vim.font is for text area.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim*fontSet is for menu.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim*fontList is for menu (for Motif GUI)<br>
+<br>
+For example, when you are using Japanese and a 14 dots font,<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim.font: -misc-fixed-medium-r-normal--14-*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim*fontSet: -misc-fixed-medium-r-normal--14-*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim*fontList: -misc-fixed-medium-r-normal--14-*</div>
+<br>
+or:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim*font: k14,r14<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim*fontSet: k14,r14<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim*fontList: k14,r14</div>
+<br>
+To have them take effect immediately you will have to do<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xrdb -merge ~/.Xdefaults</div>
+<br>
+Otherwise you will have to stop and restart the X server before the changes<br>
+take effect.<br>
+<br>
+<br>
+The GTK+ version of GUI Vim does not use .Xdefaults, use ~/.gtkrc instead.<br>
+The default mostly works OK.&nbsp;&nbsp;But for the menus you might have to change<br>
+it.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;style &quot;default&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fontset=&quot;-*-*-medium-r-normal--14-*-*-*-c-*-*-*&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;widget_class &quot;*&quot; style &quot;default&quot;</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+6.&nbsp;&nbsp;Fonts on MS-Windows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-fonts-MSwin" name="mbyte-fonts-MSwin">*mbyte-fonts-MSwin*</a><br>
+<br>
+The simplest is to use the font dialog to select fonts and try them out.&nbsp;&nbsp;You<br>
+can find this at the &quot;Edit/Select Font...&quot; menu.&nbsp;&nbsp;Once you find a font name<br>
+that works well you can use this command to see its name:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set guifont</div>
+<br>
+Then add a command to your&nbsp;<a class="Identifier" href="gui.html#gvimrc">|gvimrc|</a>&nbsp;file to set&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set guifont=courier_new:h12</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+7.&nbsp;&nbsp;Input on X11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-XIM" name="mbyte-XIM">*mbyte-XIM*</a><br>
+<br>
+<span class="Statement">X INPUT METHOD (XIM) BACKGROUND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="mbyte.html#XIM" name="XIM">*XIM*</a>&nbsp;<a class="Constant" href="mbyte.html#xim" name="xim">*xim*</a>&nbsp;<a class="Constant" href="mbyte.html#x-input-method" name="x-input-method">*x-input-method*</a><br>
+<br>
+XIM is an international input module for X.&nbsp;&nbsp;There are two kinds of structures,<br>
+Xlib unit type and&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>&nbsp;(Input-Method server) type.&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>&nbsp;type<br>
+is suitable for complex input, such as CJK.<br>
+<br>
+- IM-server<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#IM-server" name="IM-server">*IM-server*</a><br>
+&nbsp;&nbsp;In&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>&nbsp;type input structures, the input event is handled by either<br>
+&nbsp;&nbsp;of the two ways: FrontEnd system and BackEnd system.&nbsp;&nbsp;In the FrontEnd<br>
+&nbsp;&nbsp;system, input events are snatched by the&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>&nbsp;first, then&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a><br>
+&nbsp;&nbsp;give the application the result of input.&nbsp;&nbsp;On the other hand, the BackEnd<br>
+&nbsp;&nbsp;system works reverse order.&nbsp;&nbsp;MS Windows adopt BackEnd system.&nbsp;&nbsp;In X, most of<br>
+&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>s adopt FrontEnd system.&nbsp;&nbsp;The demerit of BackEnd system is the<br>
+&nbsp;&nbsp;large overhead in communication, but it provides safe synchronization with<br>
+&nbsp;&nbsp;no restrictions on applications.<br>
+<br>
+&nbsp;&nbsp;For example, there are xwnmo and kinput2 Japanese&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>, both are<br>
+&nbsp;&nbsp;FrontEnd system.&nbsp;&nbsp;Xwnmo is distributed with Wnn (see below), kinput2 can be<br>
+&nbsp;&nbsp;found at:&nbsp;<span class="Constant">ftp://ftp.sra.co.jp/pub/x11/kinput2/</span><br>
+<br>
+&nbsp;&nbsp;For Chinese, there's a great XIM server named &quot;xcin&quot;, you can input both<br>
+&nbsp;&nbsp;Traditional and Simplified Chinese characters.&nbsp;&nbsp;And it can accept other<br>
+&nbsp;&nbsp;locale if you make a correct input table.&nbsp;&nbsp;Xcin can be found at:<br>
+&nbsp;&nbsp;<span class="Constant"><a href="http://cle.linux.org.tw/xcin/">http://cle.linux.org.tw/xcin/</a></span><br>
+&nbsp;&nbsp;Others are scim:&nbsp;<span class="Constant"><a href="http://scim.freedesktop.org/">http://scim.freedesktop.org/</a></span>&nbsp;and fcitx:<br>
+&nbsp;&nbsp;<span class="Constant"><a href="http://www.fcitx.org/">http://www.fcitx.org/</a></span><br>
+<br>
+- Conversion Server<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#conversion-server" name="conversion-server">*conversion-server*</a><br>
+&nbsp;&nbsp;Some system needs additional server: conversion server.&nbsp;&nbsp;Most of Japanese<br>
+&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>s need it, Kana-Kanji conversion server.&nbsp;&nbsp;For Chinese inputting,<br>
+&nbsp;&nbsp;it depends on the method of inputting, in some methods, PinYin or ZhuYin to<br>
+&nbsp;&nbsp;HanZi conversion server is needed.&nbsp;&nbsp;For Korean inputting, if you want to<br>
+&nbsp;&nbsp;input Hanja, Hangul-Hanja conversion server is needed.<br>
+<br>
+&nbsp;&nbsp;For example, the Japanese inputting process is divided into 2 steps.&nbsp;&nbsp;First<br>
+&nbsp;&nbsp;we pre-input Hira-gana, second Kana-Kanji conversion.&nbsp;&nbsp;There are so many<br>
+&nbsp;&nbsp;Kanji characters (6349 Kanji characters are defined in JIS X 0208) and the<br>
+&nbsp;&nbsp;number of Hira-gana characters are 76.&nbsp;&nbsp;So, first, we pre-input text as<br>
+&nbsp;&nbsp;pronounced in Hira-gana, second, we convert Hira-gana to Kanji or Kata-Kana,<br>
+&nbsp;&nbsp;if needed.&nbsp;&nbsp;There are some Kana-Kanji conversion server: jserver<br>
+&nbsp;&nbsp;(distributed with Wnn, see below) and canna.&nbsp;&nbsp;Canna can be found at:<br>
+&nbsp;&nbsp;<span class="Constant"><a href="http://canna.sourceforge.jp/">http://canna.sourceforge.jp/</a></span><br>
+<br>
+There is a good input system: Wnn4.2.&nbsp;&nbsp;Wnn 4.2 contains,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;xwnmo (<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;jserver (Japanese Kana-Kanji conversion server)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cserver (Chinese PinYin or ZhuYin to simplified HanZi conversion server)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tserver (Chinese PinYin or ZhuYin to traditional HanZi conversion server)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kserver (Hangul-Hanja conversion server)<br>
+Wnn 4.2 for several systems can be found at various places on the internet.<br>
+Use the RPM or port for your system.<br>
+<br>
+<br>
+- Input Style<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#xim-input-style" name="xim-input-style">*xim-input-style*</a><br>
+&nbsp;&nbsp;When inputting CJK, there are four areas:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. The area to display of the input while it is being composed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. The area to display the currently active input mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. The area to display the next candidate for the selection.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. The area to display other tools.<br>
+<br>
+&nbsp;&nbsp;The third area is needed when converting.&nbsp;&nbsp;For example, in Japanese<br>
+&nbsp;&nbsp;inputting, multiple Kanji characters could have the same pronunciation, so<br>
+&nbsp;&nbsp;a sequence of Hira-gana characters could map to a distinct sequence of Kanji<br>
+&nbsp;&nbsp;characters.<br>
+<br>
+&nbsp;&nbsp;The first and second areas are defined in international input of X with the<br>
+&nbsp;&nbsp;names of &quot;Preedit Area&quot;, &quot;Status Area&quot; respectively.&nbsp;&nbsp;The third and fourth<br>
+&nbsp;&nbsp;areas are not defined and are left to be managed by the&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>.&nbsp;&nbsp;In the<br>
+&nbsp;&nbsp;international input, four input styles have been defined using combinations<br>
+&nbsp;&nbsp;of Preedit Area and Status Area:&nbsp;<a class="Identifier" href="mbyte.html#OnTheSpot">|OnTheSpot|</a>,&nbsp;<a class="Identifier" href="mbyte.html#OffTheSpot">|OffTheSpot|</a>,&nbsp;<a class="Identifier" href="mbyte.html#OverTheSpot">|OverTheSpot|</a><br>
+&nbsp;&nbsp;and&nbsp;<a class="Identifier" href="mbyte.html#Root">|Root|</a>.<br>
+<br>
+&nbsp;&nbsp;Currently, GUI Vim supports three styles,&nbsp;<a class="Identifier" href="mbyte.html#OverTheSpot">|OverTheSpot|</a>,&nbsp;<a class="Identifier" href="mbyte.html#OffTheSpot">|OffTheSpot|</a>&nbsp;and<br>
+&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#Root">|Root|</a>.<br>
+<br>
+*.&nbsp;&nbsp;on-the-spot&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#OnTheSpot" name="OnTheSpot">*OnTheSpot*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Preedit Area and Status Area are performed by the client application in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the area of application.&nbsp;&nbsp;The client application is directed by the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>&nbsp;to display all pre-edit data at the location of text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;insertion.&nbsp;&nbsp;The client registers callbacks invoked by the input method<br>
+&nbsp;&nbsp;&nbsp;&nbsp;during pre-editing.<br>
+*.&nbsp;&nbsp;over-the-spot&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#OverTheSpot" name="OverTheSpot">*OverTheSpot*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Status Area is created in a fixed position within the area of application,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;in case of Vim, the position is the additional status line.&nbsp;&nbsp;Preedit Area<br>
+&nbsp;&nbsp;&nbsp;&nbsp;is made at present input position of application.&nbsp;&nbsp;The input method<br>
+&nbsp;&nbsp;&nbsp;&nbsp;displays pre-edit data in a window which it brings up directly over the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;text insertion position.<br>
+*.&nbsp;&nbsp;off-the-spot&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#OffTheSpot" name="OffTheSpot">*OffTheSpot*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Preedit Area and Status Area are performed in the area of application, in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;case of Vim, the area is additional status line.&nbsp;&nbsp;The client application<br>
+&nbsp;&nbsp;&nbsp;&nbsp;provides display windows for the pre-edit data to the input method which<br>
+&nbsp;&nbsp;&nbsp;&nbsp;displays into them directly.<br>
+*.&nbsp;&nbsp;root-window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#Root" name="Root">*Root*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Preedit Area and Status Area are outside of the application.&nbsp;&nbsp;The input<br>
+&nbsp;&nbsp;&nbsp;&nbsp;method displays all pre-edit data in a separate area of the screen in a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;window specific to the input method.<br>
+<br>
+<br>
+<span class="Statement">USING XIM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="mbyte.html#multibyte-input" name="multibyte-input">*multibyte-input*</a>&nbsp;<a class="Constant" href="mbyte.html#E284" name="E284">*E284*</a>&nbsp;<a class="Constant" href="mbyte.html#E286" name="E286">*E286*</a>&nbsp;<a class="Constant" href="mbyte.html#E287" name="E287">*E287*</a>&nbsp;<a class="Constant" href="mbyte.html#E288" name="E288">*E288*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#E285" name="E285">*E285*</a>&nbsp;<a class="Constant" href="mbyte.html#E289" name="E289">*E289*</a><br>
+<br>
+<span class="Todo">Note</span>&nbsp;that Display and Input are independent.&nbsp;&nbsp;It is possible to see your<br>
+language even though you have no input method for it.&nbsp;&nbsp;But when your Display<br>
+method doesn't match your Input method, the text will be displayed wrong.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>: You can not use IM unless you specify&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Therefore, Latin users, you have to also use&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if you use IM.<br>
+<br>
+To input your language you should run the&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>&nbsp;which supports your<br>
+language and&nbsp;<a class="Identifier" href="mbyte.html#conversion-server">|conversion-server|</a>&nbsp;if needed.<br>
+<br>
+The next 3 lines should be put in your ~/.Xdefaults file.&nbsp;&nbsp;They are common for<br>
+all X applications which uses&nbsp;<a class="Identifier" href="mbyte.html#XIM">|XIM|</a>.&nbsp;&nbsp;If you already use&nbsp;<a class="Identifier" href="mbyte.html#XIM">|XIM|</a>, you can skip<br>
+this.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*international: True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.inputMethod: your_input_server_name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.preeditType: your_input_style</div>
+<br>
+input_server_name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is your&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>&nbsp;name (check your&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manual).<br>
+your_input_style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is one of&nbsp;<a class="Identifier" href="mbyte.html#OverTheSpot">|OverTheSpot|</a>,&nbsp;<a class="Identifier" href="mbyte.html#OffTheSpot">|OffTheSpot|</a>,&nbsp;<a class="Identifier" href="mbyte.html#Root">|Root|</a>.&nbsp;&nbsp;See<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;also&nbsp;<a class="Identifier" href="mbyte.html#xim-input-style">|xim-input-style|</a>.<br>
+<br>
+*international may not necessary if you use X11R6.<br>
+*.inputMethod and *.preeditType are optional if you use X11R6.<br>
+<br>
+For example, when you are using kinput2 as&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>,<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*international: True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.inputMethod: kinput2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.preeditType: OverTheSpot</div>
+<br>
+When using&nbsp;<a class="Identifier" href="mbyte.html#OverTheSpot">|OverTheSpot|</a>, GUI Vim always connects to the IM Server even in<br>
+Normal mode, so you can input your language with commands like &quot;f&quot; and &quot;r&quot;.<br>
+But when using one of the other two methods, GUI Vim connects to the IM Server<br>
+only if it is not in Normal mode.<br>
+<br>
+If your IM Server does not support&nbsp;<a class="Identifier" href="mbyte.html#OverTheSpot">|OverTheSpot|</a>, and if you want to use your<br>
+language with some Normal mode command like &quot;f&quot; or &quot;r&quot;, then you should use a<br>
+localized xterm&nbsp;&nbsp;or an xterm which supports&nbsp;<a class="Identifier" href="mbyte.html#XIM">|XIM|</a><br>
+<br>
+If needed, you can set the XMODIFIERS environment variable:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sh:&nbsp;&nbsp;export XMODIFIERS=&quot;@im=input_server_name&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;csh: setenv XMODIFIERS &quot;@im=input_server_name&quot;<br>
+<br>
+For example, when you are using kinput2 as&nbsp;<a class="Identifier" href="mbyte.html#IM-server">|IM-server|</a>&nbsp;and sh,<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export XMODIFIERS=&quot;@im=kinput2&quot;</div>
+<br>
+<br>
+FULLY CONTROLLED XIM<br>
+<br>
+You can fully control XIM, like with IME of MS-Windows (see&nbsp;<a class="Identifier" href="mbyte.html#multibyte-ime">|multibyte-ime|</a>).<br>
+This is currently only available for the GTK GUI.<br>
+<br>
+Before using fully controlled XIM, one setting is required.&nbsp;&nbsp;Set the<br>
+<a class="Type" href="options.html#'imactivatekey'">'imactivatekey'</a>&nbsp;option to the key that is used for the activation of the input<br>
+method.&nbsp;&nbsp;For example, when you are using kinput2 + canna as IM Server, the<br>
+activation key is probably Shift+Space:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set imactivatekey=S-space</div>
+<br>
+See&nbsp;<a class="Type" href="options.html#'imactivatekey'">'imactivatekey'</a>&nbsp;for the format.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+8.&nbsp;&nbsp;Input on MS-Windows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-IME" name="mbyte-IME">*mbyte-IME*</a><br>
+<br>
+(Windows IME support)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#multibyte-ime" name="multibyte-ime">*multibyte-ime*</a>&nbsp;<a class="Constant" href="mbyte.html#IME" name="IME">*IME*</a><br>
+<br>
+<span class="Special">{only works Windows GUI and compiled with the&nbsp;</span><a class="Identifier" href="various.html#+multi_byte_ime">|+multi_byte_ime|</a><span class="Special">&nbsp;feature}</span><br>
+<br>
+To input multibyte characters on Windows, you can use an Input Method Editor<br>
+(IME).&nbsp;&nbsp;In process of your editing text, you must switch status (on/off) of<br>
+IME many many many times.&nbsp;&nbsp;Because IME with status on is hooking all of your<br>
+key inputs, you cannot input 'j', 'k', or almost all of keys to Vim directly.<br>
+<br>
+This&nbsp;<a class="Identifier" href="various.html#+multi_byte_ime">|+multi_byte_ime|</a>&nbsp;feature help this.&nbsp;&nbsp;It reduce times of switch status of<br>
+IME manually.&nbsp;&nbsp;In normal mode, there are almost no need working IME, even<br>
+editing multibyte text.&nbsp;&nbsp;So exiting insert mode with ESC, Vim memorize last<br>
+status of IME and force turn off IME.&nbsp;&nbsp;When re-enter insert mode, Vim revert<br>
+IME status to that memorized automatically.<br>
+<br>
+This works on not only insert-normal mode, but also search-command input and<br>
+replace mode.<br>
+The options&nbsp;<a class="Type" href="options.html#'iminsert'">'iminsert'</a>,&nbsp;<a class="Type" href="options.html#'imsearch'">'imsearch'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'imcmdline'">'imcmdline'</a>&nbsp;can be used to chose<br>
+the different input methods or disable them temporarily.<br>
+<br>
+WHAT IS IME<br>
+&nbsp;&nbsp;&nbsp;&nbsp;IME is a part of East asian version Windows.&nbsp;&nbsp;That helps you to input<br>
+&nbsp;&nbsp;&nbsp;&nbsp;multibyte character.&nbsp;&nbsp;English and other language version Windows does not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;have any IME.&nbsp;&nbsp;(Also there is no need usually.) But there is one that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;called Microsoft Global IME.&nbsp;&nbsp;Global IME is a part of Internet Explorer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;4.0 or above.&nbsp;&nbsp;You can get more information about Global IME, at below<br>
+&nbsp;&nbsp;&nbsp;&nbsp;URL.<br>
+<br>
+<span class="Statement">WHAT IS GLOBAL IME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="mbyte.html#global-ime" name="global-ime">*global-ime*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Global IME makes capability to input Chinese, Japanese, and Korean text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;into Vim buffer on any language version of Windows 98, Windows 95, and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Windows NT 4.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;On Windows 2000 and XP it should work as well (without downloading).&nbsp;&nbsp;On<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Windows 2000 Professional, Global IME is built in, and the Input Locales<br>
+&nbsp;&nbsp;&nbsp;&nbsp;can be added through Control Panel/Regional Options/Input Locales.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Please see below URL for detail of Global IME.&nbsp;&nbsp;You can also find various<br>
+&nbsp;&nbsp;&nbsp;&nbsp;language version of Global IME at same place.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- Global IME detailed information.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://search.microsoft.com/results.aspx?q=global+ime">http://search.microsoft.com/results.aspx?q=global+ime</a></span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- Active Input Method Manager (Global IME)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://msdn.microsoft.com/en-us/library/aa741221(v=VS.85).aspx">http://msdn.microsoft.com/en-us/library/aa741221(v=VS.85).aspx</a></span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Support for Global IME is an experimental feature.<br>
+<br>
+<span class="Todo">NOTE</span>: For IME to work you must make sure the input locales of your language<br>
+are added to your system.&nbsp;&nbsp;The exact location of this depends on the version<br>
+of Windows you use.&nbsp;&nbsp;For example, on my Windows 2000 box:<br>
+1. Control Panel<br>
+2. Regional Options<br>
+3. Input Locales Tab<br>
+4. Add Installed input locales -&gt; Chinese(PRC)<br>
+&nbsp;&nbsp; The default is still English (United Stated)<br>
+<br>
+<br>
+Cursor color when IME or XIM is on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#CursorIM" name="CursorIM">*CursorIM*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;There is a little cute feature for IME.&nbsp;&nbsp;Cursor can indicate status of IME<br>
+&nbsp;&nbsp;&nbsp;&nbsp;by changing its color.&nbsp;&nbsp;Usually status of IME was indicated by little icon<br>
+&nbsp;&nbsp;&nbsp;&nbsp;at a corner of desktop (or taskbar).&nbsp;&nbsp;It is not easy to verify status of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;IME.&nbsp;&nbsp;But this feature help this.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;This works in the same way when using XIM.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;You can select cursor color when status is on by using highlight group<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CursorIM.&nbsp;&nbsp;For example, add these lines to your&nbsp;<a class="Identifier" href="gui.html#gvimrc">|gvimrc|</a>:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('multi_byte_ime')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;highlight Cursor guifg=NONE guibg=Green<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;highlight CursorIM guifg=NONE guibg=Purple<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Cursor color with off IME is green.&nbsp;&nbsp;And purple cursor indicates that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;status is on.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+9. Input with a keymap&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-keymap" name="mbyte-keymap">*mbyte-keymap*</a><br>
+<br>
+When the keyboard doesn't produce the characters you want to enter in your<br>
+text, you can use the&nbsp;<a class="Type" href="options.html#'keymap'">'keymap'</a>&nbsp;option.&nbsp;&nbsp;This will translate one or more<br>
+(English) characters to another (non-English) character.&nbsp;&nbsp;This only happens<br>
+when typing text, not when typing Vim commands.&nbsp;&nbsp;This avoids having to switch<br>
+between two keyboard settings.<br>
+<span class="Special">{only available when compiled with the&nbsp;</span><a class="Identifier" href="various.html#+keymap">|+keymap|</a><span class="Special">&nbsp;feature}</span><br>
+<br>
+The value of the&nbsp;<a class="Type" href="options.html#'keymap'">'keymap'</a>&nbsp;option specifies a keymap file to use.&nbsp;&nbsp;The name of<br>
+this file is one of these two:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;keymap/<span class="Special">{keymap}</span>_<span class="Special">{encoding}</span>.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;keymap/<span class="Special">{keymap}</span>.vim<br>
+<br>
+Here&nbsp;<span class="Special">{keymap}</span>&nbsp;is the value of the&nbsp;<a class="Type" href="options.html#'keymap'">'keymap'</a>&nbsp;option and&nbsp;<span class="Special">{encoding}</span>&nbsp;of the<br>
+<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;option.&nbsp;&nbsp;The file name with the&nbsp;<span class="Special">{encoding}</span>&nbsp;included is tried first.<br>
+<br>
+<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;is used to find these files.&nbsp;&nbsp;To see an overview of all<br>
+available keymap files, use this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo globpath(&amp;rtp, &quot;keymap/*.vim&quot;)</div>
+<br>
+In Insert and Command-line mode you can use&nbsp;<span class="Special">CTRL-^</span>&nbsp;to toggle between using the<br>
+keyboard map or not.&nbsp;<a class="Identifier" href="insert.html#i_CTRL-^">|i_CTRL-^|</a>&nbsp;<a class="Identifier" href="cmdline.html#c_CTRL-^">|c_CTRL-^|</a><br>
+This flag is remembered for Insert mode with the&nbsp;<a class="Type" href="options.html#'iminsert'">'iminsert'</a>&nbsp;option.&nbsp;&nbsp;When<br>
+leaving and entering Insert mode the previous value is used.&nbsp;&nbsp;The same value<br>
+is also used for commands that take a single character argument, like&nbsp;<a class="Identifier" href="motion.html#f">|f|</a>&nbsp;and<br>
+<a class="Identifier" href="change.html#r">|r|</a>.<br>
+For Command-line mode the flag is NOT remembered.&nbsp;&nbsp;You are expected to type an<br>
+Ex command first, which is ASCII.<br>
+For typing search patterns the&nbsp;<a class="Type" href="options.html#'imsearch'">'imsearch'</a>&nbsp;option is used.&nbsp;&nbsp;It can be set to<br>
+use the same value as for&nbsp;<a class="Type" href="options.html#'iminsert'">'iminsert'</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#lCursor" name="lCursor">*lCursor*</a><br>
+It is possible to give the GUI cursor another color when the language mappings<br>
+are being used.&nbsp;&nbsp;This is disabled by default, to avoid that the cursor becomes<br>
+invisible when you use a non-standard background color.&nbsp;&nbsp;Here is an example to<br>
+use a brightly colored cursor:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:highlight Cursor guifg=NONE guibg=Green<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:highlight lCursor guifg=NONE guibg=Cyan</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#keymap-file-format" name="keymap-file-format">*keymap-file-format*</a>&nbsp;<a class="Constant" href="mbyte.html#:loadk" name=":loadk">*:loadk*</a>&nbsp;<a class="Constant" href="mbyte.html#:loadkeymap" name=":loadkeymap">*:loadkeymap*</a>&nbsp;<a class="Constant" href="mbyte.html#E105" name="E105">*E105*</a>&nbsp;<a class="Constant" href="mbyte.html#E791" name="E791">*E791*</a><br>
+The keymap file looks something like this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Maintainer:&nbsp;&nbsp; name &lt;email@address&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Last Changed: 2001 Jan 1</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let b:keymap_name = &quot;short&quot;</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;loadkeymap<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; comment</div>
+<br>
+The lines starting with a &quot; are comments and will be ignored.&nbsp;&nbsp;Blank lines are<br>
+also ignored.&nbsp;&nbsp;The lines with the mappings may have a comment after the useful<br>
+text.<br>
+<br>
+The &quot;b:keymap_name&quot; can be set to a short name, which will be shown in the<br>
+status line.&nbsp;&nbsp;The idea is that this takes less room than the value of<br>
+<a class="Type" href="options.html#'keymap'">'keymap'</a>, which might be long to distinguish between different languages,<br>
+keyboards and encodings.<br>
+<br>
+The actual mappings are in the lines below &quot;loadkeymap&quot;.&nbsp;&nbsp;In the example &quot;a&quot;<br>
+is mapped to &quot;A&quot; and &quot;b&quot; to &quot;B&quot;.&nbsp;&nbsp;Thus the first item is mapped to the second<br>
+item.&nbsp;&nbsp;This is done for each line, until the end of the file.<br>
+These items are exactly the same as what can be used in a&nbsp;<a class="Identifier" href="map.html#:lnoremap">|:lnoremap|</a>&nbsp;command,<br>
+using &quot;<span class="Special">&lt;buffer&gt;</span>&quot; to make the mappings local to the buffer.<br>
+You can check the result with this command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:lmap</div>
+The two items must be separated by white space.&nbsp;&nbsp;You cannot include white<br>
+space inside an item, use the special names &quot;<span class="Special">&lt;Tab&gt;</span>&quot; and &quot;<span class="Special">&lt;Space&gt;</span>&quot; instead.<br>
+The length of the two items together must not exceed 200 bytes.<br>
+<br>
+It's possible to have more than one character in the first column.&nbsp;&nbsp;This works<br>
+like a dead key.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;á</div>
+Since Vim doesn't know if the next character after a quote is really an &quot;a&quot;,<br>
+it will wait for the next character.&nbsp;&nbsp;To be able to insert a single quote,<br>
+also add this line:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;''&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'</div>
+Since the mapping is defined with&nbsp;<a class="Identifier" href="map.html#:lnoremap">|:lnoremap|</a>&nbsp;the resulting quote will not be<br>
+used for the start of another character.<br>
+The &quot;accents&quot; keymap uses this.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#keymap-accents" name="keymap-accents">*keymap-accents*</a><br>
+<br>
+The first column can also be in&nbsp;<a class="Identifier" href="intro.html#<>">|&lt;&gt;|</a>&nbsp;form:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-c&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Ctrl-C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;A-c&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Alt-c<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;A-C&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Alt-C<br>
+<span class="Todo">Note</span>&nbsp;that the Alt mappings may not work, depending on your keyboard and<br>
+terminal.<br>
+<br>
+Although it's possible to have more than one character in the second column,<br>
+this is unusual.&nbsp;&nbsp;But you can use various ways to specify the character:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; literal character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;char-97&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; decimal value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;char-0x61&gt;&nbsp;&nbsp;&nbsp;&nbsp; hexadecimal value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;char-0141&gt;&nbsp;&nbsp;&nbsp;&nbsp; octal value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Space&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; special key name</div>
+<br>
+The characters are assumed to be encoded for the current value of&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>.<br>
+It's possible to use &quot;:scriptencoding&quot; when all characters are given<br>
+literally.&nbsp;&nbsp;That doesn't work when using the&nbsp;<span class="Special">&lt;char-&gt;</span>&nbsp;construct, because the<br>
+conversion is done on the keymap file, not on the resulting character.<br>
+<br>
+The lines after &quot;loadkeymap&quot; are interpreted with&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;set to &quot;C&quot;.<br>
+This means that continuation lines are not used and a backslash has a special<br>
+meaning in the mappings.&nbsp;&nbsp;Examples:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; a comment line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; maps &quot; to x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; maps \ to y</div>
+<br>
+If you write a keymap file that will be useful for others, consider submitting<br>
+it to the Vim maintainer for inclusion in the distribution:<br>
+&lt;maintainer@vim.org&gt;<br>
+<br>
+<br>
+<span class="Statement">HEBREW KEYMAP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="mbyte.html#keymap-hebrew" name="keymap-hebrew">*keymap-hebrew*</a><br>
+<br>
+This file explains what characters are available in UTF-8 and CP1255 encodings,<br>
+and what the keymaps are to get those characters:<br>
+<br>
+<span class="PreProc">glyph&nbsp;&nbsp; encoding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; keymap</span><br>
+<span class="PreProc">Char&nbsp;&nbsp; utf-8 cp1255&nbsp;&nbsp;hebrew&nbsp;&nbsp;hebrewp&nbsp;&nbsp;name</span><br>
+א&nbsp;&nbsp;&nbsp;&nbsp;0x5d0&nbsp;&nbsp;0xe0&nbsp;&nbsp;&nbsp;&nbsp; t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp; 'alef<br>
+ב&nbsp;&nbsp;&nbsp;&nbsp;0x5d1&nbsp;&nbsp;0xe1&nbsp;&nbsp;&nbsp;&nbsp; c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;&nbsp;&nbsp;&nbsp; bet<br>
+ג&nbsp;&nbsp;&nbsp;&nbsp;0x5d2&nbsp;&nbsp;0xe2&nbsp;&nbsp;&nbsp;&nbsp; d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g&nbsp;&nbsp;&nbsp;&nbsp; gimel<br>
+ד&nbsp;&nbsp;&nbsp;&nbsp;0x5d3&nbsp;&nbsp;0xe3&nbsp;&nbsp;&nbsp;&nbsp; s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d&nbsp;&nbsp;&nbsp;&nbsp; dalet<br>
+ה&nbsp;&nbsp;&nbsp;&nbsp;0x5d4&nbsp;&nbsp;0xe4&nbsp;&nbsp;&nbsp;&nbsp; v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h&nbsp;&nbsp;&nbsp;&nbsp; he<br>
+ו&nbsp;&nbsp;&nbsp;&nbsp;0x5d5&nbsp;&nbsp;0xe5&nbsp;&nbsp;&nbsp;&nbsp; u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;&nbsp;&nbsp;&nbsp; vav<br>
+ז&nbsp;&nbsp;&nbsp;&nbsp;0x5d6&nbsp;&nbsp;0xe6&nbsp;&nbsp;&nbsp;&nbsp; z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z&nbsp;&nbsp;&nbsp;&nbsp; zayin<br>
+ח&nbsp;&nbsp;&nbsp;&nbsp;0x5d7&nbsp;&nbsp;0xe7&nbsp;&nbsp;&nbsp;&nbsp; j&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j&nbsp;&nbsp;&nbsp;&nbsp; het<br>
+ט&nbsp;&nbsp;&nbsp;&nbsp;0x5d8&nbsp;&nbsp;0xe8&nbsp;&nbsp;&nbsp;&nbsp; y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp; tet<br>
+י&nbsp;&nbsp;&nbsp;&nbsp;0x5d9&nbsp;&nbsp;0xe9&nbsp;&nbsp;&nbsp;&nbsp; h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp; yod<br>
+ך&nbsp;&nbsp;&nbsp;&nbsp;0x5da&nbsp;&nbsp;0xea&nbsp;&nbsp;&nbsp;&nbsp; l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;K&nbsp;&nbsp;&nbsp;&nbsp; kaf sofit<br>
+כ&nbsp;&nbsp;&nbsp;&nbsp;0x5db&nbsp;&nbsp;0xeb&nbsp;&nbsp;&nbsp;&nbsp; f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;k&nbsp;&nbsp;&nbsp;&nbsp; kaf<br>
+ל&nbsp;&nbsp;&nbsp;&nbsp;0x5dc&nbsp;&nbsp;0xec&nbsp;&nbsp;&nbsp;&nbsp; k&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l&nbsp;&nbsp;&nbsp;&nbsp; lamed<br>
+ם&nbsp;&nbsp;&nbsp;&nbsp;0x5dd&nbsp;&nbsp;0xed&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M&nbsp;&nbsp;&nbsp;&nbsp; mem sofit<br>
+מ&nbsp;&nbsp;&nbsp;&nbsp;0x5de&nbsp;&nbsp;0xee&nbsp;&nbsp;&nbsp;&nbsp; n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp; mem<br>
+ן&nbsp;&nbsp;&nbsp;&nbsp;0x5df&nbsp;&nbsp;0xef&nbsp;&nbsp;&nbsp;&nbsp; i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">N</span>&nbsp;&nbsp;&nbsp;&nbsp; nun sofit<br>
+נ&nbsp;&nbsp;&nbsp;&nbsp;0x5e0&nbsp;&nbsp;0xf0&nbsp;&nbsp;&nbsp;&nbsp; b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp; nun<br>
+ס&nbsp;&nbsp;&nbsp;&nbsp;0x5e1&nbsp;&nbsp;0xf1&nbsp;&nbsp;&nbsp;&nbsp; x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;&nbsp;&nbsp;&nbsp; samech<br>
+ע&nbsp;&nbsp;&nbsp;&nbsp;0x5e2&nbsp;&nbsp;0xf2&nbsp;&nbsp;&nbsp;&nbsp; g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;u&nbsp;&nbsp;&nbsp;&nbsp; `ayin<br>
+ף&nbsp;&nbsp;&nbsp;&nbsp;0x5e3&nbsp;&nbsp;0xf3&nbsp;&nbsp;&nbsp;&nbsp; ;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P&nbsp;&nbsp;&nbsp;&nbsp; pe sofit<br>
+פ&nbsp;&nbsp;&nbsp;&nbsp;0x5e4&nbsp;&nbsp;0xf4&nbsp;&nbsp;&nbsp;&nbsp; p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p&nbsp;&nbsp;&nbsp;&nbsp; pe<br>
+ץ&nbsp;&nbsp;&nbsp;&nbsp;0x5e5&nbsp;&nbsp;0xf5&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;&nbsp; tsadi sofit<br>
+צ&nbsp;&nbsp;&nbsp;&nbsp;0x5e6&nbsp;&nbsp;0xf6&nbsp;&nbsp;&nbsp;&nbsp; m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp; tsadi<br>
+ק&nbsp;&nbsp;&nbsp;&nbsp;0x5e7&nbsp;&nbsp;0xf7&nbsp;&nbsp;&nbsp;&nbsp; e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q&nbsp;&nbsp;&nbsp;&nbsp; qof<br>
+ר&nbsp;&nbsp;&nbsp;&nbsp;0x5e8&nbsp;&nbsp;0xf8&nbsp;&nbsp;&nbsp;&nbsp; r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r&nbsp;&nbsp;&nbsp;&nbsp; resh<br>
+ש&nbsp;&nbsp;&nbsp;&nbsp;0x5e9&nbsp;&nbsp;0xf9&nbsp;&nbsp;&nbsp;&nbsp; a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp; shin<br>
+ת&nbsp;&nbsp;&nbsp;&nbsp;0x5ea&nbsp;&nbsp;0xfa&nbsp;&nbsp;&nbsp;&nbsp; ,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp; tav<br>
+<br>
+Vowel marks and special punctuation:<br>
+הְ&nbsp;&nbsp;&nbsp;&nbsp;0x5b0&nbsp;&nbsp;0xc0&nbsp;&nbsp;&nbsp;&nbsp; A:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A:&nbsp;&nbsp; sheva<br>
+הֱ&nbsp;&nbsp;&nbsp;&nbsp;0x5b1&nbsp;&nbsp;0xc1&nbsp;&nbsp;&nbsp;&nbsp; HE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HE&nbsp;&nbsp; hataf segol<br>
+הֲ&nbsp;&nbsp;&nbsp;&nbsp;0x5b2&nbsp;&nbsp;0xc2&nbsp;&nbsp;&nbsp;&nbsp; HA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HA&nbsp;&nbsp; hataf patah<br>
+הֳ&nbsp;&nbsp;&nbsp;&nbsp;0x5b3&nbsp;&nbsp;0xc3&nbsp;&nbsp;&nbsp;&nbsp; HO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HO&nbsp;&nbsp; hataf qamats<br>
+הִ&nbsp;&nbsp;&nbsp;&nbsp;0x5b4&nbsp;&nbsp;0xc4&nbsp;&nbsp;&nbsp;&nbsp; I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I&nbsp;&nbsp;&nbsp;&nbsp;hiriq<br>
+הֵ&nbsp;&nbsp;&nbsp;&nbsp;0x5b5&nbsp;&nbsp;0xc5&nbsp;&nbsp;&nbsp;&nbsp; AY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AY&nbsp;&nbsp; tsere<br>
+הֶ&nbsp;&nbsp;&nbsp;&nbsp;0x5b6&nbsp;&nbsp;0xc6&nbsp;&nbsp;&nbsp;&nbsp; E&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; E&nbsp;&nbsp;&nbsp;&nbsp;segol<br>
+הַ&nbsp;&nbsp;&nbsp;&nbsp;0x5b7&nbsp;&nbsp;0xc7&nbsp;&nbsp;&nbsp;&nbsp; AA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AA&nbsp;&nbsp; patah<br>
+הָ&nbsp;&nbsp;&nbsp;&nbsp;0x5b8&nbsp;&nbsp;0xc8&nbsp;&nbsp;&nbsp;&nbsp; AO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AO&nbsp;&nbsp; qamats<br>
+הֹ&nbsp;&nbsp;&nbsp;&nbsp;0x5b9&nbsp;&nbsp;0xc9&nbsp;&nbsp;&nbsp;&nbsp; O&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; O&nbsp;&nbsp;&nbsp;&nbsp;holam<br>
+הֻ&nbsp;&nbsp;&nbsp;&nbsp;0x5bb&nbsp;&nbsp;0xcb&nbsp;&nbsp;&nbsp;&nbsp; U&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; U&nbsp;&nbsp;&nbsp;&nbsp;qubuts<br>
+כּ&nbsp;&nbsp;&nbsp;&nbsp;0x5bc&nbsp;&nbsp;0xcc&nbsp;&nbsp;&nbsp;&nbsp; D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; D&nbsp;&nbsp;&nbsp;&nbsp;dagesh<br>
+הֽ&nbsp;&nbsp;&nbsp;&nbsp;0x5bd&nbsp;&nbsp;0xcd&nbsp;&nbsp;&nbsp;&nbsp; ]T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]T&nbsp;&nbsp; meteg<br>
+ה־&nbsp;&nbsp; 0x5be&nbsp;&nbsp;0xce&nbsp;&nbsp;&nbsp;&nbsp; ]Q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]Q&nbsp;&nbsp; maqaf<br>
+בֿ&nbsp;&nbsp;&nbsp;&nbsp;0x5bf&nbsp;&nbsp;0xcf&nbsp;&nbsp;&nbsp;&nbsp; ]R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]R&nbsp;&nbsp; rafe<br>
+ב׀&nbsp;&nbsp; 0x5c0&nbsp;&nbsp;0xd0&nbsp;&nbsp;&nbsp;&nbsp; ]p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]p&nbsp;&nbsp; paseq<br>
+שׁ&nbsp;&nbsp;&nbsp;&nbsp;0x5c1&nbsp;&nbsp;0xd1&nbsp;&nbsp;&nbsp;&nbsp; SR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SR&nbsp;&nbsp; shin-dot<br>
+שׂ&nbsp;&nbsp;&nbsp;&nbsp;0x5c2&nbsp;&nbsp;0xd2&nbsp;&nbsp;&nbsp;&nbsp; SL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SL&nbsp;&nbsp; sin-dot<br>
+׃&nbsp;&nbsp;&nbsp;&nbsp;0x5c3&nbsp;&nbsp;0xd3&nbsp;&nbsp;&nbsp;&nbsp; ]P&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]P&nbsp;&nbsp; sof-pasuq<br>
+װ&nbsp;&nbsp;&nbsp;&nbsp;0x5f0&nbsp;&nbsp;0xd4&nbsp;&nbsp;&nbsp;&nbsp; VV&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VV&nbsp;&nbsp; double-vav<br>
+ױ&nbsp;&nbsp;&nbsp;&nbsp;0x5f1&nbsp;&nbsp;0xd5&nbsp;&nbsp;&nbsp;&nbsp; VY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VY&nbsp;&nbsp; vav-yod<br>
+ײ&nbsp;&nbsp;&nbsp;&nbsp;0x5f2&nbsp;&nbsp;0xd6&nbsp;&nbsp;&nbsp;&nbsp; YY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YY&nbsp;&nbsp; yod-yod<br>
+<br>
+The following are only available in utf-8<br>
+<br>
+Cantillation marks:<br>
+glyph<br>
+Char utf-8 hebrew name<br>
+ב֑&nbsp;&nbsp;&nbsp;&nbsp;0x591&nbsp;&nbsp; C:&nbsp;&nbsp; etnahta<br>
+ב֒&nbsp;&nbsp;&nbsp;&nbsp;0x592&nbsp;&nbsp; Cs&nbsp;&nbsp; segol<br>
+ב֓&nbsp;&nbsp;&nbsp;&nbsp;0x593&nbsp;&nbsp; CS&nbsp;&nbsp; shalshelet<br>
+ב֔&nbsp;&nbsp;&nbsp;&nbsp;0x594&nbsp;&nbsp; Cz&nbsp;&nbsp; zaqef qatan<br>
+ב֕&nbsp;&nbsp;&nbsp;&nbsp;0x595&nbsp;&nbsp; CZ&nbsp;&nbsp; zaqef gadol<br>
+ב֖&nbsp;&nbsp;&nbsp;&nbsp;0x596&nbsp;&nbsp; Ct&nbsp;&nbsp; tipeha<br>
+ב֗&nbsp;&nbsp;&nbsp;&nbsp;0x597&nbsp;&nbsp; Cr&nbsp;&nbsp; revia<br>
+ב֘&nbsp;&nbsp;&nbsp;&nbsp;0x598&nbsp;&nbsp; Cq&nbsp;&nbsp; zarqa<br>
+ב֙&nbsp;&nbsp;&nbsp;&nbsp;0x599&nbsp;&nbsp; Cp&nbsp;&nbsp; pashta<br>
+ב֚&nbsp;&nbsp;&nbsp;&nbsp;0x59a&nbsp;&nbsp; C!&nbsp;&nbsp; yetiv<br>
+ב֛&nbsp;&nbsp;&nbsp;&nbsp;0x59b&nbsp;&nbsp; Cv&nbsp;&nbsp; tevir<br>
+ב֜&nbsp;&nbsp;&nbsp;&nbsp;0x59c&nbsp;&nbsp; Cg&nbsp;&nbsp; geresh<br>
+ב֝&nbsp;&nbsp;&nbsp;&nbsp;0x59d&nbsp;&nbsp; C*&nbsp;&nbsp; geresh qadim<br>
+ב֞&nbsp;&nbsp;&nbsp;&nbsp;0x59e&nbsp;&nbsp; CG&nbsp;&nbsp; gershayim<br>
+ב֟&nbsp;&nbsp;&nbsp;&nbsp;0x59f&nbsp;&nbsp; CP&nbsp;&nbsp; qarnei-parah<br>
+ב֪&nbsp;&nbsp;&nbsp;&nbsp;0x5aa&nbsp;&nbsp; Cy&nbsp;&nbsp; yerach-ben-yomo<br>
+ב֫&nbsp;&nbsp;&nbsp;&nbsp;0x5ab&nbsp;&nbsp; Co&nbsp;&nbsp; ole<br>
+ב֬&nbsp;&nbsp;&nbsp;&nbsp;0x5ac&nbsp;&nbsp; Ci&nbsp;&nbsp; iluy<br>
+ב֭&nbsp;&nbsp;&nbsp;&nbsp;0x5ad&nbsp;&nbsp; Cd&nbsp;&nbsp; dehi<br>
+ב֮&nbsp;&nbsp;&nbsp;&nbsp;0x5ae&nbsp;&nbsp; Cn&nbsp;&nbsp; zinor<br>
+ב֯&nbsp;&nbsp;&nbsp;&nbsp;0x5af&nbsp;&nbsp; CC&nbsp;&nbsp; masora circle<br>
+<br>
+Combining forms:<br>
+ﬠ&nbsp;&nbsp;&nbsp;&nbsp;0xfb20&nbsp;&nbsp;X`&nbsp;&nbsp; Alternative `ayin<br>
+ﬡ&nbsp;&nbsp;&nbsp;&nbsp;0xfb21&nbsp;&nbsp;X'&nbsp;&nbsp; Alternative 'alef<br>
+ﬢ&nbsp;&nbsp;&nbsp;&nbsp;0xfb22&nbsp;&nbsp;X-d&nbsp;&nbsp;Alternative dalet<br>
+ﬣ&nbsp;&nbsp;&nbsp;&nbsp;0xfb23&nbsp;&nbsp;X-h&nbsp;&nbsp;Alternative he<br>
+ﬤ&nbsp;&nbsp;&nbsp;&nbsp;0xfb24&nbsp;&nbsp;X-k&nbsp;&nbsp;Alternative kaf<br>
+ﬥ&nbsp;&nbsp;&nbsp;&nbsp;0xfb25&nbsp;&nbsp;X-l&nbsp;&nbsp;Alternative lamed<br>
+ﬦ&nbsp;&nbsp;&nbsp;&nbsp;0xfb26&nbsp;&nbsp;X-m&nbsp;&nbsp;Alternative mem-sofit<br>
+ﬧ&nbsp;&nbsp;&nbsp;&nbsp;0xfb27&nbsp;&nbsp;X-r&nbsp;&nbsp;Alternative resh<br>
+ﬨ&nbsp;&nbsp;&nbsp;&nbsp;0xfb28&nbsp;&nbsp;X-t&nbsp;&nbsp;Alternative tav<br>
+﬩&nbsp;&nbsp;&nbsp;&nbsp;0xfb29&nbsp;&nbsp;X-+&nbsp;&nbsp;Alternative plus<br>
+שׁ&nbsp;&nbsp;&nbsp;&nbsp;0xfb2a&nbsp;&nbsp;XW&nbsp;&nbsp; shin+shin-dot<br>
+שׂ&nbsp;&nbsp;&nbsp;&nbsp;0xfb2b&nbsp;&nbsp;Xw&nbsp;&nbsp; shin+sin-dot<br>
+שּׁ&nbsp;&nbsp;&nbsp;&nbsp;0xfb2c&nbsp;&nbsp;X..W&nbsp;&nbsp;shin+shin-dot+dagesh<br>
+שּׂ&nbsp;&nbsp;&nbsp;&nbsp;0xfb2d&nbsp;&nbsp;X..w&nbsp;&nbsp;shin+sin-dot+dagesh<br>
+אַ&nbsp;&nbsp;&nbsp;&nbsp;0xfb2e&nbsp;&nbsp;XA&nbsp;&nbsp; alef+patah<br>
+אָ&nbsp;&nbsp;&nbsp;&nbsp;0xfb2f&nbsp;&nbsp;XO&nbsp;&nbsp; alef+qamats<br>
+אּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb30&nbsp;&nbsp;XI&nbsp;&nbsp; alef+hiriq (mapiq)<br>
+בּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb31&nbsp;&nbsp;X.b&nbsp;&nbsp;bet+dagesh<br>
+גּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb32&nbsp;&nbsp;X.g&nbsp;&nbsp;gimel+dagesh<br>
+דּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb33&nbsp;&nbsp;X.d&nbsp;&nbsp;dalet+dagesh<br>
+הּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb34&nbsp;&nbsp;X.h&nbsp;&nbsp;he+dagesh<br>
+וּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb35&nbsp;&nbsp;Xu&nbsp;&nbsp;vav+dagesh<br>
+זּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb36&nbsp;&nbsp;X.z&nbsp;&nbsp;zayin+dagesh<br>
+טּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb38&nbsp;&nbsp;X.T&nbsp;&nbsp;tet+dagesh<br>
+יּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb39&nbsp;&nbsp;X.y&nbsp;&nbsp;yud+dagesh<br>
+ךּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb3a&nbsp;&nbsp;X.K&nbsp;&nbsp;kaf sofit+dagesh<br>
+כּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb3b&nbsp;&nbsp;X.k&nbsp;&nbsp;kaf+dagesh<br>
+לּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb3c&nbsp;&nbsp;X.l&nbsp;&nbsp;lamed+dagesh<br>
+מּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb3e&nbsp;&nbsp;X.m&nbsp;&nbsp;mem+dagesh<br>
+נּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb40&nbsp;&nbsp;X.n&nbsp;&nbsp;nun+dagesh<br>
+סּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb41&nbsp;&nbsp;X.s&nbsp;&nbsp;samech+dagesh<br>
+ףּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb43&nbsp;&nbsp;X.P&nbsp;&nbsp;pe sofit+dagesh<br>
+פּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb44&nbsp;&nbsp;X.p&nbsp;&nbsp;pe+dagesh<br>
+צּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb46&nbsp;&nbsp;X.x&nbsp;&nbsp;tsadi+dagesh<br>
+קּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb47&nbsp;&nbsp;X.q&nbsp;&nbsp;qof+dagesh<br>
+רּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb48&nbsp;&nbsp;X.r&nbsp;&nbsp;resh+dagesh<br>
+שּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb49&nbsp;&nbsp;X.w&nbsp;&nbsp;shin+dagesh<br>
+תּ&nbsp;&nbsp;&nbsp;&nbsp;0xfb4a&nbsp;&nbsp;X.t&nbsp;&nbsp;tav+dagesh<br>
+וֹ&nbsp;&nbsp;&nbsp;&nbsp;0xfb4b&nbsp;&nbsp;Xo&nbsp;&nbsp; vav+holam<br>
+בֿ&nbsp;&nbsp;&nbsp;&nbsp;0xfb4c&nbsp;&nbsp;XRb&nbsp;&nbsp;bet+rafe<br>
+כֿ&nbsp;&nbsp;&nbsp;&nbsp;0xfb4d&nbsp;&nbsp;XRk&nbsp;&nbsp;kaf+rafe<br>
+פֿ&nbsp;&nbsp;&nbsp;&nbsp;0xfb4e&nbsp;&nbsp;XRp&nbsp;&nbsp;pe+rafe<br>
+ﭏ&nbsp;&nbsp;&nbsp;&nbsp;0xfb4f&nbsp;&nbsp;Xal&nbsp;&nbsp;alef-lamed<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+10. Using UTF-8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-utf8" name="mbyte-utf8">*mbyte-utf8*</a>&nbsp;<a class="Constant" href="mbyte.html#UTF-8" name="UTF-8">*UTF-8*</a>&nbsp;<a class="Constant" href="mbyte.html#utf-8" name="utf-8">*utf-8*</a>&nbsp;<a class="Constant" href="mbyte.html#utf8" name="utf8">*utf8*</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#Unicode" name="Unicode">*Unicode*</a>&nbsp;<a class="Constant" href="mbyte.html#unicode" name="unicode">*unicode*</a><br>
+The Unicode character set was designed to include all characters from other<br>
+character sets.&nbsp;&nbsp;Therefore it is possible to write text in any language using<br>
+Unicode (with a few rarely used languages excluded).&nbsp;&nbsp;And it's mostly possible<br>
+to mix these languages in one file, which is impossible with other encodings.<br>
+<br>
+Unicode can be encoded in several ways.&nbsp;&nbsp;The most popular one is UTF-8, which<br>
+uses one or more bytes for each character and is backwards compatible with<br>
+ASCII.&nbsp;&nbsp; On MS-Windows UTF-16 is also used (previously UCS-2), which uses<br>
+16-bit words.&nbsp;&nbsp;Vim can support all of these encodings, but always uses UTF-8<br>
+internally.<br>
+<br>
+Vim has comprehensive UTF-8 support.&nbsp;&nbsp;It works well in:<br>
+- xterm with utf-8 support enabled<br>
+- Athena, Motif and GTK GUI<br>
+- MS-Windows GUI<br>
+- several other platforms<br>
+<br>
+Double-width characters are supported.&nbsp;&nbsp;This works best with&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;or<br>
+<a class="Type" href="options.html#'guifontset'">'guifontset'</a>.&nbsp;&nbsp;When using only&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;the wide characters are drawn in the<br>
+normal width and a space to fill the gap.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that the&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;option<br>
+is no longer relevant in the GTK+ 2 GUI.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#bom-bytes" name="bom-bytes">*bom-bytes*</a><br>
+When reading a file a BOM (Byte Order Mark) can be used to recognize the<br>
+Unicode encoding:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EF BB BF&nbsp;&nbsp;&nbsp;&nbsp; utf-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FE FF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;utf-16 big endian<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FF FE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;utf-16 little endian<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;00 00 FE FF&nbsp;&nbsp;utf-32 big endian<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FF FE 00 00&nbsp;&nbsp;utf-32 little endian<br>
+<br>
+Utf-8 is the recommended encoding.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that it's difficult to tell utf-16<br>
+and utf-32 apart.&nbsp;&nbsp;Utf-16 is often used on MS-Windows, utf-32 is not<br>
+widespread as file format.<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-combining" name="mbyte-combining">*mbyte-combining*</a>&nbsp;<a class="Constant" href="mbyte.html#mbyte-composing" name="mbyte-composing">*mbyte-composing*</a><br>
+A composing or combining character is used to change the meaning of the<br>
+character before it.&nbsp;&nbsp;The combining characters are drawn on top of the<br>
+preceding character.<br>
+Up to two combining characters can be used by default.&nbsp;&nbsp;This can be changed<br>
+with the&nbsp;<a class="Type" href="options.html#'maxcombine'">'maxcombine'</a>&nbsp;option.<br>
+When editing text a composing character is mostly considered part of the<br>
+preceding character.&nbsp;&nbsp;For example &quot;x&quot; will delete a character and its<br>
+following composing characters by default.<br>
+If the&nbsp;<a class="Type" href="options.html#'delcombine'">'delcombine'</a>&nbsp;option is on, then pressing 'x' will delete the combining<br>
+characters, one at a time, then the base character.&nbsp;&nbsp;But when inserting, you<br>
+type the first character and the following composing characters separately,<br>
+after which they will be joined.&nbsp;&nbsp;The &quot;r&quot; command will not allow you to type a<br>
+combining character, because it doesn't know one is coming.&nbsp;&nbsp;Use &quot;R&quot; instead.<br>
+<br>
+Bytes which are not part of a valid UTF-8 byte sequence are handled like a<br>
+single character and displayed as&nbsp;<span class="Special">&lt;xx&gt;</span>, where &quot;xx&quot; is the hex value of the<br>
+byte.<br>
+<br>
+Overlong sequences are not handled specially and displayed like a valid<br>
+character.&nbsp;&nbsp;However, search patterns may not match on an overlong sequence.<br>
+(an overlong sequence is where more bytes are used than required for the<br>
+character.)&nbsp;&nbsp;An exception is NUL (zero) which is displayed as &quot;<span class="Special">&lt;00&gt;</span>&quot;.<br>
+<br>
+In the file and buffer the full range of Unicode characters can be used (31<br>
+bits).&nbsp;&nbsp;However, displaying only works for the characters present in the<br>
+selected font.<br>
+<br>
+Useful commands:<br>
+- &quot;ga&quot; shows the decimal, hexadecimal and octal value of the character under<br>
+&nbsp;&nbsp;the cursor.&nbsp;&nbsp;If there are composing characters these are shown too.&nbsp;&nbsp;(If the<br>
+&nbsp;&nbsp;message is truncated, use &quot;:messages&quot;).<br>
+- &quot;g8&quot; shows the bytes used in a UTF-8 character, also the composing<br>
+&nbsp;&nbsp;characters, as hex numbers.<br>
+- &quot;:set encoding=utf-8 fileencodings=&quot; forces using UTF-8 for all files.&nbsp;&nbsp;The<br>
+&nbsp;&nbsp;default is to use the current locale for&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;and set&nbsp;<a class="Type" href="options.html#'fileencodings'">'fileencodings'</a><br>
+&nbsp;&nbsp;to automatically detect the encoding of a file.<br>
+<br>
+<br>
+STARTING VIM<br>
+<br>
+If your current locale is in an utf-8 encoding, Vim will automatically start<br>
+in utf-8 mode.<br>
+<br>
+If you are using another locale:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set encoding=utf-8</div>
+<br>
+You might also want to select the font used for the menus.&nbsp;&nbsp;Unfortunately this<br>
+doesn't always work.&nbsp;&nbsp;See the system specific remarks below, and&nbsp;<a class="Type" href="options.html#'langmenu'">'langmenu'</a>.<br>
+<br>
+<br>
+USING UTF-8 IN X-Windows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#utf-8-in-xwindows" name="utf-8-in-xwindows">*utf-8-in-xwindows*</a><br>
+<br>
+<span class="Todo">Note</span>: This section does not apply to the GTK+ 2 GUI.<br>
+<br>
+You need to specify a font to be used.&nbsp;&nbsp;For double-wide characters another<br>
+font is required, which is exactly twice as wide.&nbsp;&nbsp;There are three ways to do<br>
+this:<br>
+<br>
+1. Set&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;and let Vim find a matching&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a><br>
+2. Set&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a><br>
+3. Set&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a><br>
+<br>
+See the documentation for each option for details.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp; :set guifont=-misc-fixed-medium-r-normal--15-140-75-75-c-90-iso10646-1</div>
+<br>
+You might also want to set the font used for the menus.&nbsp;&nbsp;This only works for<br>
+Motif.&nbsp;&nbsp;Use the &quot;:hi Menu font=<span class="Special">{fontname}</span>&quot; command for this.&nbsp;<a class="Identifier" href="syntax.html#:highlight">|:highlight|</a><br>
+<br>
+<br>
+<span class="Statement">TYPING UTF-8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="mbyte.html#utf-8-typing" name="utf-8-typing">*utf-8-typing*</a><br>
+<br>
+If you are using X-Windows, you should find an input method that supports<br>
+utf-8.<br>
+<br>
+If your system does not provide support for typing utf-8, you can use the<br>
+<a class="Type" href="options.html#'keymap'">'keymap'</a>&nbsp;feature.&nbsp;&nbsp;This allows writing a keymap file, which defines a utf-8<br>
+character as a sequence of ASCII characters.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="mbyte.html#mbyte-keymap">|mbyte-keymap|</a>.<br>
+<br>
+Another method is to set the current locale to the language you want to use<br>
+and for which you have a XIM available.&nbsp;&nbsp;Then set&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;to that<br>
+language and Vim will convert the typed characters to&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;for you.<br>
+<br>
+If everything else fails, you can type any character as four hex bytes:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTRL-V u 1234</div>
+<br>
+&quot;1234&quot; is interpreted as a hex number.&nbsp;&nbsp;You must type four characters, prepend<br>
+a zero if necessary.<br>
+<br>
+<br>
+<span class="Statement">COMMAND ARGUMENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="mbyte.html#utf-8-char-arg" name="utf-8-char-arg">*utf-8-char-arg*</a><br>
+<br>
+Commands like&nbsp;<a class="Identifier" href="motion.html#f">|f|</a>,&nbsp;<a class="Identifier" href="motion.html#F">|F|</a>,&nbsp;<a class="Identifier" href="motion.html#t">|t|</a>&nbsp;and&nbsp;<a class="Identifier" href="change.html#r">|r|</a>&nbsp;take an argument of one character.&nbsp;&nbsp;For<br>
+UTF-8 this argument may include one or two composing characters.&nbsp;&nbsp;These need<br>
+to be produced together with the base character, Vim doesn't wait for the next<br>
+character to be typed to find out if it is a composing character or not.<br>
+Using&nbsp;<a class="Type" href="options.html#'keymap'">'keymap'</a>&nbsp;or&nbsp;<a class="Identifier" href="map.html#:lmap">|:lmap|</a>&nbsp;is a nice way to type these characters.<br>
+<br>
+The commands that search for a character in a line handle composing characters<br>
+as follows.&nbsp;&nbsp;When searching for a character without a composing character,<br>
+this will find matches in the text with or without composing characters.&nbsp;&nbsp;When<br>
+searching for a character with a composing character, this will only find<br>
+matches with that composing character.&nbsp;&nbsp;It was implemented this way, because<br>
+not everybody is able to type a composing character.<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+11. Overview of options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="mbyte.html#mbyte-options" name="mbyte-options">*mbyte-options*</a><br>
+<br>
+These options are relevant for editing multi-byte files.&nbsp;&nbsp;Check the help in<br>
+options.txt for detailed information.<br>
+<br>
+<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Encoding used for the keyboard and display.&nbsp;&nbsp;It is also the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default encoding for files.<br>
+<br>
+<a class="Type" href="options.html#'fileencoding'">'fileencoding'</a>&nbsp;&nbsp;Encoding of a file.&nbsp;&nbsp;When it's different from&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;conversion is done when reading or writing the file.<br>
+<br>
+<a class="Type" href="options.html#'fileencodings'">'fileencodings'</a>&nbsp;List of possible encodings of a file.&nbsp;&nbsp;When opening a file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;these will be tried and the first one that doesn't cause an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error is used for&nbsp;<a class="Type" href="options.html#'fileencoding'">'fileencoding'</a>.<br>
+<br>
+<a class="Type" href="options.html#'charconvert'">'charconvert'</a>&nbsp;&nbsp; Expression used to convert files from one encoding to another.<br>
+<br>
+<a class="Type" href="options.html#'formatoptions'">'formatoptions'</a>&nbsp;The 'm' flag can be included to have formatting break a line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at a multibyte character of 256 or higher.&nbsp;&nbsp;Thus is useful for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;languages where a sequence of characters can be broken<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;anywhere.<br>
+<br>
+<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;&nbsp;&nbsp;&nbsp;The list of font names used for a multi-byte encoding.&nbsp;&nbsp;When<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this option is not empty, it replaces&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>.<br>
+<br>
+<a class="Type" href="options.html#'keymap'">'keymap'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify the name of a keyboard mapping.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Contributions specifically for the multi-byte features by:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chi-Deok Hwang &lt;hwang@mizi.co.kr&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SungHyun Nam &lt;goweol@gmail.com&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;K.Nagano &lt;nagano@atese.advantest.co.jp&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Taro Muraoka&nbsp;&nbsp;&lt;koron@tka.att.ne.jp&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yasuhiro Matsumoto &lt;mattn@mail.goo.ne.jp&gt;<br>
+<br>
+&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

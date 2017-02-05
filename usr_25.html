@@ -1,0 +1,588 @@
+---
+layout: vimdoc
+helpname: 'usr_25'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_25.html" name="usr_25.txt">*usr_25.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2016 Mar 28<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Editing formatted text<br>
+<br>
+<br>
+Text hardly ever comes in one sentence per line.&nbsp;&nbsp;This chapter is about<br>
+breaking sentences to make them fit on a page and other formatting.<br>
+Vim also has useful features for editing single-line paragraphs and tables.<br>
+<br>
+<a class="Identifier" href="usr_25.html#25.1">|25.1|</a>&nbsp;&nbsp;Breaking lines<br>
+<a class="Identifier" href="usr_25.html#25.2">|25.2|</a>&nbsp;&nbsp;Aligning text<br>
+<a class="Identifier" href="usr_25.html#25.3">|25.3|</a>&nbsp;&nbsp;Indents and tabs<br>
+<a class="Identifier" href="usr_25.html#25.4">|25.4|</a>&nbsp;&nbsp;Dealing with long lines<br>
+<a class="Identifier" href="usr_25.html#25.5">|25.5|</a>&nbsp;&nbsp;Editing tables<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_26.html">|usr_26.txt|</a>&nbsp;&nbsp;Repeating<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_24.html">|usr_24.txt|</a>&nbsp;&nbsp;Inserting quickly<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_25.html#25.1" name="25.1">*25.1*</a>&nbsp;&nbsp;Breaking lines<br>
+<br>
+Vim has a number of functions that make dealing with text easier.&nbsp;&nbsp;By default,<br>
+the editor does not perform automatic line breaks.&nbsp;&nbsp;In other words, you have<br>
+to press&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;yourself.&nbsp;&nbsp;This is useful when you are writing programs where<br>
+you want to decide where the line ends.&nbsp;&nbsp;It is not so good when you are<br>
+creating documentation and want the text to be at most 70 character wide.<br>
+&nbsp;&nbsp; If you set the&nbsp;<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;option, Vim automatically inserts line breaks.<br>
+Suppose, for example, that you want a very narrow column of only 30<br>
+characters.&nbsp;&nbsp;You need to execute the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set textwidth=30</div>
+<br>
+Now you start typing (ruler added):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12345678901234567890123456789012345<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">I taught programming for a whi</span><br>
+<br>
+If you type &quot;l&quot; next, this makes the line longer than the 30-character limit.<br>
+When Vim sees this, it inserts a line break and you get the following:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12345678901234567890123456789012345<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">I taught programming for a</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">whil</span><br>
+<br>
+Continuing on, you can type in the rest of the paragraph:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12345678901234567890123456789012345<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">I taught programming for a</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">while. One time, I was stopped</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">by the Fort Worth police,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">because my homework was too</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">hard. True story.</span><br>
+<br>
+You do not have to type newlines; Vim puts them in automatically.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;option makes Vim display lines with a line break, but this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doesn't insert a line break in the file.<br>
+<br>
+<br>
+REFORMATTING<br>
+<br>
+The Vim editor is not a word processor.&nbsp;&nbsp;In a word processor, if you delete<br>
+something at the beginning of the paragraph, the line breaks are reworked.&nbsp;&nbsp;In<br>
+Vim they are not; so if you delete the word &quot;programming&quot; from the first line,<br>
+all you get is a short line:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12345678901234567890123456789012345<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">I taught for a</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">while. One time, I was stopped</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">by the Fort Worth police,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">because my homework was too</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">hard. True story.</span><br>
+<br>
+This does not look good.&nbsp;&nbsp;To get the paragraph into shape you use the &quot;gq&quot;<br>
+operator.<br>
+&nbsp;&nbsp; Let's first use this with a Visual selection.&nbsp;&nbsp;Starting from the first<br>
+line, type:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v4jgq</div>
+<br>
+&quot;v&quot; to start Visual mode, &quot;4j&quot; to move to the end of the paragraph and then<br>
+the &quot;gq&quot; operator.&nbsp;&nbsp;The result is:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12345678901234567890123456789012345<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">I taught for a while. One</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">time, I was stopped by the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Fort Worth police, because my</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">homework was too hard. True</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">story.</span><br>
+<br>
+<span class="Todo">Note</span>: there is a way to do automatic formatting for specific types of text<br>
+layouts, see&nbsp;<a class="Identifier" href="change.html#auto-format">|auto-format|</a>.<br>
+<br>
+Since &quot;gq&quot; is an operator, you can use one of the three ways to select the<br>
+text it works on: With Visual mode, with a movement and with a text object.<br>
+&nbsp;&nbsp; The example above could also be done with &quot;gq4j&quot;.&nbsp;&nbsp;That's less typing, but<br>
+you have to know the line count.&nbsp;&nbsp;A more useful motion command is &quot;}&quot;.&nbsp;&nbsp;This<br>
+moves to the end of a paragraph.&nbsp;&nbsp;Thus &quot;gq}&quot; formats from the cursor to the<br>
+end of the current paragraph.<br>
+&nbsp;&nbsp; A very useful text object to use with &quot;gq&quot; is the paragraph.&nbsp;&nbsp;Try this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gqap</div>
+<br>
+&quot;ap&quot; stands for &quot;a-paragraph&quot;.&nbsp;&nbsp;This formats the text of one paragraph<br>
+(separated by empty lines).&nbsp;&nbsp;Also the part before the cursor.<br>
+&nbsp;&nbsp; If you have your paragraphs separated by empty lines, you can format the<br>
+whole file by typing this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gggqG</div>
+<br>
+&quot;gg&quot; to move to the first line, &quot;gqG&quot; to format until the last line.<br>
+&nbsp;&nbsp; Warning: If your paragraphs are not properly separated, they will be joined<br>
+together.&nbsp;&nbsp;A common mistake is to have a line with a space or tab.&nbsp;&nbsp;That's a<br>
+blank line, but not an empty line.<br>
+<br>
+Vim is able to format more than just plain text.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="change.html#fo-table">|fo-table|</a>&nbsp;for how to<br>
+change this.&nbsp;&nbsp;See the&nbsp;<a class="Type" href="options.html#'joinspaces'">'joinspaces'</a>&nbsp;option to change the number of spaces used<br>
+after a full stop.<br>
+&nbsp;&nbsp; It is possible to use an external program for formatting.&nbsp;&nbsp;This is useful<br>
+if your text can't be properly formatted with Vim's builtin command.&nbsp;&nbsp;See the<br>
+<a class="Type" href="options.html#'formatprg'">'formatprg'</a>&nbsp;option.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_25.html#25.2" name="25.2">*25.2*</a>&nbsp;&nbsp;Aligning text<br>
+<br>
+To center a range of lines, use the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:{range}center [width]</div>
+<br>
+<span class="Special">{range}</span>&nbsp;is the usual command-line range.&nbsp;&nbsp;<span class="Special">[width]</span>&nbsp;is an optional line width to<br>
+use for centering.&nbsp;&nbsp;If&nbsp;<span class="Special">[width]</span>&nbsp;is not specified, it defaults to the value of<br>
+<a class="Type" href="options.html#'textwidth'">'textwidth'</a>.&nbsp;&nbsp;(If&nbsp;<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;is 0, the default is 80.)<br>
+&nbsp;&nbsp; For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:1,5center 40</div>
+<br>
+results in the following:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">I taught for a while. One</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">time, I was stopped by the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Fort Worth police, because my</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">homework was too hard. True</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">story.</span><br>
+<br>
+<br>
+RIGHT ALIGNMENT<br>
+<br>
+Similarly, the &quot;:right&quot; command right-justifies the text:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:1,5right 37</div>
+<br>
+gives this result:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">I taught for a while. One</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">time, I was stopped by the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Fort Worth police, because my</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">homework was too hard. True</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">story.</span><br>
+<br>
+LEFT ALIGNMENT<br>
+<br>
+Finally there is this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:{range}left [margin]</div>
+<br>
+Unlike &quot;:center&quot; and &quot;:right&quot;, however, the argument to &quot;:left&quot; is not the<br>
+length of the line.&nbsp;&nbsp;Instead it is the left margin.&nbsp;&nbsp;If it is omitted, the<br>
+text will be put against the left side of the screen (using a zero margin<br>
+would do the same).&nbsp;&nbsp;If it is 5, the text will be indented 5 spaces.&nbsp;&nbsp;For<br>
+example, use these commands:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:1left 5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:2,5left</div>
+<br>
+This results in the following:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">I taught for a while. One</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">time, I was stopped by the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Fort Worth police, because my</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">homework was too hard. True</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">story.</span><br>
+<br>
+<br>
+JUSTIFYING TEXT<br>
+<br>
+Vim has no built-in way of justifying text.&nbsp;&nbsp;However, there is a neat macro<br>
+package that does the job.&nbsp;&nbsp;To use this package, execute the following<br>
+command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:packadd justify</div>
+<br>
+Or put this line in your&nbsp;<a class="Identifier" href="starting.html#vimrc">|vimrc|</a>:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;packadd! justify</div>
+<br>
+This Vim script file defines a new visual command &quot;_j&quot;.&nbsp;&nbsp;To justify a block of<br>
+text, highlight the text in Visual mode and then execute &quot;_j&quot;.<br>
+&nbsp;&nbsp; Look in the file for more explanations.&nbsp;&nbsp;To go there, do &quot;gf&quot; on this name:<br>
+$VIMRUNTIME/pack/dist/opt/justify/plugin/justify.vim.<br>
+<br>
+An alternative is to filter the text through an external program.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%!fmt</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_25.html#25.3" name="25.3">*25.3*</a>&nbsp;&nbsp;Indents and tabs<br>
+<br>
+Indents can be used to make text stand out from the rest.&nbsp;&nbsp;The example texts<br>
+in this manual, for example, are indented by eight spaces or a tab.&nbsp;&nbsp;You would<br>
+normally enter this by typing a tab at the start of each line.&nbsp;&nbsp;Take this<br>
+text:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">the first line</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">the second line</span><br>
+<br>
+This is entered by typing a tab, some text,&nbsp;<span class="Special">&lt;Enter&gt;</span>, tab and more text.<br>
+&nbsp;&nbsp; The&nbsp;<a class="Type" href="options.html#'autoindent'">'autoindent'</a>&nbsp;option inserts indents automatically:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set autoindent</div>
+<br>
+When a new line is started it gets the same indent as the previous line.&nbsp;&nbsp;In<br>
+the above example, the tab after the&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;is not needed anymore.<br>
+<br>
+<br>
+INCREASING INDENT<br>
+<br>
+To increase the amount of indent in a line, use the &quot;&gt;&quot; operator.&nbsp;&nbsp;Often this<br>
+is used as &quot;&gt;&gt;&quot;, which adds indent to the current line.<br>
+&nbsp;&nbsp; The amount of indent added is specified with the&nbsp;<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;option.&nbsp;&nbsp;The<br>
+default value is 8.&nbsp;&nbsp;To make &quot;&gt;&gt;&quot; insert four spaces worth of indent, for<br>
+example, type this:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set shiftwidth=4</div>
+<br>
+When used on the second line of the example text, this is what you get:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">the first line</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">the second line</span><br>
+<br>
+&quot;4&gt;&gt;&quot; will increase the indent of four lines.<br>
+<br>
+<br>
+TABSTOP<br>
+<br>
+If you want to make indents a multiple of 4, you set&nbsp;<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;to 4.&nbsp;&nbsp;But<br>
+when pressing a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;you still get 8 spaces worth of indent.&nbsp;&nbsp;To change this,<br>
+set the&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>&nbsp;option:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set softtabstop=4</div>
+<br>
+This will make the&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;key insert 4 spaces worth of indent.&nbsp;&nbsp;If there are<br>
+already four spaces, a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;character is used (saving seven characters in the<br>
+file).&nbsp;&nbsp;(If you always want spaces and no tab characters, set the&nbsp;<a class="Type" href="options.html#'expandtab'">'expandtab'</a><br>
+option.)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You could set the&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;option to 4.&nbsp;&nbsp;However, if you edit the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file another time, with&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;set to the default value of 8, it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will look wrong.&nbsp;&nbsp;In other programs and when printing the indent will<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;also be wrong.&nbsp;&nbsp;Therefore it is recommended to keep&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;at eight<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;all the time.&nbsp;&nbsp;That's the standard value everywhere.<br>
+<br>
+<br>
+CHANGING TABS<br>
+<br>
+You edit a file which was written with a tabstop of 3.&nbsp;&nbsp;In Vim it looks ugly,<br>
+because it uses the normal tabstop value of 8.&nbsp;&nbsp;You can fix this by setting<br>
+<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;to 3.&nbsp;&nbsp;But you have to do this every time you edit this file.<br>
+&nbsp;&nbsp; Vim can change the use of tabstops in your file.&nbsp;&nbsp;First, set&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;to<br>
+make the indents look good, then use the &quot;:retab&quot; command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set tabstop=3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:retab 8</div>
+<br>
+The &quot;:retab&quot; command will change&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;to 8, while changing the text such<br>
+that it looks the same.&nbsp;&nbsp;It changes spans of white space into tabs and spaces<br>
+for this.&nbsp;&nbsp;You can now write the file.&nbsp;&nbsp;Next time you edit it the indents will<br>
+be right without setting an option.<br>
+&nbsp;&nbsp; Warning: When using &quot;:retab&quot; on a program, it may change white space inside<br>
+a string constant.&nbsp;&nbsp;Therefore it's a good habit to use &quot;\t&quot; instead of a<br>
+real tab.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_25.html#25.4" name="25.4">*25.4*</a>&nbsp;&nbsp;Dealing with long lines<br>
+<br>
+Sometimes you will be editing a file that is wider than the number of columns<br>
+in the window.&nbsp;&nbsp;When that occurs, Vim wraps the lines so that everything fits<br>
+on the screen.<br>
+&nbsp;&nbsp; If you switch the&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;option off, each line in the file shows up as one<br>
+line on the screen.&nbsp;&nbsp;Then the ends of the long lines disappear off the screen<br>
+to the right.<br>
+&nbsp;&nbsp; When you move the cursor to a character that can't be seen, Vim will scroll<br>
+the text to show it.&nbsp;&nbsp;This is like moving a viewport over the text in the<br>
+horizontal direction.<br>
+&nbsp;&nbsp; By default, Vim does not display a horizontal scrollbar in the GUI.&nbsp;&nbsp;If you<br>
+want to enable one, use the following command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set guioptions+=b</div>
+<br>
+One horizontal scrollbar will appear at the bottom of the Vim window.<br>
+<br>
+If you don't have a scrollbar or don't want to use it, use these commands to<br>
+scroll the text.&nbsp;&nbsp;The cursor will stay in the same place, but it's moved back<br>
+into the visible text if necessary.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scroll right<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4zh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; scroll four characters right<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scroll half a window width right<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ze&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scroll right to put the cursor at the end<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scroll left<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4zl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; scroll four characters left<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scroll half a window width left<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scroll left to put the cursor at the start<br>
+<br>
+Let's attempt to show this with one line of text.&nbsp;&nbsp;The cursor is on the &quot;w&quot; of<br>
+&quot;which&quot;.&nbsp;&nbsp;The &quot;current window&quot; above the line indicates the text that is<br>
+currently visible.&nbsp;&nbsp;The &quot;window&quot;s below the text indicate the text that is<br>
+visible after the command left of it.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&lt;-- current window --&gt;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">some long text, part of which is visible in the window</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ze&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&lt;--&nbsp;&nbsp;&nbsp;&nbsp; window&nbsp;&nbsp;&nbsp;&nbsp; --&gt;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&lt;--&nbsp;&nbsp;&nbsp;&nbsp; window&nbsp;&nbsp;&nbsp;&nbsp; --&gt;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4zh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&lt;--&nbsp;&nbsp;&nbsp;&nbsp; window&nbsp;&nbsp;&nbsp;&nbsp; --&gt;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&lt;--&nbsp;&nbsp;&nbsp;&nbsp; window&nbsp;&nbsp;&nbsp;&nbsp; --&gt;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&lt;--&nbsp;&nbsp;&nbsp;&nbsp; window&nbsp;&nbsp;&nbsp;&nbsp; --&gt;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4zl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&lt;--&nbsp;&nbsp;&nbsp;&nbsp; window&nbsp;&nbsp;&nbsp;&nbsp; --&gt;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&lt;--&nbsp;&nbsp;&nbsp;&nbsp; window&nbsp;&nbsp;&nbsp;&nbsp; --&gt;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&lt;--&nbsp;&nbsp;&nbsp;&nbsp; window&nbsp;&nbsp;&nbsp;&nbsp; --&gt;|<br>
+<br>
+<br>
+MOVING WITH WRAP OFF<br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;is off and the text has scrolled horizontally, you can use the<br>
+following commands to move the cursor to a character you can see.&nbsp;&nbsp;Thus text<br>
+left and right of the window is ignored.&nbsp;&nbsp;These never cause the text to<br>
+scroll:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to first visible character in this line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g^&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to first non-blank visible character in this line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to middle of this line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to last visible character in this line<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&lt;--&nbsp;&nbsp;&nbsp;&nbsp; window&nbsp;&nbsp;&nbsp;&nbsp;--&gt;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">some long&nbsp;&nbsp;&nbsp;&nbsp;text, part of which is visible</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g0&nbsp;&nbsp;g^&nbsp;&nbsp;&nbsp;&nbsp;gm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g$<br>
+<br>
+<br>
+<span class="Statement">BREAKING AT WORDS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="usr_25.html#edit-no-break" name="edit-no-break">*edit-no-break*</a><br>
+<br>
+When preparing text for use by another program, you might have to make<br>
+paragraphs without a line break.&nbsp;&nbsp;A disadvantage of using&nbsp;<a class="Type" href="options.html#'nowrap'">'nowrap'</a>&nbsp;is that you<br>
+can't see the whole sentence you are working on.&nbsp;&nbsp;When&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;is on, words are<br>
+broken halfway, which makes them hard to read.<br>
+&nbsp;&nbsp; A good solution for editing this kind of paragraph is setting the<br>
+<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;option.&nbsp;&nbsp;Vim then breaks lines at an appropriate place when<br>
+displaying the line.&nbsp;&nbsp;The text in the file remains unchanged.<br>
+&nbsp;&nbsp; Without&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;text might look like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+---------------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|letter generation program for a b|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|ank.&nbsp;&nbsp;They wanted to send out a s|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|pecial, personalized letter to th|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|eir richest 1000 customers.&nbsp;&nbsp;Unfo|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|rtunately for the programmer, he |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+---------------------------------+<br>
+After:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set linebreak</div>
+<br>
+it looks like this:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+---------------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|letter generation program for a&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|bank.&nbsp;&nbsp;They wanted to send out a |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|special, personalized letter to&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|their richest 1000 customers.&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Unfortunately for the programmer,|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+---------------------------------+<br>
+<br>
+Related options:<br>
+<a class="Type" href="options.html#'breakat'">'breakat'</a>&nbsp;specifies the characters where a break can be inserted.<br>
+<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;specifies a string to show at the start of broken line.<br>
+Set&nbsp;<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;to zero to avoid a paragraph to be split.<br>
+<br>
+<br>
+MOVING BY VISIBLE LINES<br>
+<br>
+The &quot;j&quot; and &quot;k&quot; commands move to the next and previous lines.&nbsp;&nbsp;When used on<br>
+a long line, this means moving a lot of screen lines at once.<br>
+&nbsp;&nbsp; To move only one screen line, use the &quot;gj&quot; and &quot;gk&quot; commands.&nbsp;&nbsp;When a line<br>
+doesn't wrap they do the same as &quot;j&quot; and &quot;k&quot;.&nbsp;&nbsp;When the line does wrap, they<br>
+move to a character displayed one line below or above.<br>
+&nbsp;&nbsp; You might like to use these mappings, which bind these movement commands to<br>
+the cursor keys:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:map &lt;Up&gt; gk<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:map &lt;Down&gt; gj</div>
+<br>
+<br>
+<span class="Statement">TURNING A PARAGRAPH INTO ONE LINE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="usr_25.html#edit-paragraph-join" name="edit-paragraph-join">*edit-paragraph-join*</a><br>
+<br>
+If you want to import text into a program like MS-Word, each paragraph should<br>
+be a single line.&nbsp;&nbsp;If your paragraphs are currently separated with empty<br>
+lines, this is how you turn each paragraph into a single line:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:g/./,/^$/join</div>
+<br>
+That looks complicated.&nbsp;&nbsp;Let's break it up in pieces:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:g/./&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A &quot;:global&quot; command that finds all lines that contain<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at least one character.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ,/^$/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A range, starting from the current line (the non-empty<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line) until an empty line.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;join&nbsp;&nbsp;The &quot;:join&quot; command joins the range of lines together<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;into one line.<br>
+<br>
+Starting with this text, containing eight lines broken at column 30:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+----------------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|A letter generation program&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|for a bank.&nbsp;&nbsp;They wanted to&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|send out a special,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|personalized letter.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|To their richest 1000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|customers.&nbsp;&nbsp;Unfortunately for&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|the programmer,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+----------------------------------+<br>
+<br>
+You end up with two lines:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+----------------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|A letter generation program for a |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|bank.&nbsp;&nbsp;They wanted to send out a s|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|pecial, personalized letter.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|To their richest 1000 customers.&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Unfortunately for the programmer, |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+----------------------------------+<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that this doesn't work when the separating line is blank but not empty;<br>
+when it contains spaces and/or tabs.&nbsp;&nbsp;This command does work with blank lines:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:g/\S/,/^\s*$/join</div>
+<br>
+This still requires a blank or empty line at the end of the file for the last<br>
+paragraph to be joined.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_25.html#25.5" name="25.5">*25.5*</a>&nbsp;&nbsp;Editing tables<br>
+<br>
+Suppose you are editing a table with four columns:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">nice table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test 3</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">input A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.534</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">input B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.913</span><br>
+<br>
+You need to enter numbers in the third column.&nbsp;&nbsp;You could move to the second<br>
+line, use &quot;A&quot;, enter a lot of spaces and type the text.<br>
+&nbsp;&nbsp; For this kind of editing there is a special option:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set virtualedit=all</div>
+<br>
+Now you can move the cursor to positions where there isn't any text.&nbsp;&nbsp;This is<br>
+called &quot;virtual space&quot;.&nbsp;&nbsp;Editing a table is a lot easier this way.<br>
+&nbsp;&nbsp; Move the cursor by searching for the header of the last column:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/test 3</div>
+<br>
+Now press &quot;j&quot; and you are right where you can enter the value for &quot;input A&quot;.<br>
+Typing &quot;0.693&quot; results in:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">nice table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test 1&nbsp;&nbsp;&nbsp;&nbsp; test 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test 3</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">input A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.534&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.693</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">input B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.913</span><br>
+<br>
+Vim has automatically filled the gap in front of the new text for you.&nbsp;&nbsp;Now,<br>
+to enter the next field in this column use &quot;Bj&quot;.&nbsp;&nbsp;&quot;B&quot; moves back to the start<br>
+of a white space separated word.&nbsp;&nbsp;Then &quot;j&quot; moves to the place where the next<br>
+field can be entered.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can move the cursor anywhere in the display, also beyond the end<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of a line.&nbsp;&nbsp;But Vim will not insert spaces there, until you insert a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;character in that position.<br>
+<br>
+<br>
+COPYING A COLUMN<br>
+<br>
+You want to add a column, which should be a copy of the third column and<br>
+placed before the &quot;test 1&quot; column.&nbsp;&nbsp;Do this in seven steps:<br>
+1.&nbsp;&nbsp;Move the cursor to the left upper corner of this column, e.g., with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;/test 3&quot;.<br>
+2.&nbsp;&nbsp;Press&nbsp;<span class="Special">CTRL-V</span>&nbsp;to start blockwise Visual mode.<br>
+3.&nbsp;&nbsp;Move the cursor down two lines with &quot;2j&quot;.&nbsp;&nbsp;You are now in &quot;virtual space&quot;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the &quot;input B&quot; line of the &quot;test 3&quot; column.<br>
+4.&nbsp;&nbsp;Move the cursor right, to include the whole column in the selection, plus<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the space that you want between the columns.&nbsp;&nbsp;&quot;9l&quot; should do it.<br>
+5.&nbsp;&nbsp;Yank the selected rectangle with &quot;y&quot;.<br>
+6.&nbsp;&nbsp;Move the cursor to &quot;test 1&quot;, where the new column must be placed.<br>
+7.&nbsp;&nbsp;Press &quot;P&quot;.<br>
+<br>
+The result should be:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">nice table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test 3&nbsp;&nbsp;&nbsp;&nbsp;test 1&nbsp;&nbsp;&nbsp;&nbsp; test 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test 3</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">input A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.693&nbsp;&nbsp;&nbsp;&nbsp; 0.534&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.693</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">input B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.913</span><br>
+<br>
+Notice that the whole &quot;test 1&quot; column was shifted right, also the line where<br>
+the &quot;test 3&quot; column didn't have text.<br>
+<br>
+Go back to non-virtual cursor movements with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set virtualedit=</div>
+<br>
+<br>
+VIRTUAL REPLACE MODE<br>
+<br>
+The disadvantage of using&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;is that it &quot;feels&quot; different.&nbsp;&nbsp;You<br>
+can't recognize tabs or spaces beyond the end of line when moving the cursor<br>
+around.&nbsp;&nbsp;Another method can be used: Virtual Replace mode.<br>
+&nbsp;&nbsp; Suppose you have a line in a table that contains both tabs and other<br>
+characters.&nbsp;&nbsp;Use &quot;rx&quot; on the first tab:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">inp&nbsp;&nbsp;&nbsp;&nbsp; 0.693&nbsp;&nbsp; 0.534&nbsp;&nbsp; 0.693</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rx&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">inpx0.693&nbsp;&nbsp; 0.534&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.693</span><br>
+<br>
+The layout is messed up.&nbsp;&nbsp;To avoid that, use the &quot;gr&quot; command:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">inp&nbsp;&nbsp;&nbsp;&nbsp; 0.693&nbsp;&nbsp; 0.534&nbsp;&nbsp; 0.693</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;grx&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">inpx&nbsp;&nbsp;&nbsp;&nbsp;0.693&nbsp;&nbsp; 0.534&nbsp;&nbsp; 0.693</span><br>
+<br>
+What happens is that the &quot;gr&quot; command makes sure the new character takes the<br>
+right amount of screen space.&nbsp;&nbsp;Extra spaces or tabs are inserted to fill the<br>
+gap.&nbsp;&nbsp;Thus what actually happens is that a tab is replaced by &quot;x&quot; and then<br>
+blanks added to make the text after it keep its place.&nbsp;&nbsp;In this case a<br>
+tab is inserted.<br>
+&nbsp;&nbsp; When you need to replace more than one character, you use the &quot;R&quot; command<br>
+to go to Replace mode (see&nbsp;<a class="Identifier" href="usr_04.html#04.9">|04.9|</a>).&nbsp;&nbsp;This messes up the layout and replaces<br>
+the wrong characters:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">inp&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.534&nbsp;&nbsp; 0.693</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; R0.786 |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">inp&nbsp;&nbsp;&nbsp;&nbsp; 0.78634 0.693</span><br>
+<br>
+The &quot;gR&quot; command uses Virtual Replace mode.&nbsp;&nbsp;This preserves the layout:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">inp&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.534&nbsp;&nbsp; 0.693</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gR0.786 |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">inp&nbsp;&nbsp;&nbsp;&nbsp; 0.786&nbsp;&nbsp; 0.534&nbsp;&nbsp; 0.693</span><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_26.html">|usr_26.txt|</a>&nbsp;&nbsp;Repeating<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>

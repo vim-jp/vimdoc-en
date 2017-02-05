@@ -1,0 +1,663 @@
+---
+layout: vimdoc
+helpname: 'usr_03'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_03.html" name="usr_03.txt">*usr_03.txt*</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2016 Jan 05<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Moving around<br>
+<br>
+<br>
+Before you can insert or delete text the cursor has to be moved to the right<br>
+place.&nbsp;&nbsp;Vim has a large number of commands to position the cursor.&nbsp;&nbsp;This<br>
+chapter shows you how to use the most important ones.&nbsp;&nbsp;You can find a list of<br>
+these commands below&nbsp;<a class="Identifier" href="quickref.html#Q_lr">|Q_lr|</a>.<br>
+<br>
+<a class="Identifier" href="usr_03.html#03.1">|03.1|</a>&nbsp;&nbsp;Word movement<br>
+<a class="Identifier" href="usr_03.html#03.2">|03.2|</a>&nbsp;&nbsp;Moving to the start or end of a line<br>
+<a class="Identifier" href="usr_03.html#03.3">|03.3|</a>&nbsp;&nbsp;Moving to a character<br>
+<a class="Identifier" href="usr_03.html#03.4">|03.4|</a>&nbsp;&nbsp;Matching a parenthesis<br>
+<a class="Identifier" href="usr_03.html#03.5">|03.5|</a>&nbsp;&nbsp;Moving to a specific line<br>
+<a class="Identifier" href="usr_03.html#03.6">|03.6|</a>&nbsp;&nbsp;Telling where you are<br>
+<a class="Identifier" href="usr_03.html#03.7">|03.7|</a>&nbsp;&nbsp;Scrolling around<br>
+<a class="Identifier" href="usr_03.html#03.8">|03.8|</a>&nbsp;&nbsp;Simple searches<br>
+<a class="Identifier" href="usr_03.html#03.9">|03.9|</a>&nbsp;&nbsp;Simple search patterns<br>
+<a class="Identifier" href="usr_03.html#03.10">|03.10|</a>&nbsp;Using marks<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_04.html">|usr_04.txt|</a>&nbsp;&nbsp;Making small changes<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_02.html">|usr_02.txt|</a>&nbsp;&nbsp;The first steps in Vim<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">|usr_toc.txt|</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_03.html#03.1" name="03.1">*03.1*</a>&nbsp;&nbsp;Word movement<br>
+<br>
+To move the cursor forward one word, use the &quot;w&quot; command.&nbsp;&nbsp;Like most Vim<br>
+commands, you can use a numeric prefix to move past multiple words.&nbsp;&nbsp;For<br>
+example, &quot;3w&quot; moves three words.&nbsp;&nbsp;This figure shows how it works:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">This is a line with example text</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---&gt;--&gt;-&gt;-----------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w&nbsp;&nbsp;w&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;3w<br>
+<br>
+Notice that &quot;w&quot; moves to the start of the next word if it already is at the<br>
+start of a word.<br>
+&nbsp;&nbsp; The &quot;b&quot; command moves backward to the start of the previous word:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">This is a line with example text</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;----&lt;--&lt;-&lt;---------&lt;---<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b&nbsp;&nbsp; b b&nbsp;&nbsp;&nbsp;&nbsp;2b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b<br>
+<br>
+There is also the &quot;e&quot; command that moves to the next end of a word and &quot;ge&quot;,<br>
+which moves to the previous end of a word:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">This is a line with example text</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;-&nbsp;&nbsp; &lt;--- -----&gt;&nbsp;&nbsp; ----&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ge&nbsp;&nbsp;&nbsp;&nbsp;ge&nbsp;&nbsp;&nbsp;&nbsp; e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e<br>
+<br>
+If you are at the last word of a line, the &quot;w&quot; command will take you to the<br>
+first word in the next line.&nbsp;&nbsp;Thus you can use this to move through a<br>
+paragraph, much faster than using &quot;l&quot;.&nbsp;&nbsp;&quot;b&quot; does the same in the other<br>
+direction.<br>
+<br>
+A word ends at a non-word character, such as a &quot;.&quot;, &quot;-&quot; or &quot;)&quot;.&nbsp;&nbsp;To change<br>
+what Vim considers to be a word, see the&nbsp;<a class="Type" href="options.html#'iskeyword'">'iskeyword'</a>&nbsp;option.&nbsp;&nbsp;If you try this<br>
+out in the help directly,&nbsp;<a class="Type" href="options.html#'iskeyword'">'iskeyword'</a>&nbsp;needs to be reset for the examples to<br>
+work:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set iskeyword&amp;</div>
+It is also possible to move by white-space separated WORDs.&nbsp;&nbsp;This is not a<br>
+word in the normal sense, that's why the uppercase is used.&nbsp;&nbsp;The commands for<br>
+moving by WORDs are also uppercase, as this figure shows:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ge&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;-&nbsp;&nbsp;&nbsp;&nbsp; &lt;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ---&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">This is-a line, with special/separated/words (and some more).</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;----- &lt;-----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --------------------&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -----&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; W&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; E<br>
+<br>
+With this mix of lowercase and uppercase commands, you can quickly move<br>
+forward and backward through a paragraph.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_03.html#03.2" name="03.2">*03.2*</a>&nbsp;&nbsp;Moving to the start or end of a line<br>
+<br>
+The &quot;$&quot; command moves the cursor to the end of a line.&nbsp;&nbsp;If your keyboard has<br>
+an&nbsp;<span class="Special">&lt;End&gt;</span>&nbsp;key it will do the same thing.<br>
+<br>
+The &quot;^&quot; command moves to the first non-blank character of the line.&nbsp;&nbsp;The &quot;0&quot;<br>
+command (zero) moves to the very first character of the line.&nbsp;&nbsp;The&nbsp;<span class="Special">&lt;Home&gt;</span>&nbsp;key<br>
+does the same thing.&nbsp;&nbsp;In a picture:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">.....This is a line with example text</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-----------------&nbsp;&nbsp; ---------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$<br>
+<br>
+(the &quot;.....&quot; indicates blanks here)<br>
+<br>
+&nbsp;&nbsp; The &quot;$&quot; command takes a count, like most movement commands.&nbsp;&nbsp;But moving to<br>
+the end of the line several times doesn't make sense.&nbsp;&nbsp;Therefore it causes the<br>
+editor to move to the end of another line.&nbsp;&nbsp;For example, &quot;1$&quot; moves you to<br>
+the end of the first line (the one you're on), &quot;2$&quot; to the end of the next<br>
+line, and so on.<br>
+&nbsp;&nbsp; The &quot;0&quot; command doesn't take a count argument, because the &quot;0&quot; would be<br>
+part of the count.&nbsp;&nbsp;Unexpectedly, using a count with &quot;^&quot; doesn't have any<br>
+effect.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_03.html#03.3" name="03.3">*03.3*</a>&nbsp;&nbsp;Moving to a character<br>
+<br>
+One of the most useful movement commands is the single-character search<br>
+command.&nbsp;&nbsp;The command &quot;fx&quot; searches forward in the line for the single<br>
+character x.&nbsp;&nbsp;Hint: &quot;f&quot; stands for &quot;Find&quot;.<br>
+&nbsp;&nbsp; For example, you are at the beginning of the following line.&nbsp;&nbsp;Suppose you<br>
+want to go to the h of human.&nbsp;&nbsp;Just execute the command &quot;fh&quot; and the cursor<br>
+will be positioned over the h:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human.&nbsp;&nbsp;To really foul up you need a computer.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;----------&gt;---------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fy<br>
+<br>
+This also shows that the command &quot;fy&quot; moves to the end of the word really.<br>
+&nbsp;&nbsp; You can specify a count; therefore, you can go to the &quot;l&quot; of &quot;foul&quot; with<br>
+&quot;3fl&quot;:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human.&nbsp;&nbsp;To really foul up you need a computer.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3fl<br>
+<br>
+The &quot;F&quot; command searches to the left:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human.&nbsp;&nbsp;To really foul up you need a computer.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;---------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fh<br>
+<br>
+The &quot;tx&quot; command works like the &quot;fx&quot; command, except it stops one character<br>
+before the searched character.&nbsp;&nbsp;Hint: &quot;t&quot; stands for &quot;To&quot;.&nbsp;&nbsp;The backward<br>
+version of this command is &quot;Tx&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">To err is human.&nbsp;&nbsp;To really foul up you need a computer.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;------------&nbsp;&nbsp;-------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Th&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tn<br>
+<br>
+These four commands can be repeated with &quot;;&quot;.&nbsp;&nbsp;&quot;,&quot; repeats in the other<br>
+direction.&nbsp;&nbsp;The cursor is never moved to another line.&nbsp;&nbsp;Not even when the<br>
+sentence continues.<br>
+<br>
+Sometimes you will start a search, only to realize that you have typed the<br>
+wrong command.&nbsp;&nbsp;You type &quot;f&quot; to search backward, for example, only to realize<br>
+that you really meant &quot;F&quot;.&nbsp;&nbsp;To abort a search, press&nbsp;<span class="Special">&lt;Esc&gt;</span>.&nbsp;&nbsp;So &quot;f<span class="Special">&lt;Esc&gt;</span>&quot; is an<br>
+aborted forward search and doesn't do anything.&nbsp;&nbsp;<span class="Todo">Note</span>:&nbsp;<span class="Special">&lt;Esc&gt;</span>&nbsp;cancels most<br>
+operations, not just searches.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_03.html#03.4" name="03.4">*03.4*</a>&nbsp;&nbsp;Matching a parenthesis<br>
+<br>
+When writing a program you often end up with nested () constructs.&nbsp;&nbsp;Then the<br>
+&quot;%&quot; command is very handy: It moves to the matching paren.&nbsp;&nbsp;If the cursor is<br>
+on a &quot;(&quot; it will move to the matching &quot;)&quot;.&nbsp;&nbsp;If it's on a &quot;)&quot; it will move to<br>
+the matching &quot;(&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-----&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">if (a == (b * c) / d)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;----------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%<br>
+<br>
+This also works for [] and {} pairs.&nbsp;&nbsp;(This can be defined with the<br>
+<a class="Type" href="options.html#'matchpairs'">'matchpairs'</a>&nbsp;option.)<br>
+<br>
+When the cursor is not on a useful character, &quot;%&quot; will search forward to find<br>
+one.&nbsp;&nbsp;Thus if the cursor is at the start of the line of the previous example,<br>
+&quot;%&quot; will search forward and find the first &quot;(&quot;.&nbsp;&nbsp;Then it moves to its match:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">if (a == (b * c) / d)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---+----------------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; %<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_03.html#03.5" name="03.5">*03.5*</a>&nbsp;&nbsp;Moving to a specific line<br>
+<br>
+If you are a C or C++ programmer, you are familiar with error messages such as<br>
+the following:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">prog.c:33: j&nbsp;&nbsp; undeclared (first use in this function)</span><br>
+<br>
+This tells you that you might want to fix something on line 33.&nbsp;&nbsp;So how do you<br>
+find line 33?&nbsp;&nbsp;One way is to do &quot;9999k&quot; to go to the top of the file and &quot;32j&quot;<br>
+to go down thirty two lines.&nbsp;&nbsp;It is not a good way, but it works.&nbsp;&nbsp;A much<br>
+better way of doing things is to use the &quot;G&quot; command.&nbsp;&nbsp;With a count, this<br>
+command positions you at the given line number.&nbsp;&nbsp;For example, &quot;33G&quot; puts you<br>
+on line 33.&nbsp;&nbsp;(For a better way of going through a compiler's error list, see<br>
+<a class="Identifier" href="usr_30.html">|usr_30.txt|</a>, for information on the :make command.)<br>
+&nbsp;&nbsp; With no argument, &quot;G&quot; positions you at the end of the file.&nbsp;&nbsp;A quick way to<br>
+go to the start of a file use &quot;gg&quot;.&nbsp;&nbsp;&quot;1G&quot; will do the same, but is a tiny bit<br>
+more typing.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; first line of a file&nbsp;&nbsp; ^<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; text text text text&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; text text text text&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;gg<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7G&nbsp;&nbsp;|&nbsp;&nbsp; text text text text&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; text text text text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; text text text text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V&nbsp;&nbsp; text text text text&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text text text text&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;G<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text text text text&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;last line of a file&nbsp;&nbsp;&nbsp;&nbsp;V<br>
+<br>
+Another way to move to a line is using the &quot;%&quot; command with a count.&nbsp;&nbsp;For<br>
+example &quot;50%&quot; moves you to halfway the file.&nbsp;&nbsp;&quot;90%&quot; goes to near the end.<br>
+<br>
+The previous assumes that you want to move to a line in the file, no matter if<br>
+it's currently visible or not.&nbsp;&nbsp;What if you want to move to one of the lines<br>
+you can see?&nbsp;&nbsp;This figure shows the three commands you can use:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+---------------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H --&gt;&nbsp;&nbsp; | text sample text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| sample text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| text sample text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| sample text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M --&gt;&nbsp;&nbsp; | text sample text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| sample text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| text sample text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| sample text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L --&gt;&nbsp;&nbsp; | text sample text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+---------------------------+<br>
+<br>
+Hints: &quot;H&quot; stands for Home, &quot;M&quot; for Middle and &quot;L&quot; for Last.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_03.html#03.6" name="03.6">*03.6*</a>&nbsp;&nbsp;Telling where you are<br>
+<br>
+To see where you are in a file, there are three ways:<br>
+<br>
+1.&nbsp;&nbsp;Use the&nbsp;<span class="Special">CTRL-G</span>&nbsp;command.&nbsp;&nbsp;You get a message like this (assuming the&nbsp;<a class="Type" href="options.html#'ruler'">'ruler'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;option is off):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;usr_03.txt&quot; line 233 of 650 --35%-- col 45-52</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;This shows the name of the file you are editing, the line number where the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cursor is, the total number of lines, the percentage of the way through<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the file and the column of the cursor.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sometimes you will see a split column number.&nbsp;&nbsp;For example, &quot;col 2-9&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;This indicates that the cursor is positioned on the second character, but<br>
+&nbsp;&nbsp;&nbsp;&nbsp;because character one is a tab, occupying eight spaces worth of columns,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the screen column is 9.<br>
+<br>
+2.&nbsp;&nbsp;Set the&nbsp;<a class="Type" href="options.html#'number'">'number'</a>&nbsp;option.&nbsp;&nbsp;This will display a line number in front of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;every line:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set number</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;To switch this off again:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nonumber</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Since&nbsp;<a class="Type" href="options.html#'number'">'number'</a>&nbsp;is a boolean option, prepending &quot;no&quot; to its name has the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;effect of switching it off.&nbsp;&nbsp;A boolean option has only these two values,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;it is either on or off.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim has many options.&nbsp;&nbsp;Besides the boolean ones there are options with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a numerical value and string options.&nbsp;&nbsp;You will see examples of this where<br>
+&nbsp;&nbsp;&nbsp;&nbsp;they are used.<br>
+<br>
+3.&nbsp;&nbsp;Set the&nbsp;<a class="Type" href="options.html#'ruler'">'ruler'</a>&nbsp;option.&nbsp;&nbsp;This will display the cursor position in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lower right corner of the Vim window:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set ruler</div>
+<br>
+Using the&nbsp;<a class="Type" href="options.html#'ruler'">'ruler'</a>&nbsp;option has the advantage that it doesn't take much room,<br>
+thus there is more space for your text.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_03.html#03.7" name="03.7">*03.7*</a>&nbsp;&nbsp;Scrolling around<br>
+<br>
+The&nbsp;<span class="Special">CTRL-U</span>&nbsp;command scrolls down half a screen of text.&nbsp;&nbsp;Think of looking<br>
+through a viewing window at the text and moving this window up by half the<br>
+height of the window.&nbsp;&nbsp;Thus the window moves up over the text, which is<br>
+backward in the file.&nbsp;&nbsp;Don't worry if you have a little trouble remembering<br>
+which end is up.&nbsp;&nbsp;Most users have the same problem.<br>
+&nbsp;&nbsp; The&nbsp;<span class="Special">CTRL-D</span>&nbsp;command moves the viewing window down half a screen in the file,<br>
+thus scrolls the text up half a screen.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +----------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+---------------+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| some text&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;<span class="Special">CTRL-U</span>&nbsp;&nbsp;--&gt; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 123456&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 123456&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+----------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 7890&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+----------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| example&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;<span class="Special">CTRL-D</span>&nbsp;--&gt;&nbsp;&nbsp;| 7890&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+---------------+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | example&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | example&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | example&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | example&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +----------------+<br>
+<br>
+To scroll one line at a time use&nbsp;<span class="Special">CTRL-E</span>&nbsp;(scroll up) and&nbsp;<span class="Special">CTRL-Y</span>&nbsp;(scroll down).<br>
+Think of&nbsp;<span class="Special">CTRL-E</span>&nbsp;to give you one line Extra.&nbsp;&nbsp;(If you use MS-Windows compatible<br>
+key mappings&nbsp;<span class="Special">CTRL-Y</span>&nbsp;will redo a change instead of scroll.)<br>
+<br>
+To scroll forward by a whole screen (except for two lines) use&nbsp;<span class="Special">CTRL-F</span>.&nbsp;&nbsp;The<br>
+other way is backward,&nbsp;<span class="Special">CTRL-B</span>&nbsp;is the command to use.&nbsp;&nbsp;Fortunately&nbsp;<span class="Special">CTRL-F</span>&nbsp;is<br>
+Forward and&nbsp;<span class="Special">CTRL-B</span>&nbsp;is Backward, that's easy to remember.<br>
+<br>
+A common issue is that after moving down many lines with &quot;j&quot; your cursor is at<br>
+the bottom of the screen.&nbsp;&nbsp;You would like to see the context of the line with<br>
+the cursor.&nbsp;&nbsp;That's done with the &quot;zz&quot; command.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+------------------+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +------------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; zz&nbsp;&nbsp;--&gt;&nbsp;&nbsp; | line with cursor |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| line with cursor |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | some text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+------------------+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +------------------+<br>
+<br>
+The &quot;zt&quot; command puts the cursor line at the top, &quot;zb&quot; at the bottom.&nbsp;&nbsp;There<br>
+are a few more scrolling commands, see&nbsp;<a class="Identifier" href="quickref.html#Q_sc">|Q_sc|</a>.&nbsp;&nbsp;To always keep a few lines of<br>
+context around the cursor, use the&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;option.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_03.html#03.8" name="03.8">*03.8*</a>&nbsp;&nbsp;Simple searches<br>
+<br>
+To search for a string, use the &quot;/string&quot; command.&nbsp;&nbsp;To find the word include,<br>
+for example, use the command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/include</div>
+<br>
+You will notice that when you type the &quot;/&quot; the cursor jumps to the last line<br>
+of the Vim window, like with colon commands.&nbsp;&nbsp;That is where you type the word.<br>
+You can press the backspace key (backarrow or&nbsp;<span class="Special">&lt;BS&gt;</span>) to make corrections.&nbsp;&nbsp;Use<br>
+the&nbsp;<span class="Special">&lt;Left&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;Right&gt;</span>&nbsp;cursor keys when necessary.<br>
+&nbsp;&nbsp; Pressing&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;executes the command.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The characters .*[]^%/\?~$ have special meanings.&nbsp;&nbsp;If you want to use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;them in a search you must put a \ in front of them.&nbsp;&nbsp;See below.<br>
+<br>
+To find the next occurrence of the same string use the &quot;n&quot; command.&nbsp;&nbsp;Use this<br>
+to find the first #include after the cursor:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/#include</div>
+<br>
+And then type &quot;n&quot; several times.&nbsp;&nbsp;You will move to each #include in the text.<br>
+You can also use a count if you know which match you want.&nbsp;&nbsp;Thus &quot;3n&quot; finds<br>
+the third match.&nbsp;&nbsp;Using a count with &quot;/&quot; doesn't work.<br>
+<br>
+The &quot;?&quot; command works like &quot;/&quot; but searches backwards:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;?word</div>
+<br>
+The &quot;<span class="Special">N</span>&quot; command repeats the last search the opposite direction.&nbsp;&nbsp;Thus using<br>
+&quot;<span class="Special">N</span>&quot; after a &quot;/&quot; command search backwards, using &quot;<span class="Special">N</span>&quot; after &quot;?&quot; searches<br>
+forward.<br>
+<br>
+<br>
+IGNORING CASE<br>
+<br>
+Normally you have to type exactly what you want to find.&nbsp;&nbsp;If you don't care<br>
+about upper or lowercase in a word, set the&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>&nbsp;option:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set ignorecase</div>
+<br>
+If you now search for &quot;word&quot;, it will also match &quot;Word&quot; and &quot;WORD&quot;.&nbsp;&nbsp;To match<br>
+case again:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set noignorecase</div>
+<br>
+<br>
+HISTORY<br>
+<br>
+Suppose you do three searches:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/one<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/two<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/three</div>
+<br>
+Now let's start searching by typing a simple &quot;/&quot; without pressing&nbsp;<span class="Special">&lt;Enter&gt;</span>.&nbsp;&nbsp;If<br>
+you press&nbsp;<span class="Special">&lt;Up&gt;</span>&nbsp;(the cursor key), Vim puts &quot;/three&quot; on the command line.<br>
+Pressing&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;at this point searches for three.&nbsp;&nbsp;If you do not press<br>
+<span class="Special">&lt;Enter&gt;</span>, but press&nbsp;<span class="Special">&lt;Up&gt;</span>&nbsp;instead, Vim changes the prompt to &quot;/two&quot;.&nbsp;&nbsp;Another<br>
+press of&nbsp;<span class="Special">&lt;Up&gt;</span>&nbsp;moves you to &quot;/one&quot;.<br>
+&nbsp;&nbsp; You can also use the&nbsp;<span class="Special">&lt;Down&gt;</span>&nbsp;cursor key to move through the history of<br>
+search commands in the other direction.<br>
+<br>
+If you know what a previously used pattern starts with, and you want to use it<br>
+again, type that character before pressing&nbsp;<span class="Special">&lt;Up&gt;</span>.&nbsp;&nbsp;With the previous example,<br>
+you can type &quot;/o<span class="Special">&lt;Up&gt;</span>&quot; and Vim will put &quot;/one&quot; on the command line.<br>
+<br>
+The commands starting with &quot;:&quot; also have a history.&nbsp;&nbsp;That allows you to recall<br>
+a previous command and execute it again.&nbsp;&nbsp;These two histories are separate.<br>
+<br>
+<br>
+SEARCHING FOR A WORD IN THE TEXT<br>
+<br>
+Suppose you see the word &quot;TheLongFunctionName&quot; in the text and you want to<br>
+find the next occurrence of it.&nbsp;&nbsp;You could type &quot;/TheLongFunctionName&quot;, but<br>
+that's a lot of typing.&nbsp;&nbsp;And when you make a mistake Vim won't find it.<br>
+&nbsp;&nbsp; There is an easier way: Position the cursor on the word and use the &quot;*&quot;<br>
+command.&nbsp;&nbsp;Vim will grab the word under the cursor and use it as the search<br>
+string.<br>
+&nbsp;&nbsp; The &quot;#&quot; command does the same in the other direction.&nbsp;&nbsp;You can prepend a<br>
+count: &quot;3*&quot; searches for the third occurrence of the word under the cursor.<br>
+<br>
+<br>
+SEARCHING FOR WHOLE WORDS<br>
+<br>
+If you type &quot;/the&quot; it will also match &quot;there&quot;.&nbsp;&nbsp;To only find words that end<br>
+in &quot;the&quot; use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/the\&gt;</div>
+<br>
+The &quot;\&gt;&quot; item is a special marker that only matches at the end of a word.<br>
+Similarly &quot;\&lt;&quot; only matches at the beginning of a word.&nbsp;&nbsp;Thus to search for<br>
+the word &quot;the&quot; only:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/\&lt;the\&gt;</div>
+<br>
+This does not match &quot;there&quot; or &quot;soothe&quot;.&nbsp;&nbsp;Notice that the &quot;*&quot; and &quot;#&quot; commands<br>
+use these start-of-word and end-of-word markers to only find whole words (you<br>
+can use &quot;g*&quot; and &quot;g#&quot; to match partial words).<br>
+<br>
+<br>
+HIGHLIGHTING MATCHES<br>
+<br>
+While editing a program you see a variable called &quot;nr&quot;.&nbsp;&nbsp;You want to check<br>
+where it's used.&nbsp;&nbsp;You could move the cursor to &quot;nr&quot; and use the &quot;*&quot; command<br>
+and press &quot;n&quot; to go along all the matches.<br>
+&nbsp;&nbsp; There is another way.&nbsp;&nbsp;Type this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set hlsearch</div>
+<br>
+If you now search for &quot;nr&quot;, Vim will highlight all matches.&nbsp;&nbsp;That is a very<br>
+good way to see where the variable is used, without the need to type commands.<br>
+&nbsp;&nbsp; To switch this off:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nohlsearch</div>
+<br>
+Then you need to switch it on again if you want to use it for the next search<br>
+command.&nbsp;&nbsp;If you only want to remove the highlighting, use this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:nohlsearch</div>
+<br>
+This doesn't reset the option.&nbsp;&nbsp;Instead, it disables the highlighting.&nbsp;&nbsp;As<br>
+soon as you execute a search command, the highlighting will be used again.<br>
+Also for the &quot;n&quot; and &quot;<span class="Special">N</span>&quot; commands.<br>
+<br>
+<br>
+TUNING SEARCHES<br>
+<br>
+There are a few options that change how searching works.&nbsp;&nbsp;These are the<br>
+essential ones:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set incsearch</div>
+<br>
+This makes Vim display the match for the string while you are still typing it.<br>
+Use this to check if the right match will be found.&nbsp;&nbsp;Then press&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;to<br>
+really jump to that location.&nbsp;&nbsp;Or type more to change the search string.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nowrapscan</div>
+<br>
+This stops the search at the end of the file.&nbsp;&nbsp;Or, when you are searching<br>
+backwards, at the start of the file.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'wrapscan'">'wrapscan'</a>&nbsp;option is on by default,<br>
+thus searching wraps around the end of the file.<br>
+<br>
+<br>
+INTERMEZZO<br>
+<br>
+If you like one of the options mentioned before, and set it each time you use<br>
+Vim, you can put the command in your Vim startup file.<br>
+&nbsp;&nbsp; Edit the file, as mentioned at&nbsp;<a class="Identifier" href="usr_01.html#not-compatible">|not-compatible|</a>.&nbsp;&nbsp;Or use this command to<br>
+find out where it is:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:scriptnames</div>
+<br>
+Edit the file, for example with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:edit ~/.vimrc</div>
+<br>
+Then add a line with the command to set the option, just like you typed it in<br>
+Vim.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Go:set hlsearch&lt;Esc&gt;</div>
+<br>
+&quot;G&quot; moves to the end of the file.&nbsp;&nbsp;&quot;o&quot; starts a new line, where you type the<br>
+&quot;:set&quot; command.&nbsp;&nbsp;You end insert mode with&nbsp;<span class="Special">&lt;Esc&gt;</span>.&nbsp;&nbsp;Then write the file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZZ</div>
+<br>
+If you now start Vim again, the&nbsp;<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;option will already be set.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_03.html#03.9" name="03.9">*03.9*</a>&nbsp;&nbsp;Simple search patterns<br>
+<br>
+The Vim editor uses regular expressions to specify what to search for.<br>
+Regular expressions are an extremely powerful and compact way to specify a<br>
+search pattern.&nbsp;&nbsp;Unfortunately, this power comes at a price, because regular<br>
+expressions are a bit tricky to specify.<br>
+&nbsp;&nbsp; In this section we mention only a few essential ones.&nbsp;&nbsp;More about search<br>
+patterns and commands in chapter 27&nbsp;<a class="Identifier" href="usr_27.html">|usr_27.txt|</a>.&nbsp;&nbsp;You can find the full<br>
+explanation here:&nbsp;<a class="Identifier" href="pattern.html#pattern">|pattern|</a>.<br>
+<br>
+<br>
+BEGINNING AND END OF A LINE<br>
+<br>
+The ^ character matches the beginning of a line.&nbsp;&nbsp;On an English-US keyboard<br>
+you find it above the 6.&nbsp;&nbsp;The pattern &quot;include&quot; matches the word include<br>
+anywhere on the line.&nbsp;&nbsp;But the pattern &quot;^include&quot; matches the word include<br>
+only if it is at the beginning of a line.<br>
+&nbsp;&nbsp; The $ character matches the end of a line.&nbsp;&nbsp;Therefore, &quot;was$&quot; matches the<br>
+word was only if it is at the end of a line.<br>
+<br>
+Let's mark the places where &quot;the&quot; matches in this example line with &quot;x&quot;s:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">the solder holding one of the chips melted and the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xxx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxx<br>
+<br>
+Using &quot;/the$&quot; we find this match:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">the solder holding one of the chips melted and the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xxx<br>
+<br>
+And with &quot;/^the&quot; we find this one:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">the solder holding one of the chips melted and the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxx<br>
+<br>
+You can try searching with &quot;/^the$&quot;, it will only match a single line<br>
+consisting of &quot;the&quot;.&nbsp;&nbsp;White space does matter here, thus if a line contains a<br>
+space after the word, like &quot;the &quot;, the pattern will not match.<br>
+<br>
+<br>
+MATCHING ANY SINGLE CHARACTER<br>
+<br>
+The . (dot) character matches any existing character.&nbsp;&nbsp;For example, the<br>
+pattern &quot;c.m&quot; matches a string whose first character is a c, whose second<br>
+character is anything, and whose third character is m.&nbsp;&nbsp;Example:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">We use a computer that became the cummin winter.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xxx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xxx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxx<br>
+<br>
+<br>
+MATCHING SPECIAL CHARACTERS<br>
+<br>
+If you really want to match a dot, you must avoid its special meaning by<br>
+putting a backslash before it.<br>
+&nbsp;&nbsp; If you search for &quot;ter.&quot;, you will find these matches:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">We use a computer that became the cummin winter.</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxx<br>
+<br>
+Searching for &quot;ter\.&quot; only finds the second match.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_03.html#03.10" name="03.10">*03.10*</a>&nbsp;Using marks<br>
+<br>
+When you make a jump to a position with the &quot;G&quot; command, Vim remembers the<br>
+position from before this jump.&nbsp;&nbsp;This position is called a mark.&nbsp;&nbsp;To go back<br>
+where you came from, use this command:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``</div>
+<br>
+This ` is a backtick or open single-quote character.<br>
+&nbsp;&nbsp; If you use the same command a second time you will jump back again.&nbsp;&nbsp;That's<br>
+because the ` command is a jump itself, and the position from before this jump<br>
+is remembered.<br>
+<br>
+Generally, every time you do a command that can move the cursor further than<br>
+within the same line, this is called a jump.&nbsp;&nbsp;This includes the search<br>
+commands &quot;/&quot; and &quot;n&quot; (it doesn't matter how far away the match is).&nbsp;&nbsp;But not<br>
+the character searches with &quot;fx&quot; and &quot;tx&quot; or the word movements &quot;w&quot; and &quot;e&quot;.<br>
+&nbsp;&nbsp; Also, &quot;j&quot; and &quot;k&quot; are not considered to be a jump.&nbsp;&nbsp;Even when you use a<br>
+count to make them move the cursor quite a long way away.<br>
+<br>
+The `` command jumps back and forth, between two points.&nbsp;&nbsp;The&nbsp;<span class="Special">CTRL-O</span>&nbsp;command<br>
+jumps to older positions (Hint: O for older).&nbsp;&nbsp;<span class="Special">CTRL-I</span>&nbsp;then jumps back to newer<br>
+positions (Hint: I is just next to O on the keyboard).&nbsp;&nbsp;Consider this sequence<br>
+of commands:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;33G<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/^The<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTRL-O</div>
+<br>
+You first jump to line 33, then search for a line that starts with &quot;The&quot;.<br>
+Then with&nbsp;<span class="Special">CTRL-O</span>&nbsp;you jump back to line 33.&nbsp;&nbsp;Another&nbsp;<span class="Special">CTRL-O</span>&nbsp;takes you back to<br>
+where you started.&nbsp;&nbsp;If you now use&nbsp;<span class="Special">CTRL-I</span>&nbsp;you jump to line 33 again.&nbsp;&nbsp;And<br>
+to the match for &quot;The&quot; with another&nbsp;<span class="Special">CTRL-I</span>.<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;example text&nbsp;&nbsp; ^&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;33G&nbsp;&nbsp;|&nbsp;&nbsp;example text&nbsp;&nbsp; |&nbsp;&nbsp;<span class="Special">CTRL-O</span>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;<span class="Special">CTRL-I</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;example text&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V&nbsp;&nbsp;line 33 text&nbsp;&nbsp; ^&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;example text&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /^The |&nbsp;&nbsp;example text&nbsp;&nbsp; |&nbsp;&nbsp;<span class="Special">CTRL-O</span>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;<span class="Special">CTRL-I</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V&nbsp;&nbsp;There you are&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;example text<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-I</span>&nbsp;is the same as&nbsp;<span class="Special">&lt;Tab&gt;</span>.<br>
+<br>
+The &quot;:jumps&quot; command gives a list of positions you jumped to.&nbsp;&nbsp;The entry which<br>
+you used last is marked with a &quot;&gt;&quot;.<br>
+<br>
+<br>
+<span class="Statement">NAMED MARKS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="usr_03.html#bookmark" name="bookmark">*bookmark*</a><br>
+<br>
+Vim enables you to place your own marks in the text.&nbsp;&nbsp;The command &quot;ma&quot; marks<br>
+the place under the cursor as mark a.&nbsp;&nbsp;You can place 26 marks (a through z) in<br>
+your text.&nbsp;&nbsp;You can't see them, it's just a position that Vim remembers.<br>
+&nbsp;&nbsp; To go to a mark, use the command `<span class="Special">{mark}</span>, where&nbsp;<span class="Special">{mark}</span>&nbsp;is the mark letter.<br>
+Thus to move to the a mark:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`a</div>
+<br>
+The command 'mark (single quotation mark, or apostrophe) moves you to the<br>
+beginning of the line containing the mark.&nbsp;&nbsp;This differs from the `mark<br>
+command, which moves you to marked column.<br>
+<br>
+The marks can be very useful when working on two related parts in a file.<br>
+Suppose you have some text near the start of the file you need to look at,<br>
+while working on some text near the end of the file.<br>
+&nbsp;&nbsp; Move to the text at the start and place the s (start) mark there:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ms</div>
+<br>
+Then move to the text you want to work on and put the e (end) mark there:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;me</div>
+<br>
+Now you can move around, and when you want to look at the start of the file,<br>
+you use this to jump there:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'s</div>
+<br>
+Then you can use '' to jump back to where you were, or 'e to jump to the text<br>
+you were working on at the end.<br>
+&nbsp;&nbsp; There is nothing special about using s for start and e for end, they are<br>
+just easy to remember.<br>
+<br>
+You can use this command to get a list of marks:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:marks</div>
+<br>
+You will notice a few special marks.&nbsp;&nbsp;These include:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The cursor position before doing a jump<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The cursor position when last editing the file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Start of the last change<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; End of the last change<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_04.html">|usr_04.txt|</a>&nbsp;&nbsp;Making small changes<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">|manual-copyright|</a>&nbsp;&nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
+</div>
