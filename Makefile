@@ -10,7 +10,7 @@ html:
 	cp vim/runtime/doc/*.txt target/html/doc
 	cp vim_faq/doc/*.txt target/html/doc
 	cp tools/buildhtml.vim tools/makehtml.vim target/html
-	-cd target/html/doc ; vim -eu ../buildhtml.vim -c "qall!"
+	-cd target/html/doc ; vim --cmd "set rtp^=../../../tools" -eu ../buildhtml.vim -c "qall!"
 
 clean:
 	rm -rf target
