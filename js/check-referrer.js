@@ -1,4 +1,4 @@
-$(fucntion() {
+$(function() {
   'use strict';
   var REDIRECTS = {
     'http://vim-jp.org/vimdoc-ja/hebrew.html': true,
