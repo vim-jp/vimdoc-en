@@ -8,11 +8,18 @@ let g:html_no_progress = 1
 
 enew!
 
+source <sfile>:h/tag_aliases.vim
+source <sfile>:h/untranslated.vim
 source <sfile>:h/makehtml.vim
 
+let s:tools_dir = expand('<sfile>:p:h')
+let s:proj_dir = expand('<sfile>:p:h:h')
+
 function! s:main()
+  " for the lastest help syntax
+  let &runtimepath = s:tools_dir . ',' . &runtimepath
   " for ja custom syntax
-  let &runtimepath .= ',' . expand('<sfile>:p:h')
+  let &runtimepath .= ',' . s:proj_dir
   call s:BuildHtml()
 endfunction
 
