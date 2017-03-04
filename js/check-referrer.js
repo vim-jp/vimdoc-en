@@ -6,7 +6,6 @@ $(function() {
     'http://vim-jp.org/vimdoc-ja/version5.html': true,
     'http://vim-jp.org/vimdoc-ja/version6.html': true,
     'http://vim-jp.org/vimdoc-ja/version7.html': true,
-    'http://vim-jp.org/vimdoc-ja/version8.html': true,
   };
   var CLS = 'redirected-by-notranslation';
   var MSG = 'このページには日本語訳が存在しないために英語版に転送されました。';
