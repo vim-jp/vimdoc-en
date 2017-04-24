@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Apr 09<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Apr 23<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,6 +43,10 @@ entered there will not be repeated below, unless there is extra information.<br>
 Remove the Farsi code?<br>
 <br>
 +channel:<br>
+- job_stop() should not always close the channel, e.g. for &quot;int&quot;.<br>
+&nbsp;&nbsp;(Martin Gammelsæter, 2017 Apr 11, #1632)<br>
+&nbsp;&nbsp;Only assume killed on &quot;kill&quot;.<br>
+&nbsp;&nbsp;Check job-&gt;jv_status not to be JOB_ENDED.<br>
 - Try out background make plugin:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
 - Problem with stderr on Windows? (Vincent Rischmann, 2016 Aug 31, #1026)<br>
@@ -116,6 +120,10 @@ Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif?<br>
 <br>
 Memory leak in test97?&nbsp;&nbsp;The string is actually freed.&nbsp;&nbsp;Weird.<br>
+<br>
+Patch for flickering redraw. (Hirohito Higashi, 2017 Apr 23, #1637)<br>
+<br>
+New value &quot;uselast&quot; for&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>. (Lemonboy, 2017 Apr 23, #1652)<br>
 <br>
 Add a toolbar in the terminal.&nbsp;&nbsp;Can be global, above all windows, or specific<br>
 for one window.<br>
@@ -198,12 +206,17 @@ Patch for restoring wide characters in the console buffer.<br>
 Patch to fix escaping of job arguments. (Yasuhiro Matsumoto, 2016 Oct 5)<br>
 Update Oct 14:&nbsp;<span class="Constant"><a href="https://gist.github.com/mattn/d47e7d3bfe5ade4be86062b565a4bfca">https://gist.github.com/mattn/d47e7d3bfe5ade4be86062b565a4bfca</a></span><br>
 <br>
+Characters deleted on completion. (Adrià Farrés, 2017 Apr 20, #1645)<br>
+Remarks from Christian Brabandt (Apr 21)<br>
+<br>
 The TermResponse event is not triggered when a plugin has set&nbsp;<a class="Type" href="options.html#'eventignore'">'eventignore'</a>&nbsp;to<br>
 &quot;all&quot;.&nbsp;&nbsp;Netrw does this. (Gary Johnson, 2017 Jan 24)<br>
 Postpone the event until&nbsp;<a class="Type" href="options.html#'eventignore'">'eventignore'</a>&nbsp;is reset.<br>
 <br>
 Patch to make urxvt mouse work better, recognize Esc[*M termcap code.<br>
 (Maurice Bos, 2017 Feb 17, #1486)<br>
+<br>
+Expanding /**/ is slow.&nbsp;&nbsp;Idea by Luc Hermitte, 2017 Apr 14.<br>
 <br>
 Once .exe with updated installer is available: Add remark to download page<br>
 about /S and /D options (Ken Takata, 2016 Apr 13)<br>
@@ -282,10 +295,20 @@ Patch to add &quot;cmdline&quot; completion to getcompletion(). (Shougo, Oct 1, 
 Feature request: Complete members of a dictionary. (Luc Hermitte, 2017 Jan 4,<br>
 #1350)<br>
 <br>
+Undo message is not always properly displayed.&nbsp;&nbsp;Patch by Ken Takata, 2013 oct<br>
+3.&nbsp;&nbsp;Doesn't work properly according to Yukihiro Nakadaira.<br>
+Also see #1635.<br>
+<br>
 Patch for systemlist(), add empty item. (thinca, Sep 30, #1135)<br>
 Add an argument to choose binary or non-binary (like readfile()), when omitted<br>
 use the current behavior.<br>
 Include the test.<br>
+<br>
+Patch to add tagfunc().&nbsp;&nbsp;Cleaned up by Christian Brabandt, 2013 Jun 22.<br>
+New update 2017 Apr 10, #1628<br>
+<br>
+Unnamed register only contains the last deleted text when appending deleted<br>
+text to a register. (Wolfgang Jeltsch, reproduced by Ben Fritz, 2017 Apr 10)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'keywordprg'">'keywordprg'</a>&nbsp;starts with &quot;:&quot; the argument is still escaped as a shell<br>
 command argument. (Romain Lafourcade, 2016 Oct 16, #1175)<br>
@@ -900,9 +923,6 @@ Patch to handle integer overflow. (Aaron Burrow, 2013 Dec 12)<br>
 Patch to add &quot;ntab&quot; item in&nbsp;<a class="Type" href="options.html#'listchars'">'listchars'</a>&nbsp;to repeat first character. (Nathaniel<br>
 Braun, pragm, 2013 Oct 13)&nbsp;&nbsp;A better solution 2014 Mar 5.<br>
 <br>
-Undo message is not always properly displayed.&nbsp;&nbsp;Patch by Ken Takata, 2013 oct<br>
-3.&nbsp;&nbsp;Doesn't work properly according to Yukihiro Nakadaira.<br>
-<br>
 /[b-a] gives error E16, should probably be E769.<br>
 <br>
 7&nbsp;&nbsp; Windows XP: When using &quot;ClearType&quot; for text smoothing, a column of yellow<br>
@@ -1066,8 +1086,6 @@ MS-Windows resizing problems:<br>
 <br>
 Patch to append regexp to tag commands to make it possible to select one out<br>
 of many matches. (Cody Cutler, 2013 Mar 28)<br>
-<br>
-Patch to add tagfunc().&nbsp;&nbsp;Cleaned up by Christian Brabandt, 2013 Jun 22.<br>
 <br>
 The input map for&nbsp;<span class="Special">CTRL-O</span>&nbsp;in mswin.vim causes problems after&nbsp;<span class="Special">CTRL-X</span>&nbsp;<span class="Special">CTRL-O</span>.<br>
 Suggestion for another map. (Philip Mat, 2012 Jun 18)<br>
