@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'os_mac'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="os_mac.html" name="os_mac.txt">os_mac.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2006 Apr 30<br>
+<a class="Constant" href="os_mac.html" name="os_mac.txt">os_mac.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Apr 28<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar et al.</span><br>
@@ -23,6 +23,7 @@ This file documents the particularities of the Macintosh version of Vim.<br>
 5. Known Lack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_mac.html#mac-lack">mac-lack</a><br>
 6. Mac Bug Report&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_mac.html#mac-bug">mac-bug</a><br>
 7. Compiling Vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_mac.html#mac-compile">mac-compile</a><br>
+8. The darwin feature&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_mac.html#mac-darwin-feature">mac-darwin-feature</a><br>
 <br>
 There was a Mac port for version 3.0 of Vim.&nbsp;&nbsp;Here are the first few lines<br>
 from the old file:<br>
@@ -130,6 +131,56 @@ send a message to the current MacVim maintainers:<br>
 7. Compiling Vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_mac.html#mac-compile" name="mac-compile">mac-compile</a><br>
 <br>
 See the file &quot;src/INSTALLmac.txt&quot; that comes with the source files.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+8. The Darwin Feature&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_mac.html#mac-darwin-feature" name="mac-darwin-feature">mac-darwin-feature</a><br>
+<br>
+If you have a Mac that isn't very old, you will be running OS X, also called<br>
+Darwin.&nbsp;&nbsp;The last pre-Darwin OS was Mac OS 9.&nbsp;&nbsp;The darwin feature makes Vim<br>
+use Darwin-specific properties.<br>
+<br>
+What is accomplished with this feature is two-fold:<br>
+<br>
+- Make Vim interoperable with the system clipboard.<br>
+- Incorporate into Vim a converter module that bridges the gap between some<br>
+&nbsp;&nbsp;character encodings specific to the platform and those known to Vim.<br>
+<br>
+Needless to say, both are not to be missed for any decent text editor to work<br>
+nicely with other applications running on the same desktop environment.<br>
+<br>
+As Vim is not an application dedicated only to macOS, we need an extra feature<br>
+to add in order for it to offer the same user experience that our users on<br>
+other platforms enjoy to people on macOS.<br>
+<br>
+For brevity, the feature is referred to as &quot;darwin&quot; to signify it one of the<br>
+Vim features that are specific to that particular platform.<br>
+<br>
+The feature is a configuration option.&nbsp;&nbsp;Accordingly, whether it is enabled or<br>
+not is determined at build time; once it is selected to be enabled, it is<br>
+compiled in and hence cannot be disabled at runtime.<br>
+<br>
+The feature is enabled by default.&nbsp;&nbsp;For most macOS users, that should be<br>
+sufficient unless they have specific needs mentioned briefly below.<br>
+<br>
+If you want to disable it, pass&nbsp;<span class="Comment">--disable-darwin</span>&nbsp;to the configure script:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;./configure --disable-darwin &lt;other options&gt;</div>
+<br>
+and then run&nbsp;<a class="Comment" href="quickfix.html#:make">make</a>&nbsp;to build Vim.&nbsp;&nbsp;The order of the options doesn't matter.<br>
+<br>
+To make sure at runtime whether or not the darwin feature is compiled in, you<br>
+can use&nbsp;<span class="Comment">has('macunix')</span>&nbsp;which returns 1 if the feature is compiled in; 0<br>
+otherwise.<br>
+<br>
+Notable use cases where&nbsp;<span class="Comment">--disable-darwin</span>&nbsp;is turned out to be useful are:<br>
+<br>
+- When you want to use&nbsp;<a class="Identifier" href="gui_x11.html#x11-selection">x11-selection</a>&nbsp;instead of the system clipboard.<br>
+- When you want to use&nbsp;<a class="Identifier" href="remote.html#x11-clientserver">x11-clientserver</a>.<br>
+<br>
+Since both have to make use of X11 inter-client communication for them to work<br>
+properly, and since the communication mechanism can come into conflict with<br>
+the system clipboard, the darwin feature should be disabled to prevent Vim<br>
+from hanging at runtime.<br>
 <br>
 <br>
 &nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
