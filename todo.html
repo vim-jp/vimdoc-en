@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Jun 13<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Jul 15<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -40,9 +40,39 @@ entered there will not be repeated below, unless there is extra information.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-+channel:<br>
-- When redrawing for the channel buffer, command line completion is cleared.<br>
+When redrawing for the channel buffer, command line completion is cleared.<br>
 &nbsp;&nbsp;(Ramel Eshed, 2017 May 4)<br>
+When a timer triggers the command completion disappears. (Dominique Pelle,<br>
+2017 Jun 13, #1768)<br>
+Caused by 8.0.0592.<br>
+Check if anything was output?&nbsp;&nbsp;Don't redraw when scrolled. (#1820)<br>
+When redrawing the command line a pending&nbsp;<span class="Special">CTRL-R</span>&nbsp;shows &quot;, which is removed.<br>
+<br>
+No maintainer for German translations.<br>
+No maintainer for Vietnamese translations.<br>
+No maintainer for Simplified Chinese translations.<br>
+<br>
+<br>
+Terminal emulator window:<br>
+- Lots of stuff to implement, see src/terminal.c<br>
+- Windows implementation (WiP):&nbsp;<span class="Constant"><a href="https://github.com/mattn/vim/tree/terminal">https://github.com/mattn/vim/tree/terminal</a></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Using winpty ?<br>
+-&nbsp;&nbsp; Running a shell command from the GUI still has limitations.&nbsp;&nbsp;Look into how<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the terminal emulator of the Vim shell project can help:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://vimshell.wana.at">http://vimshell.wana.at</a></span><br>
+-&nbsp;&nbsp; Add debugger interface.&nbsp;&nbsp;Implementation for gdb by Xavier de Gaye.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Should work like an IDE.&nbsp;&nbsp;Try to keep it generic.&nbsp;&nbsp;Now found here:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://clewn.sf.net">http://clewn.sf.net</a></span>.<br>
+-&nbsp;&nbsp; Look into the idevim plugin/script.<br>
+-&nbsp;&nbsp; Related wishes for NetBeans commands:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- make it possible to have 'defineAnnoType' also handle terminal colors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- send 'balloonText' events for the cursor position (using CursorHold ?)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in terminal mode.<br>
+- Feature: switch between &quot;running job&quot; and a normal buffer (possibly<br>
+&nbsp;&nbsp;read-only) to allow for searching, copy/paste, etc. (Domnique).&nbsp;&nbsp;Having a<br>
+&nbsp;&nbsp;(large) scrollback would be useful.<br>
+<br>
++channel:<br>
 - Try out background make plugin:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
 - Problem with stderr on Windows? (Vincent Rischmann, 2016 Aug 31, #1026)<br>
@@ -106,13 +136,13 @@ Regexp problems:<br>
 &nbsp;&nbsp;col and vcol when moving to another line.<br>
 - this doesn't work: &quot;syntax match ErrorMsg /.\%9l\%&gt;20c\&amp;\%&lt;28c/&quot;.&nbsp;&nbsp;Leaving<br>
 &nbsp;&nbsp;out the \&amp; works.&nbsp;&nbsp;Seems any column check after \&amp; fails.<br>
-- The pattern &quot;\1&quot; with the old engine gives E65, with the new engine it<br>
-&nbsp;&nbsp;matches the empty string. (Dominique Pelle, 2015 Oct 2, Nov 24)<br>
-&nbsp;&nbsp;had_endbrace[] is set but not initialized or used.<br>
 - Difference between two engines: &quot;.*\zs\/\@&gt;\/&quot; on text &quot;///&quot;<br>
 &nbsp;&nbsp;(Chris Paul, 2016 Nov 13)&nbsp;&nbsp;New engine not greedy enough?<br>
 &nbsp;&nbsp;Another one: echom matchstr(&quot; sdfsfsf\n sfdsdfsdf&quot;,'[^\n]*')<br>
 &nbsp;&nbsp;(2017 May 15, #1252)<br>
+<br>
+Patch to update b:changedtick in the quickfix window. (Yegappan Lakshmanan,<br>
+2017 Jul 13)<br>
 <br>
 With foldmethod=syntax and nofoldenable comment highlighting isn't removed.<br>
 (Marcin Szewczyk, 2017 Apr 26)<br>
@@ -124,13 +154,38 @@ ml_get errors with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
 Error in emsg with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
+Better detection of strace file. (Steven Fernandez, 2017 Jul 12, #1837)<br>
+<br>
+To reproduce problems &quot;vim -u NONE -<span class="Special">N</span>&quot; is often used, but this still uses<br>
+<a class="Type" href="options.html#'viminfo'">'viminfo'</a>. Add &quot;-I&quot; to not use&nbsp;<a class="Type" href="options.html#'viminfo'">'viminfo'</a>?<br>
+Or use &quot;vim -B&quot; for &quot;bug reproduction&quot;?<br>
+<br>
+Bug with conceal mode: 3rd element returned by synconcealed() differs for<br>
+every call. (Dominique Pelle, 2017 Jun 18)<br>
+<br>
 Add options_default() / options_restore() to set several options to Vim<br>
 defaults for a plugin. Comments from Zyx, 2017 May 10.<br>
 Perhaps use a vimcontext / endvimcontext command block.<br>
 <br>
-Using freed memory with &quot;qf&quot; FileType autocommand that does :cclose.<br>
-(Lemonboy, 2017 May 28, #1730, fix in 1734, with test that doesn't fail, but<br>
-it fails when run manually)&nbsp;&nbsp;Add &quot;starting&quot; to test_override()?<br>
+Patch to trigger OptionSet when entering diff mode. (Christian Brabandt, 2017<br>
+Jul 7)<br>
+<br>
+Illegal memory access, requires ASAN to see. (Dominique Pelle, 2015 Jul 28)<br>
+Still happens (2017 Jul 9)<br>
+<br>
+Memory leak in test_arabic.<br>
+<br>
+Refactored HTML indent file. (Michael Lee, #1821)<br>
+<br>
+Using uninitialzed value in test_crypt.<br>
+<br>
+X11: Putting more than about 262040 characters of text on the clipboard and<br>
+pasting it in another Vim doesn't work.&nbsp;&nbsp;(Dominique Pelle, 2008 Aug 21-23)<br>
+clip_x11_request_selection_cb() is called with zero value and length.<br>
+Also: Get an error message from free() in the process that owns the selection.<br>
+Seems to happen when the selection is requested the second time, but before<br>
+clip_x11_convert_selection_cb() is invoked, thus in X library code.<br>
+Patch to fix this by Kiichi, 2017 Jul 11, #1822)<br>
 <br>
 Problem with three-piece comment. (Michael Lee, 2017 May 11, #1696)<br>
 <br>
@@ -139,14 +194,23 @@ case of :bwipe followed by :new.<br>
 <br>
 Files for Latvian language. (Vitolins, 2017 May 3, #1675)<br>
 <br>
+MS-Windows: Opening same file in a second gvim hangs. (Sven Bruggemann, 2017<br>
+Jul 4)<br>
+<br>
 Setting&nbsp;<a class="Type" href="options.html#'clipboard'">'clipboard'</a>&nbsp;to &quot;unnamed&quot; makes a global command very slow (Daniel<br>
 Drucker, 2017 May 8).<br>
 This was supposed to be fixed, did it break again somehow?<br>
 Christian cannot reproduce it.<br>
 <br>
+Using composing char in mapping does not work properly. maparg() shows the<br>
+wrong thing. (Nikolai Pavlov, 2017 Jul 8, #1827)<br>
+Or is this not an actual problem?<br>
+<br>
 Better TeX indent file. (Christian Brabandt, 2017 May 3)<br>
 <br>
 Openhab syntax file (mueller, #1678)<br>
+<br>
+Patch to use a separate code for BS on Windows. (Linwei, #1823)<br>
 <br>
 Use gvimext.dll from the nightly build? (Issue #249)<br>
 <br>
@@ -156,17 +220,16 @@ Use gvimext.dll from the nightly build? (Issue #249)<br>
 Problem with using :cd when remotely editing a file. (Gerd Wachsmuth, 2017 May<br>
 8, #1690)<br>
 <br>
-<a class="Type" href="options.html#'equalalways'">'equalalways'</a>&nbsp;only works for one column. (Glacambre, 2017 May 15, #1707)<br>
-<br>
 Include solarized color scheme?<br>
-<br>
-Updates to GTK help. (Kazunobu Kuriyama, 2017 May 4)<br>
 <br>
 Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif?<br>
 <br>
 Bogus characters inserted when triggering indent while changing text.<br>
 (Vitor Antunes, 2016 Nov 22, #1269)<br>
+<br>
+Using &quot;wviminfo /tmp/viminfo&quot; does not store file marks that Vim knows about,<br>
+it only works when merging with an existing file.&nbsp;&nbsp;(Shougo, 2017 Jun 19, #1781)<br>
 <br>
 Segmentation fault with complete(). (Lifepillar, 2017 Apr 29, #1668)<br>
 Check for &quot;pat&quot; to be NULL in search_for_exact_line()?<br>
@@ -176,6 +239,9 @@ Is it possible to keep the complete menu open when calling complete()?<br>
 (Prabir Shrestha, 2017 May 19, #1713)<br>
 <br>
 Memory leak in test97?&nbsp;&nbsp;The string is actually freed.&nbsp;&nbsp;Weird.<br>
+<br>
+assert_fails() can only check for the first error.&nbsp;&nbsp;Make it possible to have<br>
+it catch multiple errors and check all of them.<br>
 <br>
 New value &quot;uselast&quot; for&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>. (Lemonboy, 2017 Apr 23, #1652)<br>
 <br>
@@ -192,6 +258,11 @@ Perhaps simpler: actually delete the mappings.&nbsp;&nbsp;Use maplist() to list 
 mappings (with a lhs prefix, like maparg()), mapdelete() to delete,<br>
 maprestore() to restore (using the output of maplist().<br>
 <br>
+Patch to add setbufline(). (email from Yasuhiro Matsumoto, patch by Ozaki<br>
+Kiichi, 2016 Feb 28)<br>
+Update Mar 8:&nbsp;<span class="Constant"><a href="https://gist.github.com/mattn/23c1f50999084992ca98">https://gist.github.com/mattn/23c1f50999084992ca98</a></span><br>
+Update Mar 13:&nbsp;<span class="Constant"><a href="https://gist.github.com/mattn/23c1f50999084992ca98">https://gist.github.com/mattn/23c1f50999084992ca98</a></span><br>
+<br>
 Add an argument to :mkvimrc (or add aother command) to skip mappings from<br>
 plugins (source is a Vim script).&nbsp;&nbsp;No need to put these in a .vimrc, they will<br>
 be defined when the plugin is loaded.<br>
@@ -205,6 +276,9 @@ What if there is an invalid character?<br>
 <br>
 Json string with trailing \u should be an error. (Lcd)<br>
 <br>
+import can't be used in define option when include matches too.<br>
+(Romain Lafourcade, 2017 Jun 18, #1519)<br>
+<br>
 When session file has name in argument list but the buffer was deleted, the<br>
 buffer is not deleted when using the session file. (#1393)<br>
 Should add the buffer in hidden state.<br>
@@ -215,10 +289,6 @@ like the item was not a match for :cnext.<br>
 Wrong diff highlighting with three files. (2016 Oct 20, #1186)<br>
 Also get E749 on exit.<br>
 Another example in #1309<br>
-<br>
-Patch to change all use of &amp;sw to shiftwidth(). (Tyru, 2017 Feb 19)<br>
-Takuya Fujiwara<br>
-Wait until maintainers integrate it.<br>
 <br>
 When deleting a mark or register, leave a tombstone, so that it's also deleted<br>
 when writing viminfo (and the delete was the most recent action). #1339<br>
@@ -249,6 +319,12 @@ highlighting for both stl and stlnc.&nbsp;&nbsp;Patch by Ken Hamada (itchyny, 20
 Using&nbsp;<span class="Special">CTRL-G</span>_U in InsertCharPre causes trouble for redo. (Israel Chauca<br>
 Fuentes, 2017 Feb 12, #1470)<br>
 <br>
+Add a &quot;keytrans()&quot; function, which turns the internal byte representation of a<br>
+key into a form that can be used for :map.&nbsp;&nbsp;E.g.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let xx = &quot;\<span class="Special">&lt;C-Home&gt;</span>&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo keytrans(xx)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-Home&gt;</span><br>
+<br>
 Check for errors E704 and E705 only does VAR_FUNC, should also do VAR_PARTIAL.<br>
 (Nikolai Pavlov, 2017 Mar 13, #1557)<br>
 Make a function to check for function-like type?<br>
@@ -261,9 +337,6 @@ Implement optional arguments for functions.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;call Foo(12)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;call Foo(12, all = 0)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;call Foo(12, 15, 0)<br>
-<br>
-writefile() does not abort as soon as an error is found. (Nikolai Pavlov,<br>
-2017 Feb 14, #1476)<br>
 <br>
 Patch to support on-the-spot and over-the-spot input method. (Ken Takata, 2017<br>
 Feb 14).<br>
@@ -278,6 +351,10 @@ somewhere else.&nbsp;&nbsp;:<span class="Special">{range}</span>copy&nbsp;<span 
 Patch to fix that empty first tab is not in session.<br>
 (Hirohito Higashi, 2016 Nov 25, #1282)<br>
 <br>
+Patch to add random number generator. (Hong Xu, 2010 Nov 8, update Nov 10)<br>
+Alternative from Christian Brabandt. (2010 Sep 19)<br>
+New one from Yasuhiro Matsumoto, #1277.<br>
+<br>
 Patch for restoring wide characters in the console buffer.<br>
 (Ken Takata, 2016 Jun 7)<br>
 <br>
@@ -290,9 +367,6 @@ Remarks from Christian Brabandt (Apr 21)<br>
 The TermResponse event is not triggered when a plugin has set&nbsp;<a class="Type" href="options.html#'eventignore'">'eventignore'</a>&nbsp;to<br>
 &quot;all&quot;.&nbsp;&nbsp;Netrw does this. (Gary Johnson, 2017 Jan 24)<br>
 Postpone the event until&nbsp;<a class="Type" href="options.html#'eventignore'">'eventignore'</a>&nbsp;is reset.<br>
-<br>
-Patch to make urxvt mouse work better, recognize Esc[*M termcap code.<br>
-(Maurice Bos, 2017 Feb 17, #1486)<br>
 <br>
 Expanding /**/ is slow.&nbsp;&nbsp;Idea by Luc Hermitte, 2017 Apr 14.<br>
 <br>
@@ -329,10 +403,23 @@ Does this also fix #1408 ?<br>
 <br>
 Patch to add &quot;module&quot; to quickfix entries. (Coot, 2017 Jun 8, #1757)<br>
 <br>
+<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;and match interfere. (Ozaki Kiichi, 2017 Jun 23, #1792)<br>
+<br>
 Patch for&nbsp;<span class="MissingTag">'cursorlinenr'</span>&nbsp;option. (Ozaki Kiichi, 2016 Nov 30)<br>
+<br>
+Patch to be able to separately map&nbsp;<span class="Special">CTRL-H</span>&nbsp;and BS on Windows.<br>
+(Linwei, 2017 Jul 11, #1833)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'completeopt'">'completeopt'</a>&nbsp;has &quot;noselect&quot; does not insert a newline. (Lifepillar, 2017<br>
 Apr 23, #1653)<br>
+<br>
+Using an external diff is inefficient.&nbsp;&nbsp;Not all systems have a good diff<br>
+program available (esp. MS-Windows).&nbsp;&nbsp;Would be nice to have in internal diff<br>
+implementation.&nbsp;&nbsp;Can then also use this for displaying changes within a line.<br>
+Olaf Dabrunz is working on this. (10 Jan 2016)<br>
+9&nbsp;&nbsp; Instead invoking an external diff program, use builtin code.&nbsp;&nbsp;One can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;found here:&nbsp;<span class="Constant"><a href="http://www.ioplex.com/~miallen/libmba/dl/src/diff.c">http://www.ioplex.com/~miallen/libmba/dl/src/diff.c</a></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;It's complicated and badly documented.<br>
 <br>
 Window resizing with&nbsp;<a class="Type" href="options.html#'winfixheight'">'winfixheight'</a>: With a vertical split the height changes<br>
 anyway. (Tommy allen, 2017 Feb 21, #1502)<br>
@@ -390,9 +477,6 @@ Include the test.<br>
 Patch to add tagfunc().&nbsp;&nbsp;Cleaned up by Christian Brabandt, 2013 Jun 22.<br>
 New update 2017 Apr 10, #1628<br>
 <br>
-Unnamed register only contains the last deleted text when appending deleted<br>
-text to a register. (Wolfgang Jeltsch, reproduced by Ben Fritz, 2017 Apr 10)<br>
-<br>
 When&nbsp;<a class="Type" href="options.html#'keywordprg'">'keywordprg'</a>&nbsp;starts with &quot;:&quot; the argument is still escaped as a shell<br>
 command argument. (Romain Lafourcade, 2016 Oct 16, #1175)<br>
 <br>
@@ -409,6 +493,8 @@ execute() cannot be used with command completeion. (Daniel Hahler, 2016 Oct 1,<b
 #1141)<br>
 <br>
 cmap using execute() has side effects. (Killthemule, 2016 Aug 17, #983)<br>
+<br>
+:map X may print invalid data. (Nikolay Pavlov, 2017 Jul 3, #1816)<br>
 <br>
 Patch to order results from taglist(). (Duncan McDougall, 2016 Oct 25)<br>
 <br>
@@ -507,9 +593,6 @@ Because of using the initial buffer? (Dun Peal, 2016 May 12)<br>
 Patch to add the :bvimgrep command.&nbsp;&nbsp;(Christian Brabandt, 2014 Nov 12)<br>
 Updated 2016 Jun 10, #858&nbsp;&nbsp;Update 2017 Mar 28: use&nbsp;<span class="Special">&lt;buffer&gt;</span><br>
 <br>
-Patch to fix that an encoding conversion failure results in a corrupted or<br>
-empty file. (Christian Brabandt, #1765,&nbsp;<span class="Constant"><a href="https://github.com/chrisbra/vim-mq-patches/blob/master/conversion_error">https://github.com/chrisbra/vim-mq-patches/blob/master/conversion_error</a></span>)<br>
-<br>
 Add redrawtabline command. (Naruhiko Nishino, 2016 Jun 11)<br>
 <br>
 Neovim patch for utfc_ptr2char_len()&nbsp;<span class="Constant"><a href="https://github.com/neovim/neovim/pull/4574">https://github.com/neovim/neovim/pull/4574</a></span><br>
@@ -526,11 +609,6 @@ Possibly include the needed code so that it can be build everywhere.<br>
 <br>
 Add a way to restart a timer.&nbsp;&nbsp;It's similar to timer_stop() and timer_start(),<br>
 but the reference remains valid.<br>
-<br>
-Patch to add setbufline(). (email from Yasuhiro Matsumoto, patch by Ozaki<br>
-Kiichi, 2016 Feb 28)<br>
-Update Mar 8:&nbsp;<span class="Constant"><a href="https://gist.github.com/mattn/23c1f50999084992ca98">https://gist.github.com/mattn/23c1f50999084992ca98</a></span><br>
-Update Mar 13:&nbsp;<span class="Constant"><a href="https://gist.github.com/mattn/23c1f50999084992ca98">https://gist.github.com/mattn/23c1f50999084992ca98</a></span><br>
 <br>
 Need to try out instructions in INSSTALLpc.txt about how to install all<br>
 interfaces and how to build Vim with them.<br>
@@ -644,8 +722,6 @@ Patch to add TagNotFound autocommand. (Anton Lindqvist, 2016 Feb 3)<br>
 Patch to add Error autocommand. (Anton Lindqvist, 2016 Feb 17)<br>
 Only remembers one error.<br>
 <br>
-Illegal memory access, requires ASAN to see. (Dominique Pelle, 2015 Jul 28)<br>
-<br>
 Gvim: when both Tab and&nbsp;<span class="Special">CTRL-I</span>&nbsp;are mapped, use&nbsp;<span class="Special">CTRL-I</span>&nbsp;not for Tab.<br>
 <br>
 Unexpected delay when using&nbsp;<span class="Special">CTRL-O</span>&nbsp;u.&nbsp;&nbsp;It's not timeoutlen.<br>
@@ -712,11 +788,6 @@ Patch to use two highlight groups for relative numbers. (Shaun Brady, 2016 Jan<b
 <br>
 MS-Windows: Crash opening very long file name starting with &quot;\\&quot;.<br>
 (Christian Brock, 2012 Jun 29)<br>
-<br>
-Using an external diff is inefficient.&nbsp;&nbsp;Not all systems have a good diff<br>
-program available (esp. MS-Windows).&nbsp;&nbsp;Would be nice to have in internal diff<br>
-implementation.&nbsp;&nbsp;Can then also use this for displaying changes within a line.<br>
-Olaf Dabrunz is working on this.<br>
 <br>
 The OptionSet autocommand event is not always triggered. (Rick Howe, 2015 Sep<br>
 24): :diffthis, :diffoff.<br>
@@ -1413,9 +1484,6 @@ New esperanto spell file can't be processed. (Dominique Pelle, 2011 Jan 30)<br>
 Editing a file with a ^M with&nbsp;<a class="Type" href="options.html#'ff'">'ff'</a>&nbsp;set to &quot;mac&quot;, opening a help file, then the<br>
 ^M is displayed as ^J sometimes.&nbsp;&nbsp;Getting&nbsp;<a class="Type" href="options.html#'ff'">'ff'</a>&nbsp;value from wrong window/buffer?<br>
 <br>
-<a class="Type" href="options.html#'colorcolumn'">'colorcolumn'</a>&nbsp;has higher priority than hlsearch.&nbsp;&nbsp;Should probably be the other<br>
-way around. (Nazri Ramliy, 2013 Feb 19)<br>
-<br>
 When Vim is put in the background (SIGTSTP) and then gets a SIGHUP it doesn't<br>
 exit.&nbsp;&nbsp;It exists as soon as back in the foreground. (Stephen Liang, 2011 Jan<br>
 9)&nbsp;&nbsp;Caused by vim_handle_signal(SIGNAL_BLOCK); in ui.c.<br>
@@ -1464,13 +1532,12 @@ setpos() does not restore cursor position after :normal. (Tyru, 2010 Aug 11)<br>
 7&nbsp;&nbsp; The&nbsp;<a class="Type" href="options.html#'directory'">'directory'</a>&nbsp;option supports changing path separators to &quot;%&quot; to make<br>
 &nbsp;&nbsp;&nbsp;&nbsp;file names unique, also support this for&nbsp;<a class="Type" href="options.html#'backupdir'">'backupdir'</a>. (Mikolaj Machowski)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Patch by Christian Brabandt, 2010 Oct 21.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Is this an update:&nbsp;&nbsp;related to: #179<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="https://github.com/chrisbra/vim-mq-patches/blob/master/backupdir">https://github.com/chrisbra/vim-mq-patches/blob/master/backupdir</a></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Fixed patch 2017 Jul 1.<br>
 <br>
 With &quot;tw=55 fo+=a&quot; typing space before ) doesn't work well. (Scott Mcdermott,<br>
 2010 Oct 24)<br>
-<br>
-Patch to add random number generator. (Hong Xu, 2010 Nov 8, update Nov 10)<br>
-Alternative from Christian Brabandt. (2010 Sep 19)<br>
-New one from Yasuhiro Matsumoto, #1277.<br>
 <br>
 Messages in message.txt are highlighted as examples.<br>
 <br>
@@ -2411,13 +2478,6 @@ respond to selection requests.&nbsp;&nbsp;Invoking XtDisownSelection() before ex
 the shell doesn't help.&nbsp;&nbsp;Would require forking and doing a message loop, like<br>
 what happens for the GUI.<br>
 <br>
-X11: Putting more than about 262040 characters of text on the clipboard and<br>
-pasting it in another Vim doesn't work.&nbsp;&nbsp;(Dominique Pelle, 2008 Aug 21-23)<br>
-clip_x11_request_selection_cb() is called with zero value and length.<br>
-Also: Get an error message from free() in the process that owns the selection.<br>
-Seems to happen when the selection is requested the second time, but before<br>
-clip_x11_convert_selection_cb() is invoked, thus in X library code.<br>
-<br>
 &quot;:vimgrep&quot; does not recognize a recursive symlink.&nbsp;&nbsp;Is it possible to detect<br>
 this, at least for Unix (using device/inode)?<br>
 <br>
@@ -3280,18 +3340,6 @@ Most interesting new features to be added when all bugs have been fixed:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Alternative: Make a function for Ex commands: cmd_edit().<br>
 -&nbsp;&nbsp; Add COLUMN NUMBERS to &quot;:&quot; commands &quot;:line1,line2[col1,col2]cmd&quot;.&nbsp;&nbsp;Block<br>
 &nbsp;&nbsp;&nbsp;&nbsp;can be selected with&nbsp;<span class="Special">CTRL-V</span>.&nbsp;&nbsp;Allow '$' (end of line) for col2.<br>
--&nbsp;&nbsp; Add DEBUGGER INTERFACE.&nbsp;&nbsp;Implementation for gdb by Xavier de Gaye.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Should work like an IDE.&nbsp;&nbsp;Try to keep it generic.&nbsp;&nbsp;Now found here:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://clewn.sf.net">http://clewn.sf.net</a></span>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;And the idevim plugin/script.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;To be able to start the debugger from inside Vim&#0058; For GUI run a program<br>
-&nbsp;&nbsp;&nbsp;&nbsp;with a netbeans connection; for console: start a program that splits the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;terminal, runs the debugger in one window and reconnect Vim I/O to the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;other window.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Wishes for NetBeans commands:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- make it possible to have 'defineAnnoType' also handle terminal colors.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- send 'balloonText' events for the cursor position (using CursorHold ?)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in terminal mode.<br>
 -&nbsp;&nbsp; ECLIPSE plugin.&nbsp;&nbsp;Problem is: the interface is very complicated.&nbsp;&nbsp;Need to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;implement part in Java and then connect to Vim.&nbsp;&nbsp;Some hints from Alexandru<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Roman, 2004 Dec 15.&nbsp;&nbsp;Should then also work with Oracle Jdeveloper, see JSR<br>
@@ -3304,9 +3352,6 @@ Most interesting new features to be added when all bugs have been fixed:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;scrolls back to where the cursor is.<br>
 -&nbsp;&nbsp; Scroll commands by screen line. g&nbsp;<span class="Special">CTRL-E</span>&nbsp;and g&nbsp;<span class="Special">CTRL-Y</span>&nbsp;?&nbsp;&nbsp;Requires the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;first line to be able to start halfway.<br>
--&nbsp;&nbsp; Running a shell command from the GUI still has limitations.&nbsp;&nbsp;Look into how<br>
-&nbsp;&nbsp;&nbsp;&nbsp;the terminal emulator of the Vim shell project can help:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://vimshell.wana.at">http://vimshell.wana.at</a></span><br>
 8&nbsp;&nbsp; Add a command to jump to a certain kind of tag.&nbsp;&nbsp;Allow the user to specify<br>
 &nbsp;&nbsp;&nbsp;&nbsp;values for the optional fields.&nbsp;&nbsp;E.g., &quot;:tag size type=m&quot;.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Also allow specifying the file and command, so that the result of<br>
@@ -3495,9 +3540,6 @@ Spell checking:<br>
 Diff mode:<br>
 9&nbsp;&nbsp; When making small changes, e.g. deleting a character, update the diff.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Possibly without running diff.<br>
-9&nbsp;&nbsp; Instead invoking an external diff program, use builtin code.&nbsp;&nbsp;One can be<br>
-&nbsp;&nbsp;&nbsp;&nbsp;found here:&nbsp;<span class="Constant"><a href="http://www.ioplex.com/~miallen/libmba/dl/src/diff.c">http://www.ioplex.com/~miallen/libmba/dl/src/diff.c</a></span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;It's quite big and badly documented though.<br>
 8&nbsp;&nbsp; Also show difference with the file when editing started?&nbsp;&nbsp;Should show what<br>
 &nbsp;&nbsp;&nbsp;&nbsp;can be undone. (Tom Popovich)<br>
 <br>
