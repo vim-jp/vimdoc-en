@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'terminal'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="terminal.html" name="terminal.txt">terminal.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Jul 15<br>
+<a class="Constant" href="terminal.html" name="terminal.txt">terminal.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Jul 19<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -13,6 +13,10 @@ Terminal window support&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb
 <br>
 <br>
 WARNING: THIS IS ONLY PARTLY IMPLEMENTED, ANYTHING CAN STILL CHANGE<br>
+<br>
+The terminal feature is optional, use this to check if your Vim has it:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo has('terminal')</div>
+If the result is &quot;1&quot; you have it.<br>
 <br>
 <br>
 1. Basic use&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-use">terminal-use</a><br>
@@ -39,11 +43,12 @@ the job.&nbsp;&nbsp;This uses a pty when possible.<br>
 <br>
 Navigate between windows with&nbsp;<span class="Special">CTRL-W</span>&nbsp;commands (and mouse).<br>
 E.g.&nbsp;<span class="Special">CTRL-W</span>&nbsp;<span class="Special">CTRL-W</span>&nbsp;moves focus to the next window.<br>
+Use &quot;<span class="Special">CTRL-W</span>&nbsp;:&quot; to edit an Ex command.<br>
 <br>
 See option&nbsp;<a class="Type" href="options.html#'termkey'">'termkey'</a>&nbsp;for specifying the key that precedes a Vim command.<br>
 Default is&nbsp;<span class="Special">CTRL-W</span>.<br>
 <br>
-See option&nbsp;<span class="MissingTag">'termsize'</span>&nbsp;for controlling the size of the terminal window.<br>
+See option&nbsp;<a class="Type" href="options.html#'termsize'">'termsize'</a>&nbsp;for controlling the size of the terminal window.<br>
 (TODO: scrolling when the terminal is larger than the window)<br>
 <br>
 <span class="PreProc">Syntax</span><br>
@@ -67,17 +72,21 @@ See option&nbsp;<span class="MissingTag">'termsize'</span>&nbsp;for controlling 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buffer.&nbsp;&nbsp;If there are unsaved changes this fails, use<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;! to force, as usual.<br>
 <br>
+When the buffer associated with the terminal is wiped out the job is killed,<br>
+similar to calling&nbsp;<span class="Comment">job_stop(job, &quot;kill&quot;)</span><br>
+<br>
+<br>
 <span class="PreProc">Resizing</span><br>
 <br>
 The size of the terminal can be in one of three modes:<br>
 <br>
-1. The&nbsp;<span class="MissingTag">'termsize'</span>&nbsp;option is empty: The terminal size follows the window size.<br>
+1. The&nbsp;<a class="Type" href="options.html#'termsize'">'termsize'</a>&nbsp;option is empty: The terminal size follows the window size.<br>
 &nbsp;&nbsp; The minimal size is 2 screen lines with 10 cells.<br>
 <br>
-2. The&nbsp;<span class="MissingTag">'termsize'</span>&nbsp;option is &quot;rows*cols&quot;, where &quot;rows&quot; is the minimal number of<br>
+2. The&nbsp;<a class="Type" href="options.html#'termsize'">'termsize'</a>&nbsp;option is &quot;rows*cols&quot;, where &quot;rows&quot; is the minimal number of<br>
 &nbsp;&nbsp; screen rows and &quot;cols&quot; is the minial number of cells.<br>
 <br>
-3. The&nbsp;<span class="MissingTag">'termsize'</span>&nbsp;option is &quot;rowsXcols&quot; (where the x is upper or lower case).<br>
+3. The&nbsp;<a class="Type" href="options.html#'termsize'">'termsize'</a>&nbsp;option is &quot;rowsXcols&quot; (where the x is upper or lower case).<br>
 &nbsp;&nbsp; The terminal size is fixed to the specified number of screen lines and<br>
 &nbsp;&nbsp; cells.&nbsp;&nbsp;If the window is bigger there will be unused empty space.<br>
 <br>
@@ -86,7 +95,20 @@ be seen (the lower-left part).<br>
 <br>
 The&nbsp;<a class="Identifier" href="eval.html#term_getsize()">term_getsize()</a>&nbsp;function can be used to get the current size of the<br>
 terminal.&nbsp;&nbsp;<a class="Identifier" href="eval.html#term_setsize()">term_setsize()</a>&nbsp;can be used only when in the first or second mode,<br>
-not when&nbsp;<span class="MissingTag">'termsize'</span>&nbsp;is &quot;rowsXcols&quot;.<br>
+not when&nbsp;<a class="Type" href="options.html#'termsize'">'termsize'</a>&nbsp;is &quot;rowsXcols&quot;.<br>
+<br>
+<br>
+<span class="PreProc">Unix</span><br>
+<br>
+On Unix a pty is used to make it possible to run all kinds of commands.&nbsp;&nbsp;You<br>
+can even run Vim in the terminal!&nbsp;&nbsp;That's used for debugging, see below.<br>
+<br>
+<br>
+<span class="PreProc">MS-Windows</span><br>
+<br>
+On MS-Windows a hidden console is used to run the command in.&nbsp;&nbsp;This should<br>
+work well for all kind of commands.&nbsp;&nbsp;Obviously, they must be commands that run<br>
+in a terminal, not open their own window.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 2. Remote testing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-testing" name="terminal-testing">terminal-testing</a><br>
