@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Jul 22<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Aug 01<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -40,6 +40,8 @@ entered there will not be repeated below, unless there is extra information.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Check out coverity reports.<br>
+<br>
 No maintainer for Vietnamese translations.<br>
 No maintainer for Simplified Chinese translations.<br>
 <br>
@@ -48,7 +50,8 @@ Terminal emulator window:<br>
 - Lots of stuff to implement, see src/terminal.c<br>
 - Running a shell command from the GUI still has limitations.&nbsp;&nbsp;Look into how<br>
 &nbsp;&nbsp;the terminal emulator of the Vim shell project can help:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://vimshell.wana.at">http://vimshell.wana.at</a></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://code.hootsuite.com/vimshell/">http://code.hootsuite.com/vimshell/</a></span><br>
+- Add winpty.dll and winpty-agent.exe in the NSIS build.<br>
 - Add debugger interface.&nbsp;&nbsp;Implementation for gdb by Xavier de Gaye.&nbsp;&nbsp;Should<br>
 &nbsp;&nbsp;work like an IDE.&nbsp;&nbsp;Try to keep it generic.&nbsp;&nbsp;Now found here:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://clewn.sf.net">http://clewn.sf.net</a></span>.<br>
@@ -57,9 +60,6 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- make it possible to have 'defineAnnoType' also handle terminal colors.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- send 'balloonText' events for the cursor position (using CursorHold ?)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in terminal mode.<br>
-- Feature: switch between &quot;running job&quot; and a normal buffer (possibly<br>
-&nbsp;&nbsp;read-only) to allow for searching, copy/paste, etc. (Domnique).&nbsp;&nbsp;Having a<br>
-&nbsp;&nbsp;(large) scrollback would be useful.<br>
 <br>
 +channel:<br>
 - Try out background make plugin:&nbsp;<br>
@@ -130,6 +130,9 @@ Regexp problems:<br>
 &nbsp;&nbsp;Another one: echom matchstr(&quot; sdfsfsf\n sfdsdfsdf&quot;,'[^\n]*')<br>
 &nbsp;&nbsp;(2017 May 15, #1252)<br>
 <br>
+test_gui fails with gnome2: cannot create .gnome2 dir<br>
+&nbsp;&nbsp;&nbsp;&nbsp;use&nbsp;&nbsp;testdir/Xfakehome&nbsp;&nbsp;instead of does/not/exist?<br>
+<br>
 Patch for quickfix: parse lines for any quickfix list. (Yegappan Lakshmanan,<br>
 2017 Jul 20)<br>
 <br>
@@ -143,6 +146,8 @@ ml_get errors with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
 Error in emsg with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
+Patch for Murphi syntax. (Matthew Fernandez, 2017 Jul 24)<br>
+<br>
 Better detection of strace file. (Steven Fernandez, 2017 Jul 12, #1837)<br>
 <br>
 Bug with conceal mode: 3rd element returned by synconcealed() differs for<br>
@@ -152,6 +157,11 @@ Add options_default() / options_restore() to set several options to Vim<br>
 defaults for a plugin. Comments from Zyx, 2017 May 10.<br>
 Perhaps use a vimcontext / endvimcontext command block.<br>
 <br>
+Signs drawn on top of messages. (worp, #1907)<br>
+<br>
+Folds open when job writes to another buffer. (Jonathan Fudger, 2017 Jul 31)<br>
+Already fixed?<br>
+<br>
 Illegal memory access, requires ASAN to see. (Dominique Pelle, 2015 Jul 28)<br>
 Still happens (2017 Jul 9)<br>
 <br>
@@ -159,11 +169,14 @@ Memory leak in test_arabic.<br>
 <br>
 Include Haiku port? (Adrien Destugues, Siarzhuk Zharski, 2013 Oct 24)<br>
 It can replace the BeOS code, which is likely not used anymore.<br>
-Now on github: #1856.&nbsp;&nbsp;Is not up-to-date.<br>
+Now on github: #1856.&nbsp;&nbsp;Is now up-to-date?<br>
 <br>
 Refactored HTML indent file. (Michael Lee, #1821)<br>
 <br>
 Using uninitialzed value in test_crypt.<br>
+<br>
+Test_writefile_fails_conversion failure on Solaris because if different iconv<br>
+behavior.&nbsp;&nbsp;Skip when &quot;uname&quot; returns &quot;SunOS&quot;? (Pavel Heimlich, #1872)<br>
 <br>
 All functions are global, which makes functions like get() and len() awkward.<br>
 For the future use the ~get() and ~len() syntax, e.g.:<br>
@@ -183,9 +196,18 @@ clip_x11_request_selection_cb() is called with zero value and length.<br>
 Also: Get an error message from free() in the process that owns the selection.<br>
 Seems to happen when the selection is requested the second time, but before<br>
 clip_x11_convert_selection_cb() is invoked, thus in X library code.<br>
-Patch to fix this by Kiichi, 2017 Jul 11, #1822)<br>
+Kazunobu Kuriyama is working on a proper fix. (2017 Jul 25)<br>
 <br>
 Problem with three-piece comment. (Michael Lee, 2017 May 11, #1696)<br>
+<br>
+Completion mixes results from the current buffer with tags and other files.<br>
+Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still search for results.&nbsp;&nbsp;E.g., type &quot;b_&quot; in<br>
+terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
+Should do current file first and not split it up when more results are found.<br>
+(Also #1890)<br>
+<br>
+Python: After &quot;import vim&quot; error messages only show the first line of the<br>
+stack trace. (Yggdroot, 2017 Jul 28, #1887)<br>
 <br>
 When checking if a bufref is valid, also check the buffer number, to catch the<br>
 case of :bwipe followed by :new.<br>
@@ -194,7 +216,7 @@ Patch to skip writing a temp file for diffing if the buffer is equal to the<br>
 existing file. (Akria Sheng, 2017 Jul 22)<br>
 Could also skip writing lines that are the same.<br>
 <br>
-Files for Latvian language. (Vitolins, 2017 May 3, #1675)<br>
+Patch with Files for Latvian language. (Vitolins, 2017 May 3, #1675)<br>
 <br>
 MS-Windows: Opening same file in a second gvim hangs. (Sven Bruggemann, 2017<br>
 Jul 4)<br>
@@ -241,6 +263,9 @@ Is it possible to keep the complete menu open when calling complete()?<br>
 (Prabir Shrestha, 2017 May 19, #1713)<br>
 <br>
 Memory leak in test97?&nbsp;&nbsp;The string is actually freed.&nbsp;&nbsp;Weird.<br>
+<br>
+Patch to add configure flags to skip rtl, farsi and arabic support.<br>
+(Diego Carrión, #1867)<br>
 <br>
 assert_fails() can only check for the first error.&nbsp;&nbsp;Make it possible to have<br>
 it catch multiple errors and check all of them.<br>
@@ -5625,11 +5650,11 @@ Various improvements:<br>
 -&nbsp;&nbsp; Support %name% expansion for &quot;gf&quot; on Windows.<br>
 -&nbsp;&nbsp; Make &quot;gf&quot; work on &quot;<span class="Constant">file://c:/path/name</span>&quot;.&nbsp;&nbsp;&quot;<span class="Constant">file:/c:/</span>&quot; and &quot;<span class="Constant">file:///c:/</span>&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;should also work?<br>
--&nbsp;&nbsp; Add&nbsp;<span class="MissingTag">'urlpath'</span>, used like&nbsp;<a class="Type" href="options.html#'path'">'path'</a>&nbsp;for when &quot;gf&quot; used on an URL?<br>
+-&nbsp;&nbsp; Add&nbsp;<span class="MissingTag">'urlpath'</span>, used like&nbsp;<a class="Type" href="options.html#'path'">'path'</a>&nbsp;for when &quot;gf&quot; used on a URL?<br>
 8&nbsp;&nbsp; When using &quot;gf&quot; on an absolute file name, while editing a remote file<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(starts with scp:// or <a href="http://)">http://)</a> should prepend the method and machine<br>
 &nbsp;&nbsp;&nbsp;&nbsp;name.<br>
--&nbsp;&nbsp; When finding an URL or file name, and it doesn't exist, try removing a<br>
+-&nbsp;&nbsp; When finding a URL or file name, and it doesn't exist, try removing a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;trailing '.'.<br>
 -&nbsp;&nbsp; Add &quot;:path&quot; command modifier.&nbsp;&nbsp;Should work for every command that takes a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;file name argument, to search for the file name in&nbsp;<a class="Type" href="options.html#'path'">'path'</a>.&nbsp;&nbsp;Use<br>
