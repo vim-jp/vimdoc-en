@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'options'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="options.html" name="options.txt">options.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Jul 31<br>
+<a class="Constant" href="options.html" name="options.txt">options.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Aug 27<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -422,11 +422,12 @@ On Unix systems the form &quot;$<span class="Special">{HOME}</span>&quot; can be
 contain non-id characters then.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that if you want to use this for the<br>
 &quot;gf&quot; command, you need to add the '{' and '}' characters to&nbsp;<a class="Type" href="options.html#'isfname'">'isfname'</a>.<br>
 <br>
-On MS-Windows, if $HOME is not defined as an environment variable, then<br>
-at runtime Vim will set it to the expansion of $HOMEDRIVE$HOMEPATH.<br>
-<br>
 <span class="Todo">NOTE</span>: expanding environment variables and &quot;~/&quot; is only done with the &quot;:set&quot;<br>
 command, not when assigning a value to an option with &quot;:let&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#$HOME-windows" name="$HOME-windows">$HOME-windows</a><br>
+On MS-Windows, if $HOME is not defined as an environment variable, then<br>
+at runtime Vim will set it to the expansion of $HOMEDRIVE$HOMEPATH.<br>
 <br>
 <br>
 <span class="Todo">Note</span>&nbsp;the maximum length of an expanded option is limited.&nbsp;&nbsp;How much depends on<br>
@@ -893,6 +894,10 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For other systems &quot;dark&quot; is used when&nbsp;<a class="Type" href="options.html#'term'">'term'</a>&nbsp;is &quot;linux&quot;,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;screen.linux&quot;, &quot;cygwin&quot; or &quot;putty&quot;, or $COLORFGBG suggests a dark<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;background.&nbsp;&nbsp;Otherwise the default is &quot;light&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="terminal.html#:terminal">:terminal</a>&nbsp;command and the&nbsp;<a class="Identifier" href="eval.html#term_start()">term_start()</a>&nbsp;function use the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'background'">'background'</a>&nbsp;value to decide whether the terminal window will start<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with a white or black background.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Normally this option would be set in the .vimrc file.&nbsp;&nbsp;Possibly<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;depending on the terminal name.&nbsp;&nbsp;Example:<br>
@@ -4046,7 +4051,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x:PmenuSbar,X:PmenuThumb,*:TabLine,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #:TabLineSel,_:TabLineFill,!:CursorColumn,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .:CursorLine,o:ColorColumn,q:QuickFixLine,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $:StatusLineTerm&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; z:StatusLineTerm,Z:StatusLineTermNC&quot;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option can be used to set highlighting mode for various<br>
@@ -5727,18 +5732,6 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let &amp;path = &amp;path . &quot;,&quot; . substitute($INCL, ';', ',', 'g')</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Replace the ';' with a ':' or whatever separator is used.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this doesn't work when $INCL contains a comma or white space.<br>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'perldll'" name="'perldll'">'perldll'</a><br>
-<a class="Type" href="options.html#'perldll'">'perldll'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string&nbsp;&nbsp;(default depends on the build)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{only available when compiled with the&nbsp;</span><a class="Identifier" href="various.html#+perl/dyn">+perl/dyn</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the name of the Perl shared library. The default is<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DYNAMIC_PERL_DLL, which was specified at compile time.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Environment variables are expanded&nbsp;<a class="Identifier" href="options.html#:set_env">:set_env</a>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>, for<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;security reasons.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'preserveindent'" name="'preserveindent'">'preserveindent'</a>&nbsp;<a class="Constant" href="options.html#'pi'" name="'pi'">'pi'</a>&nbsp;<a class="Constant" href="options.html#'nopreserveindent'" name="'nopreserveindent'">'nopreserveindent'</a>&nbsp;<a class="Constant" href="options.html#'nopi'" name="'nopi'">'nopi'</a><br>
 <a class="Type" href="options.html#'preserveindent'">'preserveindent'</a>&nbsp;<a class="Type" href="options.html#'pi'">'pi'</a>&nbsp;&nbsp; boolean (default off)<br>
@@ -8844,7 +8837,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature on MS-Windows}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the name of the winpty shared library, used for the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#:terminal">:terminal</a>&nbsp;command. The default depends on whether was build as a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32-bit or 64-bit executable.&nbsp;&nbsp;If not found, &quot;win32pty.dll&quot; is tried as<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32-bit or 64-bit executable.&nbsp;&nbsp;If not found, &quot;winpty.dll&quot; is tried as<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a fallback.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Environment variables are expanded&nbsp;<a class="Identifier" href="options.html#:set_env">:set_env</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>, for<br>

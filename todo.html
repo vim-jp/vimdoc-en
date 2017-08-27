@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Aug 11<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Aug 27<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -46,7 +46,6 @@ No maintainer for Simplified Chinese translations.<br>
 <br>
 Terminal emulator window:<br>
 - Lots of stuff to implement, see src/terminal.c<br>
-- Add winpty.dll and winpty-agent.exe in the NSIS build.<br>
 - Add debugger interface.&nbsp;&nbsp;Implementation for gdb by Xavier de Gaye.&nbsp;&nbsp;Should<br>
 &nbsp;&nbsp;work like an IDE.&nbsp;&nbsp;Try to keep it generic.&nbsp;&nbsp;Now found here:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="http://clewn.sf.net">http://clewn.sf.net</a></span>.<br>
@@ -65,6 +64,8 @@ Terminal emulator window:<br>
 - Try out background make plugin:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
 - Problem with stderr on Windows? (Vincent Rischmann, 2016 Aug 31, #1026)<br>
+- Writing raw mode to a buffer should still handle NL characters as line<br>
+&nbsp;&nbsp;breaks. (Dmitry Zotikov, 2017 Aug 16)<br>
 - When out_cb executes :sleep, the close_cb may be invoked. (Daniel Hahler,<br>
 &nbsp;&nbsp;2016 Dec 11, #1320)<br>
 - Implement&nbsp;<a class="Identifier" href="channel.html#job-term">job-term</a>&nbsp;?<br>
@@ -79,7 +80,7 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;Feb 9)&nbsp;&nbsp;How to do this on MS-Windows?<br>
 - For connection to server, a &quot;keep open&quot; flag would be useful.&nbsp;&nbsp;Retry<br>
 &nbsp;&nbsp;connecting in the main loop with zero timeout.<br>
-- job_start(): run job in a newly opened terminal.<br>
+- job_start(): run job in a newly opened terminal (not a terminal window).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;With xterm could use -S<span class="Special">{pty}</span>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Although user could use &quot;xterm -e 'cmd arg'&quot;.<br>
 <br>
@@ -127,6 +128,8 @@ Regexp problems:<br>
 &nbsp;&nbsp;Another one: echom matchstr(&quot; sdfsfsf\n sfdsdfsdf&quot;,'[^\n]*')<br>
 &nbsp;&nbsp;(2017 May 15, #1252)<br>
 <br>
+Patch to turn test80 into a new style test. (Yegappan Lakshmanan, 2017 Aug 20)<br>
+<br>
 Include a few color schemes, based on popularity:<br>
 <span class="Constant"><a href="http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search">http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search</a></span><br>
 <span class="Constant"><a href="http://vimawesome.com/?q=tag:color-scheme">http://vimawesome.com/?q=tag:color-scheme</a></span><br>
@@ -135,26 +138,33 @@ Use names that indicate their appearnce (Christian Brabandt, 2017 Aug 3)<br>
 - seoul256 - Christian Brabandt (2017 Aug 3)<br>
 - gruvbox -&nbsp;&nbsp;Christian Brabandt (2017 Aug 3)<br>
 - janah - Marco Hinz (2017 Aug 4)<br>
-- apprentice - Romain Lafourcade (2017 Aug 6)&nbsp;&nbsp;remarks about help file<br>
+- apprentice - Romain Lafourcade (2017 Aug 6)&nbsp;&nbsp;remarks about help file #1964<br>
 Suggested by Hiroki Kokubun:<br>
 -&nbsp;<span class="Special">[Iceberg]</span>(<span class="Constant"><a href="https://github.com/cocopon/iceberg.vim">https://github.com/cocopon/iceberg.vim</a></span>) (my one)<br>
 -&nbsp;<span class="Special">[hybrid]</span>(<span class="Constant"><a href="https://github.com/w0ng/vim-hybrid">https://github.com/w0ng/vim-hybrid</a></span>)<br>
 <br>
-test_gui fails with gnome2: cannot create .gnome2 dir<br>
-&nbsp;&nbsp;&nbsp;&nbsp;use&nbsp;&nbsp;testdir/Xfakehome&nbsp;&nbsp;instead of does/not/exist?<br>
+When starting with --clean packages under &quot;start&quot; are not loaded.&nbsp;&nbsp;Make this<br>
+work:&nbsp;&nbsp;:packadd START&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;similar to :runtime START name<br>
 <br>
-Patch for quickfix: parse lines for any quickfix list. (Yegappan Lakshmanan,<br>
-2017 Jul 20)<br>
+When using :packadd files under &quot;later&quot; are not used, which is inconsistent<br>
+with packages under &quot;start&quot;. (xtal8, #1994)<br>
 <br>
-Patch for restoring wide characters in the console buffer.<br>
-(Ken Takata, 2016 Jun 7)<br>
+After 8.0.0962 pasting leaves the cursor in another position. (Ken Takata,<br>
+2017 Aug 23, #2015) Also (zdm, 2017 Aug 23)<br>
 <br>
-Patch to add Couchbase syntax file. (Eugene Ciurana, 2017 Aug 8, #1951)<br>
+Patch to add quickfix list identifier. (Yegappan, 2017 Aug 15)<br>
 <br>
-Patch to fix font name problem with cp932. (Ken Takata, 2017 Aug 9)<br>
+Mac Terminal.app: ctermbg=15 gives light grey instead of white.<br>
+ctermbg=256 breaks clearing till end of the line.&nbsp;&nbsp;Both work fine in xterm.<br>
+<br>
+Patch to avoid editing a file in the session file twice. (Christian Brabandt,<br>
+2017 Aug 21)&nbsp;&nbsp;#1958<br>
 <br>
 With foldmethod=syntax and nofoldenable comment highlighting isn't removed.<br>
 (Marcin Szewczyk, 2017 Apr 26)<br>
+<br>
+Using&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbsp;also applies to literally entered file name.&nbsp;&nbsp;Also with<br>
+:drop (remote commands).<br>
 <br>
 ml_get error when using a Python. (Yggdroot, 2017 Jun 1, #1737)<br>
 Lemonboy can reproduce (2017 Jun 5)<br>
@@ -163,14 +173,19 @@ ml_get errors with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
 Error in emsg with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
-Start a test directory under runtime, to test runtime file changes.<br>
-Start with filetype detection.&nbsp;&nbsp;Only include in the source distribution.<br>
-&quot;make test&quot; in src/ can be renamed to &quot;make testsrc&quot; and &quot;make test&quot; would do<br>
-both &quot;testsrc&quot; and &quot;testruntime&quot; targets.<br>
+Test runtime files.<br>
+Start with filetype detection: testdir/test_filetype.vim<br>
 <br>
-Patch for Murphi syntax. (Matthew Fernandez, 2017 Jul 24)<br>
+Patch to support on-the-spot and over-the-spot input method. (Ken Takata, 2017<br>
+Feb 14).&nbsp;&nbsp;Also see #1215.<br>
 <br>
-Better detection of strace file. (Steven Fernandez, 2017 Jul 12, #1837)<br>
+Patch to ignore case when&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>&nbsp;has &quot;icase&quot; for finding the difference<br>
+inside a line. (Rick Howe, 2017 Aug 21, 22 with test)<br>
+<br>
+Patch to support strikethrough next to bold and italic. (Christian Brabandt,<br>
+2013 Jul 30)&nbsp;&nbsp;Update from Ken Takata, 2013 Oct 12.<br>
+Update mentioned by Christian, 2016 Apr 25.<br>
+Update from Ken Takata, 2017 Aug 23.<br>
 <br>
 Patch to add setbufline(). (email from Yasuhiro Matsumoto, patch by Ozaki<br>
 Kiichi, 2016 Feb 28)<br>
@@ -178,12 +193,24 @@ Update Mar 8:&nbsp;<span class="Constant"><a href="https://gist.github.com/mattn
 Update Mar 13:&nbsp;<span class="Constant"><a href="https://gist.github.com/mattn/23c1f50999084992ca98">https://gist.github.com/mattn/23c1f50999084992ca98</a></span><br>
 Update Aug 2017: #1953<br>
 <br>
+Patch to fix indenting for raw C++ string. (Christian Brabandt, 2017 Aug 24,<br>
+#2019)<br>
+<br>
 Add options_default() / options_restore() to set several options to Vim<br>
 defaults for a plugin. Comments from Zyx, 2017 May 10.<br>
 Perhaps use a vimcontext / endvimcontext command block.<br>
 <br>
+Patch to fix bogus characters inserted in visual-block append. (Christian<br>
+Brabandt, 2017 Aug 23)<br>
+<br>
 Illegal memory access, requires ASAN to see. (Dominique Pelle, 2015 Jul 28)<br>
 Still happens (2017 Jul 9)<br>
+<br>
+When bracketed paste is used, pasting at the &quot;:append&quot; prompt does not get the<br>
+line breaks. (Ken Takata, 2017 Aug 22)<br>
+<br>
+This example in the help does not work (Andy Wokula, 2017 Aug 20):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;augroup mine | au! BufRead | augroup END<br>
 <br>
 Memory leak in test_arabic.<br>
 <br>
@@ -386,9 +413,6 @@ Implement optional arguments for functions.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;call Foo(12)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;call Foo(12, all = 0)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;call Foo(12, 15, 0)<br>
-<br>
-Patch to support on-the-spot and over-the-spot input method. (Ken Takata, 2017<br>
-Feb 14).<br>
 <br>
 Change the Farsi code to work with UTF-8.&nbsp;&nbsp;Possibly combined with the Arabic<br>
 support, or similar.<br>
@@ -628,11 +652,6 @@ Reject the value? #710.<br>
 <br>
 Patch to fix increment/decrement not working properly when&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;is<br>
 set. (Hirohito Higashi, 2016 Aug 1, #923)<br>
-<br>
-Patch to support strikethrough next to bold and italic. (Christian Brabandt,<br>
-2013 Jul 30)&nbsp;&nbsp;Update from Ken Takata, 2013 Oct 12.<br>
-Update mentioned by Christian, 2016 Apr 25.<br>
-Update from Ken Takata, 2016 Jul 17.<br>
 <br>
 When doing &quot;vi buf.md&quot; a BufNew autocommand for *.md is not triggered.<br>
 Because of using the initial buffer? (Dun Peal, 2016 May 12)<br>
@@ -1400,9 +1419,6 @@ Windows keys not set properly on Windows 7?&nbsp;&nbsp;(cncyber, 2010 Aug 26)<br
 <br>
 When using a Vim server, a # in the path causes an error message.<br>
 (Jeff Lanzarotta, 2011 Feb 17)<br>
-<br>
-Setting $HOME on MS-Windows is not very well documented.&nbsp;&nbsp;Suggestion by Ben<br>
-Fritz (2011 Oct 27).<br>
 <br>
 When there is a &quot;&gt;&quot; in a line that &quot;gq&quot; wraps to the start of the next line,<br>
 then the following line will pick it up as a leader.&nbsp;&nbsp;Should get the leader<br>
