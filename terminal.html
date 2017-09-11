@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'terminal'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="terminal.html" name="terminal.txt">terminal.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Sep 09<br>
+<a class="Constant" href="terminal.html" name="terminal.txt">terminal.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Sep 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -323,11 +323,12 @@ To start debugging use&nbsp;<span class="Comment">:TermDebug</span>&nbsp;folowed
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:TermDebug vim</div>
 <br>
 This opens two windows:<br>
-- A terminal window in which &quot;gdb vim&quot; is executed.&nbsp;&nbsp;Here you can directly<br>
-&nbsp;&nbsp;interact with gdb.&nbsp;&nbsp;The buffer name is &quot;!gdb&quot;.<br>
-- A terminal window for the executed program.&nbsp;&nbsp;When &quot;run&quot; is used in gdb the<br>
-&nbsp;&nbsp;program I/O will happen in this window, so that it does not interfere with<br>
-&nbsp;&nbsp;controlling gdb.&nbsp;&nbsp;The buffer name is &quot;gdb program&quot;.<br>
+gdb window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A terminal window in which &quot;gdb vim&quot; is executed.&nbsp;&nbsp;Here you<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can directly interact with gdb.&nbsp;&nbsp;The buffer name is &quot;!gdb&quot;.<br>
+program window&nbsp;&nbsp;A terminal window for the executed program.&nbsp;&nbsp;When &quot;run&quot; is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used in gdb the program I/O will happen in this window, so<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that it does not interfere with controlling gdb.&nbsp;&nbsp;The buffer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name is &quot;gdb program&quot;.<br>
 <br>
 The current window is used to show the source code.&nbsp;&nbsp;When gdb pauses the<br>
 source file location will be displayed, if possible.&nbsp;&nbsp;A sign is used to<br>
@@ -339,7 +340,8 @@ to display the current gdb position.<br>
 Focus the terminal of the executed program to interact with it.&nbsp;&nbsp;This works<br>
 the same as any command running in a terminal window.<br>
 <br>
-When the debugger ends the two opened windows are closed.<br>
+When the debugger ends, typically by typing &quot;quit&quot; in the gdb window, the two<br>
+opened windows are closed.<br>
 <br>
 <br>
 <span class="PreProc">Stepping through code</span><br>
@@ -354,13 +356,29 @@ Put focus on the gdb window to type commands there.&nbsp;&nbsp;Some common ones 
 - frame&nbsp;<span class="Special">N</span>&nbsp;&nbsp; go to the&nbsp;<span class="Special">N</span>th stack frame<br>
 - continue&nbsp;&nbsp;continue execution<br>
 <br>
-In the window showing the source code some commands can passed to gdb:<br>
-- Break&nbsp;&nbsp;&nbsp;&nbsp; set a breakpoint at the current line; a sign will be displayed<br>
-- Delete&nbsp;&nbsp;&nbsp;&nbsp;delete a breakpoint at the current line<br>
-- Step&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;step&quot; command<br>
-- NNext&nbsp;&nbsp;&nbsp;&nbsp; execute the gdb &quot;next&quot; command (:Next is a Vim command)<br>
-- Finish&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;finish&quot; command<br>
-- Continue&nbsp;&nbsp;execute the gdb &quot;continue&quot; command<br>
+In the window showing the source code some commands can used to control gdb:<br>
+&nbsp;:Break&nbsp;&nbsp;&nbsp;&nbsp; set a breakpoint at the current line; a sign will be displayed<br>
+&nbsp;:Delete&nbsp;&nbsp;&nbsp;&nbsp;delete a breakpoint at the current line<br>
+&nbsp;:Step&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;step&quot; command<br>
+&nbsp;:Over&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;next&quot; command (:Next is a Vim command)<br>
+&nbsp;:Finish&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;finish&quot; command<br>
+&nbsp;:Continue&nbsp;&nbsp;execute the gdb &quot;continue&quot; command<br>
+<br>
+<br>
+<span class="PreProc">Inspecting variables</span><br>
+<br>
+&nbsp;:Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;evaluate the expression under the cursor<br>
+&nbsp;K&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same<br>
+&nbsp;:Evaluate&nbsp;<span class="Special">{expr}</span>&nbsp;&nbsp; evaluate&nbsp;<span class="Special">{expr}</span><br>
+&nbsp;:'&lt;,'&gt;Evaluate&nbsp;&nbsp;&nbsp;&nbsp; evaluate the Visually selected text<br>
+<br>
+This is similar to using &quot;print&quot; in the gdb window.<br>
+<br>
+<br>
+<span class="PreProc">Other commands</span><br>
+<br>
+&nbsp;:Gdb&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jump to the gdb window<br>
+&nbsp;:Program&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jump to the window with the running program<br>
 <br>
 <br>
 <span class="PreProc">Communication</span><br>
@@ -390,10 +408,6 @@ When&nbsp;<a class="Type" href="options.html#'background'">'background'</a>&nbsp
 &nbsp;&nbsp;hi debugPC term=reverse ctermbg=darkblue guibg=darkblue<br>
 &nbsp;&nbsp;hi debugBreakpoint term=reverse ctermbg=red guibg=red<br>
 <br>
-<br>
-<span class="PreProc">NOT WORKING YET:</span><br>
-<br>
-Values of variables can be inspected, etc.<br>
 <br>
 <br>
 &nbsp;vim:tw=78:ts=8:ft=help:norl:<br>
