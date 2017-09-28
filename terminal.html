@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'terminal'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="terminal.html" name="terminal.txt">terminal.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Sep 17<br>
+<a class="Constant" href="terminal.html" name="terminal.txt">terminal.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Sep 26<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -86,7 +86,14 @@ themselves (like Vim does).<br>
 <br>
 To change the keys you type use terminal mode mappings, see&nbsp;<a class="Identifier" href="map.html#:tmap">:tmap</a>.<br>
 These are defined like any mapping, but apply only when typing keys that are<br>
-sent to the job running in the terminal.<br>
+sent to the job running in the terminal.&nbsp;&nbsp;For example, to make Escape switch<br>
+to Terminal-Normal mode:<br>
+<div class="helpExample">&nbsp;&nbsp; tnoremap &lt;Esc&gt; &lt;C-W&gt;N</div>
+<br>
+After opening the terminal window and setting&nbsp;<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;to &quot;terminal&quot; the<br>
+BufWinEnter autocommand event is triggered.&nbsp;&nbsp;This makes it possible to set<br>
+options specifically for the window and buffer.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp; au BufWinEnter * if &amp;buftype == 'terminal' | setlocal bufhidden=hide | endif</div>
 <br>
 <br>
 <span class="PreProc">Size and color</span><br>
@@ -333,7 +340,7 @@ Load the plugin with this command:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;packadd termdebug</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#:Termdebug" name=":Termdebug">:Termdebug</a><br>
 To start debugging use&nbsp;<span class="Comment">:TermDebug</span>&nbsp;folowed by the command name, for example:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:TermDebug vim</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Termdebug vim</div>
 <br>
 This opens two windows:<br>
 gdb window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A terminal window in which &quot;gdb vim&quot; is executed.&nbsp;&nbsp;Here you<br>
@@ -355,6 +362,62 @@ the same as any command running in a terminal window.<br>
 <br>
 When the debugger ends, typically by typing &quot;quit&quot; in the gdb window, the two<br>
 opened windows are closed.<br>
+<br>
+<br>
+<span class="PreProc">Example session</span><br>
+<br>
+Start in the Vim &quot;src&quot; directory and build Vim&#0058;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% make</div>
+Start Vim&#0058;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% ./vim</div>
+Load the termdebug plugin and start debugging Vim&#0058;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:packadd termdebug<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Termdebug vim</div>
+You should now have three windows:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;source&nbsp;&nbsp;- where you started, has a window toolbar with buttons<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gdb&nbsp;&nbsp;&nbsp;&nbsp; - you can type gdb commands here<br>
+&nbsp;&nbsp;&nbsp;&nbsp;program - the executed program will use this window<br>
+You can use&nbsp;<span class="Special">CTRL-W</span>&nbsp;<span class="Special">CTRL-W</span>&nbsp;or the mouse to move focus between windows.<br>
+Put focus on the gdb window and type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break ex_help<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run</div>
+Vim will start running in the program window. Put focus there and type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:help gui</div>
+Gdb will run into the ex_help breakpoint.&nbsp;&nbsp;The source window now shows the&nbsp;<br>
+ex_cmds.c file.&nbsp;&nbsp;A &quot;&gt;&gt;&quot; marker will appear where the breakpoint was set.&nbsp;&nbsp;The<br>
+line where the debugger stopped is highlighted.&nbsp;&nbsp;You can now step through the<br>
+program.&nbsp;&nbsp;Let's use the mouse: click on the &quot;Next&quot; button in the window<br>
+toolbar.&nbsp;&nbsp;You will see the highlighting move as the debugger executes a line<br>
+of source code.<br>
+<br>
+Click &quot;Next&quot; a few times until the for loop is highlighted.&nbsp;&nbsp;Put the cursor on<br>
+the end of &quot;eap-&gt;arg&quot;, then click &quot;Eval&quot; in the toolbar.&nbsp;&nbsp;You will see this<br>
+displayed:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;eap-&gt;arg&quot;: 0x555555e68855 &quot;gui&quot;</span><br>
+This way you can inspect the value of local variables.&nbsp;&nbsp;You can also focus the<br>
+gdb window and use a &quot;print&quot; command, e.g.:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print *eap</div>
+<br>
+Now go back to the source window and put the cursor on the first line after<br>
+the for loop, then type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Break</div>
+You will see a &quot;&gt;&gt;&quot; marker appear, this indicates the new breakpoint.&nbsp;&nbsp;Now<br>
+click &quot;Cont&quot; in the toolbar and the code until the breakpoint will be<br>
+executed.<br>
+<br>
+You can type more advanced commands in the gdb window.&nbsp;&nbsp;For example, type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;watch curbuf</div>
+Now click &quot;Cont&quot; in the toolbar (or type &quot;cont&quot; in the gdb window). Execution<br>
+will now continue until the value of &quot;curbuf&quot; changes, which is in do_ecmd().<br>
+To remove this watchpoint again type in the gdb window:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete 3</div>
+<br>
+You can see the stack by typing in the gdb window:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where</div>
+Move through the stack frames, e.g. with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;frame 3</div>
+The source window will show the code, at the point where the call was made to<br>
+a deeper level.<br>
 <br>
 <br>
 <span class="PreProc">Stepping through code</span><br>
@@ -415,7 +478,7 @@ To change the name of the gdb command, set the &quot;termdebugger&quot; variable
 invoking&nbsp;<a class="Comment" href="terminal.html#:Termdebug">:Termdebug</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let termdebugger = &quot;mygdb&quot;</div>
 Only debuggers fully compatible with gdb will work.&nbsp;&nbsp;Vim uses the GDB/MI<br>
-interface.<br>
+interface.&nbsp;&nbsp;This probably requires gdb version 7.12.<br>
 <br>
 The color of the signs can be adjusted with these highlight groups:<br>
 - debugPC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the current position<br>
@@ -434,6 +497,10 @@ vertical split:<br>
 <div class="helpExample">&nbsp;&nbsp;let g:termdebug_wide = 163</div>
 This will set &amp;columns to 163 when :Termdebug is used.&nbsp;&nbsp;The value is restored<br>
 when quitting the debugger.<br>
+If g:termdebug_wide is set and &amp;Columns is already&nbsp;&nbsp;larger than<br>
+g:termdebug_wide then a vertical split will be used without changing &amp;columns.<br>
+Set it to 1 to get a vertical split without every changing &amp;columns (useful<br>
+for when the terminal can't be resized by Vim).<br>
 <br>
 <br>
 <br>

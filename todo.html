@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Sep 19<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Sep 27<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -40,17 +40,16 @@ entered there will not be repeated below, unless there is extra information.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+MS-Windows build and installer improvements:<br>
+- Switch to VC2015 for building. (Ken Takata, 2017 Sep 21)<br>
+&nbsp;&nbsp;Check resulting binary on XP.<br>
+- Patch to install 32 and 64 bit Gvimext and related dll files. (Ken Takata,<br>
+&nbsp;&nbsp;2017 Sep 23, #2144)<br>
+<br>
 :term hangs in Athena and Motif. (Kazunobu Kuriyama, 2017 Sep 17)<br>
 <br>
-Always use FEAT_WINDOWS:<br>
-May get rid of:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;#define W_WINCOL(wp)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(wp-&gt;w_wincol)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;#define W_WIDTH(wp) (wp-&gt;w_width)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;#define W_ENDCOL(wp)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(wp-&gt;w_wincol + wp-&gt;w_width)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;#define W_VSEP_WIDTH(wp) (wp-&gt;w_vsep_width)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;#define W_STATUS_HEIGHT(wp) (wp-&gt;w_status_height)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;#define W_WINROW(wp)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(wp-&gt;w_winrow)<br>
-# define ALIST(win) (win)-&gt;w_alist<br>
+Universal solution to detect if t_RS is working, using cursor position.<br>
+Koichi Iwamoto, #2126<br>
 <br>
 No maintainer for Vietnamese translations.<br>
 No maintainer for Simplified Chinese translations.<br>
@@ -75,6 +74,8 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;with the expected screenshot.&nbsp;&nbsp;Set t_Co to 256.<br>
 <br>
 +channel:<br>
+- Add a separate timeout for opening a socket.&nbsp;&nbsp;Currently it's fixed at 50<br>
+&nbsp;&nbsp;msec, which is too small for a remote connection. (tverniquet, #2130)<br>
 - Try out background make plugin:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
 - Problem with stderr on Windows? (Vincent Rischmann, 2016 Aug 31, #1026)<br>
@@ -99,6 +100,8 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Although user could use &quot;xterm -e 'cmd arg'&quot;.<br>
 <br>
 Regexp problems:<br>
+- [:space:] only matches ASCII spaces.&nbsp;&nbsp;Add [:white:] for all space-like<br>
+&nbsp;&nbsp;characters, esp. including 0xa0.&nbsp;&nbsp;Use character class zero.<br>
 - Since 7.4.704 the old regex engine fails to match [[:print:]] in 0xf6.<br>
 &nbsp;&nbsp;(Manuel Ortega, 2016 Apr 24)<br>
 &nbsp;&nbsp;Test fails on Mac.&nbsp;&nbsp;Avoid using isalpha(), isalnum(), etc?&nbsp;&nbsp;Depends on<br>
@@ -154,13 +157,10 @@ Use names that indicate their appearnce (Christian Brabandt, 2017 Aug 3)<br>
 Suggested by Hiroki Kokubun:<br>
 -&nbsp;<span class="Special">[Iceberg]</span>(<span class="Constant"><a href="https://github.com/cocopon/iceberg.vim">https://github.com/cocopon/iceberg.vim</a></span>) (my one)<br>
 -&nbsp;<span class="Special">[hybrid]</span>(<span class="Constant"><a href="https://github.com/w0ng/vim-hybrid">https://github.com/w0ng/vim-hybrid</a></span>)<br>
-<br>
-Patch to update Brazilian translations. (Eduardo Dobay, 2017 Sep 10, #2077)<br>
+Include solarized color scheme?<br>
 <br>
 When starting with --clean packages under &quot;start&quot; are not loaded.&nbsp;&nbsp;Make this<br>
 work:&nbsp;&nbsp;:packadd START&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;similar to :runtime START name<br>
-<br>
-Patch to refactor qf_jump(). (Yegappan, 2017 Sep 17)<br>
 <br>
 When using :packadd files under &quot;later&quot; are not used, which is inconsistent<br>
 with packages under &quot;start&quot;. (xtal8, #1994)<br>
@@ -180,13 +180,18 @@ Patch for not profiling the first line of a script. (Lemonboy, 2017 Sep 17,<br>
 Mac Terminal.app: ctermbg=15 gives light grey instead of white.<br>
 ctermbg=256 breaks clearing till end of the line.&nbsp;&nbsp;Both work fine in xterm.<br>
 <br>
+Patch to avoid&nbsp;<span class="Comment">rb_load_protect</span>&nbsp;as a workaround not to crash (#2147)<br>
+<br>
+Patch for drag&amp;drop reordering of GUI tab pages reordering.<br>
+(Ken Takata, 2013 Nov 22, second one, also by Masamichi Abe)<br>
+Now on Git:&nbsp;<span class="Constant"><a href="https://gist.github.com/nocd5/165286495c782b815b94">https://gist.github.com/nocd5/165286495c782b815b94</a></span><br>
+Update 2016 Aug 10.<br>
+<br>
 Using &quot;:hi&quot; causes a redraw, but a redraw may update the status line, which<br>
 may trigger a &quot;:hi&quot; command.<br>
 <br>
 Last line not in profile if it is a continuation line. (LemonBoy, 2017 Sep 17,<br>
 #2112)<br>
-<br>
-&quot;vim -c startinsert!&quot; doesn't append. (#2117)<br>
 <br>
 With foldmethod=syntax and nofoldenable comment highlighting isn't removed.<br>
 (Marcin Szewczyk, 2017 Apr 26)<br>
@@ -208,6 +213,7 @@ Patch to make &quot;:set scroll&amp;&quot; work properly. (Ozaki Kiichi, 2017 Se
 <br>
 mswin.vim should not map&nbsp;<span class="Special">CTRL-F</span>&nbsp;in the console (#2093)<br>
 Patch from Christian, 2017 Sep 15.<br>
+Installer patch from Ken Takata, link on #2093.<br>
 <br>
 Default install on MS-Windows should source defaults.vim.<br>
 Ask whether to use Windows or Vim key behavior?<br>
@@ -328,8 +334,6 @@ Use gvimext.dll from the nightly build? (Issue #249)<br>
 <br>
 Problem with using :cd when remotely editing a file. (Gerd Wachsmuth, 2017 May<br>
 8, #1690)<br>
-<br>
-Include solarized color scheme?<br>
 <br>
 Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif?<br>
@@ -664,11 +668,6 @@ Filetype plugin for awk. (Doug Kearns, 2016 Sep 5)<br>
 Patch to improve map documentation. Issue #799.<br>
 <br>
 Patch for syntax folding optimization. (Shougo, 2016 Sep 6, #1045)<br>
-<br>
-Patch for drag&amp;drop reordering of GUI tab pages reordering.<br>
-(Ken Takata, 2013 Nov 22, second one, also by Masamichi Abe)<br>
-Now on Git:&nbsp;<span class="Constant"><a href="https://gist.github.com/nocd5/165286495c782b815b94">https://gist.github.com/nocd5/165286495c782b815b94</a></span><br>
-Update 2016 Aug 10.<br>
 <br>
 We can use '. to go to the last change in the current buffer, but how about<br>
 the last change in any buffer?&nbsp;&nbsp;Can we use ', (, is next to .)?<br>
@@ -2240,9 +2239,6 @@ Netbeans problem.&nbsp;&nbsp;Use &quot;nc -l 127.0.0.1 55555&quot; for the serve
 with &quot;gvim -nb:localhost:55555:foo&quot;.&nbsp;&nbsp;From nc do: '1:editFile!0 &quot;foo&quot;'.&nbsp;&nbsp;Then<br>
 go to Insert mode and add a few lines.&nbsp;&nbsp;Then backspacing every other time<br>
 moves the cursor instead of deleting. (Chris Kaiser, 2007 Sep 25)<br>
-<br>
-Windows installer should install 32-bit version of right-click handler also on<br>
-64-bit systems. (Brian Cunningham, 2011 Dec 28)<br>
 <br>
 Windows installer could add a &quot;open in new tab of existing Vim&quot; menu entry.<br>
 Gvimext: patch to add &quot;Edit with single Vim &amp;tabbed&quot; menu entry.<br>
