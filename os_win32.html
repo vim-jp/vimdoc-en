@@ -86,10 +86,45 @@ The directory of the Vim executable is appended to $PATH.&nbsp;&nbsp;This is mos
 make &quot;!xxd&quot; work, as it is in the Tools menu.&nbsp;&nbsp;And it also means that when<br>
 executable() returns 1 the executable can actually be executed.<br>
 <br>
-Quotes in file names&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-quotes" name="win32-quotes">win32-quotes</a><br>
+Command line arguments&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-cmdargs" name="win32-cmdargs">win32-cmdargs</a><br>
 <br>
-Quotes inside a file name (or any other command line argument) can be escaped<br>
-with a backslash.&nbsp;&nbsp;E.g.<br>
+Analysis of a command line into parameters is not standardised in MS Windows.<br>
+Vim and gvim used to use different logic to parse it (before 7.4.432), and the<br>
+logic was also depended on what it was compiled with.&nbsp;&nbsp;Now Vim and gvim both<br>
+use the CommandLineToArgvW() Win32 API, so they behave in the same way.<br>
+<br>
+The basic rules are:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-backslashes" name="win32-backslashes">win32-backslashes</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a) A parameter is a sequence of graphic characters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b) Parameters are separated by white space.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c) A parameter can be enclosed in double quotes to include white space.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d) A sequence of zero or more backslashes (\) and a double quote (&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is special.&nbsp;&nbsp;The effective number of backslashes is halved, rounded<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;down.&nbsp;&nbsp;An even number of backslashes reverses the acceptability of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;spaces and tabs, an odd number of backslashes produces a literal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double quote.<br>
+<br>
+So:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is a special double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is a literal double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\&quot;&nbsp;&nbsp;&nbsp;&nbsp; is a literal backslash and a special double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\\&quot;&nbsp;&nbsp;&nbsp;&nbsp;is a literal backslash and a literal double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\\\&quot;&nbsp;&nbsp; is 2 literal backslashes and a special double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\\\\&quot;&nbsp;&nbsp;is 2 literal backslashes and a literal double quote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etc.<br>
+<br>
+Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim &quot;C:\My Music\freude&quot; +&quot;set ignorecase&quot; +/&quot;\&quot;foo\\&quot; +\&quot;bar\\\&quot;</div>
+<br>
+opens &quot;C:\My Music\freude&quot; and executes the line mode commands:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set ignorecase; /&quot;foo\ and /bar\&quot;</div>
+<br>
+These rules are also described in the reference of the CommandLineToArgvW API:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb776391.aspx">https://msdn.microsoft.com/en-us/library/windows/desktop/bb776391.aspx</a></span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_win32.html#win32-quotes" name="win32-quotes">win32-quotes</a><br>
+There are additional rules for quotes (which are not well documented).<br>
+As described above, quotes inside a file name (or any other command line<br>
+argument) can be escaped with a backslash.&nbsp;&nbsp;E.g.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim -c &quot;echo 'foo\&quot;bar'&quot;</div>
 <br>
 Alternatively use three quotes to get one:<br>
