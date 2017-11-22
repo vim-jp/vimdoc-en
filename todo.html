@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Nov 11<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Nov 21<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -40,10 +40,6 @@ entered there will not be repeated below, unless there is extra information.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Permission of viminfo tempfile can be wrong. (Simon Ruderich)<br>
-Always use 600 ?&nbsp;&nbsp;Also avoids groups problem.<br>
-patch from Simon Ruderich, Nov 8<br>
-<br>
 No maintainer for Vietnamese translations.<br>
 No maintainer for Simplified Chinese translations.<br>
 <br>
@@ -54,10 +50,6 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- Implement the right-click popup menu for the terminal. Can use the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;completion popup menu code and mouse dragging.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use it for &quot;set breakpoint&quot;, &quot;remove breakpoint&quot;, etc.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- make showballoon() work in a terminal.&nbsp;&nbsp;Requires getting mouse-move<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;events.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- send 'balloonText' events for the cursor position (using CursorHold ?)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in terminal mode.<br>
 &nbsp;&nbsp;- get ideas from&nbsp;<span class="Constant"><a href="http://clewn.sf.net">http://clewn.sf.net</a></span><br>
 &nbsp;&nbsp;- Look into the idevim plugin/script.<br>
 - Improve testing:<br>
@@ -93,6 +85,8 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Although user could use &quot;xterm -e 'cmd arg'&quot;.<br>
 <br>
 Regexp problems:<br>
+- When search pattern has the base character both with and without combining<br>
+&nbsp;&nbsp;character, search fails.&nbsp;&nbsp;E.g. &quot;รรีบ&quot; in &quot;การรีบรักใคร&quot;. (agguser, #2312)<br>
 - [:space:] only matches ASCII spaces.&nbsp;&nbsp;Add [:white:] for all space-like<br>
 &nbsp;&nbsp;characters, esp. including 0xa0.&nbsp;&nbsp;Use character class zero.<br>
 - Since 7.4.704 the old regex engine fails to match [[:print:]] in 0xf6.<br>
@@ -141,7 +135,7 @@ Regexp problems:<br>
 Include a few color schemes, based on popularity:<br>
 <span class="Constant"><a href="http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search">http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search</a></span><br>
 <span class="Constant"><a href="http://vimawesome.com/?q=tag:color-scheme">http://vimawesome.com/?q=tag:color-scheme</a></span><br>
-Use names that indicate their apperance (Christian Brabandt, 2017 Aug 3)<br>
+Use names that indicate their appearance (Christian Brabandt, 2017 Aug 3)<br>
 - monokai - Xia Crusoe (2017 Aug 4)&nbsp;<br>
 - seoul256 - Christian Brabandt (2017 Aug 3)<br>
 - gruvbox -&nbsp;&nbsp;Christian Brabandt (2017 Aug 3)<br>
@@ -152,6 +146,7 @@ Suggested by Hiroki Kokubun:<br>
 -&nbsp;<span class="Special">[hybrid]</span>(<span class="Constant"><a href="https://github.com/w0ng/vim-hybrid">https://github.com/w0ng/vim-hybrid</a></span>)<br>
 Include solarized color scheme?, it does not support termguicolors.<br>
 -&gt; Make check for colorscheme that it's sane.<br>
+- Sanitized version of pablo (Lifepillar, 2017 Nov 21)<br>
 <br>
 Compiler warnings (geeknik, 2017 Oct 26):<br>
 - signed integer overflow in do_sub() (#2249)<br>
@@ -159,6 +154,13 @@ Compiler warnings (geeknik, 2017 Oct 26):<br>
 - signed integer overflow in getdecchrs() (#2254)<br>
 - signed integer overflow in nfa_regatom() (#2251)<br>
 - undefined left shift in get_string_tv() (#2250)<br>
+<br>
+Patch to use imactivatefunc() also without +xim feature. (Yasuhiro Matsumoto,<br>
+2017 Nov 19, #2349)<br>
+<br>
+<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;shows empty matches, which means highlighting everything.<br>
+Don't do that.&nbsp;&nbsp;For &quot;foo\|&quot; or &quot;\v&quot;<br>
+Patch from Christian, 2017 Nov 14.&nbsp;&nbsp;Should still display &quot;$&quot; matches.<br>
 <br>
 When starting with --clean packages under &quot;start&quot; are not loaded.&nbsp;&nbsp;Make this<br>
 work:&nbsp;&nbsp;:packadd START&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;similar to :runtime START name<br>
@@ -174,6 +176,12 @@ With foldmethod=syntax and nofoldenable comment highlighting isn't removed.<br>
 Using&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbsp;also applies to literally entered file name.&nbsp;&nbsp;Also with<br>
 :drop (remote commands).<br>
 <br>
+Race condition between stat() and open() in write_viminfo(). Use open() in the<br>
+loop and try another name instead of using a temp file. (Simon Ruderich)<br>
+The first one, when viminfo is new, should just fail if it creating with<br>
+O_EXCL fails.<br>
+Also use umask instead of mch_fopen() after vim_tempname().<br>
+<br>
 &quot;gvim --remote&quot; from a directory with non-word characters changes the current<br>
 directory (Paulo Marcel Coelho Arabic, 2017 Oct 30, #2266)<br>
 Also see #1689.<br>
@@ -181,9 +189,18 @@ Also see #1689.<br>
 ml_get error when using a Python. (Yggdroot, 2017 Jun 1, #1737)<br>
 Lemonboy can reproduce (2017 Jun 5)<br>
 <br>
+Invalid range error when using BufWinLeave for closing terminal.<br>
+(Gabriel Barta, 2017 Nov 15, #2339)<br>
+<br>
 ml_get errors with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
 Error in emsg with buggy script. (Dominique, 2017 Apr 30)<br>
+<br>
+Patch to avoid clearing the intro message on Win32 console.<br>
+(Ken Takata, 2017 Nov 14)<br>
+<br>
+Patch to copy buffer-local options before buffer leaves the window. (Bjorn<br>
+Linse, 2017 Nov 14, #2336)<br>
 <br>
 When a timer is running and typing&nbsp;<span class="Special">CTRL-R</span>&nbsp;on the command line, it is not<br>
 redrawn properly. (xtal8, 2017 Oct 23, #2241)<br>
@@ -191,8 +208,18 @@ redrawn properly. (xtal8, 2017 Oct 23, #2241)<br>
 Universal solution to detect if t_RS is working, using cursor position.<br>
 Koichi Iwamoto, #2126<br>
 <br>
+Patch to fix cmdline abbreviation after '&lt;,'&gt;. (Christian Brabandt, 2017 Nov<br>
+13, on issue #2320)<br>
+<br>
+Patch to add TextDeletePost and TextYankPost events. (Philippe Vaucher, 2011<br>
+May 24)&nbsp;&nbsp;Update May 26.<br>
+Now in patch by Lemonboy, #2333&nbsp;&nbsp;(who is Lemonboy?)<br>
+<br>
 Default install on MS-Windows should source defaults.vim.<br>
 Ask whether to use Windows or Vim key behavior?<br>
+<br>
+Patch for improving detecting Ruby on Mac in configure. (Ilya Mikhaltsou, 2017<br>
+Nov 21)<br>
 <br>
 When using command line window, CmdlineLeave is triggered without<br>
 CmdlineEnter.&nbsp;&nbsp;(xtal8, 2017 Oct 30, #2263)<br>
@@ -201,8 +228,13 @@ always nested.<br>
 <br>
 matchit hasn't been maintained for a long time.&nbsp;&nbsp;#955.<br>
 <br>
+Problem with&nbsp;<a class="Type" href="options.html#'delcombine'">'delcombine'</a>. (agguser, 2017 Nov 10, #2313)<br>
+<br>
 MS-Windows: buffer completetion doesn't work when using backslash (or slash)<br>
 for a path separator. (xtal8, #2201)<br>
+<br>
+Patch to adjust to DPI setting for GTK. (Roel van de Kraats, 2017 Nov 20,<br>
+#2357)<br>
 <br>
 Test runtime files.<br>
 Start with filetype detection: testdir/test_filetype.vim<br>
@@ -222,14 +254,21 @@ Still happens (2017 Jul 9)<br>
 When bracketed paste is used, pasting at the &quot;:append&quot; prompt does not get the<br>
 line breaks. (Ken Takata, 2017 Aug 22)<br>
 <br>
+The &quot;:move&quot; command does not honor closed folds. (Ryan Lue, #2351)<br>
+<br>
 Patch for 24 bit color support in MS-Windows console, using vcon. (Nobuhiro<br>
-Takasaki, 2017 Oct 1, #2060).&nbsp;&nbsp;Ready to include now?<br>
+Takasaki, Ken Takata, 2017 Oct 1, #2060).<br>
 <br>
 Memory leaks in test_channel? (or is it because of fork())<br>
 Memory leak in test_arabic.<br>
 Using uninitialized value in test_crypt.<br>
 <br>
+Patch to clear background when &quot;guibg=NONE&quot; is used and&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>&nbsp;is<br>
+set.<br>
+<br>
 Patch to make gM move to middle of line. (Yasuhiro Matsumoto, Sep 8, #2070)<br>
+<br>
+Cannot copy modeless selection when cursor is inside it. (lkintact, #2300)<br>
 <br>
 Include Haiku port. (Adrien Destugues, Siarzhuk Zharski, 2013 Oct 24)<br>
 It can replace the BeOS code, which is likely not used anymore.<br>
@@ -295,8 +334,15 @@ Patch to add argument to :cquit. (Thinca, 2014 Oct 12)<br>
 Python: After &quot;import vim&quot; error messages only show the first line of the<br>
 stack trace. (Yggdroot, 2017 Jul 28, #1887)<br>
 <br>
+Profile of a dict function is lost when the dict is deleted.&nbsp;&nbsp;Would it be<br>
+possible to collect this?&nbsp;&nbsp;(Daniel Hahler, #2350)<br>
+<br>
 Patch to add &quot;module&quot; to quickfix entries. (Marcin Szamotulski, Coot, 2017 Jun<br>
-8, #1757)<br>
+8, #1757)&nbsp;&nbsp;Now part of #2322.&nbsp;&nbsp;Or #2327?&nbsp;&nbsp;#1757 was re-opened, include that<br>
+first.<br>
+<br>
+Add&nbsp;<a class="Comment" href="various.html#:filter">:filter</a>&nbsp;support for various commands (Marcin Szamotulski, 2017 Nov 12<br>
+#2322)&nbsp;&nbsp;Now in #2327?<br>
 <br>
 When checking if a bufref is valid, also check the buffer number, to catch the<br>
 case of :bwipe followed by :new.<br>
@@ -1488,9 +1534,6 @@ Also for another example (ZyX, 2011 Jan 24)<br>
 Build problem with small features on Mac OS X 10.6. (Rainer, 2011 Jan 24)<br>
 <br>
 &quot;0g@$&quot; puts '] on last byte of multi-byte. (ZyX, 2011 Jan 22)<br>
-<br>
-Patch to add TextDeletePost and TextYankPost events. (Philippe Vaucher, 2011<br>
-May 24)&nbsp;&nbsp;Update May 26.<br>
 <br>
 Patch for :tabrecently. (Hirokazu Yoshida, 2012 Jan 30)<br>
 <br>
@@ -4658,7 +4701,7 @@ Command line history:<br>
 -&nbsp;&nbsp; Add &quot;KeyWasTyped&quot; flag: It's reset before each command and set when a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;character from the keyboard is consumed. Value is used to decide to put a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;command line in history or not. Put line in history if it didn't<br>
-&nbsp;&nbsp;&nbsp;&nbsp;completely resulted from one mapping.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;completely result from one mapping.<br>
 -&nbsp;&nbsp; When using &quot;:browse&quot;, also put the resulting edit command in the history,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;so that it can be repeated. (Demirel)<br>
 <br>
