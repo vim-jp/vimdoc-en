@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Nov 29<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2017 Dec 17<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -39,13 +39,6 @@ entered there will not be repeated below, unless there is extra information.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
-<br>
-Motif testgui:<br>
-From test_options.vim:<br>
-Found errors in Test_set_values():<br>
-Caught exception in Test_set_values(): Vim(set):E596: Invalid font(s): guifont=fixedsys @ /home/mool/vim/vim80/src/testdir/opt_test.vim, line 1153<br>
-<br>
-WinBar: balloon shows up for next line<br>
 <br>
 No maintainer for Vietnamese translations.<br>
 No maintainer for Simplified Chinese translations.<br>
@@ -152,8 +145,13 @@ Suggested by Hiroki Kokubun:<br>
 -&nbsp;<span class="Special">[Iceberg]</span>(<span class="Constant"><a href="https://github.com/cocopon/iceberg.vim">https://github.com/cocopon/iceberg.vim</a></span>) (my one)<br>
 -&nbsp;<span class="Special">[hybrid]</span>(<span class="Constant"><a href="https://github.com/w0ng/vim-hybrid">https://github.com/w0ng/vim-hybrid</a></span>)<br>
 Include solarized color scheme?, it does not support termguicolors.<br>
--&gt; Make check for colorscheme that it's sane.<br>
 - Sanitized version of pablo (Lifepillar, 2017 Nov 21)<br>
+<br>
+heap use after free. (gy741, #2447)<br>
+heap use after free in set_bufref (gy741, #2448)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reproduces with valgrind (Dominique)<br>
+heap use after free in getout. (gy741, #2449)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reproduces with valgrind (Dominique)<br>
 <br>
 Compiler warnings (geeknik, 2017 Oct 26):<br>
 - signed integer overflow in do_sub() (#2249)<br>
@@ -162,27 +160,28 @@ Compiler warnings (geeknik, 2017 Oct 26):<br>
 - signed integer overflow in nfa_regatom() (#2251)<br>
 - undefined left shift in get_string_tv() (#2250)<br>
 <br>
-patch for: fix SHIFT-Insert on Windows command prompt (Yasuhiro Matsumoto,<br>
-#2381)<br>
-<br>
-Patch for profile log truncating halfway a character. (ichizok, 2017 Nov 28,<br>
-#2385)<br>
-<br>
-WinBar: Maximizing window causes window size to be wrong. (Lifepillar, 2017<br>
-Nov 29, #2356)<br>
-<br>
-<span class="Special">CTRL-A</span>&nbsp;does not work with empty line. (Alex, #2387)<br>
-Patch by Hirohito Higashi, 2017 Nov 29.<br>
-<br>
-<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;shows empty matches, which means highlighting everything.<br>
-Don't do that.&nbsp;&nbsp;For &quot;foo\|&quot; or &quot;\v&quot;<br>
-Patch from Christian, 2017 Nov 14.&nbsp;&nbsp;Should still display &quot;$&quot; matches.<br>
+Triggering CursorHoldI happens too often in the GUI. (#2451).<br>
+Should move code from os_unix.c mch_inchar() up into common use, it's not<br>
+really machine specific. Also the part of WaitForChar(), it deals with timers<br>
+and is also for all machines.<br>
 <br>
 When starting with --clean packages under &quot;start&quot; are not loaded.&nbsp;&nbsp;Make this<br>
 work:&nbsp;&nbsp;:packadd START&nbsp;<span class="Special">{name}</span>&nbsp;&nbsp;similar to :runtime START name<br>
 <br>
 When using :packadd files under &quot;later&quot; are not used, which is inconsistent<br>
 with packages under &quot;start&quot;. (xtal8, #1994)<br>
+<br>
+Patch to add changedtick var to quickfix list. (Yegappan Lakshmanan, 2017 Nov<br>
+18, #2391)<br>
+<br>
+7&nbsp;&nbsp; Add a watchpoint in the debug mode: An expression that breaks execution<br>
+&nbsp;&nbsp;&nbsp;&nbsp;when evaluating to non-zero.&nbsp;&nbsp;Add the &quot;watchadd expr&quot; command, stop when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the value of the expression changes.&nbsp;&nbsp;&quot;:watchdel&quot; deletes an item,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;:watchlist&quot; lists the items. (Charles Campbell)<br>
+Patch by Christian Brabandt, 2016 Jun 10, #859<br>
+<br>
+7&nbsp;&nbsp; Make &quot;ga&quot; show the digraph for a character, if it exists.<br>
+Patch from Christian Brabandt, 2011 Aug 19.<br>
 <br>
 Fold at end of the buffer behaves inconsistently. (James McCoy, 2017 Oct 9)<br>
 <br>
@@ -196,11 +195,17 @@ Using&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbs
 directory (Paulo Marcel Coelho Arabic, 2017 Oct 30, #2266)<br>
 Also see #1689.<br>
 <br>
+Patch for 24 bit color support in MS-Windows console, using vcon. (Nobuhiro<br>
+Takasaki, Ken Takata, 2017 Oct 1, #2060).<br>
+<br>
 ml_get error when using a Python. (Yggdroot, 2017 Jun 1, #1737)<br>
 Lemonboy can reproduce (2017 Jun 5)<br>
 <br>
 Patch to fix E806. (Dominique, 2017 Nov 22, #2368)<br>
 Kazunobu Kuriyama: caused by XtSetLanguageProc().<br>
+<br>
+Patch to fix GUI find/replace dialog. (kiloliter, 2017 Dec 11, report in<br>
+#2418, fix in #2435)<br>
 <br>
 Invalid range error when using BufWinLeave for closing terminal.<br>
 (Gabriel Barta, 2017 Nov 15, #2339)<br>
@@ -224,9 +229,8 @@ Koichi Iwamoto, #2126<br>
 Patch to fix cmdline abbreviation after '&lt;,'&gt;. (Christian Brabandt, 2017 Nov<br>
 13, on issue #2320)<br>
 <br>
-Patch to add TextDeletePost and TextYankPost events. (Philippe Vaucher, 2011<br>
-May 24)&nbsp;&nbsp;Update May 26.<br>
-Now in patch by Lemonboy, #2333<br>
+Patch for Neovim concerning restoring when closing help window. (glacambre<br>
+neovim #7431)<br>
 <br>
 Default install on MS-Windows should source defaults.vim.<br>
 Ask whether to use Windows or Vim key behavior?<br>
@@ -243,7 +247,7 @@ matchit hasn't been maintained for a long time.&nbsp;&nbsp;#955.<br>
 <br>
 Problem with&nbsp;<a class="Type" href="options.html#'delcombine'">'delcombine'</a>. (agguser, 2017 Nov 10, #2313)<br>
 <br>
-MS-Windows: buffer completetion doesn't work when using backslash (or slash)<br>
+MS-Windows: buffer completion doesn't work when using backslash (or slash)<br>
 for a path separator. (xtal8, #2201)<br>
 <br>
 Patch to adjust to DPI setting for GTK. (Roel van de Kraats, 2017 Nov 20,<br>
@@ -268,9 +272,6 @@ When bracketed paste is used, pasting at the &quot;:append&quot; prompt does not
 line breaks. (Ken Takata, 2017 Aug 22)<br>
 <br>
 The &quot;:move&quot; command does not honor closed folds. (Ryan Lue, #2351)<br>
-<br>
-Patch for 24 bit color support in MS-Windows console, using vcon. (Nobuhiro<br>
-Takasaki, Ken Takata, 2017 Oct 1, #2060).<br>
 <br>
 Memory leaks in test_channel? (or is it because of fork())<br>
 Memory leak in test_arabic.<br>
@@ -308,6 +309,9 @@ Alternatives for ~:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;&nbsp;list-&gt;get()&nbsp;&nbsp;two characters, used for lambda<br>
 <br>
 The ++ options for the :edit command are also useful on the Vim command line.<br>
+<br>
+When recovering a file, put the swap file name in b:recovered_swapfile.&nbsp;&nbsp;Then<br>
+a command can delete it.<br>
 <br>
 Overlong utf-8 sequence is displayed wrong. (Harm te Hennepe, 2017 Sep 14,<br>
 #2089)&nbsp;&nbsp;Patch with possible solution by Björn Linse.<br>
@@ -646,7 +650,7 @@ Probably list of keystrokes, with some annotations for mode changes.<br>
 Could store in logfile to be able to analyse it with an external command.<br>
 E.g. to see when's the last time a plugin command was used.<br>
 <br>
-execute() cannot be used with command completeion. (Daniel Hahler, 2016 Oct 1,<br>
+execute() cannot be used with command completion. (Daniel Hahler, 2016 Oct 1,<br>
 #1141)<br>
 <br>
 cmap using execute() has side effects. (Killthemule, 2016 Aug 17, #983)<br>
@@ -816,12 +820,6 @@ directory exists. (Sergio Gallelli, 2013 Dec 29)<br>
 <br>
 In debug mode one can inspect variables, but not the function parameters<br>
 (starting with a:). (Luc Hermitte, 2017 Jan 4, #1352)<br>
-<br>
-7&nbsp;&nbsp; Add a watchpoint in the debug mode: An expression that breaks execution<br>
-&nbsp;&nbsp;&nbsp;&nbsp;when evaluating to non-zero.&nbsp;&nbsp;Add the &quot;watchadd expr&quot; command, stop when<br>
-&nbsp;&nbsp;&nbsp;&nbsp;the value of the expression changes.&nbsp;&nbsp;&quot;:watchdel&quot; deletes an item,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&quot;:watchlist&quot; lists the items. (Charles Campbell)<br>
-Patch by Christian Brabandt, 2016 Jun 10, #859<br>
 <br>
 If &quot;:bd&quot; also closes a Tab page then the &quot; mark is not set.&nbsp;&nbsp;(Harm te Hennepe,<br>
 2016 Apr 25, #780)<br>
@@ -1253,13 +1251,6 @@ Patch to allow more types in remote_expr(). (Lech Lorens, 2014 Jan 5)<br>
 Doesn't work for string in list.&nbsp;&nbsp;Other way to pass all types of variables<br>
 reliably?<br>
 <br>
-Using &quot;:call foo#d.f()&quot; doesn't autoload the &quot;foo.vim&quot; file.<br>
-That is, calling a dictionary function on an autoloaded dict.<br>
-Works OK for echo, just not for&nbsp;&nbsp;&quot;:call&quot; and &quot;:call call()&quot;. (Ted, 2011 Mar<br>
-17)<br>
-Patch by Christian Brabandt, 2013 Mar 23.<br>
-Not 100% sure this is the right solution.<br>
-<br>
 Patch to add&nbsp;<span class="Special">{lhs}</span>&nbsp;to :mapclear: clear all maps starting with&nbsp;<span class="Special">{lhs}</span>.<br>
 (Christian Brabandt, 2013 Dec 9)<br>
 <br>
@@ -1527,9 +1518,6 @@ When setqflist() uses a filename that triggers a BufReadCmd autocommand Vim<br>
 doesn't jump to the correct line with :cfirst. (ZyX,&nbsp;&nbsp;2011 Sep 18)<br>
 <br>
 Behavior of i&quot; and a&quot; text objects isn't logical. (Ben Fritz, 2013 Nov 19)<br>
-<br>
-7&nbsp;&nbsp; Make &quot;ga&quot; show the digraph for a character, if it exists.<br>
-Patch from Christian Brabandt, 2011 Aug 19.<br>
 <br>
 maparg() does not show the&nbsp;<span class="Special">&lt;script&gt;</span>&nbsp;flag.&nbsp;&nbsp;When temporarily changing a<br>
 mapping, how to restore the script ID?<br>
