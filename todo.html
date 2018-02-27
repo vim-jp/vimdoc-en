@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2018 Feb 09<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2018 Feb 27<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,121 +44,16 @@ No maintainer for Vietnamese translations.<br>
 No maintainer for Simplified Chinese translations.<br>
 <br>
 Terminal emulator window:<br>
+- using feedkeys() does not work?&nbsp;&nbsp;(Charles Sheridan, 2018 Feb 17)<br>
 - Lots of stuff to implement, see src/terminal.c<br>
 - Improve debugger interface:<br>
-&nbsp;&nbsp;Include all debug features of Agide.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- Implement the right-click popup menu for the terminal. Can use the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;completion popup menu code and mouse dragging.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use it for &quot;set breakpoint&quot;, &quot;remove breakpoint&quot;, etc.<br>
-&nbsp;&nbsp;- get ideas from&nbsp;<span class="Constant"><a href="http://clewn.sf.net">http://clewn.sf.net</a></span><br>
 &nbsp;&nbsp;- Look into the idevim plugin/script.<br>
-- Improve testing:<br>
-&nbsp;&nbsp;Make a screenshot of a terminal, store in a file.<br>
-&nbsp;&nbsp;Display a stored screenshot, display diff with another one.<br>
-&nbsp;&nbsp;Make a test that puts Vim in a specific state, make a screenshot and compare<br>
-&nbsp;&nbsp;with the expected screenshot.&nbsp;&nbsp;Set t_Co to 256.<br>
-<br>
-+channel:<br>
-- get_job_options() isn't clear about what causes an error, often just returns<br>
-&nbsp;&nbsp;&quot;invalid argument&quot;.<br>
-- Add a separate timeout for opening a socket.&nbsp;&nbsp;Currently it's fixed at 50<br>
-&nbsp;&nbsp;msec, which is too small for a remote connection. (tverniquet, #2130)<br>
-- Try out background make plugin:&nbsp;<br>
-&nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
-- Problem with stderr on Windows? (Vincent Rischmann, 2016 Aug 31, #1026)<br>
-- Writing raw mode to a buffer should still handle NL characters as line<br>
-&nbsp;&nbsp;breaks. (Dmitry Zotikov, 2017 Aug 16)<br>
-- When out_cb executes :sleep, the close_cb may be invoked. (Daniel Hahler,<br>
-&nbsp;&nbsp;2016 Dec 11, #1320)<br>
-- Implement&nbsp;<a class="Identifier" href="channel.html#job-term">job-term</a>&nbsp;?<br>
-- Channel test fails with Motif.&nbsp;&nbsp;Sometimes kills the X11 server.<br>
-- When a message in the queue but there is no callback, drop it after a while?<br>
-&nbsp;&nbsp;Add timestamp to queued messages and callbacks with ID, remove after a<br>
-&nbsp;&nbsp;minute.&nbsp;&nbsp;Option to set the droptime.<br>
-- Add an option to drop text of very long lines?&nbsp;&nbsp;Default to 1 Mbyte.<br>
-- Add remark about undo sync, is there a way to force it?<br>
-- When starting a job, have an option to open the server socket, so we know<br>
-&nbsp;&nbsp;the port, and pass it to the command with --socket-fd&nbsp;<span class="Special">{nr}</span>. (Olaf Dabrunz,<br>
-&nbsp;&nbsp;Feb 9)&nbsp;&nbsp;How to do this on MS-Windows?<br>
-- For connection to server, a &quot;keep open&quot; flag would be useful.&nbsp;&nbsp;Retry<br>
-&nbsp;&nbsp;connecting in the main loop with zero timeout.<br>
-- job_start(): run job in a newly opened terminal (not a terminal window).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;With xterm could use -S<span class="Special">{pty}</span>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Although user could use &quot;xterm -e 'cmd arg'&quot;.<br>
-<br>
-Regexp problems:<br>
-- When search pattern has the base character both with and without combining<br>
-&nbsp;&nbsp;character, search fails.&nbsp;&nbsp;E.g. &quot;รรีบ&quot; in &quot;การรีบรักใคร&quot;. (agguser, #2312)<br>
-- [:space:] only matches ASCII spaces.&nbsp;&nbsp;Add [:white:] for all space-like<br>
-&nbsp;&nbsp;characters, esp. including 0xa0.&nbsp;&nbsp;Use character class zero.<br>
-- Since 7.4.704 the old regex engine fails to match [[:print:]] in 0xf6.<br>
-&nbsp;&nbsp;(Manuel Ortega, 2016 Apr 24)<br>
-&nbsp;&nbsp;Test fails on Mac.&nbsp;&nbsp;Avoid using isalpha(), isalnum(), etc?&nbsp;&nbsp;Depends on<br>
-&nbsp;&nbsp;LC_CTYPE<br>
-- The old engine does not find a match for &quot;/\%#=1\(\)\<span class="Special">{80}</span>&quot;, the new engine<br>
-&nbsp;&nbsp;matches everywhere.<br>
-- Using win_linetabsize() can still be slow. Cache the result, store col and<br>
-&nbsp;&nbsp;vcol. Reset them when moving to another line.<br>
-- Very slow with a long line and Ruby highlighting. (John Whitley, 2014 Dec 4)<br>
-- Bug with pattern: '\vblock (\d+)\.\n.*\d+%(\1)@&lt;!\.$'<br>
-&nbsp;&nbsp;(Lech Lorens, 2014 Feb 3)<br>
-- Issue 164: freeze on regexp search.<br>
-- Ignorecase not handled properly for multi-byte characters. (Axel Bender,<br>
-&nbsp;&nbsp;2013 Dec 11)<br>
-- Using \@&gt; and \?. (Brett Stahlman, 2013 Dec 21) Remark from Marcin<br>
-&nbsp;&nbsp;Szamotulski; Remark from Brett 2014 Jan 6 and 7.<br>
-- NFA regexp doesn't handle \%&lt;v correctly. (Ingo Karkat, 2014 May 12)<br>
-- Does not work with NFA regexp engine:<br>
-&nbsp;&nbsp;\%u, \%x, \%o, \%d followed by a composing character<br>
-- Search for \%d0\+ may fail with E363. (Christian Brabandt, 2016 Oct 4)<br>
-- \%'[ does not work.&nbsp;&nbsp;'%'] does work.&nbsp;&nbsp;(Masaaki Nakamura, 2016 Apr 4)<br>
-- Bug relating to back references. (Ingo Karkat, 2014 Jul 24)<br>
-- New RE does not give an error for empty group: &quot;\(\)\<span class="Special">{2}</span>&quot; (Dominique Pelle,<br>
-&nbsp;&nbsp;2015 Feb 7)<br>
-- Using back reference before the capturing group sometimes works with the old<br>
-&nbsp;&nbsp;engine, can we do this with the new engine?&nbsp;&nbsp;E.g. with<br>
-&nbsp;&nbsp;&quot;/\%(&lt;\1&gt;\)\@&lt;=.*\%(&lt;\/\(\w\+\)&gt;\)\@=&quot; matching text inside HTML tags.<br>
-&nbsp;&nbsp;This problem is probably the same: &quot;\%(^\1.*$\n\)\@&lt;=\(\d\+\).*$&quot;.<br>
-&nbsp;&nbsp;(guotuofeng, 2015 Jun 22)<br>
-- Strange matching with &quot;\(Hello\n\)\@&lt;=A&quot;. (Anas Syed, 2015 Feb 12)<br>
-- Problem with \v(A)@&lt;=b+\1c. (Issue 334)<br>
-- Diff highlighting can be very slow. (Issue 309)<br>
-- Using %&gt; for a virtual column has a check based on&nbsp;<span class="MissingTag">'tabsize'</span>.&nbsp;&nbsp;Better would<br>
-&nbsp;&nbsp;be to cache the result of win_linetabsize(col), storing both col and vcol,<br>
-&nbsp;&nbsp;and use them to decide whether win_linetabsize() needs to be called.&nbsp;&nbsp;Reset<br>
-&nbsp;&nbsp;col and vcol when moving to another line.<br>
-- this doesn't work: &quot;syntax match ErrorMsg /.\%9l\%&gt;20c\&amp;\%&lt;28c/&quot;.&nbsp;&nbsp;Leaving<br>
-&nbsp;&nbsp;out the \&amp; works.&nbsp;&nbsp;Seems any column check after \&amp; fails.<br>
-- Difference between two engines: &quot;.*\zs\/\@&gt;\/&quot; on text &quot;///&quot;<br>
-&nbsp;&nbsp;(Chris Paul, 2016 Nov 13)&nbsp;&nbsp;New engine not greedy enough?<br>
-&nbsp;&nbsp;Another one: echom matchstr(&quot; sdfsfsf\n sfdsdfsdf&quot;,'[^\n]*')<br>
-&nbsp;&nbsp;(2017 May 15, #1252)<br>
-<br>
-Use vim_clear() in more places, instead of vim_free() and assigning NULL.<br>
-<br>
-Include a few color schemes, based on popularity:<br>
-<span class="Constant"><a href="http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search">http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search</a></span><br>
-<span class="Constant"><a href="http://vimawesome.com/?q=tag:color-scheme">http://vimawesome.com/?q=tag:color-scheme</a></span><br>
-Use names that indicate their appearance (Christian Brabandt, 2017 Aug 3)<br>
-- monokai - Xia Crusoe (2017 Aug 4)&nbsp;<br>
-- seoul256 - Christian Brabandt (2017 Aug 3)<br>
-- gruvbox -&nbsp;&nbsp;Christian Brabandt (2017 Aug 3) (simplified version from<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lifepillar, 2018 Jan 22, #2573)<br>
-- janah - Marco Hinz (2017 Aug 4)<br>
-- apprentice - Romain Lafourcade (2017 Aug 6)&nbsp;&nbsp;remarks about help file #1964<br>
-Suggested by Hiroki Kokubun:<br>
--&nbsp;<span class="Special">[Iceberg]</span>(<span class="Constant"><a href="https://github.com/cocopon/iceberg.vim">https://github.com/cocopon/iceberg.vim</a></span>) (my one)<br>
--&nbsp;<span class="Special">[hybrid]</span>(<span class="Constant"><a href="https://github.com/w0ng/vim-hybrid">https://github.com/w0ng/vim-hybrid</a></span>)<br>
-Include solarized color scheme?, it does not support termguicolors.<br>
-- Sanitized version of pablo (Lifepillar, 2017 Nov 21)<br>
-<br>
-Reproducible:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;invalid memory access in regexp with zero-width.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reproduced by Dominique, 2017 Dec 23<br>
-<br>
-&quot;silent! try&quot; doesn't restore emsg_silent when an exception is thrown.<br>
-(Ben Reilly, 2018 Jan 5, #2531)&nbsp;&nbsp;Possible solution by Christian Brabandt, 2018<br>
-Jan 6.<br>
+- Improve screen dump testing:<br>
+&nbsp;&nbsp;Add docs for how to properly use the screen dumps for testing, e.g. for<br>
+&nbsp;&nbsp;syntax highlighting.<br>
 <br>
 Mode message isn't updated on vertical split. (Alexei Averchenko, 2018 Feb 2,<br>
 #2611)<br>
@@ -172,16 +67,17 @@ Compiler warnings (geeknik, 2017 Oct 26):<br>
 - signed integer overflow in getdecchrs() (#2254)<br>
 - undefined left shift in get_string_tv() (#2250)<br>
 <br>
-Cursor in wrong screen line with WinBar. (#2362)<br>
-Fix by Christian Brabandt (2018 Jan 2)<br>
+Patch to fix&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>&nbsp;in options window. (Yasuhiro Matsumoto, 2018 Feb 14,<br>
+#2645)<br>
+<br>
+Patch to fix fd leak when using jobs. (ichizok, 2018 Feb 16, #2651)<br>
+<br>
+Popup menu is too wide, causing it not to be aligned. (Linwei, 2018 Feb 22,<br>
+#2661)<br>
 <br>
 balloon_show() does not work properly in the terminal. (Ben Jackson, 2017 Dec<br>
 20, #2481)<br>
 Also see #2352, want better control over balloon, perhaps set the position.<br>
-<br>
-Patch to support hunspell. (Matej Cepl, Jan 2018, #2500)<br>
-Patch to include hunspell support. (Matej Cepl, 2017 Dec 26, #845)<br>
-Doesn't work on Windows yet.<br>
 <br>
 Cursor in status line after search. (#2530)<br>
 <br>
@@ -189,47 +85,19 @@ Cursor in wrong position when line wraps. (#2540)<br>
 <br>
 Alternative manpager.vim. (Enno, 2018 Jan 5, #2529)<br>
 <br>
-Patch for minimum width of completion popup menu. (Christian Brabandt, 2018<br>
-Jan 3, #2314)<br>
-<br>
-Patch to redraw instead of scroll for terminal window. (Ken Takata, #2010)<br>
-<br>
-Patch to add &quot;user_data&quot; to completion items. (Ben Jackson, 2018 Feb 1, #2608,<br>
-closes #2508)<br>
-<br>
-Patch to add TextChangedP, text changed while popup menu is visible. (Prabir<br>
-Shrestha, 2018 Jan 28, test added by Christian Brabandt)<br>
-<br>
 When using :packadd files under &quot;later&quot; are not used, which is inconsistent<br>
 with packages under &quot;start&quot;. (xtal8, #1994)<br>
 <br>
 Column number is wrong whsn using&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>. (Keith Smiley, 2018<br>
 Jan 15, #2555)<br>
 <br>
-Patch to add getjumplist(). (Yegappan Lakshmanan, 2018 Feb 2, #2609)<br>
-<br>
-Serbian translations. (Peseic, 2018 Jan 17)<br>
-<br>
-Patch for problem with restoring screen on Windows. (Nobuhiro Takasaki, 2015<br>
-Sep 10) Update 2018 Jan 4&nbsp;&nbsp;#2575<br>
-Alternate change by Ken Takata.<br>
-<br>
 Check argument of systemlist(). (Pavlov)<br>
-<br>
-Patch to parse &quot;:line&quot; in tags file and use it for search. (Daniel Hahler,<br>
-#2546)<br>
 <br>
 When&nbsp;<span class="MissingTag">'inchsearch'</span>&nbsp;and&nbsp;<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;are set /\v highlights everything.<br>
 Also see #2337<br>
 <br>
 Starting job with cwd option, when the directory does not exist, gives a<br>
 confusing error message. (Wang Shidong, 2018 Jan 2, #2519)<br>
-<br>
-7&nbsp;&nbsp; Add a watchpoint in the debug mode: An expression that breaks execution<br>
-&nbsp;&nbsp;&nbsp;&nbsp;when evaluating to non-zero.&nbsp;&nbsp;Add the &quot;watchadd expr&quot; command, stop when<br>
-&nbsp;&nbsp;&nbsp;&nbsp;the value of the expression changes.&nbsp;&nbsp;&quot;:watchdel&quot; deletes an item,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&quot;:watchlist&quot; lists the items. (Charles Campbell)<br>
-Patch by Christian Brabandt, 2016 Jun 10, #859<br>
 <br>
 7&nbsp;&nbsp; Make &quot;ga&quot; show the digraph for a character, if it exists.<br>
 Patch from Christian Brabandt, 2011 Aug 19.<br>
@@ -242,14 +110,15 @@ ch_sendraw() with long string does not try to read inbetween, which may cause<br
 a deadlock if the reading side is waiting for the write to finish. (Nate<br>
 Bosch, 2018 Jan 13, #2548)<br>
 <br>
+Add Makefiles to the runtime/spell directory tree, since nobody uses Aap.<br>
+Will have to explain the manual steps (downloading the .aff and .dic files,<br>
+applying the diff, etc.<br>
+<br>
 User dictionary ~/.vim/spell/lang.utf-8.add not used for spell checking until a<br>
 word is re-added to it. (Matej Cepl, 2018 Feb 6)<br>
 <br>
 Problem with mouse scroll in tmux. (fcying, #2419)&nbsp;&nbsp;Might be caused by patch<br>
 8.0.1309.&nbsp;&nbsp;Removing &quot;held_button = MOUSE_RELEASE;&quot; helps. (2018 Feb 5)<br>
-<br>
-Patch for 24 bit color support in MS-Windows console, using vcon. (Nobuhiro<br>
-Takasaki, Ken Takata, 2017 Oct 1, #2060).<br>
 <br>
 Does setting&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;cause syntax highlighting to slow down?&nbsp;&nbsp;Perhaps is<br>
 mess up the cache?&nbsp;&nbsp;(Mike Lee Williams, 2018 Jan 27, #2539)<br>
@@ -269,8 +138,14 @@ Also see #1689.<br>
 ml_get error when using a Python. (Yggdroot, 2017 Jun 1, #1737)<br>
 Lemonboy can reproduce (2017 Jun 5)<br>
 <br>
+crash when removing an element while inside map(). (Nikolai Pavlov, 2018 Feb<br>
+17, #2652)<br>
+<br>
 When&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;is &quot;all&quot; and&nbsp;<a class="Type" href="options.html#'cursorcolumn'">'cursorcolumn'</a>&nbsp;is set, the wrong column may be<br>
 highlighted. (van-de-bugger, 2018 Jan 23, #2576)<br>
+<br>
+Patch to parse &quot;:line&quot; in tags file and use it for search. (Daniel Hahler,<br>
+#2546)&nbsp;&nbsp;Fixes #1057.&nbsp;&nbsp;Missing a test.<br>
 <br>
 Patch to add winlayout() function. (Yegappan Lakshmanan, 2018 Jan 4)<br>
 <br>
@@ -295,9 +170,6 @@ ml_get errors with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
 Error in emsg with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
-Patch to avoid clearing the intro message on Win32 console.<br>
-(Ken Takata, 2017 Nov 14)<br>
-<br>
 Patch to fix encoding in print document name (Yasuhiro Matsumoto, 2017 Dec 20,<br>
 #2478)<br>
 <br>
@@ -307,8 +179,15 @@ Linse, 2017 Nov 14, #2336)<br>
 Join truncates xml comment. (Dmitrii Tcyganok, 2017 Dec 24, #2494)<br>
 Requires&nbsp;<a class="Type" href="options.html#'formatoptions'">'formatoptions'</a>&nbsp;to include &quot;j&quot;. (Gary Johnson, 2017 Dec 24)<br>
 <br>
+Patch to support hunspell. (Matej Cepl, Jan 2018, #2500) Based on older patch<br>
+in #846)<br>
+Doesn't work on Windows yet.&nbsp;&nbsp;Not ready to included, hard coded paths.<br>
+<br>
 When a timer is running and typing&nbsp;<span class="Special">CTRL-R</span>&nbsp;on the command line, it is not<br>
 redrawn properly. (xtal8, 2017 Oct 23, #2241)<br>
+<br>
+In an optional package the &quot;after&quot; directory is not scanned?<br>
+(Renato Fabbri, 2018 Feb 22)<br>
 <br>
 Universal solution to detect if t_RS is working, using cursor position.<br>
 Koichi Iwamoto, #2126<br>
@@ -370,9 +249,6 @@ Memory leaks in test_channel? (or is it because of fork())<br>
 Using uninitialized value in test_crypt.<br>
 Memory leaks in test_escaped_glob<br>
 <br>
-Patch to clear background when &quot;guibg=NONE&quot; is used and&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>&nbsp;is<br>
-set. (Nick Jensen, 2017 Nov 13, #2332, based on #981 by Kazunobu Kuriyama)<br>
-<br>
 Patch to make gM move to middle of line. (Yasuhiro Matsumoto, Sep 8, #2070)<br>
 <br>
 Cannot copy modeless selection when cursor is inside it. (lkintact, #2300)<br>
@@ -419,6 +295,22 @@ Also: Get an error message from free() in the process that owns the selection.<b
 Seems to happen when the selection is requested the second time, but before<br>
 clip_x11_convert_selection_cb() is invoked, thus in X library code.<br>
 Kazunobu Kuriyama is working on a proper fix. (2017 Jul 25)<br>
+<br>
+Include a few color schemes, based on popularity:<br>
+<span class="Constant"><a href="http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search">http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search</a></span><br>
+<span class="Constant"><a href="http://vimawesome.com/?q=tag:color-scheme">http://vimawesome.com/?q=tag:color-scheme</a></span><br>
+Use names that indicate their appearance (Christian Brabandt, 2017 Aug 3)<br>
+- monokai - Xia Crusoe (2017 Aug 4)&nbsp;<br>
+- seoul256 - Christian Brabandt (2017 Aug 3)<br>
+- gruvbox -&nbsp;&nbsp;Christian Brabandt (2017 Aug 3) (simplified version from<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lifepillar, 2018 Jan 22, #2573)<br>
+- janah - Marco Hinz (2017 Aug 4)<br>
+- apprentice - Romain Lafourcade (2017 Aug 6)&nbsp;&nbsp;remarks about help file #1964<br>
+Suggested by Hiroki Kokubun:<br>
+-&nbsp;<span class="Special">[Iceberg]</span>(<span class="Constant"><a href="https://github.com/cocopon/iceberg.vim">https://github.com/cocopon/iceberg.vim</a></span>) (my one)<br>
+-&nbsp;<span class="Special">[hybrid]</span>(<span class="Constant"><a href="https://github.com/w0ng/vim-hybrid">https://github.com/w0ng/vim-hybrid</a></span>)<br>
+Include solarized color scheme?, it does not support termguicolors.<br>
+- Sanitized version of pablo (Lifepillar, 2017 Nov 21)<br>
 <br>
 Problem with three-piece comment. (Michael Lee, 2017 May 11, #1696)<br>
 <br>
@@ -709,6 +601,80 @@ no longer support.<br>
 <br>
 sort() is not stable when using numeric/float sort (Nikolay Pavlov, 2016 Sep<br>
 4#1038)<br>
+<br>
++channel:<br>
+- Add a separate timeout for opening a socket.&nbsp;&nbsp;Currently it's fixed at 50<br>
+&nbsp;&nbsp;msec, which is too small for a remote connection. (tverniquet, #2130)<br>
+- Try out background make plugin:&nbsp;<br>
+&nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
+- Problem with stderr on Windows? (Vincent Rischmann, 2016 Aug 31, #1026)<br>
+- Writing raw mode to a buffer should still handle NL characters as line<br>
+&nbsp;&nbsp;breaks. (Dmitry Zotikov, 2017 Aug 16)<br>
+- When out_cb executes :sleep, the close_cb may be invoked. (Daniel Hahler,<br>
+&nbsp;&nbsp;2016 Dec 11, #1320)<br>
+- Implement&nbsp;<a class="Identifier" href="channel.html#job-term">job-term</a>&nbsp;?<br>
+- Channel test fails with Motif.&nbsp;&nbsp;Sometimes kills the X11 server.<br>
+- When a message in the queue but there is no callback, drop it after a while?<br>
+&nbsp;&nbsp;Add timestamp to queued messages and callbacks with ID, remove after a<br>
+&nbsp;&nbsp;minute.&nbsp;&nbsp;Option to set the droptime.<br>
+- Add an option to drop text of very long lines?&nbsp;&nbsp;Default to 1 Mbyte.<br>
+- Add remark about undo sync, is there a way to force it?<br>
+- When starting a job, have an option to open the server socket, so we know<br>
+&nbsp;&nbsp;the port, and pass it to the command with --socket-fd&nbsp;<span class="Special">{nr}</span>. (Olaf Dabrunz,<br>
+&nbsp;&nbsp;Feb 9)&nbsp;&nbsp;How to do this on MS-Windows?<br>
+- For connection to server, a &quot;keep open&quot; flag would be useful.&nbsp;&nbsp;Retry<br>
+&nbsp;&nbsp;connecting in the main loop with zero timeout.<br>
+- job_start(): run job in a newly opened terminal (not a terminal window).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;With xterm could use -S<span class="Special">{pty}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Although user could use &quot;xterm -e 'cmd arg'&quot;.<br>
+<br>
+Regexp problems:<br>
+- When search pattern has the base character both with and without combining<br>
+&nbsp;&nbsp;character, search fails.&nbsp;&nbsp;E.g. &quot;รรีบ&quot; in &quot;การรีบรักใคร&quot;. (agguser, #2312)<br>
+- [:space:] only matches ASCII spaces.&nbsp;&nbsp;Add [:white:] for all space-like<br>
+&nbsp;&nbsp;characters, esp. including 0xa0.&nbsp;&nbsp;Use character class zero.<br>
+- Since 7.4.704 the old regex engine fails to match [[:print:]] in 0xf6.<br>
+&nbsp;&nbsp;(Manuel Ortega, 2016 Apr 24)<br>
+&nbsp;&nbsp;Test fails on Mac.&nbsp;&nbsp;Avoid using isalpha(), isalnum(), etc?&nbsp;&nbsp;Depends on<br>
+&nbsp;&nbsp;LC_CTYPE<br>
+- The old engine does not find a match for &quot;/\%#=1\(\)\<span class="Special">{80}</span>&quot;, the new engine<br>
+&nbsp;&nbsp;matches everywhere.<br>
+- Using win_linetabsize() can still be slow. Cache the result, store col and<br>
+&nbsp;&nbsp;vcol. Reset them when moving to another line.<br>
+- Very slow with a long line and Ruby highlighting. (John Whitley, 2014 Dec 4)<br>
+- Bug with pattern: '\vblock (\d+)\.\n.*\d+%(\1)@&lt;!\.$'<br>
+&nbsp;&nbsp;(Lech Lorens, 2014 Feb 3)<br>
+- Issue 164: freeze on regexp search.<br>
+- Ignorecase not handled properly for multi-byte characters. (Axel Bender,<br>
+&nbsp;&nbsp;2013 Dec 11)<br>
+- Using \@&gt; and \?. (Brett Stahlman, 2013 Dec 21) Remark from Marcin<br>
+&nbsp;&nbsp;Szamotulski; Remark from Brett 2014 Jan 6 and 7.<br>
+- NFA regexp doesn't handle \%&lt;v correctly. (Ingo Karkat, 2014 May 12)<br>
+- Does not work with NFA regexp engine:<br>
+&nbsp;&nbsp;\%u, \%x, \%o, \%d followed by a composing character<br>
+- Search for \%d0\+ may fail with E363. (Christian Brabandt, 2016 Oct 4)<br>
+- \%'[ does not work.&nbsp;&nbsp;'%'] does work.&nbsp;&nbsp;(Masaaki Nakamura, 2016 Apr 4)<br>
+- Bug relating to back references. (Ingo Karkat, 2014 Jul 24)<br>
+- New RE does not give an error for empty group: &quot;\(\)\<span class="Special">{2}</span>&quot; (Dominique Pelle,<br>
+&nbsp;&nbsp;2015 Feb 7)<br>
+- Using back reference before the capturing group sometimes works with the old<br>
+&nbsp;&nbsp;engine, can we do this with the new engine?&nbsp;&nbsp;E.g. with<br>
+&nbsp;&nbsp;&quot;/\%(&lt;\1&gt;\)\@&lt;=.*\%(&lt;\/\(\w\+\)&gt;\)\@=&quot; matching text inside HTML tags.<br>
+&nbsp;&nbsp;This problem is probably the same: &quot;\%(^\1.*$\n\)\@&lt;=\(\d\+\).*$&quot;.<br>
+&nbsp;&nbsp;(guotuofeng, 2015 Jun 22)<br>
+- Strange matching with &quot;\(Hello\n\)\@&lt;=A&quot;. (Anas Syed, 2015 Feb 12)<br>
+- Problem with \v(A)@&lt;=b+\1c. (Issue 334)<br>
+- Diff highlighting can be very slow. (Issue 309)<br>
+- Using %&gt; for a virtual column has a check based on&nbsp;<span class="MissingTag">'tabsize'</span>.&nbsp;&nbsp;Better would<br>
+&nbsp;&nbsp;be to cache the result of win_linetabsize(col), storing both col and vcol,<br>
+&nbsp;&nbsp;and use them to decide whether win_linetabsize() needs to be called.&nbsp;&nbsp;Reset<br>
+&nbsp;&nbsp;col and vcol when moving to another line.<br>
+- this doesn't work: &quot;syntax match ErrorMsg /.\%9l\%&gt;20c\&amp;\%&lt;28c/&quot;.&nbsp;&nbsp;Leaving<br>
+&nbsp;&nbsp;out the \&amp; works.&nbsp;&nbsp;Seems any column check after \&amp; fails.<br>
+- Difference between two engines: &quot;.*\zs\/\@&gt;\/&quot; on text &quot;///&quot;<br>
+&nbsp;&nbsp;(Chris Paul, 2016 Nov 13)&nbsp;&nbsp;New engine not greedy enough?<br>
+&nbsp;&nbsp;Another one: echom matchstr(&quot; sdfsfsf\n sfdsdfsdf&quot;,'[^\n]*')<br>
+&nbsp;&nbsp;(2017 May 15, #1252)<br>
 <br>
 Patch to add &quot;cmdline&quot; completion to getcompletion(). (Shougo, Oct 1, #1140)<br>
 <br>
