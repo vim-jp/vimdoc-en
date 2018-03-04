@@ -12,8 +12,6 @@ helpname: 'terminal'
 Terminal window support&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal" name="terminal">terminal</a><br>
 <br>
 <br>
-WARNING: THIS IS ONLY PARTLY IMPLEMENTED, ANYTHING CAN STILL CHANGE<br>
-<br>
 The terminal feature is optional, use this to check if your Vim has it:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo has('terminal')</div>
 If the result is &quot;1&quot; you have it.<br>
@@ -45,7 +43,6 @@ If the result is &quot;1&quot; you have it.<br>
 <br>
 <span class="Special">{Vi does not have any of these commands}</span><br>
 <span class="Special">{only available when compiled with the&nbsp;</span><a class="Identifier" href="various.html#+terminal">+terminal</a><span class="Special">&nbsp;feature}</span><br>
-<br>
 The terminal feature requires the&nbsp;<a class="Identifier" href="various.html#+multi_byte">+multi_byte</a>,&nbsp;<a class="Identifier" href="various.html#+job">+job</a>&nbsp;and&nbsp;<a class="Identifier" href="various.html#+channel">+channel</a>&nbsp;features.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
@@ -486,7 +483,7 @@ program window&nbsp;&nbsp;A terminal window for the executed program.&nbsp;&nbsp
 <br>
 The current window is used to show the source code.&nbsp;&nbsp;When gdb pauses the<br>
 source file location will be displayed, if possible.&nbsp;&nbsp;A sign is used to<br>
-highlight the current position (using highlight group debugPC).&nbsp;&nbsp;<br>
+highlight the current position, using highlight group debugPC.&nbsp;&nbsp;&nbsp;<br>
 <br>
 If the buffer in the current window is modified, another window will be opened<br>
 to display the current gdb position.<br>
@@ -511,6 +508,7 @@ You should now have three windows:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;source&nbsp;&nbsp;- where you started, has a window toolbar with buttons<br>
 &nbsp;&nbsp;&nbsp;&nbsp;gdb&nbsp;&nbsp;&nbsp;&nbsp; - you can type gdb commands here<br>
 &nbsp;&nbsp;&nbsp;&nbsp;program - the executed program will use this window<br>
+<br>
 You can use&nbsp;<span class="Special">CTRL-W</span>&nbsp;<span class="Special">CTRL-W</span>&nbsp;or the mouse to move focus between windows.<br>
 Put focus on the gdb window and type:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break ex_help<br>
@@ -531,6 +529,8 @@ displayed:<br>
 This way you can inspect the value of local variables.&nbsp;&nbsp;You can also focus the<br>
 gdb window and use a &quot;print&quot; command, e.g.:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print *eap</div>
+If mouse pointer movements are working, Vim will also show a balloon when the<br>
+mouse rests on text that can be evaluated by gdb.<br>
 <br>
 Now go back to the source window and put the cursor on the first line after<br>
 the for loop, then type:<br>
@@ -566,38 +566,42 @@ Put focus on the gdb window to type commands there.&nbsp;&nbsp;Some common ones 
 - frame&nbsp;<span class="Special">N</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; go to the&nbsp;<span class="Special">N</span>th stack frame<br>
 - continue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue execution<br>
 <br>
-In the window showing the source code these commands can used to control gdb:<br>
-&nbsp;:Run&nbsp;<span class="Special">[args]</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run the program with&nbsp;<span class="Special">[args]</span>&nbsp;or the previous arguments<br>
-&nbsp;:Arguments&nbsp;<span class="Special">{args}</span>&nbsp;&nbsp;set arguments for the next :Run<br>
+In the window showing the source code these commands can be used to control gdb:<br>
+&nbsp;<span class="Comment">:Run</span>&nbsp;<span class="Special">[args]</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run the program with&nbsp;<span class="Special">[args]</span>&nbsp;or the previous arguments<br>
+&nbsp;<span class="Comment">:Arguments</span>&nbsp;<span class="Special">{args}</span>&nbsp;&nbsp;set arguments for the next&nbsp;<span class="Comment">:Run</span><br>
 <br>
-&nbsp;:Break&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set a breakpoint at the current line; a sign will be displayed<br>
-&nbsp;:Delete&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete a breakpoint at the current line<br>
+&nbsp;<span class="Comment">:Break</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set a breakpoint at the current line; a sign will be displayed<br>
+&nbsp;<span class="Comment">:Clear</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete the breakpoint at the current line<br>
 <br>
-&nbsp;:Step&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;step&quot; command<br>
-&nbsp;:Over&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;next&quot; command (:Next is a Vim command)<br>
-&nbsp;:Finish&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;finish&quot; command<br>
-&nbsp;:Continue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;continue&quot; command<br>
-&nbsp;:Stop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;interrupt the program<br>
+&nbsp;<span class="Comment">:Step</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;step&quot; command<br>
+&nbsp;<span class="Comment">:Over</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;next&quot; command (<a class="Comment" href="editing.html#:Next">:Next</a>&nbsp;is a Vim command)<br>
+&nbsp;<span class="Comment">:Finish</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;finish&quot; command<br>
+&nbsp;<span class="Comment">:Continue</span>&nbsp;&nbsp;&nbsp;&nbsp;execute the gdb &quot;continue&quot; command<br>
+&nbsp;<span class="Comment">:Stop</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;interrupt the program<br>
 <br>
 If&nbsp;<a class="Type" href="options.html#'mouse'">'mouse'</a>&nbsp;is set the plugin adds a window toolbar with these entries:<br>
-&nbsp;&nbsp;Step&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Step<br>
-&nbsp;&nbsp;Next&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Over<br>
-&nbsp;&nbsp;Finish&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Finish<br>
-&nbsp;&nbsp;Cont&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Continue<br>
-&nbsp;&nbsp;Stop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Stop<br>
-&nbsp;&nbsp;Eval&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Evaluate<br>
+&nbsp;&nbsp;Step&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:Step</span><br>
+&nbsp;&nbsp;Next&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:Over</span><br>
+&nbsp;&nbsp;Finish&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:Finish</span><br>
+&nbsp;&nbsp;Cont&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:Continue</span><br>
+&nbsp;&nbsp;Stop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:Stop</span><br>
+&nbsp;&nbsp;Eval&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:Evaluate</span><br>
 This way you can use the mouse to perform the most common commands.&nbsp;&nbsp;You need<br>
 to have the&nbsp;<a class="Type" href="options.html#'mouse'">'mouse'</a>&nbsp;option set to enable mouse clicks.<br>
+<br>
+You can add the window toolbar in other windows you open with:<br>
+<div class="helpExample">&nbsp;&nbsp;:Winbar</div>
 <br>
 <br>
 <span class="PreProc">Inspecting variables</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#termdebug-variables" name="termdebug-variables">termdebug-variables</a><br>
-&nbsp;:Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;evaluate the expression under the cursor<br>
-&nbsp;K&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same<br>
-&nbsp;:Evaluate&nbsp;<span class="Special">{expr}</span>&nbsp;&nbsp; evaluate&nbsp;<span class="Special">{expr}</span><br>
-&nbsp;:'&lt;,'&gt;Evaluate&nbsp;&nbsp;&nbsp;&nbsp; evaluate the Visually selected text<br>
+&nbsp;<span class="Comment">:Evaluate</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;evaluate the expression under the cursor<br>
+&nbsp;<a class="Comment" href="various.html#K">K</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same<br>
+&nbsp;<span class="Comment">:Evaluate</span>&nbsp;<span class="Special">{expr}</span>&nbsp;&nbsp; evaluate&nbsp;<span class="Special">{expr}</span><br>
+&nbsp;<span class="Comment">:'&lt;,'&gt;Evaluate</span>&nbsp;&nbsp;&nbsp;&nbsp; evaluate the Visually selected text<br>
 <br>
 This is similar to using &quot;print&quot; in the gdb window.<br>
+You can usually shorten&nbsp;<span class="Comment">:Evaluate</span>&nbsp;to&nbsp;<span class="Comment">:Ev</span>.<br>
 <br>
 <br>
 <span class="PreProc">Other commands</span><br>
@@ -614,17 +618,21 @@ will break the debugger.<br>
 <br>
 <br>
 <span class="PreProc">Customizing</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#termdebug-customizing" name="termdebug-customizing">termdebug-customizing</a><br>
+<br>
+GDB command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#termdebug-customizing" name="termdebug-customizing">termdebug-customizing</a><br>
+<br>
 To change the name of the gdb command, set the &quot;termdebugger&quot; variable before<br>
 invoking&nbsp;<a class="Comment" href="terminal.html#:Termdebug">:Termdebug</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let termdebugger = &quot;mygdb&quot;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#gdb-version" name="gdb-version">gdb-version</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#gdb-version" name="gdb-version">gdb-version</a><br>
 Only debuggers fully compatible with gdb will work.&nbsp;&nbsp;Vim uses the GDB/MI<br>
 interface.&nbsp;&nbsp;This probably requires gdb version 7.12.&nbsp;&nbsp;if you get this error:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">Undefined command: &quot;new-ui&quot;. Try &quot;help&quot;.</span><br>
 Then your gdb is too old.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#hl-debugPC" name="hl-debugPC">hl-debugPC</a>&nbsp;<a class="Constant" href="terminal.html#hl-debugBreakpoint" name="hl-debugBreakpoint">hl-debugBreakpoint</a><br>
+<br>
+Colors&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#hl-debugPC" name="hl-debugPC">hl-debugPC</a>&nbsp;<a class="Constant" href="terminal.html#hl-debugBreakpoint" name="hl-debugBreakpoint">hl-debugBreakpoint</a><br>
+<br>
 The color of the signs can be adjusted with these highlight groups:<br>
 - debugPC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the current position<br>
 - debugBreakpoint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a breakpoint<br>
@@ -636,6 +644,20 @@ The defaults are, when&nbsp;<a class="Type" href="options.html#'background'">'ba
 When&nbsp;<a class="Type" href="options.html#'background'">'background'</a>&nbsp;is &quot;dark&quot;:<br>
 &nbsp;&nbsp;hi debugPC term=reverse ctermbg=darkblue guibg=darkblue<br>
 &nbsp;&nbsp;hi debugBreakpoint term=reverse ctermbg=red guibg=red<br>
+<br>
+<br>
+Popup menu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#termdebug_popup" name="termdebug_popup">termdebug_popup</a><br>
+<br>
+By default the Termdebug plugin sets&nbsp;<a class="Type" href="options.html#'mousemodel'">'mousemodel'</a>&nbsp;to &quot;popup_setpos&quot; and adds<br>
+these entries to the popup menu:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set breakpoint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:Break</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clear breakpoint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:Clear</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:Evaluate</span><br>
+If you don't want this then disable it with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:termdebug_popup = 0</div>
+<br>
+<br>
+Vim window width&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#termdebug_wide" name="termdebug_wide">termdebug_wide</a><br>
 <br>
 To change the width of the Vim window when debugging starts, and use a<br>
 vertical split:<br>
