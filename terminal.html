@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'terminal'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="terminal.html" name="terminal.txt">terminal.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2018 Mar 16<br>
+<a class="Constant" href="terminal.html" name="terminal.txt">terminal.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2018 Mar 25<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -28,12 +28,16 @@ If the result is &quot;1&quot; you have it.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Session&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-session">terminal-session</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-unix">terminal-unix</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MS-Windows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-ms-windows">terminal-ms-windows</a><br>
-2. Remote testing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-testing">terminal-testing</a><br>
-3. Diffing screen dumps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-diff">terminal-diff</a><br>
+2. Terminal communication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-communication">terminal-communication</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim to job: term_sendkeys()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-to-job">terminal-to-job</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Job to Vim&#0058; JSON API&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-api">terminal-api</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Using the client-server feature&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-client-server">terminal-client-server</a><br>
+3. Remote testing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-testing">terminal-testing</a><br>
+4. Diffing screen dumps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-diff">terminal-diff</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Writing a screen dump test for Vim&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-dumptest">terminal-dumptest</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creating a screen dump&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-screendump">terminal-screendump</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Comparing screen dumps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-diffscreendump">terminal-diffscreendump</a><br>
-4. Debugging&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-debug">terminal-debug</a><br>
+5. Debugging&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-debug">terminal-debug</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Starting&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#termdebug-starting">termdebug-starting</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example session&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#termdebug-example">termdebug-example</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stepping through code&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#termdebug-stepping">termdebug-stepping</a><br>
@@ -360,15 +364,6 @@ Environment variables are used to pass information to the running job:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;COLORS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of colors,&nbsp;<a class="Type" href="term.html#'t_Co'">'t_Co'</a>&nbsp;(256*256*256 in the GUI)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;VIM_SERVERNAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:servername<br>
 <br>
-The&nbsp;<a class="Identifier" href="remote.html#client-server">client-server</a>&nbsp;feature can be used to communicate with the Vim instance<br>
-where the job was started.&nbsp;&nbsp;This only works when v:servername is not empty.<br>
-If needed you can set it with:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call remote_startserver('vim-server')</div>
-<br>
-In the job you can then do something like:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim --servername $VIM_SERVERNAME --remote +123 some_file.c</div>
-This will open the file &quot;some_file.c&quot; and put the cursor on line 123.<br>
-<br>
 <br>
 <span class="PreProc">MS-Windows</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-ms-windows" name="terminal-ms-windows">terminal-ms-windows</a><br>
@@ -394,7 +389,91 @@ Environment variables are used to pass information to the running job:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;VIM_SERVERNAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:servername<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-2. Remote testing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-testing" name="terminal-testing">terminal-testing</a><br>
+2. Terminal communication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-communication" name="terminal-communication">terminal-communication</a><br>
+<br>
+There are several ways to communicate with the job running in a terminal:<br>
+- Use&nbsp;<a class="Identifier" href="eval.html#term_sendkeys()">term_sendkeys()</a>&nbsp;to send text and escape sequences from Vim to the job.<br>
+- Use the JSON API to send encoded commands from the job to Vim.<br>
+- Use the&nbsp;<a class="Identifier" href="remote.html#client-server">client-server</a>&nbsp;mechanism. This works on machines with an X server<br>
+&nbsp;&nbsp;and on MS-Windows.<br>
+<br>
+<br>
+<span class="PreProc">Vim to job: term_sendkeys()</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-to-job" name="terminal-to-job">terminal-to-job</a><br>
+This allows for remote controlling the job running in the terminal.&nbsp;&nbsp;It is a<br>
+one-way mechanism.&nbsp;&nbsp;The job can update the display to signal back to Vim.<br>
+For example, if a shell is running in a terminal, you can do:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call term_sendkeys(buf, &quot;ls *.java\&lt;CR&gt;&quot;)</div>
+<br>
+This requires for the job to be in the right state where it will do the right<br>
+thing when receiving the keys.&nbsp;&nbsp;For the above example, the shell must be<br>
+waiting for a command to be typed.<br>
+<br>
+For a job that was written for the purpose, you can use the JSON API escape<br>
+sequence in the other direction.&nbsp;&nbsp;E.g.:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call term_sendkeys(buf, &quot;\&lt;Esc&gt;]51;[&quot;response&quot;]\x07&quot;)</div>
+<br>
+<br>
+<span class="PreProc">Job to Vim&#0058; JSON API</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-api" name="terminal-api">terminal-api</a><br>
+The job can send JSON to Vim, using a special escape sequence.&nbsp;&nbsp;The JSON<br>
+encodes a command that Vim understands.&nbsp;&nbsp;Example of such a message:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Esc&gt;]51;[&quot;drop&quot;, &quot;README.md&quot;]&lt;07&gt;</div>
+<br>
+The body is always a list, making it easy to find the end: ]<span class="Special">&lt;07&gt;</span>.<br>
+The&nbsp;<span class="Special">&lt;Esc&gt;</span>]51;msg<span class="Special">&lt;07&gt;</span>&nbsp;sequence is reserved by xterm for &quot;Emacs shell&quot;, which is<br>
+similar to what we are doing here.<br>
+<br>
+Currently supported commands:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call&nbsp;<span class="Special">{funcname}</span>&nbsp;<span class="Special">{argument}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call a user defined function with&nbsp;<span class="Special">[argument]</span>.&nbsp;&nbsp;The function is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;called with the buffer number of the terminal and the decoded<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;argument.&nbsp;&nbsp;The user function must sanity check the argument.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The function can use&nbsp;<a class="Identifier" href="eval.html#term_sendkeys()">term_sendkeys()</a>&nbsp;to send back a reply.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example in JSON:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;call&quot;, &quot;Impression&quot;, [&quot;play&quot;, 14]]</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Calls a function defined like this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function Impression(bufnum, arglist)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if len(a:arglist) == 2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo &quot;impression &quot; . a:arglist[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo &quot;count &quot; . a:arglist[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;drop&nbsp;<span class="Special">{filename}</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let Vim open a file, like the&nbsp;<a class="Comment" href="windows.html#:drop">:drop</a>&nbsp;command.&nbsp;&nbsp;If&nbsp;<span class="Special">{filename}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is already open in a window, switch to that window.&nbsp;&nbsp;Otherwise<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;open a new window to edit&nbsp;<span class="Special">{filename}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example in JSON:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;drop&quot;, &quot;path/file.txt&quot;, {&quot;ff&quot;: &quot;dos&quot;}]</div>
+<br>
+A trick to have Vim send this escape sequence:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exe &quot;set t_ts=\&lt;Esc&gt;]51; t_fs=\x07&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;titlestring = '[&quot;call&quot;,&quot;TryThis&quot;,[&quot;hello&quot;,123]]'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redraw<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set t_ts&amp; t_fs&amp;</div>
+<br>
+Rationale: Why not allow for any command or expression?&nbsp;&nbsp;Because that might<br>
+create a security problem.<br>
+<br>
+<br>
+<span class="PreProc">Using the client-server feature</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-client-server" name="terminal-client-server">terminal-client-server</a><br>
+This only works when v:servername is not empty.&nbsp;&nbsp;If needed you can set it,<br>
+before opening the terminal, with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call remote_startserver('vim-server')</div>
+<br>
+$VIM_SERVERNAME is set in the terminal to pass on the server name.<br>
+<br>
+In the job you can then do something like:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim --servername $VIM_SERVERNAME --remote +123 some_file.c</div>
+This will open the file &quot;some_file.c&quot; and put the cursor on line 123.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+3. Remote testing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-testing" name="terminal-testing">terminal-testing</a><br>
 <br>
 Most Vim tests execute a script inside Vim.&nbsp;&nbsp;For some tests this does not<br>
 work, running the test interferes with the code being tested.&nbsp;&nbsp;To avoid this<br>
@@ -409,7 +488,7 @@ term_scrape()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; inspec
 <br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-3. Diffing screen dumps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-diff" name="terminal-diff">terminal-diff</a><br>
+4. Diffing screen dumps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-diff" name="terminal-diff">terminal-diff</a><br>
 <br>
 In some cases it can be bothersome to test that Vim displays the right<br>
 characters on the screen.&nbsp;&nbsp;E.g. with syntax highlighting.&nbsp;&nbsp;To make this<br>
@@ -499,7 +578,7 @@ Alternatively, press &quot;s&quot; to swap the first and second dump. Do this se
 times so that you can spot the difference in the context of the text.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-4. Debugging&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-debug" name="terminal-debug">terminal-debug</a><br>
+5. Debugging&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#terminal-debug" name="terminal-debug">terminal-debug</a><br>
 <br>
 The Terminal debugging plugin can be used to debug a program with gdb and view<br>
 the source code in a Vim window.&nbsp;&nbsp;Since this is completely contained inside<br>
