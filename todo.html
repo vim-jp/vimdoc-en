@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2018 Mar 16<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2018 Mar 29<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -41,18 +41,40 @@ entered there will not be repeated below, unless there is extra information.<br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Terminal emulator window:<br>
+- dump diff sometimes creates a different way of repeating.<br>
+&nbsp;&nbsp; Example:&nbsp;<span class="Constant"><a href="https://api.travis-ci.org/v3/job/359102504/log.txt">https://api.travis-ci.org/v3/job/359102504/log.txt</a></span><br>
+&nbsp;&nbsp;unclear why this can happen.<br>
 - Still some stuff to implement and bugs to fix, see src/terminal.c<br>
-- Crash when using popup menu while balloon is visible?<br>
-- Test_terminal_qall_kill_func if flaky<br>
-- Drop options argument of term_dumpdiff() / termp_dumpload() ?<br>
 <br>
 Mode message isn't updated on vertical split. (Alexei Averchenko, 2018 Feb 2,<br>
 #2611)<br>
 <br>
+Patch to fix vimgrep adding to wrong quickfix list. (Yegappan, 2018 Mar 25)<br>
+<br>
+Problem with sudo. #2758<br>
+<br>
+Code refactoring, macro for message, #2729<br>
+<br>
+Patch to enforce c89 compliance. (James McCoy, #2735)<br>
+With fix for Mac from Kazunobu.<br>
+<br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
 <br>
-Implement option_save() and option_restore().<br>
+Patch to avoid bad highlighting caused by #if. (ichizok, #2731)<br>
+<br>
+Implement option_save() and option_restore()?&nbsp;&nbsp;Or remove the help.<br>
+<br>
+Looks like an error for inserting register makes &quot;:file other&quot; not work.<br>
+(Tom M, 2018 Mar 28)<br>
+<br>
+Patch to fix mouse pointer after :tselect. (Hirohito Higashi, #2709)<br>
+How to reproduce the problem?<br>
+<br>
+Patch to avoid job killed when I/O is disconnected. (ichizok, #2734)<br>
+<br>
+When opening foo/x.txt and bar/x.txt get swap file warning.&nbsp;&nbsp;Should check the<br>
+file name. (Juergen Weigert)<br>
 <br>
 Compiler warnings (geeknik, 2017 Oct 26):<br>
 - signed integer overflow in do_sub() (#2249)<br>
@@ -60,7 +82,13 @@ Compiler warnings (geeknik, 2017 Oct 26):<br>
 - signed integer overflow in getdecchrs() (#2254)<br>
 - undefined left shift in get_string_tv() (#2250)<br>
 <br>
+Tests failing for &quot;make testgui&quot; with GTK:<br>
+- Test_setbufvar_options()<br>
+- Test_exit_callback_interval()<br>
+<br>
 Mouse pointer sticks to stop shape.&nbsp;&nbsp;Only on Windows GUI?&nbsp;&nbsp;#2709<br>
+<br>
+Patch to make log_tr() use variable arguments. (Ichizok, 2018 Mar 20, #2730)<br>
 <br>
 balloon_show() does not work properly in the terminal. (Ben Jackson, 2017 Dec<br>
 20, #2481)<br>
@@ -76,9 +104,17 @@ mode.&nbsp;&nbsp;Also used for switching Terminal mode.<br>
 <br>
 Cursor in status line after search. (#2530)<br>
 <br>
+Patch to fix that an empty buffer remains when using :argedit. (Christian,<br>
+#2713)&nbsp;&nbsp;Updated patch.<br>
+<br>
+Patch to fix interaction between&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;and i_<span class="Special">CTRL-G</span>_j. (Christian<br>
+Brabandt, #2743)<br>
+<br>
 Cursor in wrong position when line wraps. (#2540)<br>
 <br>
 Alternative manpager.vim. (Enno, 2018 Jan 5, #2529)<br>
+<br>
+Patch to add more flags to :ls. (Marcin Szamotulski, #2751)<br>
 <br>
 Does setting&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;cause syntax highlighting to slow down?&nbsp;&nbsp;Perhaps is<br>
 mess up the cache?&nbsp;&nbsp;(Mike Lee Williams, 2018 Jan 27, #2539)<br>
@@ -89,7 +125,11 @@ with packages under &quot;start&quot;. (xtal8, #1994)<br>
 Column number is wrong when using&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>. (Keith Smiley, 2018<br>
 Jan 15, #2555)<br>
 <br>
+&quot;:bufdo e&quot; disabled syntax HL in windows other than the current. (BPJ)<br>
+<br>
 Check argument of systemlist(). (Pavlov)<br>
+<br>
+Patch to add reg_executing() and reg_recording(). (Hirohito Higashi, #2745)<br>
 <br>
 No maintainer for Vietnamese translations.<br>
 No maintainer for Simplified Chinese translations.<br>
@@ -131,6 +171,9 @@ With foldmethod=syntax and nofoldenable comment highlighting isn't removed.<br>
 Using&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbsp;also applies to literally entered file name.&nbsp;&nbsp;Also with<br>
 :drop (remote commands).<br>
 <br>
+Patch to use the xdiff library instead of external diff. (Christian Brabandt,<br>
+2018 Mar 20, #2732)<br>
+<br>
 &quot;gvim --remote&quot; from a directory with non-word characters changes the current<br>
 directory (Paulo Marcel Coelho Arabic, 2017 Oct 30, #2266)<br>
 Also see #1689.<br>
@@ -155,6 +198,8 @@ No profile information for function that executes &quot;:quit&quot;. (Daniel Hah
 Get a &quot;No Name&quot; buffer when&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;is set and opening a new window from the<br>
 quickfix list. (bfrg, 2018 Jan 22, #2574)<br>
 <br>
+<span class="Special">CTRL-X</span>&nbsp;on zero gets stuck on 0xfffffffffffffffe. (Hengyang Zhao, #2746)<br>
+<br>
 A function on a dictionary is not profiled. (ZyX, 2010 Dec 25)<br>
 <br>
 Patch to fix E806. (Dominique, 2017 Nov 22, #2368)<br>
@@ -166,9 +211,22 @@ Patch to fix GUI find/replace dialog. (kiloliter, 2017 Dec 11, report in<br>
 Invalid range error when using BufWinLeave for closing terminal.<br>
 (Gabriel Barta, 2017 Nov 15, #2339)<br>
 <br>
+Using an external diff is inefficient.&nbsp;&nbsp;Not all systems have a good diff<br>
+program available (esp. MS-Windows).&nbsp;&nbsp;Would be nice to have in internal diff<br>
+implementation.&nbsp;&nbsp;Can then also use this for displaying changes within a line.<br>
+Olaf Dabrunz is working on this. (10 Jan 2016)<br>
+9&nbsp;&nbsp; Instead invoking an external diff program, use builtin code.&nbsp;&nbsp;One can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;found here:&nbsp;<span class="Constant"><a href="http://www.ioplex.com/~miallen/libmba/dl/src/diff.c">http://www.ioplex.com/~miallen/libmba/dl/src/diff.c</a></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;It's complicated and badly documented.<br>
+Alternative: use the xdiff library.&nbsp;&nbsp;Patch from Christian Brabandt, 2018 Mar<br>
+2018, #2732)<br>
+<br>
 ml_get errors with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
 Error in emsg with buggy script. (Dominique, 2017 Apr 30)<br>
+<br>
+Using&nbsp;<span class="Special">CTRL-G</span>&nbsp;j in insert mode in combination with&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;doesn't work<br>
+as expected. (Rich, 2018 March 23, #2743)<br>
 <br>
 Patch to fix encoding in print document name (Yasuhiro Matsumoto, 2017 Dec 20,<br>
 #2478)<br>
@@ -227,6 +285,10 @@ Start with filetype detection: testdir/test_filetype.vim<br>
 <br>
 Window not closed when deleting buffer. (Harm te Hennepe, 2017 Aug 27, #2029)<br>
 <br>
+Duplication of completion suggestions for &quot;:!hom&quot;.&nbsp;&nbsp;Issue #539.<br>
+Patch by Christian, 2016 Jan 29<br>
+Another patch in #2733.<br>
+<br>
 Add options_default() / options_restore() to set several options to Vim<br>
 defaults for a plugin. Comments from Zyx, 2017 May 10.<br>
 Perhaps use a vimcontext / endvimcontext command block.<br>
@@ -241,6 +303,9 @@ When bracketed paste is used, pasting at the &quot;:append&quot; prompt does not
 line breaks. (Ken Takata, 2017 Aug 22)<br>
 <br>
 The &quot;:move&quot; command does not honor closed folds. (Ryan Lue, #2351)<br>
+<br>
+Patch to fix increment/decrement not working properly when&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;is<br>
+set. (Hirohito Higashi, 2016 Aug 1, #923)<br>
 <br>
 Memory leaks in test_channel? (or is it because of fork())<br>
 Using uninitialized value in test_crypt.<br>
@@ -552,14 +617,6 @@ Patch to be able to separately map&nbsp;<span class="Special">CTRL-H</span>&nbsp
 When&nbsp;<a class="Type" href="options.html#'completeopt'">'completeopt'</a>&nbsp;has &quot;noselect&quot; does not insert a newline. (Lifepillar, 2017<br>
 Apr 23, #1653)<br>
 <br>
-Using an external diff is inefficient.&nbsp;&nbsp;Not all systems have a good diff<br>
-program available (esp. MS-Windows).&nbsp;&nbsp;Would be nice to have in internal diff<br>
-implementation.&nbsp;&nbsp;Can then also use this for displaying changes within a line.<br>
-Olaf Dabrunz is working on this. (10 Jan 2016)<br>
-9&nbsp;&nbsp; Instead invoking an external diff program, use builtin code.&nbsp;&nbsp;One can be<br>
-&nbsp;&nbsp;&nbsp;&nbsp;found here:&nbsp;<span class="Constant"><a href="http://www.ioplex.com/~miallen/libmba/dl/src/diff.c">http://www.ioplex.com/~miallen/libmba/dl/src/diff.c</a></span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;It's complicated and badly documented.<br>
-<br>
 Window resizing with&nbsp;<a class="Type" href="options.html#'winfixheight'">'winfixheight'</a>: With a vertical split the height changes<br>
 anyway. (Tommy allen, 2017 Feb 21, #1502)<br>
 <br>
@@ -574,8 +631,6 @@ Patch to make it possible to extend a list with itself.<br>
 (Nikolai Pavlov, 2016 Sep 23)<br>
 <br>
 Patch to add Zstandard compressed file support. (Nick Terrell, 2016 Oct 24)<br>
-<br>
-Patch to add trim() function. (Bukn, 2016 Nov 25, #1280)<br>
 <br>
 Patch to add MODIFIED_BY to MSVC build file. (Chen Lei, 2016 Nov 24, #1275)<br>
 <br>
@@ -779,9 +834,6 @@ emoji_width table has only one entry.<br>
 It's possible to add &quot;,,&quot; to&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>, an empty entry.&nbsp;&nbsp;Causes problems.<br>
 Reject the value? #710.<br>
 <br>
-Patch to fix increment/decrement not working properly when&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;is<br>
-set. (Hirohito Higashi, 2016 Aug 1, #923)<br>
-<br>
 When doing &quot;vi buf.md&quot; a BufNew autocommand for *.md is not triggered.<br>
 Because of using the initial buffer? (Dun Peal, 2016 May 12)<br>
 <br>
@@ -810,9 +862,6 @@ interfaces and how to build Vim with them.<br>
 Appveyor build with self-installing executable, includes getting most<br>
 interfaces:&nbsp;<span class="Constant"><a href="https://github.com/k-takata/vim/tree/chrisbra-appveyor-build">https://github.com/k-takata/vim/tree/chrisbra-appveyor-build</a></span><br>
 result:&nbsp;<span class="Constant"><a href="https://ci.appveyor.com/project/k-takata/vim/history">https://ci.appveyor.com/project/k-takata/vim/history</a></span><br>
-<br>
-Duplication of completion suggestions for &quot;:!hom&quot;.&nbsp;&nbsp;Issue 539.<br>
-Patch by Christian, 2016 Jan 29<br>
 <br>
 Problem that a previous silent &quot;:throw&quot; causes a following try/catch not to<br>
 work. (ZyX, 2013 Sep 28) With examples: (Malcolm Rowe, 2015 Dec 24)<br>
@@ -4318,6 +4367,8 @@ Perl interface:<br>
 <br>
 <br>
 Shared libraries:<br>
+8&nbsp;&nbsp; libcall() can keep the library around instead of always calling dlclose().<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Jason Felice, 2018 Mar 20)<br>
 6&nbsp;&nbsp; Add support for loading shared libraries, and calling functions in it.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:libload internal-name libname<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:libunload internal-name<br>
