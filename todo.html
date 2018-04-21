@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2018 Apr 05<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.0.</span>&nbsp;&nbsp;Last change: 2018 Apr 20<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -41,53 +41,34 @@ entered there will not be repeated below, unless there is extra information.<br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Terminal emulator window:<br>
-- dump diff sometimes creates a different way of repeating.<br>
-&nbsp;&nbsp; Example:&nbsp;<span class="Constant"><a href="https://api.travis-ci.org/v3/job/359102504/log.txt">https://api.travis-ci.org/v3/job/359102504/log.txt</a></span><br>
-&nbsp;&nbsp;unclear why this can happen.<br>
-- Passing&nbsp;<a class="Type" href="options.html#'term'">'term'</a>&nbsp;as $TERM doesn't work in GUI.<br>
 - Still some stuff to implement and bugs to fix, see src/terminal.c<br>
-- GUI: problem with split window and sourcing the current buffer into python?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(Blay263, 2018 Mar 31)<br>
-- Terminal debugger: need a way to (re) open the source window, where current<br>
-&nbsp;&nbsp;position is displayed.<br>
-<br>
-Mode message isn't updated on vertical split. (Alexei Averchenko, 2018 Feb 2,<br>
-#2611)<br>
-<br>
-Patch to fix vimgrep adding to wrong quickfix list. (Yegappan, 2018 Mar 25)<br>
 <br>
 Problem with sudo. #2758<br>
-<br>
-Code refactoring, macro for message, #2729<br>
-<br>
-Fix for crash with non-dict argument to job options. (ichizok, #2765)<br>
-<br>
-Patch to enforce c89 compliance. (James McCoy, #2735)<br>
-With fix for Mac from Kazunobu.<br>
-<br>
-Block insert doesn't work if the first line is auto-indented. (Christian<br>
-Brabandt, 2018 Apr 4, #2778)<br>
 <br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
 <br>
 Patch to avoid bad highlighting caused by #if. (ichizok, #2731)<br>
 <br>
-Patch to make mkdir() more like the shell command. (James McCoy, #2775)<br>
-<br>
-Implement option_save() and option_restore()?&nbsp;&nbsp;Or remove the help.<br>
+Patch to refactor qf_set_properties(). (Yegappan, Apr 17, #2812)<br>
 <br>
 Patch for static analysis warnings. (Christian Brabandt, 2018 Apr 1, #2770)<br>
+Ther are more here:&nbsp;<span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
 <br>
 Patch to refactor ex_helpgrep. (Yegappan, #2766, 2018 Mar 30)<br>
 Also in email, take the one with a test.<br>
+<br>
+Allow for C99 features, decide which ones are OK:<br>
+- &quot;inline&quot;<br>
+- &quot;long long&quot;<br>
+- flexible array members (change code to avoid FORTIFY_SOURCE problems)<br>
 <br>
 Looks like an error for inserting register makes &quot;:file other&quot; not work.<br>
 (Tom M, 2018 Mar 28)&nbsp;&nbsp;Reset did_emsg after inserting a register.<br>
 Or at the top of the loop? (Apr 4)<br>
 <br>
 Patch to fix mouse pointer after :tselect. (Hirohito Higashi, #2709)<br>
-How to reproduce the problem?<br>
+How to reproduce the problem?&nbsp;&nbsp;Remarks by Hirohito, Apr 8.<br>
 <br>
 Patch to avoid job killed when I/O is disconnected. (ichizok, #2734)<br>
 <br>
@@ -121,6 +102,10 @@ Add a ModeChanged autocommand that has an argument indicating the old and new<br
 mode.&nbsp;&nbsp;Also used for switching Terminal mode.<br>
 <br>
 Cursor in status line after search. (#2530)<br>
+<br>
+Add an option with file patterns, to be used when unloading a buffer: If there<br>
+is a match, remove entries for the buffer from marks, jumplist, etc.&nbsp;&nbsp;To be<br>
+used for git temp files.<br>
 <br>
 Patch to fix that an empty buffer remains when using :argedit. (Christian,<br>
 #2713)&nbsp;&nbsp;Updated patch.<br>
@@ -159,6 +144,10 @@ No maintainer for Simplified Chinese translations.<br>
 When&nbsp;<span class="MissingTag">'inchsearch'</span>&nbsp;and&nbsp;<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;are set /\v highlights everything.<br>
 Also see #2337<br>
 <br>
+Python indenting: alternative way to indent arguments:<br>
+<span class="Constant"><a href="http://orchistro.tistory.com/236">http://orchistro.tistory.com/236</a></span><br>
+Should be supported with a flag.<br>
+<br>
 Starting job with cwd option, when the directory does not exist, gives a<br>
 confusing error message. (Wang Shidong, 2018 Jan 2, #2519)<br>
 <br>
@@ -192,6 +181,30 @@ Using&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbs
 <br>
 Patch to use the xdiff library instead of external diff. (Christian Brabandt,<br>
 2018 Mar 20, #2732)<br>
+<br>
+Implement option_save() and option_restore():<br>
+option_restore(<span class="Special">{list}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#option_restore()" name="option_restore()">option_restore()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Restore options previously saved by option_save().<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When buffer-local options have been saved, this function must<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be called when the same buffer is the current buffer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When window-local options have been saved, this function must<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be called when the same window is the current window.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When in the wrong buffer and/or window an error is given and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the local options won't be restored.<br>
+<br>
+option_save(<span class="Special">{list}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#option_save()" name="option_save()">option_save()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Saves the options named in&nbsp;<span class="Special">{list}</span>.&nbsp;&nbsp;The returned value can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;passed to option_restore().&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let s:saved_options = option_save([<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'ignorecase',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'iskeyword',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ ])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; au &lt;buffer&gt; BufLeave *<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ call option_restore(s:saved_options)</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The advantage over using&nbsp;<a class="Comment" href="eval.html#:let">:let</a>&nbsp;is that global and local<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;values are handled and the script ID is restored, so that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:verbose set</span>&nbsp;will show where the option was originally set,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not where it was restored.<br>
 <br>
 &quot;gvim --remote&quot; from a directory with non-word characters changes the current<br>
 directory (Paulo Marcel Coelho Arabic, 2017 Oct 30, #2266)<br>
@@ -259,6 +272,9 @@ Requires&nbsp;<a class="Type" href="options.html#'formatoptions'">'formatoptions
 Patch to support hunspell. (Matej Cepl, Jan 2018, #2500) Based on older patch<br>
 in #846)<br>
 Doesn't work on Windows yet.&nbsp;&nbsp;Not ready to included, hard coded paths.<br>
+<br>
+Win32 GUI: when running a fast timer, the cursor no longer blinks.<br>
+Was reported: cursor blinks in terminal on widows with a timer. (xtal8, #2142)<br>
 <br>
 When a timer is running and typing&nbsp;<span class="Special">CTRL-R</span>&nbsp;on the command line, it is not<br>
 redrawn properly. (xtal8, 2017 Oct 23, #2241)<br>
@@ -586,9 +602,6 @@ Patch to fix escaping of job arguments. (Yasuhiro Matsumoto, 2016 Oct 5)<br>
 Update Oct 14:&nbsp;<span class="Constant"><a href="https://gist.github.com/mattn/d47e7d3bfe5ade4be86062b565a4bfca">https://gist.github.com/mattn/d47e7d3bfe5ade4be86062b565a4bfca</a></span><br>
 Update Aug 2017: #1954<br>
 <br>
-Characters deleted on completion. (Adrià Farrés, 2017 Apr 20, #1645)<br>
-Remarks from Christian Brabandt (Apr 21)<br>
-<br>
 The TermResponse event is not triggered when a plugin has set&nbsp;<a class="Type" href="options.html#'eventignore'">'eventignore'</a>&nbsp;to<br>
 &quot;all&quot;.&nbsp;&nbsp;Netrw does this. (Gary Johnson, 2017 Jan 24)<br>
 Postpone the event until&nbsp;<a class="Type" href="options.html#'eventignore'">'eventignore'</a>&nbsp;is reset.<br>
@@ -767,6 +780,8 @@ command argument. (Romain Lafourcade, 2016 Oct 16, #1175)<br>
 <br>
 Patch to support CamelCase for spell checking: See a lower-to-upper case<br>
 change as a word boundary. (btucker-MPCData, 2016 Nov 6, #1235)<br>
+patch for&nbsp;<span class="MissingTag">'spellcamelcase'</span>&nbsp;option: spellcheck each CamelCased word.<br>
+(Ben Tucker, 2016 Dec 2)<br>
 <br>
 Idea from Sven: record sequence of keys.&nbsp;&nbsp;Useful to show others what they are<br>
 doing (look over the shoulder), and also to see what happened.<br>
@@ -782,9 +797,6 @@ cmap using execute() has side effects. (Killthemule, 2016 Aug 17, #983)<br>
 :map X may print invalid data. (Nikolay Pavlov, 2017 Jul 3, #1816)<br>
 <br>
 Patch to order results from taglist(). (Duncan McDougall, 2016 Oct 25)<br>
-<br>
-patch for&nbsp;<span class="MissingTag">'spellcamelcase'</span>&nbsp;option: spellcheck each CamelCased word.<br>
-(Ben Tucker, 2016 Dec 2)<br>
 <br>
 When using &quot;:diffput&quot; through a mapping, undo in the target buffer isn't<br>
 synced.&nbsp;&nbsp;(Ryan Carney, 2016 Sep 14)<br>
@@ -1208,6 +1220,9 @@ Spell files use a latin single quote. Unicode also has another single quote:<br>
 0x2019.&nbsp;&nbsp;(Ron Aaron, 2014 Apr 4)<br>
 New OpenOffice spell files support this with ICONV.&nbsp;&nbsp;But they are not<br>
 compatible with Vim spell files.&nbsp;&nbsp;The old files can no longer be downloaded.<br>
+<br>
+Spell checking: Add a feature to only consider two spaces after a dot to start<br>
+a new sentence.&nbsp;&nbsp;Don't give the capitalization error when there is one space.<br>
 <br>
 xterm should be able to pass focus changes to Vim, so that Vim can check for<br>
 buffers that changed.&nbsp;&nbsp;Perhaps in misc.c, function selectwindow().<br>
