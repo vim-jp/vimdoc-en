@@ -44,7 +44,7 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Terminal emulator window:<br>
-- Win32: Termdebug doesn't work, because gdb does not support mi2.<br>
+- Win32: Termdebug doesn't work, because gdb does not support mi2 on a tty.<br>
 &nbsp;&nbsp;This plugin:&nbsp;<span class="Constant"><a href="https://github.com/cpiger/NeoDebug">https://github.com/cpiger/NeoDebug</a></span>&nbsp;&nbsp;runs gdb as a job,<br>
 &nbsp;&nbsp;redirecting input and output.<br>
 &nbsp;&nbsp;Open new console for for program with: &quot;set new-console on&quot;<br>
@@ -66,12 +66,12 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
 &nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
 <br>
-Patch to refactor efm_to_regpat(). (Yegappan Lakshmanan, 2018 May 16, #2924)<br>
+Does not build with MinGW out of the box:<br>
+- _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
+- WINVER conflict, should use 0x0600 by default?<br>
 <br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
-<br>
-Deprecate using&nbsp;&nbsp;has(&quot;patch213&quot;)&nbsp;&nbsp;always include the version number.<br>
 <br>
 On Win32 when not in the console and t_Co &gt;= 256, allow using&nbsp;<a class="Type" href="options.html#'tgc'">'tgc'</a>.<br>
 (Nobuhiro Takasaki, #2833)&nbsp;&nbsp;Also check t_Co.<br>
@@ -128,11 +128,8 @@ CreateFile() returns ERROR_SHARING_VIOLATION (Linwei, 2018 May 5)<br>
 Should add a test for every command line argument.&nbsp;&nbsp;Check coverage for what is<br>
 missing: --nofork, -A , -b, -h, etc.<br>
 <br>
-Completing a command sometimes results in duplicates, since 7.4.672.<br>
-(Yegappan Lakshmanan, 2018 May 16)<br>
-Duplication of completion suggestions for &quot;:!hom&quot;.&nbsp;&nbsp;Issue #539.<br>
-Patch by Christian, 2016 Jan 29<br>
-Another patch in #2733.<br>
+Patch for variable tabstops.&nbsp;&nbsp;On github (Christian Brabandt, 2014 May 15)<br>
+Update 2018 March 12, #2711<br>
 <br>
 Improve the installer for MS-Windows.&nbsp;&nbsp;There are a few alternatives:<br>
 - Add silent install option. (Shane Lee, #751)<br>
@@ -157,6 +154,7 @@ When using :packadd files under &quot;later&quot; are not used, which is inconsi
 with packages under &quot;start&quot;. (xtal8, #1994)<br>
 <br>
 Patch to support &quot;xxd -ps&quot;. (Erik Auerswald, 2018 May 1)<br>
+Lacks a test.<br>
 <br>
 Column number is wrong when using&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>. (Keith Smiley, 2018<br>
 Jan 15, #2555)<br>
@@ -164,8 +162,6 @@ Jan 15, #2555)<br>
 &quot;:bufdo e&quot; disabled syntax HL in windows other than the current. (BPJ)<br>
 <br>
 Check argument of systemlist(). (Pavlov)<br>
-<br>
-Patch to add reg_executing() and reg_recording(). (Hirohito Higashi, #2745)<br>
 <br>
 No maintainer for Vietnamese translations.<br>
 No maintainer for Simplified Chinese translations.<br>
@@ -1188,9 +1184,6 @@ Patch for building a 32bit Vim with 64bit MingW compiler.<br>
 <br>
 Patch: On MS-Windows shellescape() may have to triple double quotes.<br>
 (Ingo Karkat, 2015 Jan 16)<br>
-<br>
-Patch for variable tabstops.&nbsp;&nbsp;On github (Christian Brabandt, 2014 May 15)<br>
-Update 2018 March 12, #2711<br>
 <br>
 Redo only remembers the last change.&nbsp;&nbsp;Could use &quot;<span class="Special">{count}</span>g.&quot; to redo an older<br>
 change.&nbsp;&nbsp;How does the user know which change?&nbsp;&nbsp;At least have a way to list<br>
