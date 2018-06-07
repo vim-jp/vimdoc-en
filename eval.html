@@ -2115,6 +2115,8 @@ cursor(<span class="Special">{lnum}</span>,&nbsp;<span class="Special">{col}</sp
 cursor(<span class="Special">{list}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;&nbsp;move cursor to position in&nbsp;<span class="Special">{list}</span><br>
 deepcopy(<span class="Special">{expr}</span>&nbsp;[,&nbsp;<span class="Special">{noref}</span>])&nbsp;&nbsp;&nbsp;&nbsp;any&nbsp;&nbsp;&nbsp;&nbsp; make a full copy of&nbsp;<span class="Special">{expr}</span><br>
 delete(<span class="Special">{fname}</span>&nbsp;[,&nbsp;<span class="Special">{flags}</span>])&nbsp;&nbsp;&nbsp;&nbsp; Number&nbsp;&nbsp;delete the file or directory&nbsp;<span class="Special">{fname}</span><br>
+deletebufline(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{first}</span>[,&nbsp;<span class="Special">{last}</span>])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;&nbsp;delete lines from buffer&nbsp;<span class="Special">{expr}</span><br>
 did_filetype()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;&nbsp;<a class="Identifier" href="eval.html#TRUE">TRUE</a>&nbsp;if FileType autocmd event used<br>
 diff_filler(<span class="Special">{lnum}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Number&nbsp;&nbsp;diff filler lines about&nbsp;<span class="Special">{lnum}</span><br>
 diff_hlID(<span class="Special">{lnum}</span>,&nbsp;<span class="Special">{col}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;&nbsp;diff highlighting at&nbsp;<span class="Special">{lnum}</span>/<span class="Special">{col}</span><br>
@@ -2565,6 +2567,21 @@ append(<span class="Special">{lnum}</span>,&nbsp;<span class="Special">{expr}</s
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 for success.&nbsp;&nbsp;Example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let failed = append(line('$'), &quot;# THE END&quot;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let failed = append(0, [&quot;Chapter 1&quot;, &quot;the beginning&quot;])</div>
+<br>
+appendbufline(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{lnum}</span>,&nbsp;<span class="Special">{text}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#appendbufline()" name="appendbufline()">appendbufline()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like&nbsp;<a class="Identifier" href="eval.html#append()">append()</a>&nbsp;but append the text in buffer&nbsp;<span class="Special">{expr}</span>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For the use of&nbsp;<span class="Special">{expr}</span>, see&nbsp;<a class="Identifier" href="eval.html#bufname()">bufname()</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{lnum}</span>&nbsp;is used like with&nbsp;<a class="Identifier" href="eval.html#append()">append()</a>.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that using&nbsp;<a class="Identifier" href="eval.html#line()">line()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;would use the current buffer, not the one appending to.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use &quot;$&quot; to append at the end of the buffer.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;On success 0 is returned, on failure 1 is returned.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;<span class="Special">{expr}</span>&nbsp;is not a valid buffer or&nbsp;<span class="Special">{lnum}</span>&nbsp;is not valid, an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error message is given. Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let failed = appendbufline(13, 0, &quot;# THE START&quot;)</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#argc()" name="argc()">argc()</a><br>
 argc()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The result is the number of files in the argument list of the<br>
@@ -3507,8 +3524,19 @@ delete(<span class="Special">{fname}</span>&nbsp;[,&nbsp;<span class="Special">{
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;successful and -1 when the deletion failed or partly failed.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="eval.html#remove()">remove()</a>&nbsp;to delete an item from a&nbsp;<a class="Identifier" href="eval.html#List">List</a>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To delete a line from the buffer use&nbsp;<a class="Identifier" href="change.html#:delete">:delete</a>.&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="eval.html#:exe">:exe</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when the line number is in a variable.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To delete a line from the buffer use&nbsp;<a class="Identifier" href="change.html#:delete">:delete</a>&nbsp;or<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#deletebufline()">deletebufline()</a>.<br>
+<br>
+deletebufline(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{first}</span>[,&nbsp;<span class="Special">{last}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#deletebufline()" name="deletebufline()">deletebufline()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Delete lines&nbsp;<span class="Special">{first}</span>&nbsp;to&nbsp;<span class="Special">{last}</span>&nbsp;(inclusive) from buffer&nbsp;<span class="Special">{expr}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;<span class="Special">{last}</span>&nbsp;is omitted then delete line&nbsp;<span class="Special">{first}</span>&nbsp;only.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;On success 0 is returned, on failure 1 is returned.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For the use of&nbsp;<span class="Special">{expr}</span>, see&nbsp;<a class="Identifier" href="eval.html#bufname()">bufname()</a>&nbsp;above.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{first}</span>&nbsp;and&nbsp;<span class="Special">{last}</span>&nbsp;are used like with&nbsp;<a class="Identifier" href="eval.html#setline()">setline()</a>.&nbsp;<span class="Todo">Note</span>&nbsp;that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when using&nbsp;<a class="Identifier" href="eval.html#line()">line()</a>&nbsp;this refers to the current buffer. Use &quot;$&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to refer to the last line in buffer&nbsp;<span class="Special">{expr}</span>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#did_filetype()" name="did_filetype()">did_filetype()</a><br>
 did_filetype()&nbsp;&nbsp;Returns&nbsp;<a class="Identifier" href="eval.html#TRUE">TRUE</a>&nbsp;when autocommands are being executed and the<br>
