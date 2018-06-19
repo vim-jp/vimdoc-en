@@ -1,7 +1,6 @@
 $(function() {
   'use strict';
   var REDIRECTS = {
-    '//vim-jp.org/vimdoc-ja/ft_rust.html': true,
     '//vim-jp.org/vimdoc-ja/hebrew.html': true,
     '//vim-jp.org/vimdoc-ja/todo.html': true,
     '//vim-jp.org/vimdoc-ja/version5.html': true,
