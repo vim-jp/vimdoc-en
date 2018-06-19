@@ -24,8 +24,8 @@ If the result is &quot;1&quot; you have it.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resizing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-resizing">terminal-resizing</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Terminal Modes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#Terminal-mode">Terminal-mode</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cursor style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-cursor-style">terminal-cursor-style</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Special keys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-special-keys">terminal-special-keys</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Session&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-session">terminal-session</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Special keys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-special-keys">terminal-special-keys</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-unix">terminal-unix</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MS-Windows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-ms-windows">terminal-ms-windows</a><br>
 2. Terminal communication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="terminal.html#terminal-communication">terminal-communication</a><br>
@@ -121,9 +121,12 @@ break:<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#options-in-terminal" name="options-in-terminal">options-in-terminal</a><br>
 After opening the terminal window and setting&nbsp;<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;to &quot;terminal&quot; the<br>
-BufWinEnter autocommand event is triggered.&nbsp;&nbsp;This makes it possible to set<br>
+TerminalOpen autocommand event is triggered.&nbsp;&nbsp;This makes it possible to set<br>
 options specifically for the window and buffer.&nbsp;&nbsp;Example:<br>
-<div class="helpExample">&nbsp;&nbsp; au BufWinEnter * if &amp;buftype == 'terminal' | setlocal bufhidden=hide | endif</div>
+<div class="helpExample">&nbsp;&nbsp; au TerminalOpen * if &amp;buftype == 'terminal' | setlocal bufhidden=hide | endif</div>
+The&nbsp;<span class="Special">&lt;abuf&gt;</span>&nbsp;is set to the terminal buffer, but if there is no window (hidden<br>
+terminal) then setting options will happen in the wrong buffer, therefore the<br>
+check for &amp;buftype in the example.<br>
 <br>
 Mouse events (click and drag) are passed to the terminal.&nbsp;&nbsp;Mouse move events<br>
 are only passed when Vim itself is receiving them.&nbsp;&nbsp;For a terminal that is<br>
@@ -454,7 +457,7 @@ Currently supported commands:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of the terminal and&nbsp;<span class="Special">{argument}</span>, the decoded JSON argument.&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The function name must start with &quot;Tapi_&quot; to avoid<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;accidentally calling a function not meant to be used for the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;terminal API<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;terminal API.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The user function should sanity check the argument.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The function can use&nbsp;<a class="Identifier" href="eval.html#term_sendkeys()">term_sendkeys()</a>&nbsp;to send back a reply.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example in JSON:<br>
@@ -707,11 +710,11 @@ Put focus on the gdb window and type:<br>
 Vim will start running in the program window. Put focus there and type:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:help gui</div>
 Gdb will run into the ex_help breakpoint.&nbsp;&nbsp;The source window now shows the&nbsp;<br>
-ex_cmds.c file.&nbsp;&nbsp;A &quot;&gt;&gt;&quot; marker will appear where the breakpoint was set.&nbsp;&nbsp;The<br>
-line where the debugger stopped is highlighted.&nbsp;&nbsp;You can now step through the<br>
-program.&nbsp;&nbsp;Let's use the mouse: click on the &quot;Next&quot; button in the window<br>
-toolbar.&nbsp;&nbsp;You will see the highlighting move as the debugger executes a line<br>
-of source code.<br>
+ex_cmds.c file.&nbsp;&nbsp;A red &quot;1 &quot; marker will appear in the signcolumn where the<br>
+breakpoint was set.&nbsp;&nbsp;The line where the debugger stopped is highlighted.&nbsp;&nbsp;You<br>
+can now step through the program.&nbsp;&nbsp;Let's use the mouse: click on the &quot;Next&quot;<br>
+button in the window toolbar.&nbsp;&nbsp;You will see the highlighting move as the<br>
+debugger executes a line of source code.<br>
 <br>
 Click &quot;Next&quot; a few times until the for loop is highlighted.&nbsp;&nbsp;Put the cursor on<br>
 the end of &quot;eap-&gt;arg&quot;, then click &quot;Eval&quot; in the toolbar.&nbsp;&nbsp;You will see this<br>
@@ -790,6 +793,13 @@ source code, a new window will be created for the source code.&nbsp;&nbsp;This a
 happens if the buffer in the source code window has been modified and can't be<br>
 abandoned.<br>
 <br>
+Gdb gives each breakpoint a number.&nbsp;&nbsp;In Vim the number shows up in the sign<br>
+column, with a red background.&nbsp;&nbsp;You can use these gdb commands:<br>
+- info break&nbsp;&nbsp;&nbsp;&nbsp;list breakpoints<br>
+- delete&nbsp;<span class="Special">N</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete breakpoint&nbsp;<span class="Special">N</span><br>
+You can also use the&nbsp;<a class="Comment" href="terminal.html#:Clear">:Clear</a>&nbsp;command if the cursor is in the line with the<br>
+breakpoint, or use the &quot;Clear breakpoint&quot; right-click menu entry.<br>
+<br>
 <br>
 <span class="PreProc">Inspecting variables</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#termdebug-variables" name="termdebug-variables">termdebug-variables</a>&nbsp;<a class="Constant" href="terminal.html#:Evaluate" name=":Evaluate">:Evaluate</a><br>
@@ -832,6 +842,13 @@ Prompt mode can be used even when the&nbsp;<a class="Identifier" href="various.h
 There is another, hidden, buffer, which is used for Vim to communicate with<br>
 gdb.&nbsp;&nbsp;The buffer name is &quot;gdb communication&quot;.&nbsp;&nbsp;Do not delete this buffer, it<br>
 will break the debugger.<br>
+<br>
+Gdb has some weird behavior, the plugin does its best to work around that.<br>
+For example, after typing &quot;continue&quot; in the gdb window a&nbsp;<span class="Special">CTRL-C</span>&nbsp;can be used to<br>
+interrupt the running program.&nbsp;&nbsp;But after using the MI command<br>
+&quot;-exec-continue&quot;&nbsp;&nbsp;pressing&nbsp;<span class="Special">CTRL-C</span>&nbsp;does not interrupt.&nbsp;&nbsp;Therefore you will see<br>
+&quot;continue&quot; being used for the&nbsp;<a class="Comment" href="terminal.html#:Continue">:Continue</a>&nbsp;command, instead of using the<br>
+communication channel.<br>
 <br>
 <br>
 <span class="PreProc">Customizing</span><br>
@@ -890,7 +907,7 @@ vertical split:<br>
 <div class="helpExample">&nbsp;&nbsp;let g:termdebug_wide = 163</div>
 This will set &amp;columns to 163 when :Termdebug is used.&nbsp;&nbsp;The value is restored<br>
 when quitting the debugger.<br>
-If g:termdebug_wide is set and &amp;Columns is already&nbsp;&nbsp;larger than<br>
+If g:termdebug_wide is set and &amp;columns is already larger than<br>
 g:termdebug_wide then a vertical split will be used without changing &amp;columns.<br>
 Set it to 1 to get a vertical split without every changing &amp;columns (useful<br>
 for when the terminal can't be resized by Vim).<br>

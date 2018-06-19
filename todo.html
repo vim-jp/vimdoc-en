@@ -47,11 +47,35 @@ Prompt buffer:<br>
 - Add a command line history.<br>
 - delay next prompt until plugin gives OK?<br>
 <br>
+Terminal debugger:<br>
+- Using terminal window: after &quot;cont&quot; in gdb window&nbsp;<span class="Special">CTRL-C</span>&nbsp;interrupts, but<br>
+&nbsp;&nbsp;after :Continue it does not.&nbsp;&nbsp;Mode of UI is changed?&nbsp;&nbsp;:Stop does work.<br>
+- patch from Christian to handle changing&nbsp;<a class="Type" href="options.html#'background'">'background'</a><br>
+&nbsp;&nbsp;and a patch to show breakpoint nr in sign. (June 14)<br>
+- Make prompt-buffer variant work better.<br>
+- Termdebug does not work when Vim was build with mzscheme: gdb hangs just<br>
+&nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
+&nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
+- Show breakpoint number in the sign? (Uri Moszkowicz, 2018 Jun 13, #3007)<br>
+- Allow for users to create their own gdb mappings.&nbsp;&nbsp;Perhaps by making the gdb<br>
+&nbsp;&nbsp;buffer global?&nbsp;&nbsp;(Uri Moszkowicz, #3012) Or with a function to send a command<br>
+&nbsp;&nbsp;to gdb.<br>
+<br>
 Terminal emulator window:<br>
-- Win32: Termdebug doesn't work, because gdb does not support mi2 on a tty.<br>
-&nbsp;&nbsp;This plugin:&nbsp;<span class="Constant"><a href="https://github.com/cpiger/NeoDebug">https://github.com/cpiger/NeoDebug</a></span>&nbsp;&nbsp;runs gdb as a job,<br>
-&nbsp;&nbsp;redirecting input and output.<br>
-&nbsp;&nbsp;Open new console for for program with: &quot;set new-console on&quot;<br>
+- With a vertical split only one window is updated. (Linwei, 2018 Jun 2,<br>
+&nbsp;&nbsp;#2977)<br>
+- When typing : at the more prompt, instead of entering a new Vim command, the<br>
+&nbsp;&nbsp;: is inserted in the terminal window.&nbsp;&nbsp;Should skip terminal_loop here.<br>
+&nbsp;&nbsp;()<br>
+- When pasting should call vterm_keyboard_start_paste(), e.g. when using<br>
+&nbsp;&nbsp;K_MIDDLEMOUSE, calling insert_reg().<br>
+- Users expect parsing the :term argument like a shell does, also support<br>
+&nbsp;&nbsp;single quotes.&nbsp;&nbsp;E.g. with:&nbsp;&nbsp;:term grep 'alice says &quot;hello&quot;'&nbsp;&nbsp;(#1999)<br>
+- When running a shell in a terminal to run Vim tests,&nbsp;<span class="Special">CTRL-W</span>&nbsp;: the command<br>
+&nbsp;&nbsp;line keeps getting cleard.&nbsp;&nbsp;Doing the same in another window is OK. (Jason<br>
+&nbsp;&nbsp;Franklin, 2018 Jun 17)<br>
+- How to access selection in Terminal running a shell? (damnskippy, 2018 May<br>
+&nbsp;&nbsp;27, #29620&nbsp;&nbsp;When terminal doesn't use the mouse, use modeless selection.<br>
 - Win32: Redirecting input does not work, half of Test_terminal_redir_file()<br>
 &nbsp;&nbsp;is disabled.<br>
 - Win32: Redirecting output works but includes escape sequences.<br>
@@ -66,9 +90,6 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;<span class="Constant"><a href="http://bazaar.launchpad.net/~leonerd/pangoterm/trunk/view/head:/main.c#L134">http://bazaar.launchpad.net/~leonerd/pangoterm/trunk/view/head:/main.c#L134</a></span><br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
-- Termdebug does not work when Vim was build with mzscheme: gdb hangs just<br>
-&nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
-&nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
 <br>
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
@@ -80,26 +101,32 @@ Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 On Win32 when not in the console and t_Co &gt;= 256, allow using&nbsp;<a class="Type" href="options.html#'tgc'">'tgc'</a>.<br>
 (Nobuhiro Takasaki, #2833)&nbsp;&nbsp;Also check t_Co.<br>
 <br>
-Patch to fix arguments of :edit. (Dominique Pelle, 2018 May 28 #2966)<br>
-<br>
-Ptch to update html syntax. (Jorge Maldonado Ventura, #2974)<br>
-<br>
-Patch to fix that restoring window doesn't work when&nbsp;<a class="Type" href="options.html#'winheight'">'winheight'</a>&nbsp;is large.<br>
-(Darrell Nash, 2018 May 30, #2971)&nbsp;&nbsp;Doesn't work?&nbsp;&nbsp;Issue #2970<br>
-<br>
-Patch to add completion to :unlet for environment vars. (Jason Franklin, 2018<br>
-May 30) Last update.<br>
-<br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
 <br>
 More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
 <br>
-Patch to make &quot;is&quot; and &quot;as&quot; work bettter. (Jason Franklin, 2018 May 19)<br>
+Patch to make &quot;is&quot; and &quot;as&quot; work better. (Jason Franklin, 2018 May 19)<br>
 <br>
 Patch to add tests for user and language completion. (Dominique Pelle, 2018<br>
-Jun 2, #2978)<br>
+Jun 2, #2978)&nbsp;&nbsp;typo wk -&gt; we<br>
+Patch to support user name completion on MS-Windows. (Yasuhiro Matsumoto, 2012<br>
+Aug 16)<br>
+<br>
+Patch to add tests for libcall() and libcallnr(). (Dominique Pelle, #2982)<br>
+<br>
+Patch to fix that v:shell_error is always zero when using terminal for shell<br>
+command. (Ichizok, 2018 Jun 8, #2994)<br>
+<br>
+Patch to make test for terminal out&amp;error more reliable. (Ichizok, 2018 Jun 8,<br>
+#2991)<br>
+<br>
+Patch to fix duplicate entry in tagfiles() and add a test. (Dominique Pelle,<br>
+#2979)<br>
+<br>
+Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
+Related to bracketed paste.<br>
 <br>
 Using &quot;:file&quot; in quickfix window during an autocommand doesn't work.&nbsp;<br>
 (Jason Franklin, 2018 May 23) Allow for using it when there is no argument.<br>
@@ -111,6 +138,9 @@ Patch for xterm and vt320 builtin termcap. (Kouichi Iwamoto, 2018 May 31,<br>
 <br>
 Patch to add more testing for :cd command. (Dominique Pelle, 2018 May 30,<br>
 #2972)<br>
+<br>
+Patch to make mode() return something different for Normal mode when coming<br>
+from Insert mode with&nbsp;<span class="Special">CTRL-O</span>. (#3000)<br>
 <br>
 Script generated by :mksession does not work well if there are windows with<br>
 modified buffers<br>
@@ -167,6 +197,12 @@ CreateFile() returns ERROR_SHARING_VIOLATION (Linwei, 2018 May 5)<br>
 Should add a test for every command line argument.&nbsp;&nbsp;Check coverage for what is<br>
 missing: --nofork, -A , -b, -h, etc.<br>
 <br>
+&quot;:au * * command&quot; should not be allowed, only use * for event when listing or<br>
+deleting autocmds, not when adding them.<br>
+<br>
+Quickfix window height is not kept with a vertical split. (Lifepillar, 2018<br>
+Jun 10, #2998)<br>
+<br>
 Patch for variable tabstops.&nbsp;&nbsp;On github (Christian Brabandt, 2014 May 15)<br>
 Update 2018 March 12, #2711<br>
 <br>
@@ -220,7 +256,7 @@ Add the debug command line history to viminfo.<br>
 Avoid that &quot;sign unplace id&quot; does a redraw right away, esp. when there is a<br>
 sequence of these commands. (Andy Stewart, 2018 Mar 16)<br>
 <br>
-ch_sendraw() with long string does not try to read inbetween, which may cause<br>
+ch_sendraw() with long string does not try to read in between, which may cause<br>
 a deadlock if the reading side is waiting for the write to finish. (Nate<br>
 Bosch, 2018 Jan 13, #2548)<br>
 <br>
@@ -246,6 +282,9 @@ Using&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbs
 :drop (remote commands).<br>
 <br>
 Patch to support &quot;:tag&nbsp;<span class="Special">&lt;tagkind&gt;</span>&nbsp;&lt;tagname&quot;. (emmrk, 2018 May 7, #2871)<br>
+<br>
+Inserting a line in a CompleteDone autocommand may confuse undo. (micbou,<br>
+2018 Jun 18, #3027)<br>
 <br>
 Implement option_save() and option_restore():<br>
 option_restore(<span class="Special">{list}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#option_restore()" name="option_restore()">option_restore()</a><br>
@@ -938,7 +977,7 @@ Possibly include the needed code so that it can be build everywhere.<br>
 Add a way to restart a timer.&nbsp;&nbsp;It's similar to timer_stop() and timer_start(),<br>
 but the reference remains valid.<br>
 <br>
-Need to try out instructions in INSSTALLpc.txt about how to install all<br>
+Need to try out instructions in INSTALLpc.txt about how to install all<br>
 interfaces and how to build Vim with them.<br>
 Appveyor build with self-installing executable, includes getting most<br>
 interfaces:&nbsp;<span class="Constant"><a href="https://github.com/k-takata/vim/tree/chrisbra-appveyor-build">https://github.com/k-takata/vim/tree/chrisbra-appveyor-build</a></span><br>
@@ -1515,9 +1554,6 @@ of many matches. (Cody Cutler, 2013 Mar 28)<br>
 The input map for&nbsp;<span class="Special">CTRL-O</span>&nbsp;in mswin.vim causes problems after&nbsp;<span class="Special">CTRL-X</span>&nbsp;<span class="Special">CTRL-O</span>.<br>
 Suggestion for another map. (Philip Mat, 2012 Jun 18)<br>
 But use &quot;gi&quot; instead of &quot;a&quot;.&nbsp;&nbsp;Or use&nbsp;<span class="Special">CTRL-\</span>&nbsp;<span class="Special">CTRL-O</span>.<br>
-<br>
-Patch to support user name completion on MS-Windows. (Yasuhiro Matsumoto, 2012<br>
-Aug 16)<br>
 <br>
 When there are no command line arguments &quot;:next&quot; and &quot;:argu&quot; give E163, which<br>
 is confusing.&nbsp;&nbsp;Should say &quot;the argument list is empty&quot;.<br>
@@ -4173,8 +4209,6 @@ Vim script language:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;virtualmode()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; add argument to obtain whether &quot;$&quot; was used in<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visual block mode.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;getacp()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Win32: get codepage (Glenn Maynard)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deletebufline()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete line in any buffer<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;appendbufline()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; append line in any buffer<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;libcall()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Allow more than one argument.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;libcallext()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like libcall(), but using a callback function<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to allow the library to execute a command or<br>
