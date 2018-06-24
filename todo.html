@@ -48,32 +48,19 @@ Prompt buffer:<br>
 - delay next prompt until plugin gives OK?<br>
 <br>
 Terminal debugger:<br>
-- Using terminal window: after &quot;cont&quot; in gdb window&nbsp;<span class="Special">CTRL-C</span>&nbsp;interrupts, but<br>
-&nbsp;&nbsp;after :Continue it does not.&nbsp;&nbsp;Mode of UI is changed?&nbsp;&nbsp;:Stop does work.<br>
-- patch from Christian to handle changing&nbsp;<a class="Type" href="options.html#'background'">'background'</a><br>
-&nbsp;&nbsp;and a patch to show breakpoint nr in sign. (June 14)<br>
 - Make prompt-buffer variant work better.<br>
+- When only gdb window exists, on &quot;quit&quot; edit another buffer.<br>
 - Termdebug does not work when Vim was build with mzscheme: gdb hangs just<br>
 &nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
 &nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
-- Show breakpoint number in the sign? (Uri Moszkowicz, 2018 Jun 13, #3007)<br>
-- Allow for users to create their own gdb mappings.&nbsp;&nbsp;Perhaps by making the gdb<br>
-&nbsp;&nbsp;buffer global?&nbsp;&nbsp;(Uri Moszkowicz, #3012) Or with a function to send a command<br>
-&nbsp;&nbsp;to gdb.<br>
 <br>
 Terminal emulator window:<br>
 - With a vertical split only one window is updated. (Linwei, 2018 Jun 2,<br>
 &nbsp;&nbsp;#2977)<br>
-- When typing : at the more prompt, instead of entering a new Vim command, the<br>
-&nbsp;&nbsp;: is inserted in the terminal window.&nbsp;&nbsp;Should skip terminal_loop here.<br>
-&nbsp;&nbsp;()<br>
 - When pasting should call vterm_keyboard_start_paste(), e.g. when using<br>
 &nbsp;&nbsp;K_MIDDLEMOUSE, calling insert_reg().<br>
 - Users expect parsing the :term argument like a shell does, also support<br>
 &nbsp;&nbsp;single quotes.&nbsp;&nbsp;E.g. with:&nbsp;&nbsp;:term grep 'alice says &quot;hello&quot;'&nbsp;&nbsp;(#1999)<br>
-- When running a shell in a terminal to run Vim tests,&nbsp;<span class="Special">CTRL-W</span>&nbsp;: the command<br>
-&nbsp;&nbsp;line keeps getting cleard.&nbsp;&nbsp;Doing the same in another window is OK. (Jason<br>
-&nbsp;&nbsp;Franklin, 2018 Jun 17)<br>
 - How to access selection in Terminal running a shell? (damnskippy, 2018 May<br>
 &nbsp;&nbsp;27, #29620&nbsp;&nbsp;When terminal doesn't use the mouse, use modeless selection.<br>
 - Win32: Redirecting input does not work, half of Test_terminal_redir_file()<br>
@@ -107,26 +94,11 @@ Errors found with random data:<br>
 More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
 <br>
-Patch to make &quot;is&quot; and &quot;as&quot; work better. (Jason Franklin, 2018 May 19)<br>
-<br>
-Patch to add tests for user and language completion. (Dominique Pelle, 2018<br>
-Jun 2, #2978)&nbsp;&nbsp;typo wk -&gt; we<br>
-Patch to support user name completion on MS-Windows. (Yasuhiro Matsumoto, 2012<br>
-Aug 16)<br>
-<br>
-Patch to add tests for libcall() and libcallnr(). (Dominique Pelle, #2982)<br>
-<br>
-Patch to fix that v:shell_error is always zero when using terminal for shell<br>
-command. (Ichizok, 2018 Jun 8, #2994)<br>
-<br>
-Patch to make test for terminal out&amp;error more reliable. (Ichizok, 2018 Jun 8,<br>
-#2991)<br>
-<br>
 Patch to fix duplicate entry in tagfiles() and add a test. (Dominique Pelle,<br>
 #2979)<br>
 <br>
 Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
-Related to bracketed paste.<br>
+Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
 <br>
 Using &quot;:file&quot; in quickfix window during an autocommand doesn't work.&nbsp;<br>
 (Jason Franklin, 2018 May 23) Allow for using it when there is no argument.<br>
@@ -138,6 +110,15 @@ Patch for xterm and vt320 builtin termcap. (Kouichi Iwamoto, 2018 May 31,<br>
 <br>
 Patch to add more testing for :cd command. (Dominique Pelle, 2018 May 30,<br>
 #2972)<br>
+<br>
+Whenever the file name is &quot;~&quot; then expand('%:p') returns $HOME. (Aidan<br>
+Shafran, 2018 Jun 23, #3072)<br>
+<br>
+Patch to set w_curswant when setting the cursor in language interfaces.<br>
+(David Hotham, 2018 Jun 22, #3060)<br>
+<br>
+Patch to make&nbsp;<span class="Special">CTRL-W</span>&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;work properly in a quickfix window. (Jason Franklin,<br>
+2018 May 30)<br>
 <br>
 Patch to make mode() return something different for Normal mode when coming<br>
 from Insert mode with&nbsp;<span class="Special">CTRL-O</span>. (#3000)<br>
@@ -162,6 +143,13 @@ Patch for more quickfix refactoring. (Yegappan Lakshmanan, #2950)<br>
 Tests failing for &quot;make testgui&quot; with GTK:<br>
 - Test_setbufvar_options()<br>
 - Test_exit_callback_interval()<br>
+<br>
+Patch to stack and pop the window title and icon. (IWAMOTO Kouichi, 2018 Jun<br>
+22, #3059)<br>
+8&nbsp;&nbsp; For xterm need to open a connection to the X server to get the window<br>
+&nbsp;&nbsp;&nbsp;&nbsp;title, which can be slow.&nbsp;&nbsp;Can also get the title with &quot;<span class="Special">&lt;Esc&gt;</span>[21t&quot;, no<br>
+&nbsp;&nbsp;&nbsp;&nbsp;need to use X11 calls.&nbsp;&nbsp;This returns &quot;<span class="Special">&lt;Esc&gt;</span>]l<span class="Special">{title}&lt;Esc&gt;</span>\&quot;.<br>
+Using title stack probably works better.<br>
 <br>
 Make balloon_show() work outside of&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>?&nbsp;&nbsp;Users expect it to work:<br>
 #2948. (related to #1512?)<br>
@@ -202,9 +190,6 @@ deleting autocmds, not when adding them.<br>
 <br>
 Quickfix window height is not kept with a vertical split. (Lifepillar, 2018<br>
 Jun 10, #2998)<br>
-<br>
-Patch for variable tabstops.&nbsp;&nbsp;On github (Christian Brabandt, 2014 May 15)<br>
-Update 2018 March 12, #2711<br>
 <br>
 Improve the installer for MS-Windows.&nbsp;&nbsp;There are a few alternatives:<br>
 - Add silent install option. (Shane Lee, #751)<br>
@@ -325,6 +310,8 @@ highlighted. (van-de-bugger, 2018 Jan 23, #2576)<br>
 <br>
 Patch to parse &quot;:line&quot; in tags file and use it for search. (Daniel Hahler,<br>
 #2546)&nbsp;&nbsp;Fixes #1057.&nbsp;&nbsp;Missing a test.<br>
+<br>
+&quot;:file&quot; does not show anything when&nbsp;<a class="Type" href="options.html#'shortmess'">'shortmess'</a>&nbsp;contains 'F'. (#3070)<br>
 <br>
 Patch to add winlayout() function. (Yegappan Lakshmanan, 2018 Jan 4)<br>
 <br>
@@ -467,6 +454,10 @@ The ++ options for the :edit command are also useful on the Vim command line.<br
 <br>
 When recovering a file, put the swap file name in b:recovered_swapfile.&nbsp;&nbsp;Then<br>
 a command can delete it.<br>
+<br>
+When a swap file exists, is not for a running process, is from the same<br>
+machine and recovering results in the same text, we could silently delete it.<br>
+#1237<br>
 <br>
 Overlong utf-8 sequence is displayed wrong. (Harm te Hennepe, 2017 Sep 14,<br>
 #2089)&nbsp;&nbsp;Patch with possible solution by Björn Linse.<br>
@@ -3435,9 +3426,6 @@ Macintosh:<br>
 7&nbsp;&nbsp; X11: Some people prefer to use CLIPBOARD instead of PRIMARY for the normal<br>
 &nbsp;&nbsp;&nbsp;&nbsp;selection.&nbsp;&nbsp;Add an &quot;xclipboard&quot; argument to the&nbsp;<a class="Type" href="options.html#'clipboard'">'clipboard'</a>&nbsp;option? (Mark<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Waggoner)<br>
-8&nbsp;&nbsp; For xterm need to open a connection to the X server to get the window<br>
-&nbsp;&nbsp;&nbsp;&nbsp;title, which can be slow.&nbsp;&nbsp;Can also get the title with &quot;<span class="Special">&lt;Esc&gt;</span>[21t&quot;, no<br>
-&nbsp;&nbsp;&nbsp;&nbsp;need to use X11 calls.&nbsp;&nbsp;This returns &quot;<span class="Special">&lt;Esc&gt;</span>]l<span class="Special">{title}&lt;Esc&gt;</span>\&quot;.<br>
 6&nbsp;&nbsp; When the xterm reports the number of colors, a redraw occurs.&nbsp;&nbsp;This is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;annoying on a slow connection.&nbsp;&nbsp;Wait for the xterm to report the number of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;colors before drawing the screen.&nbsp;&nbsp;With a timeout.<br>
