@@ -43,6 +43,8 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+testdir: remove use of lua.vim from makefiles and test1.in<br>
+<br>
 Prompt buffer:<br>
 - Add a command line history.<br>
 - delay next prompt until plugin gives OK?<br>
@@ -94,8 +96,8 @@ Errors found with random data:<br>
 More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
 <br>
-Patch to fix duplicate entry in tagfiles() and add a test. (Dominique Pelle,<br>
-#2979)<br>
+Patch to fix that :cexpr no longer jumps to first error. (Yegappan 2018 Jun<br>
+25, #3092)<br>
 <br>
 Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
 Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
@@ -108,13 +110,15 @@ Pull request #2967: Allow white space in sign text. (Ben Jackson)<br>
 Patch for xterm and vt320 builtin termcap. (Kouichi Iwamoto, 2018 May 31,<br>
 #2973)<br>
 <br>
+Patch for matchit and matchparen. (Christian, 2018 Jun 25)<br>
+<br>
 Patch to add more testing for :cd command. (Dominique Pelle, 2018 May 30,<br>
 #2972)<br>
 <br>
 Whenever the file name is &quot;~&quot; then expand('%:p') returns $HOME. (Aidan<br>
-Shafran, 2018 Jun 23, #3072)<br>
+Shafran, 2018 Jun 23, #3072)&nbsp;&nbsp;Proposed patch by Aidan, 2018 Jun 24.<br>
 <br>
-Patch to set w_curswant when setting the cursor in language interfaces.<br>
+Patch to set w_set_curswant when setting the cursor in language interfaces.<br>
 (David Hotham, 2018 Jun 22, #3060)<br>
 <br>
 Patch to make&nbsp;<span class="Special">CTRL-W</span>&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;work properly in a quickfix window. (Jason Franklin,<br>
@@ -174,8 +178,18 @@ Cursor in wrong position when line wraps. (#2540)<br>
 <br>
 Patch for Lua support. (Kazunobu Kuriyama, 2018 May 26)<br>
 <br>
+Make&nbsp;<span class="Special">{skip}</span>&nbsp;argument of searchpair() consistent with other places where we<br>
+pass an expression to evaluate.&nbsp;&nbsp;Allow passing zero for &quot;never skip&quot;.<br>
+<br>
 Add an option similar to&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;to skip redrawing while executing a<br>
 script or function.<br>
+<br>
+Universal solution to detect if t_RS is working, using cursor position.<br>
+Koichi Iwamoto, #2126<br>
+<br>
+When using a menu item while the &quot;more&quot; prompt is displayed doesn't work well.<br>
+E.g. after using help-&gt;version.&nbsp;&nbsp;Have a key that ends the &quot;more&quot; prompt and<br>
+does nothing otherwise?<br>
 <br>
 MS-Windows: write may fail if another program is reading the file.<br>
 If&nbsp;<a class="Type" href="options.html#'readonly'">'readonly'</a>&nbsp;is not set but the file appears to be readonly later, try again<br>
@@ -357,9 +371,6 @@ redrawn properly. (xtal8, 2017 Oct 23, #2241)<br>
 <br>
 In an optional package the &quot;after&quot; directory is not scanned?<br>
 (Renato Fabbri, 2018 Feb 22)<br>
-<br>
-Universal solution to detect if t_RS is working, using cursor position.<br>
-Koichi Iwamoto, #2126<br>
 <br>
 Patch for Neovim concerning restoring when closing help window. (glacambre<br>
 neovim #7431)<br>
@@ -1409,9 +1420,6 @@ Braun, pragm, 2013 Oct 13)&nbsp;&nbsp;A better solution 2014 Mar 5.<br>
 Patch by Thomas Tuegel, also for GTK, 2013 Nov 24<br>
 <br>
 :help gives example for z?, but it does not work.&nbsp;&nbsp;m? and t? do work.<br>
-<br>
-Patch to add funcref to Lua.&nbsp;&nbsp;(Luis Carvalho, 2013 Sep 4)<br>
-With tests: Sep 5.<br>
 <br>
 Discussion about canonicalization of Hebrew. (Ron Aaron, 2011 April 10)<br>
 <br>
@@ -4669,10 +4677,7 @@ Autocommands:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;command used dos fileformat.&nbsp;&nbsp;Same for&nbsp;<a class="Type" href="options.html#'fileencoding'">'fileencoding'</a>.<br>
 -&nbsp;&nbsp; Add events to autocommands:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Error&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - When an error happens<br>
-&nbsp;&nbsp;&nbsp;&nbsp;NormalEnter&nbsp;&nbsp;&nbsp;&nbsp; - Entering Normal mode<br>
-&nbsp;&nbsp;&nbsp;&nbsp;ReplaceEnter&nbsp;&nbsp;&nbsp;&nbsp;- Entering Replace mode<br>
-&nbsp;&nbsp;&nbsp;&nbsp;VisualEnter&nbsp;&nbsp;&nbsp;&nbsp; - Entering Visual mode<br>
-<span class="Statement">&nbsp;&nbsp;&nbsp;&nbsp;</span>*Leave&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Leaving a mode (in pair with the above *Enter)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ModeChange&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- after changing mode (before waiting for a char)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;VimLeaveCheck&nbsp;&nbsp;&nbsp;&nbsp;- Before Vim decides to exit, so that it can be cancelled<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when exiting isn't a good idea.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;CursorHoldC&nbsp;&nbsp;&nbsp;&nbsp; - CursorHold while command-line editing<br>
