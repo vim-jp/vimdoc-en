@@ -43,6 +43,15 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+<a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
+- :/foo/s//<span class="Special">&lt;Esc&gt;</span>&nbsp;&nbsp;changes last search pattern.&nbsp;&nbsp;Also E486.<br>
+- :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
+&nbsp;&nbsp;correct line (it uses the last but one line) (Lifepillar, Aug 18, #3345)<br>
+- Also support range: :/foo/,/bar/delete<br>
+- :%s/foo should take the first match below the cursor line, unless there<br>
+&nbsp;&nbsp;isn't one?<br>
+&nbsp;&nbsp;Then :%s?foo should take the first match above the cursor line.<br>
+<br>
 Prompt buffer:<br>
 - Add a command line history.<br>
 - delay next prompt until plugin gives OK?<br>
@@ -55,11 +64,16 @@ Terminal debugger:<br>
 &nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
 <br>
 Terminal emulator window:<br>
+- GUI: When using &quot;:set go+=!&quot; a system() call causes the hit-enter prompt.<br>
+&nbsp;&nbsp;(#3327)<br>
 - When the job in the terminal doesn't use mouse events, let the scroll wheel<br>
 &nbsp;&nbsp;scroll the scrollback, like a terminal does at the shell prompt. #2490<br>
 &nbsp;&nbsp;And use modeless selection.&nbsp;&nbsp;#2962<br>
+- Allow for specifying the directory, with ++cwd=<span class="Special">{dir}</span>.<br>
 - With a vertical split only one window is updated. (Linwei, 2018 Jun 2,<br>
 &nbsp;&nbsp;#2977)<br>
+- Add a way to make &quot;:term cmd&quot; run &quot;cmd&quot; in a shell, instead of executing it<br>
+&nbsp;&nbsp;directly.&nbsp;&nbsp;Perhaps &quot;:term ++shell cmd&quot;. (#3340)<br>
 - When pasting should call vterm_keyboard_start_paste(), e.g. when using<br>
 &nbsp;&nbsp;K_MIDDLEMOUSE, calling insert_reg().<br>
 - Users expect parsing the :term argument like a shell does, also support<br>
@@ -79,35 +93,12 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
-Patch to support &quot;:tag&nbsp;<span class="Special">&lt;tagkind&gt;</span>&nbsp;&lt;tagname&quot;. (emmrk, 2018 May 7, #2871)<br>
-<br>
-Patch to parse &quot;:line&quot; in tags file and use it for search. (Daniel Hahler,<br>
-#2546)&nbsp;&nbsp;Fixes #1057.&nbsp;&nbsp;Missing a test.<br>
-<br>
-Problem with quickfix giving E42 when filtering the error list.<br>
-(Nobuhiro Takasaki, 2018 Aug 1, #3270)<br>
-Patch with test from Yegappan, Aug 2.<br>
-<br>
-Patch to add variable name after &quot;scope add&quot;. (Eddie Lebow, 2018 Feb 7, #2620)<br>
-Maybe not needed?<br>
-<br>
-Patch in issue 3268, fix suggestion window appearing on wrong screen.<br>
-Also from Ken Takata, 2018 Aug 2.<br>
-<br>
-Patch for Lua support. (Kazunobu Kuriyama, 2018 May 26)<br>
-<br>
-Patch to use NGETTEXT() in many more places. (Sergey Alyoshin, 2018 May 25)<br>
-Updated patch May 27.<br>
-<br>
-Patch to add winlayout() function. (Yegappan Lakshmanan, 2018 Jan 4)<br>
-<br>
-Patch to fix profiling condition lines. (Ozaki Kiichi,, 2017 Dec 26, #2499)<br>
-<br>
-Issue #686: apply 'F' in&nbsp;<a class="Type" href="options.html#'shortmess'">'shortmess'</a>&nbsp;to more messages.&nbsp;&nbsp;Also #3221.<br>
-Patch on #3221 from Christian.&nbsp;&nbsp;Does it work now?<br>
-<br>
-Patch to include a cfilter plugin to filter quickfix/location lists.<br>
-(Yegappan Lakshmanan, 2018 May 12)<br>
+Not possible to have a comment in between line continuation.&nbsp;&nbsp;Use |\&quot;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let array = [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ item,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|\&quot; comment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ item,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ ]<br>
 <br>
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
@@ -116,9 +107,6 @@ Does not build with MinGW out of the box:<br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
 <br>
-On Win32 when not in the console and t_Co &gt;= 256, allow using&nbsp;<a class="Type" href="options.html#'tgc'">'tgc'</a>.<br>
-(Nobuhiro Takasaki, #2833)&nbsp;&nbsp;Also check t_Co.<br>
-<br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
 <br>
@@ -126,7 +114,15 @@ Improve fallback for menu translations, to avoid having to create lots of<br>
 files that source the actual file.&nbsp;&nbsp;E.g. menu_da_de -&gt; menu_da<br>
 Include part of #3242?<br>
 <br>
-Inlcude Chinese-Taiwan translations. (bystar, #3261)<br>
+Using &quot;:file&quot; in quickfix window during an autocommand doesn't work.&nbsp;<br>
+(Jason Franklin, 2018 May 23) Allow for using it when there is no argument.<br>
+Patch should now work. (Jason Franklin, 2018 Aug 12)<br>
+<br>
+Include Chinese-Taiwan translations. (bystar, #3261)<br>
+<br>
+Screendump test fails even though characters are the same.<br>
+Some attribute difference that isn't included in the screenshot?<br>
+(Elimar Riesebieter, 2018 Aug 21)<br>
 <br>
 Completion mixes results from the current buffer with tags and other files.<br>
 Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still search for results.&nbsp;&nbsp;E.g., type &quot;b_&quot; in<br>
@@ -134,8 +130,10 @@ terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
 Should do current file first and not split it up when more results are found.<br>
 (Also #1890)<br>
 <br>
-Using mouse for inputlist() doesn't work after patch 8.0.1756. (Dominique<br>
-Pelle, 2018 Jul 22, #3239)&nbsp;&nbsp;Also see 8.0.0722.&nbsp;&nbsp;Check both console and GUI.<br>
+Patch to support VTP better. (Nobuhiro Takasaki, 2018 Aug 19, #3347)<br>
+<br>
+Patch with improvement for ccomplete: #3350<br>
+Try it out.&nbsp;&nbsp;Perhaps write a test?<br>
 <br>
 More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
@@ -143,11 +141,11 @@ More warnings from static analysis:<br>
 Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
 Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
 <br>
-Using &quot;:file&quot; in quickfix window during an autocommand doesn't work.&nbsp;<br>
-(Jason Franklin, 2018 May 23) Allow for using it when there is no argument.<br>
-<br>
 Patch in pull request #2967: Allow white space in sign text. (Ben Jackson)<br>
 Test fails in AppVeyor.<br>
+<br>
+Patch to add script line number to script ID. (ichizok, Ozaki Kiichi, 2018 Aug<br>
+24, #3362)<br>
 <br>
 Removing flags from&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;breaks the Winbar buttons in termdebug.<br>
 (Dominique Pelle, 2018 Jul 16)<br>
@@ -191,12 +189,27 @@ Delete the src/main.aap file?<br>
 matchaddpos() gets slow with many matches.&nbsp;&nbsp;Proposal by Rick Howe, 2018 Jul<br>
 19.<br>
 <br>
+Patch to support &quot;:tag&nbsp;<span class="Special">&lt;tagkind&gt;</span>&nbsp;<span class="Special">&lt;tagname&gt;</span>&quot;. (emmrk, 2018 May 7, #2871)<br>
+Use something like &quot;:tag&nbsp;<span class="Special">{kind}</span>/<span class="Special">{tagname}</span>&quot;.<br>
+Not ready to include.<br>
+<br>
 home_replace() uses $HOME instead of &quot;homedir&quot;. (Cesar Martins, 2018 Aug 9)<br>
 <br>
 Adjust windows installer explanation of behavior. (scootergrisen, #3310)<br>
 <br>
 Set g:actual_curbuf when evaluating&nbsp;<a class="Type" href="options.html#'statusline'">'statusline'</a>, not just with an expression.<br>
 (Daniel Hahler, 2018 Aug 8, #3299)<br>
+<br>
+Difference between two regexp engines: #3373<br>
+<br>
+When the last line wraps, selecting with the mouse below that line only<br>
+includes the first screen line. (2018 Aug 23, #3368)<br>
+<br>
+Refactored HTML indent file. (Michael Lee, #1821)<br>
+<br>
+Patch to add getregpoint() and setreg() with an option to set &quot;&quot;.<br>
+(Andy Massimino, 2018 Aug 24, #3370)<br>
+Better name?<br>
 <br>
 Script generated by :mksession does not work well if there are windows with<br>
 modified buffers<br>
@@ -214,6 +227,12 @@ Compiler warnings (geeknik, 2017 Oct 26):<br>
 Win32 console:&nbsp;<span class="Special">&lt;F11&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;F12&gt;</span>&nbsp;typed in Insert mode don't result in normal<br>
 characters. (#3246)<br>
 <br>
+Height of quickfix window is not retained with vertical splits. (Lifepillar,<br>
+2018 Aug 24, #2998)<br>
+<br>
+Window size is wrong when using quickfix window. (Lifepillar, 2018 Aug 24,<br>
+#2999)<br>
+<br>
 Tests failing for &quot;make testgui&quot; with GTK:<br>
 - Test_setbufvar_options()<br>
 - Test_exit_callback_interval()<br>
@@ -229,6 +248,7 @@ On Win32 it stops showing, because showState is already ShS_SHOWING.<br>
 balloon_show() does not work properly in the terminal. (Ben Jackson, 2017 Dec<br>
 20, #2481)<br>
 Also see #2352, want better control over balloon, perhaps set the position.<br>
+Should also be possible to add highlighting, like in the status line?<br>
 <br>
 Try out background make plugin:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
@@ -244,8 +264,13 @@ used for git temp files.<br>
 <br>
 Cursor in wrong position when line wraps. (#2540)<br>
 <br>
+Patch to parse &quot;:line&quot; in tags file and use it for search. (Daniel Hahler,<br>
+#2546)&nbsp;&nbsp;Fixes #1057.&nbsp;&nbsp;Missing a test.<br>
+<br>
 Make&nbsp;<span class="Special">{skip}</span>&nbsp;argument of searchpair() consistent with other places where we<br>
 pass an expression to evaluate.&nbsp;&nbsp;Allow passing zero for &quot;never skip&quot;.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;option is global, make it global-local. #3195<br>
 <br>
 Add an option similar to&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;to skip redrawing while executing a<br>
 script or function.<br>
@@ -286,6 +311,9 @@ How to test that it works well for all Vim users?<br>
 <br>
 Alternative manpager.vim. (Enno, 2018 Jan 5, #2529)<br>
 <br>
+Delete all the speficic stuff for the Borland compiler? (#3374)<br>
+Patch in #3377 (Thomas Dziedzic)<br>
+<br>
 Does setting&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;cause syntax highlighting to slow down?&nbsp;&nbsp;Perhaps is<br>
 mess up the cache?&nbsp;&nbsp;(Mike Lee Williams, 2018 Jan 27, #2539)<br>
 Also:&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;is evaluated too often. (Daniel Hahler, #2773)<br>
@@ -325,7 +353,8 @@ sequence of these commands. (Andy Stewart, 2018 Mar 16)<br>
 ch_sendraw() with long string does not try to read in between, which may cause<br>
 a deadlock if the reading side is waiting for the write to finish. (Nate<br>
 Bosch, 2018 Jan 13, #2548)<br>
-Perhaps just make chunks of 1024 bytes?&nbsp;&nbsp;Make the write non-blocking?<br>
+Perhaps just make chunks of 1024 bytes?<br>
+Probably better: Make the write non-blocking<br>
 Also a problem on MS-Windows: #2828.<br>
 <br>
 Add Makefiles to the runtime/spell directory tree, since nobody uses Aap.<br>
@@ -392,6 +421,8 @@ No profile information for function that executes &quot;:quit&quot;. (Daniel Hah
 2017 Dec 26, #2501)<br>
 <br>
 A function on a dictionary is not profiled. (ZyX, 2010 Dec 25)<br>
+<br>
+Add script number to profile?&nbsp;&nbsp;(#3330 breaks tests).<br>
 <br>
 A function defined locally and lambda's are not easily recognized.<br>
 Mention where they were defined somewhere.<br>
@@ -491,8 +522,6 @@ It can replace the BeOS code, which is likely not used anymore.<br>
 Now on github: #1856.&nbsp;&nbsp;Updated Oct 2017<br>
 Got permission to include this under the Vim license.<br>
 <br>
-Refactored HTML indent file. (Michael Lee, #1821)<br>
-<br>
 Test_writefile_fails_conversion failure on Solaris because if different iconv<br>
 behavior.&nbsp;&nbsp;Skip when &quot;uname&quot; returns &quot;SunOS&quot;? (Pavel Heimlich, #1872)<br>
 <br>
@@ -571,7 +600,7 @@ Profile of a dict function is lost when the dict is deleted.&nbsp;&nbsp;Would it
 possible to collect this?&nbsp;&nbsp;(Daniel Hahler, #2350)<br>
 <br>
 Add&nbsp;<a class="Comment" href="various.html#:filter">:filter</a>&nbsp;support for various commands (Marcin Szamotulski, 2017 Nov 12<br>
-#2322)&nbsp;&nbsp;Now in #2327?<br>
+#2322)&nbsp;&nbsp;Patch now in #2856.<br>
 <br>
 When checking if a bufref is valid, also check the buffer number, to catch the<br>
 case of :bwipe followed by :new.<br>
@@ -756,6 +785,7 @@ receiving Vim?&nbsp;&nbsp;Or make an exception for #, it's not useful remotely.<
 vertical split. (Haldean Brown, 2017 Mar 1)<br>
 <br>
 Use ADDR_OTHER instead of ADDR_LINES for many more commands.<br>
+E.g. all the location list commands use a count.<br>
 Add tests for using number larger than number of lines in buffer.<br>
 <br>
 Might be useful to have isreadonly(), like we have islocked().<br>
