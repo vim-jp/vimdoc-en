@@ -48,6 +48,7 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 - :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
 &nbsp;&nbsp;correct line (it uses the last but one line) (Lifepillar, Aug 18, #3345)<br>
 - Also support range: :/foo/,/bar/delete<br>
+- Also support for user command, e.g. Cfilter<br>
 - :%s/foo should take the first match below the cursor line, unless there<br>
 &nbsp;&nbsp;isn't one?<br>
 &nbsp;&nbsp;Then :%s?foo should take the first match above the cursor line.<br>
@@ -114,26 +115,11 @@ Improve fallback for menu translations, to avoid having to create lots of<br>
 files that source the actual file.&nbsp;&nbsp;E.g. menu_da_de -&gt; menu_da<br>
 Include part of #3242?<br>
 <br>
-Using &quot;:file&quot; in quickfix window during an autocommand doesn't work.&nbsp;<br>
-(Jason Franklin, 2018 May 23) Allow for using it when there is no argument.<br>
-Patch should now work. (Jason Franklin, 2018 Aug 12)<br>
-<br>
-Include Chinese-Taiwan translations. (bystar, #3261)<br>
-<br>
-Screendump test fails even though characters are the same.<br>
-Some attribute difference that isn't included in the screenshot?<br>
-(Elimar Riesebieter, 2018 Aug 21)<br>
-<br>
 Completion mixes results from the current buffer with tags and other files.<br>
 Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still search for results.&nbsp;&nbsp;E.g., type &quot;b_&quot; in<br>
 terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
 Should do current file first and not split it up when more results are found.<br>
 (Also #1890)<br>
-<br>
-Patch to support VTP better. (Nobuhiro Takasaki, 2018 Aug 19, #3347)<br>
-<br>
-Patch with improvement for ccomplete: #3350<br>
-Try it out.&nbsp;&nbsp;Perhaps write a test?<br>
 <br>
 More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
@@ -200,7 +186,21 @@ Adjust windows installer explanation of behavior. (scootergrisen, #3310)<br>
 Set g:actual_curbuf when evaluating&nbsp;<a class="Type" href="options.html#'statusline'">'statusline'</a>, not just with an expression.<br>
 (Daniel Hahler, 2018 Aug 8, #3299)<br>
 <br>
+Using an external diff is inefficient.&nbsp;&nbsp;Not all systems have a good diff<br>
+program available (esp. MS-Windows).&nbsp;&nbsp;Would be nice to have in internal diff<br>
+implementation.&nbsp;&nbsp;Can then also use this for displaying changes within a line.<br>
+Olaf Dabrunz is working on this. (10 Jan 2016)<br>
+9&nbsp;&nbsp; Instead invoking an external diff program, use builtin code.&nbsp;&nbsp;One can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;found here:&nbsp;<span class="Constant"><a href="http://www.ioplex.com/~miallen/libmba/dl/src/diff.c">http://www.ioplex.com/~miallen/libmba/dl/src/diff.c</a></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;It's complicated and badly documented.<br>
+Alternative: use the xdiff library.&nbsp;&nbsp;Unfinished Patch from Christian Brabandt,<br>
+2018 Mar 20, #2732)<br>
+<br>
 Difference between two regexp engines: #3373<br>
+<br>
+Patch to add arguments to argc() and argv(). (Yegappan Lakshmanan, 2016 Jan<br>
+24, #832)&nbsp;&nbsp;Also need a way to get the global arg list?&nbsp;&nbsp;Update later on Jan 24<br>
+Update Mar 5. Update Apr 7.&nbsp;&nbsp;Update Jun 5.<br>
 <br>
 When the last line wraps, selecting with the mouse below that line only<br>
 includes the first screen line. (2018 Aug 23, #3368)<br>
@@ -249,6 +249,9 @@ balloon_show() does not work properly in the terminal. (Ben Jackson, 2017 Dec<br
 20, #2481)<br>
 Also see #2352, want better control over balloon, perhaps set the position.<br>
 Should also be possible to add highlighting, like in the status line?<br>
+<br>
+Patch to fix that executable() may fail on very long filename in MS-Windows.<br>
+(Ken Takata, 2016 Feb 1)<br>
 <br>
 Try out background make plugin:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
@@ -434,16 +437,6 @@ quickfix list. (bfrg, 2018 Jan 22, #2574)<br>
 <br>
 Invalid range error when using BufWinLeave for closing terminal.<br>
 (Gabriel Barta, 2017 Nov 15, #2339)<br>
-<br>
-Using an external diff is inefficient.&nbsp;&nbsp;Not all systems have a good diff<br>
-program available (esp. MS-Windows).&nbsp;&nbsp;Would be nice to have in internal diff<br>
-implementation.&nbsp;&nbsp;Can then also use this for displaying changes within a line.<br>
-Olaf Dabrunz is working on this. (10 Jan 2016)<br>
-9&nbsp;&nbsp; Instead invoking an external diff program, use builtin code.&nbsp;&nbsp;One can be<br>
-&nbsp;&nbsp;&nbsp;&nbsp;found here:&nbsp;<span class="Constant"><a href="http://www.ioplex.com/~miallen/libmba/dl/src/diff.c">http://www.ioplex.com/~miallen/libmba/dl/src/diff.c</a></span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;It's complicated and badly documented.<br>
-Alternative: use the xdiff library.&nbsp;&nbsp;Unfinished Patch from Christian Brabandt,<br>
-2018 Mar 20, #2732)<br>
 <br>
 ml_get errors with buggy script. (Dominique, 2017 Apr 30)<br>
 <br>
@@ -1133,9 +1126,6 @@ Patch to add&nbsp;<span class="Special">&lt;restore&gt;</span>&nbsp;to :windo, :
 6, 2nd message)<br>
 Alternative: &quot;:keeppos&quot; command modifier: &quot;:keeppos windo&nbsp;<span class="Special">{cmd}</span>&quot;.<br>
 <br>
-Patch to fix that executable() may fail on very long filename in MS-Windows.<br>
-(Ken Takata, 2016 Feb 1)<br>
-<br>
 Patch to fix display of listchars on the cursorline. (Nayuri Aohime, 2013)<br>
 Update suggested by Yasuhiro Matsumoto, 2014 Nov 25:<br>
 <span class="Constant"><a href="https://gist.github.com/presuku/d3d6b230b9b6dcfc0477">https://gist.github.com/presuku/d3d6b230b9b6dcfc0477</a></span><br>
@@ -1196,10 +1186,6 @@ I can't recommend it though.<br>
 <br>
 Build with Python on Mac does not always use the right library.<br>
 (Kazunobu Kuriyama, 2015 Mar 28)<br>
-<br>
-Patch to add arguments to argc() and argv(). (Yegappan Lakshmanan, 2016 Jan<br>
-24)&nbsp;&nbsp;Also need a way to get the global arg list?&nbsp;&nbsp;Update later on Jan 24<br>
-Update Mar 5. Update Apr 7.&nbsp;&nbsp;Update Jun 5.<br>
 <br>
 To support Thai (and other languages) word boundaries, include the ICU<br>
 library:&nbsp;&nbsp;<span class="Constant"><a href="http://userguide.icu-project.org/boundaryanalysis">http://userguide.icu-project.org/boundaryanalysis</a></span><br>
