@@ -43,8 +43,10 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+tar plugin: use &quot;file&quot; to check compression type, use bzip2 only when it<br>
+recognizes bzip2 or file ends in .bz2<br>
+<br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
-- :/foo/s//<span class="Special">&lt;Esc&gt;</span>&nbsp;&nbsp;changes last search pattern.&nbsp;&nbsp;Also E486.<br>
 - :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
 &nbsp;&nbsp;correct line (it uses the last but one line) (Lifepillar, Aug 18, #3345)<br>
 - Also support range: :/foo/,/bar/delete<br>
@@ -108,6 +110,9 @@ Does not build with MinGW out of the box:<br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
 <br>
+Patch to add script line number to script ID. (ichizok, Ozaki Kiichi, 2018 Aug<br>
+24, #3362)<br>
+<br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
 <br>
@@ -130,14 +135,18 @@ Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
 Patch in pull request #2967: Allow white space in sign text. (Ben Jackson)<br>
 Test fails in AppVeyor.<br>
 <br>
-Patch to add script line number to script ID. (ichizok, Ozaki Kiichi, 2018 Aug<br>
-24, #3362)<br>
+Job_info() returns command without backslashes. (Daniel Hahler, 2018 Sep 3,<br>
+#3404)<br>
 <br>
 Removing flags from&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;breaks the Winbar buttons in termdebug.<br>
 (Dominique Pelle, 2018 Jul 16)<br>
 <br>
 Problem with two buffers with the same name a/b, if it didn't exist before and<br>
 is created outside of Vim. (dskloetg, 2018 Jul 16, #3219)<br>
+<br>
+Invalid memory access with old regexp engine. (Dominique Pelle, 2018 Sep 3,<br>
+#3405)&nbsp;&nbsp;Introduced by 8.0.1517, which was fixing another memory access error.<br>
+(Sep 8)<br>
 <br>
 Memory leak in test_assert:<br>
 ==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2640D7: alloc (misc2.c:874)<br>
@@ -193,8 +202,12 @@ Olaf Dabrunz is working on this. (10 Jan 2016)<br>
 9&nbsp;&nbsp; Instead invoking an external diff program, use builtin code.&nbsp;&nbsp;One can be<br>
 &nbsp;&nbsp;&nbsp;&nbsp;found here:&nbsp;<span class="Constant"><a href="http://www.ioplex.com/~miallen/libmba/dl/src/diff.c">http://www.ioplex.com/~miallen/libmba/dl/src/diff.c</a></span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;It's complicated and badly documented.<br>
-Alternative: use the xdiff library.&nbsp;&nbsp;Unfinished Patch from Christian Brabandt,<br>
-2018 Mar 20, #2732)<br>
+Alternative: use the xdiff library from git.&nbsp;&nbsp;Unfinished Patch from Christian<br>
+Brabandt, 2018 Mar 20, #2732)<br>
+<span class="Todo">Note</span>&nbsp;that this is NOT libxdiff.<br>
+-&gt; avoid writing all the text to a file, use in-memory only<br>
+-&gt; add option to use external diff above a certain size.<br>
+-&gt; when making changes, diff only the part of the buffer that changed.<br>
 <br>
 Difference between two regexp engines: #3373<br>
 <br>
@@ -206,6 +219,9 @@ When the last line wraps, selecting with the mouse below that line only<br>
 includes the first screen line. (2018 Aug 23, #3368)<br>
 <br>
 Refactored HTML indent file. (Michael Lee, #1821)<br>
+<br>
+Test for user name completeion &quot;:e ~s<span class="Special">&lt;Tab&gt;</span>&quot; fails because we don't get all<br>
+user names.&nbsp;&nbsp;Is there another function to get more? (2018 Sep 3, Stuckrad)<br>
 <br>
 Patch to add getregpoint() and setreg() with an option to set &quot;&quot;.<br>
 (Andy Massimino, 2018 Aug 24, #3370)<br>
@@ -352,13 +368,6 @@ Add the debug command line history to viminfo.<br>
 <br>
 Avoid that &quot;sign unplace id&quot; does a redraw right away, esp. when there is a<br>
 sequence of these commands. (Andy Stewart, 2018 Mar 16)<br>
-<br>
-ch_sendraw() with long string does not try to read in between, which may cause<br>
-a deadlock if the reading side is waiting for the write to finish. (Nate<br>
-Bosch, 2018 Jan 13, #2548)<br>
-Perhaps just make chunks of 1024 bytes?<br>
-Probably better: Make the write non-blocking<br>
-Also a problem on MS-Windows: #2828.<br>
 <br>
 Add Makefiles to the runtime/spell directory tree, since nobody uses Aap.<br>
 Will have to explain the manual steps (downloading the .aff and .dic files,<br>
