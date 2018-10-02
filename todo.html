@@ -43,8 +43,17 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-tar plugin: use &quot;file&quot; to check compression type, use bzip2 only when it<br>
-recognizes bzip2 or file ends in .bz2<br>
+Test_scrollbars() fails with X11-Athena GUI or X11-Motif GUI<br>
+(Dominique, #3451)<br>
+<br>
+Flashing highlighting with&nbsp;<a class="Type" href="options.html#'rnu'">'rnu'</a>&nbsp;and folding.<br>
+(Vitaly Yashin, 2018 Sep 26, #3484)<br>
+<br>
+Still a cursorline problem. (Justin Keyes, #3488)<br>
+<br>
+Crash with recursive use of getcmdline() from Timer.&nbsp;&nbsp;save_ccline isn't used<br>
+then.&nbsp;&nbsp;Turn it around: When getcmdline() is called it checks if it is a<br>
+recursive call, and saves the cmdline then. (#3493)<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
@@ -54,6 +63,8 @@ recognizes bzip2 or file ends in .bz2<br>
 - :%s/foo should take the first match below the cursor line, unless there<br>
 &nbsp;&nbsp;isn't one?<br>
 &nbsp;&nbsp;Then :%s?foo should take the first match above the cursor line.<br>
+<br>
+Don't set diffexpr when generating _vimrc for MS-Windows.<br>
 <br>
 Prompt buffer:<br>
 - Add a command line history.<br>
@@ -96,12 +107,8 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
-Not possible to have a comment in between line continuation.&nbsp;&nbsp;Use |\&quot;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let array = [<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ item,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|\&quot; comment<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ item,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ ]<br>
+Key mapping times out when using a timer in Gvim. (Michael Henry, 2018 Sep 9,<br>
+#3417)<br>
 <br>
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
@@ -109,9 +116,6 @@ Does not build with MinGW out of the box:<br>
 <br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
-<br>
-Patch to add script line number to script ID. (ichizok, Ozaki Kiichi, 2018 Aug<br>
-24, #3362)<br>
 <br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
@@ -132,11 +136,17 @@ More warnings from static analysis:<br>
 Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
 Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
 <br>
+&quot;:mksession&quot; cannot handle a very long&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>. (Timothy Madden, 21 Sep<br>
+2018, #3466)<br>
+<br>
 Patch in pull request #2967: Allow white space in sign text. (Ben Jackson)<br>
 Test fails in AppVeyor.<br>
 <br>
 Job_info() returns command without backslashes. (Daniel Hahler, 2018 Sep 3,<br>
 #3404)<br>
+<br>
+Patch to simplify nsis installer. (Ken Takata, 2018 Sep 24, was #3479)<br>
+Now included in #3501, using MUI2.<br>
 <br>
 Removing flags from&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;breaks the Winbar buttons in termdebug.<br>
 (Dominique Pelle, 2018 Jul 16)<br>
@@ -147,6 +157,9 @@ is created outside of Vim. (dskloetg, 2018 Jul 16, #3219)<br>
 Invalid memory access with old regexp engine. (Dominique Pelle, 2018 Sep 3,<br>
 #3405)&nbsp;&nbsp;Introduced by 8.0.1517, which was fixing another memory access error.<br>
 (Sep 8)<br>
+<br>
+Add function to make use of internal diff, working on two lists and returning<br>
+unified diff (list of lines).<br>
 <br>
 Memory leak in test_assert:<br>
 ==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2640D7: alloc (misc2.c:874)<br>
@@ -188,28 +201,35 @@ Patch to support &quot;:tag&nbsp;<span class="Special">&lt;tagkind&gt;</span>&nb
 Use something like &quot;:tag&nbsp;<span class="Special">{kind}</span>/<span class="Special">{tagname}</span>&quot;.<br>
 Not ready to include.<br>
 <br>
+Patch to support menus in terminal: &quot;:tlmenu&quot;. (Yee Cheng Chin, #3439)<br>
+<br>
 home_replace() uses $HOME instead of &quot;homedir&quot;. (Cesar Martins, 2018 Aug 9)<br>
+<br>
+When the status line uses term_gettitle(), it does not get updated when the<br>
+terminal title changes. (Josh Triplett, 2018 Sep 9, #3418)<br>
+How would we know that the status line needs to be updated?<br>
 <br>
 Adjust windows installer explanation of behavior. (scootergrisen, #3310)<br>
 <br>
 Set g:actual_curbuf when evaluating&nbsp;<a class="Type" href="options.html#'statusline'">'statusline'</a>, not just with an expression.<br>
 (Daniel Hahler, 2018 Aug 8, #3299)<br>
 <br>
-Using an external diff is inefficient.&nbsp;&nbsp;Not all systems have a good diff<br>
-program available (esp. MS-Windows).&nbsp;&nbsp;Would be nice to have in internal diff<br>
-implementation.&nbsp;&nbsp;Can then also use this for displaying changes within a line.<br>
-Olaf Dabrunz is working on this. (10 Jan 2016)<br>
-9&nbsp;&nbsp; Instead invoking an external diff program, use builtin code.&nbsp;&nbsp;One can be<br>
-&nbsp;&nbsp;&nbsp;&nbsp;found here:&nbsp;<span class="Constant"><a href="http://www.ioplex.com/~miallen/libmba/dl/src/diff.c">http://www.ioplex.com/~miallen/libmba/dl/src/diff.c</a></span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;It's complicated and badly documented.<br>
-Alternative: use the xdiff library from git.&nbsp;&nbsp;Unfinished Patch from Christian<br>
-Brabandt, 2018 Mar 20, #2732)<br>
-<span class="Todo">Note</span>&nbsp;that this is NOT libxdiff.<br>
--&gt; avoid writing all the text to a file, use in-memory only<br>
--&gt; add option to use external diff above a certain size.<br>
--&gt; when making changes, diff only the part of the buffer that changed.<br>
+ml_get error. (Dominique Pelle, 2018 Sep 14, #3434)<br>
+<br>
+Only output t_Cs when t_Ce is also set.&nbsp;&nbsp;do not use Cs and Ce termcap entries.&nbsp;&nbsp;(Daniel Hahler, 2018 Sep 25)<br>
+Add t_cS and t_cR for cursor color select and reset.&nbsp;&nbsp;Use Cs and Cr terminfo<br>
+values.<br>
+<br>
+Furthere xdiff changes:<br>
+- More options, e.g. different kind of whitespace diff.<br>
+- when editing text, update the surrounding diff blocks.<br>
+- omit diff.exe from distribution<br>
+- Can we make this show differences within a line?<br>
+- add option to use external diff above a certain size.<br>
 <br>
 Difference between two regexp engines: #3373<br>
+<br>
+Patch to handle missin glibwinpthread-1.dll. (Ken Takata, 2018 Sep 23, #2827)<br>
 <br>
 Patch to add arguments to argc() and argv(). (Yegappan Lakshmanan, 2016 Jan<br>
 24, #832)&nbsp;&nbsp;Also need a way to get the global arg list?&nbsp;&nbsp;Update later on Jan 24<br>
@@ -220,12 +240,12 @@ includes the first screen line. (2018 Aug 23, #3368)<br>
 <br>
 Refactored HTML indent file. (Michael Lee, #1821)<br>
 <br>
-Test for user name completeion &quot;:e ~s<span class="Special">&lt;Tab&gt;</span>&quot; fails because we don't get all<br>
-user names.&nbsp;&nbsp;Is there another function to get more? (2018 Sep 3, Stuckrad)<br>
-<br>
 Patch to add getregpoint() and setreg() with an option to set &quot;&quot;.<br>
 (Andy Massimino, 2018 Aug 24, #3370)<br>
 Better name?<br>
+<br>
+MS-Windows: .lnk file not resolved properly when&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is set.<br>
+(lkintact, 2018 Sep 22, #3473)<br>
 <br>
 Script generated by :mksession does not work well if there are windows with<br>
 modified buffers<br>
@@ -243,6 +263,8 @@ Compiler warnings (geeknik, 2017 Oct 26):<br>
 Win32 console:&nbsp;<span class="Special">&lt;F11&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;F12&gt;</span>&nbsp;typed in Insert mode don't result in normal<br>
 characters. (#3246)<br>
 <br>
+<a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;is evaluated too often. (Daniel Hahler, #2773)<br>
+<br>
 Height of quickfix window is not retained with vertical splits. (Lifepillar,<br>
 2018 Aug 24, #2998)<br>
 <br>
@@ -258,6 +280,9 @@ is cleared, to avoid going back to the list of errors buffer (would have two<br>
 windows with it).&nbsp;&nbsp;Can we just remove the jump list entries for the quickfix<br>
 buffer?<br>
 <br>
+Patch to be able to use hex numbers with :digraph. (Lcd, 2015 Sep 6)<br>
+Update Sep 7.&nbsp;&nbsp;Update by Christian Brabandt, 2015 Sep 8, 2016 Feb 1.<br>
+<br>
 Make balloon_show() work outside of&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>?&nbsp;&nbsp;Users expect it to work:<br>
 #2948. (related to #1512?)<br>
 On Win32 it stops showing, because showState is already ShS_SHOWING.<br>
@@ -265,6 +290,12 @@ balloon_show() does not work properly in the terminal. (Ben Jackson, 2017 Dec<br
 20, #2481)<br>
 Also see #2352, want better control over balloon, perhaps set the position.<br>
 Should also be possible to add highlighting, like in the status line?<br>
+balloonexpr() on MS-Windows GUI doesn't handle accented chars? (nivaemail,<br>
+2018 Sep 14)<br>
+<br>
+Add v:motion_force. (Kana Natsuno, 2008 Dec 6)<br>
+Maybe call it v:motiontype.&nbsp;&nbsp;Update in #3490)<br>
+Alternaitve: add the force flag to mode(), after &quot;no&quot;.<br>
 <br>
 Patch to fix that executable() may fail on very long filename in MS-Windows.<br>
 (Ken Takata, 2016 Feb 1)<br>
@@ -286,6 +317,10 @@ Cursor in wrong position when line wraps. (#2540)<br>
 Patch to parse &quot;:line&quot; in tags file and use it for search. (Daniel Hahler,<br>
 #2546)&nbsp;&nbsp;Fixes #1057.&nbsp;&nbsp;Missing a test.<br>
 <br>
+Setting&nbsp;<a class="Type" href="options.html#'columns'">'columns'</a>&nbsp;in a BufEnter autocommand causes a second tab width to<br>
+behave strangely, as if there is a gap and a vertical window separator.<br>
+(Michael Soyka, 2018 Sep 23, #3477)<br>
+<br>
 Make&nbsp;<span class="Special">{skip}</span>&nbsp;argument of searchpair() consistent with other places where we<br>
 pass an expression to evaluate.&nbsp;&nbsp;Allow passing zero for &quot;never skip&quot;.<br>
 <br>
@@ -306,6 +341,11 @@ If&nbsp;<a class="Type" href="options.html#'readonly'">'readonly'</a>&nbsp;is no
 (wait a little while).<br>
 CreateFile() returns ERROR_SHARING_VIOLATION (Linwei, 2018 May 5)<br>
 <br>
+Using --remote to open a file in which a # appears does not work on<br>
+MS-Windows.&nbsp;&nbsp;Perhaps in \#&nbsp;&nbsp;the \ is seen as a path separator. (Axel Bender,<br>
+2017 Feb 9)&nbsp;&nbsp;Can we expand wildcards first and send the path literally to the<br>
+receiving Vim?&nbsp;&nbsp;Or make an exception for #, it's not useful remotely.<br>
+<br>
 Should add a test for every command line argument.&nbsp;&nbsp;Check coverage for what is<br>
 missing: --nofork, -A , -b, -h, etc.<br>
 <br>
@@ -316,6 +356,7 @@ Quickfix window height is not kept with a vertical split. (Lifepillar, 2018<br>
 Jun 10, #2998)<br>
 <br>
 Improve the installer for MS-Windows.&nbsp;&nbsp;There are a few alternatives:<br>
+- mui2 installer improved by Ken Takata (2018 Sep 29)<br>
 - Add silent install option. (Shane Lee, #751)<br>
 - Installer from Cream (Steve Hall).<br>
 - Modern UI 2.0 for the Nsis installer. (Guopeng Wen)<br>
@@ -332,10 +373,6 @@ Alternative manpager.vim. (Enno, 2018 Jan 5, #2529)<br>
 <br>
 Delete all the speficic stuff for the Borland compiler? (#3374)<br>
 Patch in #3377 (Thomas Dziedzic)<br>
-<br>
-Does setting&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;cause syntax highlighting to slow down?&nbsp;&nbsp;Perhaps is<br>
-mess up the cache?&nbsp;&nbsp;(Mike Lee Williams, 2018 Jan 27, #2539)<br>
-Also:&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;is evaluated too often. (Daniel Hahler, #2773)<br>
 <br>
 With&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;&quot;indent&quot; and appending an empty line, what follows isn't<br>
 included in the existing fold.&nbsp;&nbsp;Deleting the empty line and undo fixes it.<br>
@@ -494,6 +531,9 @@ Problem with&nbsp;<a class="Type" href="options.html#'delcombine'">'delcombine'<
 <br>
 MS-Windows: buffer completion doesn't work when using backslash (or slash)<br>
 for a path separator. (xtal8, #2201)<br>
+<br>
+Would be nice for insert mode completion to highlight the text that was added<br>
+(and may change when picking another compltion).<br>
 <br>
 Test runtime files.<br>
 Start with filetype detection: testdir/test_filetype.vim<br>
@@ -777,11 +817,6 @@ Or point to nightly builds:&nbsp;<span class="Constant"><a href="https://github.
 <br>
 Problem passing non-UTF-8 strings to Python 3. (Björn Linse, 2016 Sep 11,<br>
 #1053)&nbsp;&nbsp;With patch, does it work?<br>
-<br>
-Using --remote to open a file in which a # appears does not work on<br>
-MS-Windows.&nbsp;&nbsp;Perhaps in \#&nbsp;&nbsp;the \ is seen as a path separator. (Axel Bender,<br>
-2017 Feb 9)&nbsp;&nbsp;Can we expand wildcards first and send the path literally to the<br>
-receiving Vim?&nbsp;&nbsp;Or make an exception for #, it's not useful remotely.<br>
 <br>
 &quot;:sbr&quot; docs state it respects&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>, but &quot;vsplit&quot; does not cause a<br>
 vertical split. (Haldean Brown, 2017 Mar 1)<br>
@@ -1117,9 +1152,6 @@ Patch to avoid redrawing tabline when the popup menu is visible.<br>
 <br>
 Patch to add&nbsp;<span class="Special">{skip}</span>&nbsp;argument to search(). (Christian Brabandt, 2016 Feb 24)<br>
 Update 2016 Jun 10, #861<br>
-<br>
-Patch to be able to use hex numbers with :digraph. (Lcd, 2015 Sep 6)<br>
-Update Sep 7.&nbsp;&nbsp;Update by Christian Brabandt, 2015 Sep 8, 2016 Feb 1.<br>
 <br>
 Patch to show search statistics. (Christian Brabandt, 2016 Jul 22)<br>
 <br>
@@ -2195,9 +2227,6 @@ Something wrong with session that has &quot;cd&quot; commands and &quot;badd&quo
 that Vim doesn't find the edited file in the buffer list, causing the<br>
 ATTENTION message?&nbsp;&nbsp;(Tony Mechelynck, 2008 Dec 1)<br>
 Also: swap files are in ~/tmp/&nbsp;&nbsp;One has relative file name &quot;.mozilla/...&quot;.<br>
-<br>
-Add v:motion_force. (Kana Natsuno, 2008 Dec 6)<br>
-Maybe call it v:motiontype.<br>
 <br>
 MS-Windows: editing the first, empty buffer,&nbsp;<a class="Type" href="options.html#'ffs'">'ffs'</a>&nbsp;set to &quot;unix,dos&quot;, &quot;:enew&quot;<br>
 doesn't set&nbsp;<a class="Type" href="options.html#'ff'">'ff'</a>&nbsp;to &quot;unix&quot;.&nbsp;&nbsp;(Ben Fritz, 2008 Dec 5) Reusing the old buffer<br>
