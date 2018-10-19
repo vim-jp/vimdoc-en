@@ -43,17 +43,8 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Test_scrollbars() fails with X11-Athena GUI or X11-Motif GUI<br>
-(Dominique, #3451)<br>
-<br>
-Flashing highlighting with&nbsp;<a class="Type" href="options.html#'rnu'">'rnu'</a>&nbsp;and folding.<br>
-(Vitaly Yashin, 2018 Sep 26, #3484)<br>
-<br>
-Still a cursorline problem. (Justin Keyes, #3488)<br>
-<br>
-Crash with recursive use of getcmdline() from Timer.&nbsp;&nbsp;save_ccline isn't used<br>
-then.&nbsp;&nbsp;Turn it around: When getcmdline() is called it checks if it is a<br>
-recursive call, and saves the cmdline then. (#3493)<br>
+Using freed memory in quickfix. (Dominique Pelle, Yegappan is looking into a<br>
+fix).<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
@@ -63,8 +54,6 @@ recursive call, and saves the cmdline then. (#3493)<br>
 - :%s/foo should take the first match below the cursor line, unless there<br>
 &nbsp;&nbsp;isn't one?<br>
 &nbsp;&nbsp;Then :%s?foo should take the first match above the cursor line.<br>
-<br>
-Don't set diffexpr when generating _vimrc for MS-Windows.<br>
 <br>
 Prompt buffer:<br>
 - Add a command line history.<br>
@@ -80,6 +69,7 @@ Terminal debugger:<br>
 Terminal emulator window:<br>
 - GUI: When using &quot;:set go+=!&quot; a system() call causes the hit-enter prompt.<br>
 &nbsp;&nbsp;(#3327)<br>
+- GUI: hang until key typed. (#3530)<br>
 - When the job in the terminal doesn't use mouse events, let the scroll wheel<br>
 &nbsp;&nbsp;scroll the scrollback, like a terminal does at the shell prompt. #2490<br>
 &nbsp;&nbsp;And use modeless selection.&nbsp;&nbsp;#2962<br>
@@ -110,6 +100,9 @@ Terminal emulator window:<br>
 Key mapping times out when using a timer in Gvim. (Michael Henry, 2018 Sep 9,<br>
 #3417)<br>
 <br>
+Patch to check for directory access in term_start(). (Jason Franklin, 2018 Oct<br>
+15)<br>
+<br>
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
 - WINVER conflict, should use 0x0600 by default?<br>
@@ -120,9 +113,15 @@ Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
 <br>
+Win32 key codes are messy.&nbsp;&nbsp;Mike Williams tried to fix that, but now old<br>
+mappings no longer work.&nbsp;&nbsp;Create a new terminal for the better solution?<br>
+<br>
 Improve fallback for menu translations, to avoid having to create lots of<br>
 files that source the actual file.&nbsp;&nbsp;E.g. menu_da_de -&gt; menu_da<br>
 Include part of #3242?<br>
+<br>
+When a terminal exit_cb closes the window, a following typed key is lost, if<br>
+it's in a mapping. (2018 Oct 6, #2302, #3522)<br>
 <br>
 Completion mixes results from the current buffer with tags and other files.<br>
 Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still search for results.&nbsp;&nbsp;E.g., type &quot;b_&quot; in<br>
@@ -130,23 +129,39 @@ terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
 Should do current file first and not split it up when more results are found.<br>
 (Also #1890)<br>
 <br>
+C syntax: {} inside () causes following {} to be highlighted as error.<br>
+(Michalis Giannakidis, 2006 Jun 1)<br>
+<br>
 More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
+<br>
+Quickfix accessing free memory. (Dominique, 2018 Oct 13, #3538)<br>
+Yegappan will look into it.<br>
+<br>
+Patch for this: (Aron Widforss, 2018 Oct 13, #3539)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;missing a test.<br>
+7&nbsp;&nbsp; Make&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;a global-local option, so that it can be different in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;quickfix window, for example. (Gary Holloway)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Also do&nbsp;<a class="Type" href="options.html#'sidescrolloff'">'sidescrolloff'</a>.<br>
 <br>
 Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
 Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
 <br>
 &quot;:mksession&quot; cannot handle a very long&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>. (Timothy Madden, 21 Sep<br>
-2018, #3466)<br>
+2018, #3466)&nbsp;&nbsp;Christian is working on a patch.<br>
 <br>
 Patch in pull request #2967: Allow white space in sign text. (Ben Jackson)<br>
 Test fails in AppVeyor.<br>
 <br>
-Job_info() returns command without backslashes. (Daniel Hahler, 2018 Sep 3,<br>
-#3404)<br>
-<br>
 Patch to simplify nsis installer. (Ken Takata, 2018 Sep 24, was #3479)<br>
-Now included in #3501, using MUI2.<br>
+Now included in #3501, using MUI2.&nbsp;&nbsp;Use the zip file to get the binary files:<br>
+<span class="Constant"><a href="https://github.com/vim/vim/files/2475621/nsis-icons.zip">https://github.com/vim/vim/files/2475621/nsis-icons.zip</a></span><br>
+Still being worked on.<br>
+<br>
+ml_get error: (Israel Chauca Fuentes, 2018 Oct 17, #3550).<br>
+<br>
+Patch to convert temp file name. (Yasuhiro Matsumoto, #3520)<br>
+Not ready to include yet.<br>
 <br>
 Removing flags from&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;breaks the Winbar buttons in termdebug.<br>
 (Dominique Pelle, 2018 Jul 16)<br>
@@ -161,24 +176,11 @@ Invalid memory access with old regexp engine. (Dominique Pelle, 2018 Sep 3,<br>
 Add function to make use of internal diff, working on two lists and returning<br>
 unified diff (list of lines).<br>
 <br>
-Memory leak in test_assert:<br>
-==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2640D7: alloc (misc2.c:874)<br>
-==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2646D6: vim_strsave (misc2.c:1315)<br>
-==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x1B68D2: f_getcwd (evalfunc.c:4950)<br>
-And:<br>
-==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2640D7: alloc (misc2.c:874)<br>
-==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x1A9477: set_var (eval.c:7601)<br>
-==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x19F96F: set_var_lval (eval.c:2233)<br>
-==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x19EA3A: ex_let_one (eval.c:1810)<br>
-==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x19D737: ex_let_vars (eval.c:1294)<br>
-==19127==&nbsp;&nbsp;&nbsp;&nbsp;by 0x19D6B4: ex_let (eval.c:1259)<br>
+Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (#3535)<br>
+&nbsp;&nbsp;Easier to use a&nbsp;<span class="MissingTag">'diffmaster'</span>&nbsp;option, is the extra complexity needed?<br>
+<br>
 Memory leaks in test_channel? (or is it because of fork())<br>
 Using uninitialized value in test_crypt.<br>
-Memory leaks in test_escaped_glob<br>
-==20651==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2640D7: alloc (misc2.c:874)<br>
-==20651==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2646D6: vim_strsave (misc2.c:1315)<br>
-==20651==&nbsp;&nbsp;&nbsp;&nbsp;by 0x3741EA: get_function_args (userfunc.c:131)<br>
-==20651==&nbsp;&nbsp;&nbsp;&nbsp;by 0x378779: ex_function (userfunc.c:2036)<br>
 Memory leak in test_terminal:<br>
 ==23530==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2640D7: alloc (misc2.c:874)<br>
 ==23530==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2646D6: vim_strsave (misc2.c:1315)<br>
@@ -202,6 +204,9 @@ Use something like &quot;:tag&nbsp;<span class="Special">{kind}</span>/<span cla
 Not ready to include.<br>
 <br>
 Patch to support menus in terminal: &quot;:tlmenu&quot;. (Yee Cheng Chin, #3439)<br>
+<br>
+:pedit resets the&nbsp;<a class="Type" href="options.html#'buflisted'">'buflisted'</a>&nbsp;option unexpectedly. (Wang Shidong, 2018 Oct 12,<br>
+#3536)<br>
 <br>
 home_replace() uses $HOME instead of &quot;homedir&quot;. (Cesar Martins, 2018 Aug 9)<br>
 <br>
@@ -238,6 +243,9 @@ Update Mar 5. Update Apr 7.&nbsp;&nbsp;Update Jun 5.<br>
 When the last line wraps, selecting with the mouse below that line only<br>
 includes the first screen line. (2018 Aug 23, #3368)<br>
 <br>
+Add&nbsp;<a class="Comment" href="various.html#:filter">:filter</a>&nbsp;support for various commands (Marcin Szamotulski, 2017 Nov 12<br>
+#2322)&nbsp;&nbsp;Patch now in #2856.<br>
+<br>
 Refactored HTML indent file. (Michael Lee, #1821)<br>
 <br>
 Patch to add getregpoint() and setreg() with an option to set &quot;&quot;.<br>
@@ -265,6 +273,11 @@ characters. (#3246)<br>
 <br>
 <a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;is evaluated too often. (Daniel Hahler, #2773)<br>
 <br>
+ml_get error when using a Python script. (Yggdroot, 2017 Jun 1, #1737)<br>
+Lemonboy can reproduce (2017 Jun 5)<br>
+Also reproduced by Benjamin Doherty, 2018 Oct 4.<br>
+Simpler way: Ken Takata, Oct 6.<br>
+<br>
 Height of quickfix window is not retained with vertical splits. (Lifepillar,<br>
 2018 Aug 24, #2998)<br>
 <br>
@@ -279,6 +292,9 @@ When using&nbsp;<span class="Special">CTRL-W</span>&nbsp;CR in the quickfix wind
 is cleared, to avoid going back to the list of errors buffer (would have two<br>
 windows with it).&nbsp;&nbsp;Can we just remove the jump list entries for the quickfix<br>
 buffer?<br>
+<br>
+Patch to fix that executable() may fail on very long filename in MS-Windows.<br>
+(Ken Takata, 2016 Feb 1, update 2018 Oct 7)<br>
 <br>
 Patch to be able to use hex numbers with :digraph. (Lcd, 2015 Sep 6)<br>
 Update Sep 7.&nbsp;&nbsp;Update by Christian Brabandt, 2015 Sep 8, 2016 Feb 1.<br>
@@ -296,9 +312,6 @@ balloonexpr() on MS-Windows GUI doesn't handle accented chars? (nivaemail,<br>
 Add v:motion_force. (Kana Natsuno, 2008 Dec 6)<br>
 Maybe call it v:motiontype.&nbsp;&nbsp;Update in #3490)<br>
 Alternaitve: add the force flag to mode(), after &quot;no&quot;.<br>
-<br>
-Patch to fix that executable() may fail on very long filename in MS-Windows.<br>
-(Ken Takata, 2016 Feb 1)<br>
 <br>
 Try out background make plugin:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
@@ -454,9 +467,6 @@ option_save(<span class="Special">{list}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 &quot;gvim --remote&quot; from a directory with non-word characters changes the current<br>
 directory (Paulo Marcel Coelho Arabic, 2017 Oct 30, #2266)<br>
 Also see #1689.<br>
-<br>
-ml_get error when using a Python script. (Yggdroot, 2017 Jun 1, #1737)<br>
-Lemonboy can reproduce (2017 Jun 5)<br>
 <br>
 crash when removing an element while inside map(). (Nikolai Pavlov, 2018 Feb<br>
 17, #2652)<br>
@@ -640,9 +650,6 @@ stack trace. (Yggdroot, 2017 Jul 28, #1887)<br>
 <br>
 Profile of a dict function is lost when the dict is deleted.&nbsp;&nbsp;Would it be<br>
 possible to collect this?&nbsp;&nbsp;(Daniel Hahler, #2350)<br>
-<br>
-Add&nbsp;<a class="Comment" href="various.html#:filter">:filter</a>&nbsp;support for various commands (Marcin Szamotulski, 2017 Nov 12<br>
-#2322)&nbsp;&nbsp;Patch now in #2856.<br>
 <br>
 When checking if a bufref is valid, also check the buffer number, to catch the<br>
 case of :bwipe followed by :new.<br>
@@ -2417,9 +2424,6 @@ Syntax highlighting wrong for transparent region. (Doug Kearns, 2007 Feb 26)<br>
 Bug in using a transparent syntax region. (Hanlen in vim-dev maillist, 2007<br>
 Jul 31)<br>
 <br>
-C syntax: {} inside () causes following {} to be highlighted as error.<br>
-(Michalis Giannakidis, 2006 Jun 1)<br>
-<br>
 When&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>&nbsp;has &quot;context:0&quot; a single deleted line causes two folds to merge<br>
 and mess up syncing. (Austin Jennings, 2008 Jan 31)<br>
 <br>
@@ -2882,8 +2886,6 @@ More patches:<br>
 -&nbsp;&nbsp; Another patch for Javascript indenting. (Hari Kumar, 2010 Jul 11)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Needs a few tests.<br>
 -&nbsp;&nbsp; Add&nbsp;<span class="MissingTag">'cscopeignorecase'</span>&nbsp;option. (Liang Wenzhi, 2006 Sept 3)<br>
--&nbsp;&nbsp; Load intl.dll too, not only libintl.dll. (Mike Williams, 2006 May 9, docs<br>
-&nbsp;&nbsp;&nbsp;&nbsp;patch May 10)<br>
 -&nbsp;&nbsp; Extra argument to strtrans() to translate special keys to their name (Eric<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Arnold, 2006 May 22)<br>
 -&nbsp;&nbsp;&nbsp;<span class="MissingTag">'threglookexp'</span>&nbsp;option: only match with first word in thesaurus file.<br>
@@ -5579,9 +5581,6 @@ Options:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;that marks if the option was set.&nbsp;&nbsp;Useful to keep the effect of setting<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;after &quot;:syntax on&quot; has been used.<br>
 7&nbsp;&nbsp; There is&nbsp;<a class="Type" href="options.html#'titleold'">'titleold'</a>, why is there no&nbsp;<span class="MissingTag">'iconold'</span>? (Chazelas)<br>
-7&nbsp;&nbsp; Make&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;a global-local option, so that it can be different in the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;quickfix window, for example. (Gary Holloway)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Also do&nbsp;<a class="Type" href="options.html#'sidescrolloff'">'sidescrolloff'</a>.<br>
 <br>
 <br>
 External commands:<br>
