@@ -43,9 +43,6 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Using freed memory in quickfix. (Dominique Pelle, Yegappan is looking into a<br>
-fix).<br>
-<br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
 &nbsp;&nbsp;correct line (it uses the last but one line) (Lifepillar, Aug 18, #3345)<br>
@@ -61,10 +58,13 @@ Prompt buffer:<br>
 <br>
 Terminal debugger:<br>
 - Make prompt-buffer variant work better.<br>
+- Add option to not open the program window.&nbsp;&nbsp;It's not used when attaching to<br>
+&nbsp;&nbsp;an already running program. (M. Kelly)<br>
 - When only gdb window exists, on &quot;quit&quot; edit another buffer.<br>
 - Termdebug does not work when Vim was build with mzscheme: gdb hangs just<br>
 &nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
 &nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
+- Add support for lldb?&nbsp;&nbsp;#3565<br>
 <br>
 Terminal emulator window:<br>
 - GUI: When using &quot;:set go+=!&quot; a system() call causes the hit-enter prompt.<br>
@@ -126,6 +126,11 @@ terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
 Should do current file first and not split it up when more results are found.<br>
 (Also #1890)<br>
 <br>
+Internal diff doesn't handle binary file like external diff does. (Mike<br>
+Williams, 2018 Oct 30)<br>
+<br>
+Problem with :tlmenu: Detach item added with all modes?&nbsp;&nbsp;Issue #3563.<br>
+<br>
 C syntax: {} inside () causes following {} to be highlighted as error.<br>
 (Michalis Giannakidis, 2006 Jun 1)<br>
 <br>
@@ -145,7 +150,7 @@ Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
 Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
 <br>
 &quot;:mksession&quot; cannot handle a very long&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>. (Timothy Madden, 21 Sep<br>
-2018, #3466)&nbsp;&nbsp;Christian is working on a patch.<br>
+2018, #3466)&nbsp;&nbsp;Patch from Christian, 2018 Oct 30 (with comments).<br>
 <br>
 Patch in pull request #2967: Allow white space in sign text. (Ben Jackson)<br>
 Test fails in AppVeyor.<br>
@@ -160,9 +165,6 @@ ml_get error: (Israel Chauca Fuentes, 2018 Oct 17, #3550).<br>
 Patch to convert temp file name. (Yasuhiro Matsumoto, #3520)<br>
 Not ready to include yet.<br>
 <br>
-Removing flags from&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;breaks the Winbar buttons in termdebug.<br>
-(Dominique Pelle, 2018 Jul 16)<br>
-<br>
 Problem with two buffers with the same name a/b, if it didn't exist before and<br>
 is created outside of Vim. (dskloetg, 2018 Jul 16, #3219)<br>
 <br>
@@ -175,6 +177,12 @@ unified diff (list of lines).<br>
 <br>
 Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (#3535)<br>
 &nbsp;&nbsp;Easier to use a&nbsp;<span class="MissingTag">'diffmaster'</span>&nbsp;option, is the extra complexity needed?<br>
+<br>
+Patch to fix that bracketed paste remains after Vim exits. (2018 Oct 30, #3579)<br>
+<br>
+cursorline highlighting not removed after yanking in Visual mode.<br>
+(Matéo Zanibelli, 2018 Oct 30, #3578)<br>
+Patch by Christian, Oct 30.<br>
 <br>
 Memory leaks in test_channel? (or is it because of fork())<br>
 Using uninitialized value in test_crypt.<br>
@@ -193,6 +201,9 @@ gethostbyname() is old, use getaddrinfo() if available. (#3227)<br>
 <br>
 matchaddpos() gets slow with many matches.&nbsp;&nbsp;Proposal by Rick Howe, 2018 Jul<br>
 19.<br>
+<br>
+Sourceforge Vim pages still have content, redirect from empty page.<br>
+Check for PHP errors. (Wayne Davison, 2018 Oct 26)<br>
 <br>
 Patch to support &quot;:tag&nbsp;<span class="Special">&lt;tagkind&gt;</span>&nbsp;<span class="Special">&lt;tagname&gt;</span>&quot;. (emmrk, 2018 May 7, #2871)<br>
 Use something like &quot;:tag&nbsp;<span class="Special">{kind}</span>/<span class="Special">{tagname}</span>&quot;.<br>
@@ -218,7 +229,7 @@ Only output t_Cs when t_Ce is also set.&nbsp;&nbsp;do not use Cs and Ce termcap 
 Add t_cS and t_cR for cursor color select and reset.&nbsp;&nbsp;Use Cs and Cr terminfo<br>
 values.<br>
 <br>
-Furthere xdiff changes:<br>
+Further xdiff changes:<br>
 - More options, e.g. different kind of whitespace diff.<br>
 - when editing text, update the surrounding diff blocks.<br>
 - omit diff.exe from distribution<br>
@@ -227,19 +238,11 @@ Furthere xdiff changes:<br>
 <br>
 Difference between two regexp engines: #3373<br>
 <br>
-Patch to handle missin glibwinpthread-1.dll. (Ken Takata, 2018 Sep 23, #2827)<br>
-<br>
-Patch to add arguments to argc() and argv(). (Yegappan Lakshmanan, 2016 Jan<br>
-24, #832)&nbsp;&nbsp;Also need a way to get the global arg list?&nbsp;&nbsp;Update later on Jan 24<br>
-Update Mar 5. Update Apr 7.&nbsp;&nbsp;Update Jun 5.<br>
-<br>
 When the last line wraps, selecting with the mouse below that line only<br>
 includes the first screen line. (2018 Aug 23, #3368)<br>
 <br>
-Add&nbsp;<a class="Comment" href="various.html#:filter">:filter</a>&nbsp;support for various commands (Marcin Szamotulski, 2017 Nov 12<br>
-#2322)&nbsp;&nbsp;Patch now in #2856.<br>
-<br>
 Refactored HTML indent file. (Michael Lee, #1821)<br>
+Ask to write a test first.<br>
 <br>
 Patch to add getregpoint() and setreg() with an option to set &quot;&quot;.<br>
 (Andy Massimino, 2018 Aug 24, #3370)<br>
@@ -266,6 +269,9 @@ characters. (#3246)<br>
 <br>
 <a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;is evaluated too often. (Daniel Hahler, #2773)<br>
 <br>
+Add Native language protocol server (LSP) support. (Yegappan Lakshmanan, 2018<br>
+Oct 28)<br>
+<br>
 ml_get error when using a Python script. (Yggdroot, 2017 Jun 1, #1737)<br>
 Lemonboy can reproduce (2017 Jun 5)<br>
 Also reproduced by Benjamin Doherty, 2018 Oct 4.<br>
@@ -280,6 +286,11 @@ Window size is wrong when using quickfix window. (Lifepillar, 2018 Aug 24,<br>
 Tests failing for &quot;make testgui&quot; with GTK:<br>
 - Test_setbufvar_options()<br>
 - Test_exit_callback_interval()<br>
+<br>
+Get a &quot;No Name&quot; buffer when&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;is set and opening a new window from the<br>
+quickfix list. (bfrg, 2018 Jan 22, #2574)<br>
+Tracked down by Jason Franklin, 2018 Oct 30.<br>
+Suggested patch by Yegappan, Nov 1.<br>
 <br>
 When using&nbsp;<span class="Special">CTRL-W</span>&nbsp;CR in the quickfix window, the jumplist in the opened window<br>
 is cleared, to avoid going back to the list of errors buffer (would have two<br>
@@ -303,8 +314,8 @@ balloonexpr() on MS-Windows GUI doesn't handle accented chars? (nivaemail,<br>
 2018 Sep 14)<br>
 <br>
 Add v:motion_force. (Kana Natsuno, 2008 Dec 6)<br>
-Maybe call it v:motiontype.&nbsp;&nbsp;Update in #3490)<br>
-Alternaitve: add the force flag to mode(), after &quot;no&quot;.<br>
+Maybe call it v:motiontype.&nbsp;&nbsp;Update in #3490.<br>
+Alternative: add the force flag to mode(), after &quot;no&quot;.<br>
 <br>
 Try out background make plugin:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
@@ -312,7 +323,7 @@ or asyncmake:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/yegappan/asyncmake">https://github.com/yegappan/asyncmake</a></span><br>
 <br>
 Add a ModeChanged autocommand that has an argument indicating the old and new<br>
-mode.&nbsp;&nbsp;Also used for switching Terminal mode.<br>
+mode, as what's returned from mode().&nbsp;&nbsp;Also used for switching Terminal mode.<br>
 <br>
 Add an option with file patterns, to be used when unloading a buffer: If there<br>
 is a match, remove entries for the buffer from marks, jumplist, etc.&nbsp;&nbsp;To be<br>
@@ -377,7 +388,7 @@ How to test that it works well for all Vim users?<br>
 <br>
 Alternative manpager.vim. (Enno, 2018 Jan 5, #2529)<br>
 <br>
-Delete all the speficic stuff for the Borland compiler? (#3374)<br>
+Delete all the specific stuff for the Borland compiler? (#3374)<br>
 Patch in #3377 (Thomas Dziedzic)<br>
 <br>
 With&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;&quot;indent&quot; and appending an empty line, what follows isn't<br>
@@ -456,6 +467,10 @@ option_save(<span class="Special">{list}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;values are handled and the script ID is restored, so that<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:verbose set</span>&nbsp;will show where the option was originally set,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not where it was restored.<br>
+&nbsp;&nbsp;Alternatively: save and restore ALL options.&nbsp;&nbsp;Implementation needs to use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;copy-on-write.&nbsp;&nbsp;Return an ID from option_save(), when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;option_restore(ID) is called give an error if another option_save()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;was called in the mean time, they must be balanced.<br>
 <br>
 &quot;gvim --remote&quot; from a directory with non-word characters changes the current<br>
 directory (Paulo Marcel Coelho Arabic, 2017 Oct 30, #2266)<br>
@@ -478,9 +493,6 @@ Add script number to profile?&nbsp;&nbsp;(#3330 breaks tests).<br>
 <br>
 A function defined locally and lambda's are not easily recognized.<br>
 Mention where they were defined somewhere.<br>
-<br>
-Get a &quot;No Name&quot; buffer when&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;is set and opening a new window from the<br>
-quickfix list. (bfrg, 2018 Jan 22, #2574)<br>
 <br>
 <span class="Special">CTRL-X</span>&nbsp;on zero gets stuck on 0xfffffffffffffffe. (Hengyang Zhao, #2746)<br>
 <br>
@@ -536,7 +548,7 @@ MS-Windows: buffer completion doesn't work when using backslash (or slash)<br>
 for a path separator. (xtal8, #2201)<br>
 <br>
 Would be nice for insert mode completion to highlight the text that was added<br>
-(and may change when picking another compltion).<br>
+(and may change when picking another completion).<br>
 <br>
 Test runtime files.<br>
 Start with filetype detection: testdir/test_filetype.vim<br>
@@ -3700,6 +3712,7 @@ Most interesting new features to be added when all bugs have been fixed:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Alternative: Make a function for Ex commands: cmd_edit().<br>
 -&nbsp;&nbsp; Add COLUMN NUMBERS to &quot;:&quot; commands &quot;:line1,line2[col1,col2]cmd&quot;.&nbsp;&nbsp;Block<br>
 &nbsp;&nbsp;&nbsp;&nbsp;can be selected with&nbsp;<span class="Special">CTRL-V</span>.&nbsp;&nbsp;Allow '$' (end of line) for col2.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(issue #3292)<br>
 -&nbsp;&nbsp; ECLIPSE plugin.&nbsp;&nbsp;Problem is: the interface is very complicated.&nbsp;&nbsp;Need to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;implement part in Java and then connect to Vim.&nbsp;&nbsp;Some hints from Alexandru<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Roman, 2004 Dec 15.&nbsp;&nbsp;Should then also work with Oracle Jdeveloper, see JSR<br>
