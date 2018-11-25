@@ -43,7 +43,11 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-runtest: for flaky test, try more often if error message changes (5 times)<br>
+Make &quot;:script 40&quot; edit the script listed with number 40.&nbsp;&nbsp;Actually use<br>
+&quot;:scriptnames&quot;.<br>
+<br>
+Download page: &quot;A 64 bit version&quot; link is wrong, use this one instead:<br>
+<span class="Constant"><a href="https://github.com/vim/vim-win32-installer/releases/latest">https://github.com/vim/vim-win32-installer/releases/latest</a></span><br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
@@ -57,9 +61,12 @@ runtest: for flaky test, try more often if error message changes (5 times)<br>
 Prompt buffer:<br>
 - Add a command line history.<br>
 - delay next prompt until plugin gives OK?<br>
+- add prompt_addtext(<span class="Special">{buf}</span>,&nbsp;<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp; none&nbsp;&nbsp;&nbsp;&nbsp;add text to a prompt buffer<br>
 <br>
 Terminal debugger:<br>
 - Make prompt-buffer variant work better.<br>
+- If breakpoints are deleted with &quot;delete&quot; in gdb the response is not parsed<br>
+&nbsp;&nbsp;properly and the breakpoints in Vim are not removed.<br>
 - Add option to not open the program window.&nbsp;&nbsp;It's not used when attaching to<br>
 &nbsp;&nbsp;an already running program. (M. Kelly)<br>
 - When only gdb window exists, on &quot;quit&quot; edit another buffer.<br>
@@ -67,6 +74,10 @@ Terminal debugger:<br>
 &nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
 &nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
 - Add support for lldb?&nbsp;&nbsp;#3565<br>
+- Could we do something similar for debugging Vim scripts?&nbsp;&nbsp;At least see the<br>
+&nbsp;&nbsp;script while stepping through it.&nbsp;&nbsp;Simple version would use an extra window.<br>
+&nbsp;&nbsp;More complete solution would actually run Vim in a Terminal an control it<br>
+&nbsp;&nbsp;with another Vim instance.<br>
 <br>
 Terminal emulator window:<br>
 - GUI: When using &quot;:set go+=!&quot; a system() call causes the hit-enter prompt.<br>
@@ -107,10 +118,13 @@ catch actual errors, overwriting a function from another script.<br>
 Update for German spell files:&nbsp;<span class="Constant"><a href="https://github.com/chrisbra/vim/compare/5e021c990f8817a50d3264782a5...3b27c92f297540761ebbd92d04fb3">https://github.com/chrisbra/vim/compare/5e021c990f8817a50d3264782a5...3b27c92f297540761ebbd92d04fb3</a></span><br>
 (Christian Brabandt, 2018 Nov 4)<br>
 <br>
-Patch for comparing quickfix and location stacks. (Yegappan, 2018 Nov 15)<br>
+Patch for nsis/README.txt and uninstal.txt (Ken Takata, 2018 Nov 17, #3614)<br>
 <br>
-Patch to fix visual block problem. (Tom M, tommm, 2018 Nov 14)<br>
-Also will write a test.<br>
+Patch to add commandline completion tests. (Dominique, #3622)<br>
+<br>
+Problem with Visual yank when&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;are set.<br>
+Patch with tests, but it's not clear how it is supposed to work. (tommm, 2018<br>
+Nov 17)<br>
 <br>
 Key mapping times out when using a timer in Gvim. (Michael Henry, 2018 Sep 9,<br>
 #3417)<br>
@@ -118,6 +132,13 @@ Key mapping times out when using a timer in Gvim. (Michael Henry, 2018 Sep 9,<br
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
 - WINVER conflict, should use 0x0600 by default?<br>
+<br>
+Adding a fold with a marker in a C file doesn't add the comment /* */ if the<br>
+line contains a * somewhere.&nbsp;&nbsp;Patch with a fix (Hirohito Higashi, 2018 Nov 22)<br>
+<br>
+Crash in terminal with long multi-byte sequence. (2018 Nov 17, #3619)<br>
+Dominique cannot reproduce. Update Nov 18.<br>
+Suggested solution by Yasuhiro Matsumoto, 2018 Nov 18.<br>
 <br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
@@ -128,6 +149,9 @@ Errors found with random data:<br>
 Win32 key codes are messy.&nbsp;&nbsp;Mike Williams tried to fix that, but now old<br>
 mappings no longer work.&nbsp;&nbsp;Create a new terminal for the better solution?<br>
 <br>
+Patch to fix that appending makes items to be &quot;recognized&quot;.<br>
+(Yegappan, 2018 Nov 23). Reported by Daniel Hahler, #3633.<br>
+<br>
 Improve fallback for menu translations, to avoid having to create lots of<br>
 files that source the actual file.&nbsp;&nbsp;E.g. menu_da_de -&gt; menu_da<br>
 Include part of #3242?<br>
@@ -135,9 +159,10 @@ Include part of #3242?<br>
 When a terminal exit_cb closes the window, a following typed key is lost, if<br>
 it's in a mapping. (2018 Oct 6, #2302, #3522)<br>
 <br>
-Patch for dos installer to use logic instead of $HOME.&nbsp;&nbsp;(Ken Takata, Nov 5,<br>
-#3564)<br>
+Patch to add FOR_ALL_FRAMES. (Yegappan, 2018 Nov 18)<br>
 <br>
+Patch to resize to fit parent position when using ---windowid. ( Agorgianitis<br>
+Loukas, 2018 Nov 17, #3616)<br>
 Completion mixes results from the current buffer with tags and other files.<br>
 Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still search for results.&nbsp;&nbsp;E.g., type &quot;b_&quot; in<br>
 terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
@@ -148,9 +173,6 @@ Internal diff doesn't handle binary file like external diff does. (Mike<br>
 Williams, 2018 Oct 30)<br>
 <br>
 Problem with :tlmenu: Detach item added with all modes?&nbsp;&nbsp;Issue #3563.<br>
-<br>
-Patch to avoid that increment or decrement gets interrupted by updating folds.<br>
-(Christian Brabandt, 2018 Nov 6, #3599)<br>
 <br>
 C syntax: {} inside () causes following {} to be highlighted as error.<br>
 (Michalis Giannakidis, 2006 Jun 1)<br>
@@ -167,8 +189,17 @@ Patch for this: (Aron Widforss, 2018 Oct 13, #3539)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;quickfix window, for example. (Gary Holloway)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Also do&nbsp;<a class="Type" href="options.html#'sidescrolloff'">'sidescrolloff'</a>.<br>
 <br>
+Patch for ConPTY support, #3474: What is the status?<br>
+<br>
 Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
 Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
+<br>
+Using&nbsp;<span class="Special">CTRL-L</span>&nbsp;to add a character to the search string doesn't work for the last<br>
+character in the file. (Smylers, 2018 Nov 17, #3620)<br>
+Suggested patch by Hirohito Higashi, 2018 Nov 18.<br>
+<br>
+Using&nbsp;<span class="Special">CTRL-L</span>&nbsp;to add a character to the search string that contains \v,<br>
+punctiuation is repeated. (Smylers, 2018 Nov 17, #3621)<br>
 <br>
 &quot;:mksession&quot; cannot handle a very long&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>. (Timothy Madden, 21 Sep<br>
 2018, #3466)&nbsp;&nbsp;Patch from Christian, 2018 Oct 30 (with comments).<br>
@@ -326,6 +357,8 @@ Patch to fix that executable() may fail on very long filename in MS-Windows.<br>
 <br>
 Patch to be able to use hex numbers with :digraph. (Lcd, 2015 Sep 6)<br>
 Update Sep 7.&nbsp;&nbsp;Update by Christian Brabandt, 2015 Sep 8, 2016 Feb 1.<br>
+Patch to be able to disable default digraphs (incomplete) (Eric Pruitt, 2018<br>
+Nov 22).<br>
 <br>
 Make balloon_show() work outside of&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>?&nbsp;&nbsp;Users expect it to work:<br>
 #2948. (related to #1512?)<br>
