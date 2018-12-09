@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2018 May 17<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2018 Dec 09<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,15 +43,11 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Make &quot;:script 40&quot; edit the script listed with number 40.&nbsp;&nbsp;Actually use<br>
-&quot;:scriptnames&quot;.<br>
-<br>
-Download page: &quot;A 64 bit version&quot; link is wrong, use this one instead:<br>
-<span class="Constant"><a href="https://github.com/vim/vim-win32-installer/releases/latest">https://github.com/vim/vim-win32-installer/releases/latest</a></span><br>
-<br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
 &nbsp;&nbsp;correct line (it uses the last but one line) (Lifepillar, Aug 18, #3345)<br>
+- :s@pat/tern@ doesn't include &quot;/&quot; in the pattern. (Takahiro Yoshihara, #3637)<br>
+&nbsp;&nbsp; pass delim to do_search() ?<br>
 - Also support range: :/foo/,/bar/delete<br>
 - Also support for user command, e.g. Cfilter<br>
 - :%s/foo should take the first match below the cursor line, unless there<br>
@@ -110,21 +106,18 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
-Users get used to &quot;function!&quot; because they reload a script file.&nbsp;&nbsp;How about<br>
-recognizing the script is re-sourced and not giving an error for the first<br>
-function that overwrites.&nbsp;&nbsp;Then one can leave out the exclamation mark and<br>
-catch actual errors, overwriting a function from another script.<br>
+&quot;:function&quot; can now silently overwrite the function from the same script.<br>
+Do the same for &quot;:command&quot; ?<br>
 <br>
 Update for German spell files:&nbsp;<span class="Constant"><a href="https://github.com/chrisbra/vim/compare/5e021c990f8817a50d3264782a5...3b27c92f297540761ebbd92d04fb3">https://github.com/chrisbra/vim/compare/5e021c990f8817a50d3264782a5...3b27c92f297540761ebbd92d04fb3</a></span><br>
 (Christian Brabandt, 2018 Nov 4)<br>
 <br>
-Patch for nsis/README.txt and uninstal.txt (Ken Takata, 2018 Nov 17, #3614)<br>
-<br>
-Patch to add commandline completion tests. (Dominique, #3622)<br>
-<br>
 Problem with Visual yank when&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;are set.<br>
 Patch with tests, but it's not clear how it is supposed to work. (tommm, 2018<br>
 Nov 17)<br>
+<br>
+Patch to add configure flags to skip rtl, farsi and arabic support.<br>
+(Diego Carrión, #1867)<br>
 <br>
 Key mapping times out when using a timer in Gvim. (Michael Henry, 2018 Sep 9,<br>
 #3417)<br>
@@ -133,15 +126,20 @@ Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
 - WINVER conflict, should use 0x0600 by default?<br>
 <br>
-Adding a fold with a marker in a C file doesn't add the comment /* */ if the<br>
-line contains a * somewhere.&nbsp;&nbsp;Patch with a fix (Hirohito Higashi, 2018 Nov 22)<br>
-<br>
 Crash in terminal with long multi-byte sequence. (2018 Nov 17, #3619)<br>
 Dominique cannot reproduce. Update Nov 18.<br>
 Suggested solution by Yasuhiro Matsumoto, 2018 Nov 18.<br>
 <br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
+<br>
+Patch to simplify nsis installer. (Ken Takata, 2018 Sep 24, was #3479)<br>
+Now included in #3501, using MUI2.&nbsp;&nbsp;Use the zip file to get the binary files:<br>
+<span class="Constant"><a href="https://github.com/vim/vim/files/2475621/nsis-icons.zip">https://github.com/vim/vim/files/2475621/nsis-icons.zip</a></span><br>
+Ready to include now.<br>
+<br>
+Patch to add blob type support.&nbsp;&nbsp;(Yasuhiro Matsumoto, 2018 Nov 26, #3638)<br>
+Not done yet.<br>
 <br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
@@ -151,6 +149,9 @@ mappings no longer work.&nbsp;&nbsp;Create a new terminal for the better solutio
 <br>
 Patch to fix that appending makes items to be &quot;recognized&quot;.<br>
 (Yegappan, 2018 Nov 23). Reported by Daniel Hahler, #3633.<br>
+<br>
+Patch to define and manipulate signs with functions.&nbsp;&nbsp;Adds sign groups and<br>
+priority.&nbsp;&nbsp; (Yegappan Lakshmanan, #3652)<br>
 <br>
 Improve fallback for menu translations, to avoid having to create lots of<br>
 files that source the actual file.&nbsp;&nbsp;E.g. menu_da_de -&gt; menu_da<br>
@@ -180,9 +181,6 @@ C syntax: {} inside () causes following {} to be highlighted as error.<br>
 More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
 <br>
-Quickfix accessing free memory. (Dominique, 2018 Oct 13, #3538)<br>
-Yegappan will look into it.<br>
-<br>
 Patch for this: (Aron Widforss, 2018 Oct 13, #3539)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;missing a test.<br>
 7&nbsp;&nbsp; Make&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;a global-local option, so that it can be different in the<br>
@@ -204,13 +202,11 @@ punctiuation is repeated. (Smylers, 2018 Nov 17, #3621)<br>
 &quot;:mksession&quot; cannot handle a very long&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>. (Timothy Madden, 21 Sep<br>
 2018, #3466)&nbsp;&nbsp;Patch from Christian, 2018 Oct 30 (with comments).<br>
 <br>
+Patch to add functions for signs. (Yegappan Lakshmanan, 2018 Nov 24)<br>
+obsolete: Patch to add functions for signs. (Christian Brabandt, 2013 Jan 27)<br>
+<br>
 Patch in pull request #2967: Allow white space in sign text. (Ben Jackson)<br>
 Test fails in AppVeyor.<br>
-<br>
-Patch to simplify nsis installer. (Ken Takata, 2018 Sep 24, was #3479)<br>
-Now included in #3501, using MUI2.&nbsp;&nbsp;Use the zip file to get the binary files:<br>
-<span class="Constant"><a href="https://github.com/vim/vim/files/2475621/nsis-icons.zip">https://github.com/vim/vim/files/2475621/nsis-icons.zip</a></span><br>
-Still being worked on.<br>
 <br>
 ml_get error: (Israel Chauca Fuentes, 2018 Oct 17, #3550).<br>
 <br>
@@ -232,6 +228,9 @@ Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (
 <br>
 Patch to fix that bracketed paste remains after Vim exits. (2018 Oct 30, #3579)<br>
 <br>
+Patch for lnext/lprev work in specific cases. (Yegappan Lakshmanan, 2018 Dec<br>
+4, #3633)<br>
+<br>
 cursorline highlighting not removed after yanking in Visual mode.<br>
 (Matéo Zanibelli, 2018 Oct 30, #3578)<br>
 Patch by Christian, Oct 30.<br>
@@ -250,6 +249,9 @@ Memory leak in test_terminal:<br>
 ==23530==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2B16BE: mch_call_shell (os_unix.c:5383)<br>
 <br>
 gethostbyname() is old, use getaddrinfo() if available. (#3227)<br>
+<br>
+Patch to add match count and current index &quot;3/44&quot; when using &quot;n&quot; command.<br>
+(Christian Brabandt, on issue #453).&nbsp;&nbsp;Only when search string was typed?<br>
 <br>
 matchaddpos() gets slow with many matches.&nbsp;&nbsp;Proposal by Rick Howe, 2018 Jul<br>
 19.<br>
@@ -292,6 +294,9 @@ Further xdiff changes:<br>
 - add option to use external diff above a certain size.<br>
 <br>
 Difference between two regexp engines: #3373<br>
+<br>
+Patch to add ch_listen() (Yasuhiro Matsumoto, 2018 Nov 26, #3639)<br>
+What is the practical use for this?<br>
 <br>
 When the last line wraps, selecting with the mouse below that line only<br>
 includes the first screen line. (2018 Aug 23, #3368)<br>
@@ -763,9 +768,6 @@ Is it possible to keep the complete menu open when calling complete()?<br>
 (Prabir Shrestha, 2017 May 19, #1713)<br>
 <br>
 Memory leak in test97?&nbsp;&nbsp;The string is actually freed.&nbsp;&nbsp;Weird.<br>
-<br>
-Patch to add configure flags to skip rtl, farsi and arabic support.<br>
-(Diego Carrión, #1867)<br>
 <br>
 assert_fails() can only check for the first error.&nbsp;&nbsp;Make it possible to have<br>
 it catch multiple errors and check all of them.<br>
@@ -1658,8 +1660,6 @@ Patch to add getsid(). (Tyru, 2011 Oct 2)&nbsp;&nbsp;Do we want this?&nbsp;&nbsp
 Or use expand('<span class="Special">&lt;sid&gt;</span>')?<br>
 <br>
 Patch to make confirm() display colors. (Christian Brabandt, 2012 Nov 9)<br>
-<br>
-Patch to add functions for signs. (Christian Brabandt, 2013 Jan 27)<br>
 <br>
 Patch to remove flicker from popup menu. (Yasuhiro Matsumoto, 2013 Aug 15)<br>
 <br>
