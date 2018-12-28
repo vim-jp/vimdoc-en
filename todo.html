@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2018 Dec 17<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2018 Dec 27<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -42,6 +42,10 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 (replace 1234 with the issue/pull number)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
+<br>
+Possible errors reported from fuzzer. Shadowblade #3716<br>
+a) using get_regline() without checking for NULL<br>
+b) using getcell() in libvterm without checking for NULL<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
@@ -112,49 +116,39 @@ Update for German spell files:&nbsp;<span class="Constant"><a href="https://gith
 <br>
 Problem with Visual yank when&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;are set.<br>
 Patch with tests, but it's not clear how it is supposed to work. (tommm, 2018<br>
-Nov 17)<br>
+Nov 17)&nbsp;&nbsp;Asked about this, Dec 22. Christian will have a look.<br>
 <br>
 Key mapping times out when using a timer in Gvim. (Michael Henry, 2018 Sep 9,<br>
 #3417)<br>
+<br>
+Add v:motion_force. (Kana Natsuno, 2008 Dec 6)<br>
+Maybe call it v:motiontype.&nbsp;&nbsp;Update in #3490.<br>
+Alternative: add the force flag to mode(), after &quot;no&quot;.<br>
+Patch ready to include?<br>
 <br>
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
 - WINVER conflict, should use 0x0600 by default?<br>
 <br>
 Signs:<br>
--&nbsp;&nbsp; Patch to define and manipulate signs with functions.&nbsp;&nbsp;Adds sign groups and<br>
-&nbsp;&nbsp;&nbsp;&nbsp;priority.&nbsp;&nbsp; (Yegappan Lakshmanan, #3652)<br>
+-&nbsp;&nbsp; Use a sign group in the Termdebug plugin.<br>
 -&nbsp;&nbsp; Avoid that &quot;sign unplace id&quot; does a redraw right away, esp. when there is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;a sequence of these commands. (Andy Stewart, 2018 Mar 16)<br>
 -&nbsp;&nbsp; Patch to right-align signs. (James Kolb (email james), 2013 Sep 23)<br>
 -&nbsp;&nbsp; Patch from Christian Brabandt to make the &quot;buffer&quot; argument for &quot;:sign<br>
 &nbsp;&nbsp;&nbsp;&nbsp;place&quot; optional. (2013 Jul 12)<br>
 <br>
-Rename get_tv_ functions to tv_get_.<br>
-<br>
-Crash in terminal with long multi-byte sequence. (2018 Nov 17, #3619)<br>
-Dominique cannot reproduce. Update Nov 18.<br>
-Suggested solution by Yasuhiro Matsumoto, 2018 Nov 18.<br>
-<br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
 <br>
-Patch to simplify nsis installer. (Ken Takata, 2018 Sep 24, was #3479)<br>
-Now included in #3501, using MUI2.&nbsp;&nbsp;Use the zip file to get the binary files:<br>
-<span class="Constant"><a href="https://github.com/vim/vim/files/2475621/nsis-icons.zip">https://github.com/vim/vim/files/2475621/nsis-icons.zip</a></span><br>
-Ready to include now.<br>
-<br>
 Patch to add blob type support.&nbsp;&nbsp;(Yasuhiro Matsumoto, 2018 Nov 26, #3638)<br>
-Not done yet.<br>
+Should be ready to include.<br>
 <br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
 <br>
 Win32 key codes are messy.&nbsp;&nbsp;Mike Williams tried to fix that, but now old<br>
 mappings no longer work.&nbsp;&nbsp;Create a new terminal for the better solution?<br>
-<br>
-Patch to fix that appending makes items to be &quot;recognized&quot;.<br>
-(Yegappan, 2018 Nov 23, #3683). Reported by Daniel Hahler, #3633.<br>
 <br>
 Improve fallback for menu translations, to avoid having to create lots of<br>
 files that source the actual file.&nbsp;&nbsp;E.g. menu_da_de -&gt; menu_da<br>
@@ -163,10 +157,6 @@ Include part of #3242?<br>
 When a terminal exit_cb closes the window, a following typed key is lost, if<br>
 it's in a mapping. (2018 Oct 6, #2302, #3522)<br>
 <br>
-Patch to add FOR_ALL_FRAMES. (Yegappan, 2018 Nov 18)<br>
-<br>
-Patch to resize to fit parent position when using ---windowid. ( Agorgianitis<br>
-Loukas, 2018 Nov 17, #3616)<br>
 Completion mixes results from the current buffer with tags and other files.<br>
 Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still search for results.&nbsp;&nbsp;E.g., type &quot;b_&quot; in<br>
 terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
@@ -181,13 +171,8 @@ Problem with :tlmenu: Detach item added with all modes?&nbsp;&nbsp;Issue #3563.<
 C syntax: {} inside () causes following {} to be highlighted as error.<br>
 (Michalis Giannakidis, 2006 Jun 1)<br>
 <br>
-Patch to fix function object in Python3. (Ozaki Kiichi, #3681)<br>
-<br>
 Patch on #3690 to fix that &quot;wincmd p&quot; does not always behave properly.<br>
 (Christian Brabandt, 2018 Dec 17)<br>
-<br>
-&quot;gn&quot; selects two matches instead of one when the pattern contains &quot;\zs&quot; and<br>
-spans more than one line.&nbsp;&nbsp;(#3695)<br>
 <br>
 Patch: When using %v in&nbsp;<a class="Type" href="options.html#'errorformat'">'errorformat'</a>, assume the number is the screen column<br>
 not bytes, also handle multi-byte charactes. (Yegappan Lakshmanan, #3700)<br>
@@ -207,7 +192,13 @@ Patch for this: (Aron Widforss, 2018 Oct 13, #3539)<br>
 <br>
 Patch for ConPTY support, #3474: What is the status?<br>
 <br>
+Issue #3649: Retrying the X server connection once may be insufficient.<br>
+Since patch 8.1.0615 we try reconnecting five times.&nbsp;&nbsp;Does it work?<br>
+<br>
 nvo-mode mapping works on Windows, not on Linux. (#3678)<br>
+<br>
+Patch to be able to separately map&nbsp;<span class="Special">CTRL-H</span>&nbsp;and BS on Windows.<br>
+(Linwei, 2017 Jul 11, #1833)<br>
 <br>
 Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
 Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
@@ -233,6 +224,10 @@ Not ready to include yet.<br>
 Problem with two buffers with the same name a/b, if it didn't exist before and<br>
 is created outside of Vim. (dskloetg, 2018 Jul 16, #3219)<br>
 <br>
+When&nbsp;<a class="Type" href="options.html#'sidescrolloff'">'sidescrolloff'</a>&nbsp;is set, using &quot;zl&quot; to go to the end of the line, suddenly<br>
+scrolls back.&nbsp;&nbsp;Should allow for this scrolling, like&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;does when<br>
+using&nbsp;<span class="Special">CTRL-E</span>. (Yee Cheng Chin, #3721)<br>
+<br>
 Invalid memory access with old regexp engine. (Dominique Pelle, 2018 Sep 3,<br>
 #3405)&nbsp;&nbsp;Introduced by 8.0.1517, which was fixing another memory access error.<br>
 (Sep 8)<br>
@@ -244,6 +239,9 @@ Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (
 &nbsp;&nbsp;Easier to use a&nbsp;<span class="MissingTag">'diffmaster'</span>&nbsp;option, is the extra complexity needed?<br>
 <br>
 Patch to fix that bracketed paste remains after Vim exits. (2018 Oct 30, #3579)<br>
+<br>
+Patch to add support for changing the current quickfix/location list indes.<br>
+(Yegappan Lakshmanan, 2018 Dec 18, #3701)<br>
 <br>
 Make &quot;:interactive !cmd&quot; stop termcap mode, also when used in an autocommand.<br>
 (#3692)<br>
@@ -386,11 +384,6 @@ Also see #2352, want better control over balloon, perhaps set the position.<br>
 Should also be possible to add highlighting, like in the status line?<br>
 balloonexpr() on MS-Windows GUI doesn't handle accented chars? (nivaemail,<br>
 2018 Sep 14)<br>
-<br>
-Add v:motion_force. (Kana Natsuno, 2008 Dec 6)<br>
-Maybe call it v:motiontype.&nbsp;&nbsp;Update in #3490.<br>
-Alternative: add the force flag to mode(), after &quot;no&quot;.<br>
-Patch ready to include?<br>
 <br>
 Try out background make plugin:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
@@ -921,9 +914,6 @@ Does this also fix #1408 ?<br>
 <a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;and match interfere. (Ozaki Kiichi, 2017 Jun 23, #1792)<br>
 <br>
 Patch for&nbsp;<span class="MissingTag">'cursorlinenr'</span>&nbsp;option. (Ozaki Kiichi, 2016 Nov 30)<br>
-<br>
-Patch to be able to separately map&nbsp;<span class="Special">CTRL-H</span>&nbsp;and BS on Windows.<br>
-(Linwei, 2017 Jul 11, #1833)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'completeopt'">'completeopt'</a>&nbsp;has &quot;noselect&quot; does not insert a newline. (Lifepillar, 2017<br>
 Apr 23, #1653)<br>
