@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'quickfix'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="quickfix.html" name="quickfix.txt">quickfix.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2018 Dec 27<br>
+<a class="Constant" href="quickfix.html" name="quickfix.txt">quickfix.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jan 09<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -61,6 +61,7 @@ A location list is a window-local quickfix list. You get one after commands<br>
 like&nbsp;<a class="Comment" href="quickfix.html#:lvimgrep">:lvimgrep</a>,&nbsp;<a class="Comment" href="quickfix.html#:lgrep">:lgrep</a>,&nbsp;<a class="Comment" href="helphelp.html#:lhelpgrep">:lhelpgrep</a>,&nbsp;<a class="Comment" href="quickfix.html#:lmake">:lmake</a>, etc., which create a<br>
 location list instead of a quickfix list as the corresponding&nbsp;<a class="Comment" href="quickfix.html#:vimgrep">:vimgrep</a>,<br>
 <a class="Comment" href="quickfix.html#:grep">:grep</a>,&nbsp;<a class="Comment" href="helphelp.html#:helpgrep">:helpgrep</a>,&nbsp;<a class="Comment" href="quickfix.html#:make">:make</a>&nbsp;do.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="quickfix.html#location-list-file-window" name="location-list-file-window">location-list-file-window</a><br>
 A location list is associated with a window and each window can have a<br>
 separate location list.&nbsp;&nbsp;A location list can be associated with only one<br>
 window.&nbsp;&nbsp;The location list is independent of the quickfix list.<br>
@@ -369,6 +370,23 @@ modify the title of a quickfix and location list respectively. Examples:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call setloclist(3, [], 'a', {'title' : 'Cmd output'})<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo getloclist(3, {'title' : 1})</div>
 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="quickfix.html#quickfix-index" name="quickfix-index">quickfix-index</a><br>
+When you jump to a quickfix/location list entry using any of the quickfix<br>
+commands (e.g.&nbsp;<a class="Identifier" href="change.html#cc">cc</a>,&nbsp;<a class="Identifier" href="quickfix.html#:cnext">cnext</a>,&nbsp;<span class="MissingTag">cprev</span>, etc.), that entry becomes the currently<br>
+selected entry. The index of the currently selected entry in a<br>
+quickfix/location list can be obtained using the getqflist()/getloclist()<br>
+functions. Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo getqflist({'idx' : 0}).idx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo getqflist({'id' : qfid, 'idx' : 0}).idx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo getloclist(2, {'idx' : 0}).idx</div>
+<br>
+For a new quickfix list, the first entry is selected and the index is 1.&nbsp;&nbsp;Any<br>
+entry in any quickfix/location list can be set as the currently selected entry<br>
+using the setqflist() function. Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call setqflist([], 'a', {'idx' : 12})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call setqflist([], 'a', {'id' : qfid, 'idx' : 7})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call setloclist(1, [], 'a', {'idx' : 7})</div>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="quickfix.html#quickfix-size" name="quickfix-size">quickfix-size</a><br>
 You can get the number of entries (size) in a quickfix and a location list<br>
 using the&nbsp;<a class="Identifier" href="eval.html#getqflist()">getqflist()</a>&nbsp;and&nbsp;<a class="Identifier" href="eval.html#getloclist()">getloclist()</a>&nbsp;functions respectively. Examples:<br>
@@ -663,6 +681,9 @@ using these functions are below:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&quot; get the location list window id of the third window<br>
 &nbsp;&nbsp;&nbsp;&nbsp;:echo getloclist(3, {'winid' : 0}).winid</div>
 <br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&quot; get the file window id of a location list window (winnr: 4)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:echo getloclist(4, {'filewinid' : 0}).filewinid</div>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="quickfix.html#setqflist-examples" name="setqflist-examples">setqflist-examples</a><br>
 The&nbsp;<a class="Identifier" href="eval.html#setqflist()">setqflist()</a>&nbsp;and&nbsp;<a class="Identifier" href="eval.html#setloclist()">setloclist()</a>&nbsp;functions can be used to set the various<br>
 attributes of a quickfix and location list respectively. Some examples for<br>
@@ -675,6 +696,9 @@ using these functions are below:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&quot; set the title of the current quickfix list<br>
 &nbsp;&nbsp;&nbsp;&nbsp;:call setqflist([], 'a', {'title' : 'Mytitle'})</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&quot; change the current entry in the list specified by an identifier<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:call setqflist([], 'a', {'id' : qfid, 'idx' : 10})</div>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&quot; set the context of a quickfix list specified by an identifier<br>
 &nbsp;&nbsp;&nbsp;&nbsp;:call setqflist([], 'a', {'id' : qfid, 'context' : {'val' : 100}})</div>
@@ -1556,7 +1580,7 @@ The backslashes before the pipe character are required to avoid it to be<br>
 recognized as a command separator.&nbsp;&nbsp;The backslash before each space is<br>
 required for the set command.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="quickfix.html#cfilter-plugin" name="cfilter-plugin">cfilter-plugin</a>&nbsp;<a class="Constant" href="quickfix.html#:Cfilter" name=":Cfilter">:Cfilter</a>&nbsp;<a class="Constant" href="quickfix.html#:Lfilter" name=":Lfilter">:Lfilter</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="quickfix.html#cfilter-plugin" name="cfilter-plugin">cfilter-plugin</a>&nbsp;<a class="Constant" href="quickfix.html#:Cfilter" name=":Cfilter">:Cfilter</a>&nbsp;<a class="Constant" href="quickfix.html#:Lfilter" name=":Lfilter">:Lfilter</a><br>
 If you have too many matching messages, you can use the cfilter plugin to<br>
 reduce the number of entries.&nbsp;&nbsp;Load the plugin with:<br>
 <div class="helpExample">&nbsp;&nbsp; packadd cfilter</div>
