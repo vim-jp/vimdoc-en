@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'eval'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="eval.html" name="eval.txt">eval.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jan 13<br>
+<a class="Constant" href="eval.html" name="eval.txt">eval.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jan 15<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -22,7 +22,8 @@ done, the features in this document are not available.&nbsp;&nbsp;See&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;1.2 Function references&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;1.3 Lists&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#Lists">Lists</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;1.4 Dictionaries&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#Dictionaries">Dictionaries</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;1.5 More about variables&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#more-variables">more-variables</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;1.5 Blobs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#Blobs">Blobs</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;1.6 More about variables&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#more-variables">more-variables</a><br>
 2.&nbsp;&nbsp;Expression syntax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#expression-syntax">expression-syntax</a><br>
 3.&nbsp;&nbsp;Internal variable&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#internal-variables">internal-variables</a><br>
 4.&nbsp;&nbsp;Builtin Functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#functions">functions</a><br>
@@ -58,7 +59,7 @@ Float&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A floating poi
 String&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A NUL terminated string of 8-bit unsigned characters (bytes).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#expr-string">expr-string</a>&nbsp;Examples: &quot;ab\txx\&quot;--&quot;&nbsp;&nbsp;'x-z''a,c'<br>
 <br>
-List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An ordered sequence of items&nbsp;<a class="Identifier" href="eval.html#List">List</a>.<br>
+List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An ordered sequence of items, see&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;for details.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: [1, 2, ['a', 'b']]<br>
 <br>
 Dictionary&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An associative, unordered array: Each entry has a key and a<br>
@@ -77,7 +78,8 @@ Job&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Used
 <br>
 Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Used for a channel, see&nbsp;<a class="Identifier" href="eval.html#ch_open()">ch_open()</a>.&nbsp;<a class="Constant" href="eval.html#Channel" name="Channel">Channel</a>&nbsp;<a class="Constant" href="eval.html#Channels" name="Channels">Channels</a><br>
 <br>
-Blob&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Binary Large Object. Stores any sequence of bytes.&nbsp;<a class="Constant" href="eval.html#Blob" name="Blob">Blob</a><br>
+Blob&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Binary Large Object. Stores any sequence of bytes.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="eval.html#Blob">Blob</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for details<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: 0zFF00ED015DAF<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0z is an empty Blob.<br>
 <br>
@@ -464,7 +466,7 @@ example, to add up all the numbers in a list:<br>
 <br>
 <br>
 <span class="PreProc">1.4 Dictionaries</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#dict" name="dict">dict</a>&nbsp;<a class="Constant" href="eval.html#Dictionaries" name="Dictionaries">Dictionaries</a>&nbsp;<a class="Constant" href="eval.html#Dictionary" name="Dictionary">Dictionary</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#dict" name="dict">dict</a>&nbsp;<a class="Constant" href="eval.html#Dict" name="Dict">Dict</a>&nbsp;<a class="Constant" href="eval.html#Dictionaries" name="Dictionaries">Dictionaries</a>&nbsp;<a class="Constant" href="eval.html#Dictionary" name="Dictionary">Dictionary</a><br>
 A Dictionary is an associative array: Each entry has a key and a value.&nbsp;&nbsp;The<br>
 entry can be located with the key.&nbsp;&nbsp;The entries are stored without a specific<br>
 ordering.<br>
@@ -626,7 +628,122 @@ Functions that can be used with a Dictionary:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:call map(dict, '&quot;&gt;&gt; &quot; . v:val')&nbsp;&nbsp;&quot; prepend &quot;&gt;&gt; &quot; to each item</div>
 <br>
 <br>
-<span class="PreProc">1.5 More about variables</span><br>
+<span class="PreProc">1.5 Blobs</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#blob" name="blob">blob</a>&nbsp;<a class="Constant" href="eval.html#Blob" name="Blob">Blob</a>&nbsp;<a class="Constant" href="eval.html#Blobs" name="Blobs">Blobs</a>&nbsp;<a class="Constant" href="eval.html#E978" name="E978">E978</a><br>
+A Blob mostly behaves like a&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;of numbers, where the numbers have an<br>
+8-bit value, from 0 to 255.<br>
+<br>
+<br>
+<span class="PreProc">Blob creation</span><br>
+<br>
+A Blob can be created with a&nbsp;<a class="Identifier" href="eval.html#blob-literal">blob-literal</a>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let b = 0zFF00ED015DAF</div>
+<br>
+A blob can be read from a file with&nbsp;<a class="Identifier" href="eval.html#readfile()">readfile()</a>&nbsp;passing the&nbsp;<span class="Special">{type}</span>&nbsp;argument<br>
+set to &quot;B&quot;, for example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let b = readfile('image.png', 'B')</div>
+<br>
+A blob can be read from a channel with the&nbsp;<a class="Identifier" href="eval.html#ch_readblob()">ch_readblob()</a>&nbsp;function.<br>
+<br>
+<br>
+<span class="PreProc">Blob index</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#blob-index" name="blob-index">blob-index</a>&nbsp;<a class="Constant" href="eval.html#E979" name="E979">E979</a><br>
+A byte in the Blob can be accessed by putting the index in square brackets<br>
+after the Blob.&nbsp;&nbsp;Indexes are zero-based, thus the first byte has index zero.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let myblob = 0z00112233<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let byte = myblob[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; get the first byte: 0x00<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let byte = myblob[2]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; get the third byte: 0x22</div>
+<br>
+A negative index is counted from the end.&nbsp;&nbsp;Index -1 refers to the last byte in<br>
+the Blob, -2 to the last but one byte, etc.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let last = myblob[-1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; get the last byte: 0x33</div>
+<br>
+To avoid an error for an invalid index use the&nbsp;<a class="Identifier" href="eval.html#get()">get()</a>&nbsp;function.&nbsp;&nbsp;When an item<br>
+is not available it returns -1 or the default value you specify:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo get(myblob, idx)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo get(myblob, idx, 999)</div>
+<br>
+<br>
+<span class="PreProc">Blob concatenation</span><br>
+<br>
+Two blobs can be concatenated with the &quot;+&quot; operator:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let longblob = myblob + 0z4455<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let myblob += 0z6677</div>
+<br>
+To change a blob in-place see&nbsp;<a class="Identifier" href="eval.html#blob-modification">blob-modification</a>&nbsp;below.<br>
+<br>
+<br>
+<span class="PreProc">Part of a blob</span><br>
+<br>
+A part of the Blob can be obtained by specifying the first and last index,<br>
+separated by a colon in square brackets:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let myblob = 0z00112233<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let shortblob = myblob[2:-1]&nbsp;&nbsp; &quot; get 0z2233</div>
+<br>
+Omitting the first index is similar to zero.&nbsp;&nbsp;Omitting the last index is<br>
+similar to -1.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let endblob = myblob[2:]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; from item 2 to the end: 0z2233<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let shortblob = myblob[2:2]&nbsp;&nbsp;&nbsp;&nbsp;&quot; Blob with one byte: 0z22<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let otherblob = myblob[:]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; make a copy of the Blob</div>
+<br>
+If the first index is beyond the last byte of the Blob or the second byte is<br>
+before the first byte, the result is an empty list.&nbsp;&nbsp;There is no error<br>
+message.<br>
+<br>
+If the second index is equal to or greater than the length of the list the<br>
+length minus one is used:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo myblob[2:8]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; result: 0z2233</div>
+<br>
+<br>
+<span class="PreProc">Blob modification</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#blob-modification" name="blob-modification">blob-modification</a><br>
+To change a specific byte of a blob use&nbsp;<a class="Identifier" href="eval.html#:let">:let</a>&nbsp;this way:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blob[4] = 0x44</div>
+<br>
+When the index is just one beyond the end of the Blob, it is appended. Any<br>
+higher index is an error.<br>
+<br>
+To change a sequence of bytes the [:] notation can be used:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let blob[1:3] = 0z445566</div>
+The length of the replaced bytes much be exactly the same as the value<br>
+provided.&nbsp;<a class="Constant" href="eval.html#E972" name="E972">E972</a><br>
+<br>
+To change part of a blob you can specify the first and last byte to be<br>
+modified.&nbsp;&nbsp;The value must at least have the number of bytes in the range:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blob[3:5] = [3, 4, 5]</div>
+<br>
+You can also use the functions&nbsp;<a class="Identifier" href="eval.html#add()">add()</a>,&nbsp;<a class="Identifier" href="eval.html#remove()">remove()</a>&nbsp;and&nbsp;<a class="Identifier" href="eval.html#insert()">insert()</a>.<br>
+<br>
+<br>
+<span class="PreProc">Blob identity</span><br>
+<br>
+Blobs can be compared for equality:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if blob == 0z001122</div>
+And for equal identity:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if blob is otherblob</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#blob-identity" name="blob-identity">blob-identity</a>&nbsp;<a class="Constant" href="eval.html#E977" name="E977">E977</a><br>
+When variable &quot;aa&quot; is a Blob and you assign it to another variable &quot;bb&quot;, both<br>
+variables refer to the same Blob.&nbsp;&nbsp;Then the &quot;is&quot; operator returns true.<br>
+<br>
+When making a copy using [:] or&nbsp;<a class="Identifier" href="eval.html#copy()">copy()</a>&nbsp;the values are the same, but the<br>
+identity is different:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blob = 0z112233<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blob2 = blob<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo blob == blob2</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo blob is blob2</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blob3 = blob[:]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo blob == blob3</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo blob is blob3</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0<br>
+<br>
+Making a copy of a list is done with the&nbsp;<a class="Identifier" href="eval.html#copy()">copy()</a>&nbsp;function.&nbsp;&nbsp;Using [:] also<br>
+works, as explained above.<br>
+<br>
+<br>
+<span class="PreProc">1.6 More about variables</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#more-variables" name="more-variables">more-variables</a><br>
 If you need to know the type of a variable or expression, use the&nbsp;<a class="Identifier" href="eval.html#type()">type()</a><br>
 function.<br>
@@ -1172,7 +1289,7 @@ of&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>.<br>
 <span class="Todo">Note</span>&nbsp;that &quot;\000&quot; and &quot;\x00&quot; force the end of the string.<br>
 <br>
 <br>
-blob-literal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#blob-literal" name="blob-literal">blob-literal</a>&nbsp;<a class="Constant" href="eval.html#E973" name="E973">E973</a>&nbsp;<a class="Constant" href="eval.html#E977" name="E977">E977</a>&nbsp;<a class="Constant" href="eval.html#E978" name="E978">E978</a><br>
+blob-literal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#blob-literal" name="blob-literal">blob-literal</a>&nbsp;<a class="Constant" href="eval.html#E973" name="E973">E973</a><br>
 <span class="PreProc">------------</span><br>
 <br>
 Hexadecimal starting with 0z or 0Z, with an arbitrary number of bytes.<br>
@@ -2052,7 +2169,7 @@ See&nbsp;<a class="Identifier" href="usr_41.html#function-list">function-list</a
 <br>
 abs(<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Float or Number&nbsp;&nbsp;absolute value of&nbsp;<span class="Special">{expr}</span><br>
 acos(<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Float&nbsp;&nbsp; arc cosine of&nbsp;<span class="Special">{expr}</span><br>
-add(<span class="Special">{list}</span>,&nbsp;<span class="Special">{item}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; List&nbsp;&nbsp;&nbsp;&nbsp;append&nbsp;<span class="Special">{item}</span>&nbsp;to&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;<span class="Special">{list}</span><br>
+add(<span class="Special">{object}</span>,&nbsp;<span class="Special">{item}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; List/Blob&nbsp;&nbsp; append&nbsp;<span class="Special">{item}</span>&nbsp;to&nbsp;<span class="Special">{object}</span><br>
 and(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Number&nbsp;&nbsp;bitwise AND<br>
 append(<span class="Special">{lnum}</span>,&nbsp;<span class="Special">{text}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;&nbsp;append&nbsp;<span class="Special">{text}</span>&nbsp;below line&nbsp;<span class="Special">{lnum}</span><br>
 appendbufline(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{lnum}</span>,&nbsp;<span class="Special">{text}</span>)<br>
@@ -2616,13 +2733,14 @@ acos(<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{only available when compiled with the&nbsp;</span><a class="Identifier" href="various.html#+float">+float</a><span class="Special">&nbsp;feature}</span><br>
 <br>
 <br>
-add(<span class="Special">{list}</span>,&nbsp;<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#add()" name="add()">add()</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Append the item&nbsp;<span class="Special">{expr}</span>&nbsp;to&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;<span class="Special">{list}</span>.&nbsp;&nbsp;Returns the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resulting&nbsp;<a class="Identifier" href="eval.html#List">List</a>.&nbsp;&nbsp;Examples:<br>
+add(<span class="Special">{object}</span>,&nbsp;<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#add()" name="add()">add()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Append the item&nbsp;<span class="Special">{expr}</span>&nbsp;to&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;or&nbsp;<a class="Identifier" href="eval.html#Blob">Blob</a>&nbsp;<span class="Special">{object}</span>.&nbsp;&nbsp;Returns<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the resulting&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;or&nbsp;<a class="Identifier" href="eval.html#Blob">Blob</a>.&nbsp;&nbsp;Examples:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let alist = add([1, 2, 3], item)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:call add(mylist, &quot;woodstock&quot;)</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that when&nbsp;<span class="Special">{expr}</span>&nbsp;is a&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;it is appended as a single<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;item.&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="eval.html#extend()">extend()</a>&nbsp;to concatenate&nbsp;<a class="Identifier" href="eval.html#Lists">Lists</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">{object}</span>&nbsp;is a&nbsp;<a class="Identifier" href="eval.html#Blob">Blob</a>&nbsp;then&nbsp;&nbsp;<span class="Special">{expr}</span>&nbsp;must be a number.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="eval.html#insert()">insert()</a>&nbsp;to add an item at another position.<br>
 <br>
 <br>
@@ -3670,11 +3788,12 @@ empty(<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the Number 1 if&nbsp;<span class="Special">{expr}</span>&nbsp;is empty, zero otherwise.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;or&nbsp;<a class="Identifier" href="eval.html#Dictionary">Dictionary</a>&nbsp;is empty when it does not have any<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;items.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A String is empty when its length is zero.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A Number and Float is empty when its value is zero.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A&nbsp;<a class="Identifier" href="eval.html#String">String</a>&nbsp;is empty when its length is zero.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A&nbsp;<a class="Identifier" href="eval.html#Number">Number</a>&nbsp;and&nbsp;<a class="Identifier" href="eval.html#Float">Float</a>&nbsp;are empty when their value is zero.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<a class="Identifier" href="eval.html#v:false">v:false</a>,&nbsp;<a class="Identifier" href="eval.html#v:none">v:none</a>&nbsp;and&nbsp;<a class="Identifier" href="eval.html#v:null">v:null</a>&nbsp;are empty,&nbsp;<a class="Identifier" href="eval.html#v:true">v:true</a>&nbsp;is not.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A Job is empty when it failed to start.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A Channel is empty when it is closed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A&nbsp;<a class="Identifier" href="eval.html#Job">Job</a>&nbsp;is empty when it failed to start.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A&nbsp;<a class="Identifier" href="eval.html#Channel">Channel</a>&nbsp;is empty when it is closed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A Blob is empty when its length is zero.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For a long&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;this is much faster than comparing the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;length with zero.<br>
@@ -4346,6 +4465,10 @@ garbagecollect([<span class="Special">{atexit}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&
 get(<span class="Special">{list}</span>,&nbsp;<span class="Special">{idx}</span>&nbsp;[,&nbsp;<span class="Special">{default}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#get()" name="get()">get()</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get item&nbsp;<span class="Special">{idx}</span>&nbsp;from&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;<span class="Special">{list}</span>.&nbsp;&nbsp;When this item is not<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;available return&nbsp;<span class="Special">{default}</span>.&nbsp;&nbsp;Return zero when&nbsp;<span class="Special">{default}</span>&nbsp;is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;omitted.<br>
+get(<span class="Special">{blob}</span>,&nbsp;<span class="Special">{idx}</span>&nbsp;[,&nbsp;<span class="Special">{default}</span>])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get byte&nbsp;<span class="Special">{idx}</span>&nbsp;from&nbsp;<a class="Identifier" href="eval.html#Blob">Blob</a>&nbsp;<span class="Special">{blob}</span>.&nbsp;&nbsp;When this byte is not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;available return&nbsp;<span class="Special">{default}</span>.&nbsp;&nbsp;Return -1 when&nbsp;<span class="Special">{default}</span>&nbsp;is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;omitted.<br>
 get(<span class="Special">{dict}</span>,&nbsp;<span class="Special">{key}</span>&nbsp;[,&nbsp;<span class="Special">{default}</span>])<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get item with key&nbsp;<span class="Special">{key}</span>&nbsp;from&nbsp;<a class="Identifier" href="eval.html#Dictionary">Dictionary</a>&nbsp;<span class="Special">{dict}</span>.&nbsp;&nbsp;When this<br>
@@ -9352,7 +9475,7 @@ test_null_channel()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{only available when compiled with the +channel feature}</span><br>
 <br>
 test_null_dict()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#test_null_dict()" name="test_null_dict()">test_null_dict()</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a&nbsp;<span class="MissingTag">Dict</span>&nbsp;that is null. Only useful for testing.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>&nbsp;that is null. Only useful for testing.<br>
 <br>
 test_null_job()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#test_null_job()" name="test_null_job()">test_null_job()</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a&nbsp;<a class="Identifier" href="eval.html#Job">Job</a>&nbsp;that is null. Only useful for testing.<br>
