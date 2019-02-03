@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'usr_05'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="usr_05.html" name="usr_05.txt">usr_05.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2018 Feb 20<br>
+<a class="Constant" href="usr_05.html" name="usr_05.txt">usr_05.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jan 26<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
 <br>
@@ -16,12 +16,13 @@ Vim's capabilities.&nbsp;&nbsp;Or define your own macros.<br>
 <br>
 <a class="Identifier" href="usr_05.html#05.1">05.1</a>&nbsp;&nbsp;The vimrc file<br>
 <a class="Identifier" href="usr_05.html#05.2">05.2</a>&nbsp;&nbsp;The example vimrc file explained<br>
-<a class="Identifier" href="usr_05.html#05.3">05.3</a>&nbsp;&nbsp;Simple mappings<br>
-<a class="Identifier" href="usr_05.html#05.4">05.4</a>&nbsp;&nbsp;Adding a package<br>
-<a class="Identifier" href="usr_05.html#05.5">05.5</a>&nbsp;&nbsp;Adding a plugin<br>
-<a class="Identifier" href="usr_05.html#05.6">05.6</a>&nbsp;&nbsp;Adding a help file<br>
-<a class="Identifier" href="usr_05.html#05.7">05.7</a>&nbsp;&nbsp;The option window<br>
-<a class="Identifier" href="usr_05.html#05.8">05.8</a>&nbsp;&nbsp;Often used options<br>
+<a class="Identifier" href="usr_05.html#05.3">05.3</a>&nbsp;&nbsp;The defaults.vim file explained<br>
+<a class="Identifier" href="usr_05.html#05.4">05.4</a>&nbsp;&nbsp;Simple mappings<br>
+<a class="Identifier" href="usr_05.html#05.5">05.5</a>&nbsp;&nbsp;Adding a package<br>
+<a class="Identifier" href="usr_05.html#05.6">05.6</a>&nbsp;&nbsp;Adding a plugin<br>
+<a class="Identifier" href="usr_05.html#05.7">05.7</a>&nbsp;&nbsp;Adding a help file<br>
+<a class="Identifier" href="usr_05.html#05.8">05.8</a>&nbsp;&nbsp;The option window<br>
+<a class="Identifier" href="usr_05.html#05.9">05.9</a>&nbsp;&nbsp;Often used options<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_06.html">usr_06.txt</a>&nbsp;&nbsp;Using syntax highlighting<br>
 &nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_04.html">usr_04.txt</a>&nbsp;&nbsp;Making small changes<br>
@@ -87,6 +88,95 @@ will give you hints about how to set up your own preferences.&nbsp;&nbsp;Not eve
 will be explained though.&nbsp;&nbsp;Use the &quot;:help&quot; command to find out more.<br>
 <br>
 <br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Get the defaults that most users want.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source $VIMRUNTIME/defaults.vim</div>
+<br>
+This loads the &quot;defaults.vim&quot; file in the $VIMRUNTIME directory.&nbsp;&nbsp;This sets up<br>
+Vim for how most users like it.&nbsp;&nbsp;If you are one of the few that don't, then<br>
+comment out this line.&nbsp;&nbsp;The commands are explained below:<br>
+<a class="Identifier" href="usr_05.html#defaults.vim-explained">defaults.vim-explained</a><br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has(&quot;vms&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set nobackup<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set backup<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('persistent_undo')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set undofile<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+This tells Vim to keep a backup copy of a file when overwriting it.&nbsp;&nbsp;But not<br>
+on the VMS system, since it keeps old versions of files already.&nbsp;&nbsp;The backup<br>
+file will have the same name as the original file with &quot;~&quot; added.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="usr_07.html#07.4">07.4</a><br>
+<br>
+This also sets the&nbsp;<a class="Type" href="options.html#'undofile'">'undofile'</a>&nbsp;option, if available.&nbsp;&nbsp;This will store the<br>
+multi-level undo information in a file.&nbsp;&nbsp;The result is that when you change a<br>
+file, exit Vim, and then edit the file again, you can undo the changes made<br>
+previously.&nbsp;&nbsp;It's a very powerful and useful feature, at the cost of storing a<br>
+file.&nbsp;&nbsp;For more information see&nbsp;<a class="Identifier" href="undo.html#undo-persistence">undo-persistence</a>.<br>
+<br>
+The &quot;if&quot; command is very useful to set options<br>
+only when some condition is met.&nbsp;&nbsp;More about that in&nbsp;<a class="Identifier" href="usr_41.html">usr_41.txt</a>.<br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if &amp;t_Co &gt; 2 || has(&quot;gui_running&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set hlsearch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+This switches on the&nbsp;<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;option, telling Vim to highlight matches with<br>
+the last used search pattern.<br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;augroup vimrcEx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autocmd FileType text setlocal textwidth=78<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;augroup END</div>
+<br>
+This makes Vim break text to avoid lines getting longer than 78 characters.<br>
+But only for files that have been detected to be plain text.&nbsp;&nbsp;There are<br>
+actually two parts here.&nbsp;&nbsp;&quot;autocmd FileType text&quot; is an autocommand.&nbsp;&nbsp;This<br>
+defines that when the file type is set to &quot;text&quot; the following command is<br>
+automatically executed.&nbsp;&nbsp;&quot;setlocal textwidth=78&quot; sets the&nbsp;<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;option<br>
+to 78, but only locally in one file.<br>
+<br>
+The wrapper with &quot;augroup vimrcEx&quot; and &quot;augroup END&quot; makes it possible to<br>
+delete the autocommand with the &quot;au!&quot; command.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="autocmd.html#:augroup">:augroup</a>.<br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('syntax') &amp;&amp; has('eval')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;packadd! matchit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+This loads the &quot;matchit&quot; plugin if the required features are available.<br>
+It makes the&nbsp;<a class="Identifier" href="motion.html#%">%</a>&nbsp;command more powerful.&nbsp;&nbsp;This is explained at<br>
+<a class="Identifier" href="usr_05.html#matchit-install">matchit-install</a>.<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_05.html#05.3" name="05.3">05.3</a>&nbsp;&nbsp;The defaults.vim file explained&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#defaults.vim-explained" name="defaults.vim-explained">defaults.vim-explained</a><br>
+<br>
+The&nbsp;<a class="Identifier" href="starting.html#defaults.vim">defaults.vim</a>&nbsp;file is loaded when the user has no vimrc file.&nbsp;&nbsp;When you<br>
+create a new vimrc file, add this line near the top to keep using it:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source $VIMRUNTIME/defaults.vim</div>
+<br>
+Or use the vimrc_example.vim file, as explained above.<br>
+<br>
+The following explains what defaults.vim is doing.<br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if exists('skip_defaults_vim')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+Loading defaults.vim can be disabled with this command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let skip_defaults_vim = 1</div>
+This has to be done in the system vimrc file.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="starting.html#system-vimrc">system-vimrc</a>.&nbsp;&nbsp;If you<br>
+have a user vimrc this is not needed, since defaults.vim will not be loaded<br>
+automatically.<br>
+<br>
+<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set nocompatible</div>
 <br>
 As mentioned in the first chapter, these manuals explain Vim working in an<br>
@@ -99,38 +189,19 @@ option off, thus&nbsp;<a class="Type" href="options.html#'nocompatible'">'nocomp
 This specifies where in Insert mode the&nbsp;<span class="Special">&lt;BS&gt;</span>&nbsp;is allowed to delete the<br>
 character in front of the cursor.&nbsp;&nbsp;The three items, separated by commas, tell<br>
 Vim to delete the white space at the start of the line, a line break and the<br>
-character before where Insert mode started.<br>
+character before where Insert mode started.&nbsp;&nbsp;See&nbsp;<a class="Type" href="options.html#'backspace'">'backspace'</a>.<br>
 <br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set autoindent</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set history=200</div>
 <br>
-This makes Vim use the indent of the previous line for a newly created line.<br>
-Thus there is the same amount of white space before the new line.&nbsp;&nbsp;For example<br>
-when pressing&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;in Insert mode, and when using the &quot;o&quot; command to open a<br>
-new line.<br>
-<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has(&quot;vms&quot;)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set nobackup<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set backup<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
-<br>
-This tells Vim to keep a backup copy of a file when overwriting it.&nbsp;&nbsp;But not<br>
-on the VMS system, since it keeps old versions of files already.&nbsp;&nbsp;The backup<br>
-file will have the same name as the original file with &quot;~&quot; added.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="usr_07.html#07.4">07.4</a><br>
-<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set history=50</div>
-<br>
-Keep 50 commands and 50 search patterns in the history.&nbsp;&nbsp;Use another number if<br>
-you want to remember fewer or more lines.<br>
+Keep 200 commands and 200 search patterns in the history.&nbsp;&nbsp;Use another number<br>
+if you want to remember fewer or more lines.&nbsp;&nbsp;See&nbsp;<a class="Type" href="options.html#'history'">'history'</a>.<br>
 <br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set ruler</div>
 <br>
 Always display the current cursor position in the lower right corner of the<br>
-Vim window.<br>
+Vim window.&nbsp;&nbsp;See&nbsp;<a class="Type" href="options.html#'ruler'">'ruler'</a>.<br>
 <br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set showcmd</div>
@@ -150,9 +221,36 @@ the &quot;2fw&quot; command is executed and the displayed &quot;2f&quot; is remo
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'showmode'">'showmode'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'showcmd'">'showcmd'</a>&nbsp;&nbsp;<a class="Type" href="options.html#'ruler'">'ruler'</a><br>
 <br>
 <br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set wildmenu</div>
+<br>
+Display completion matches in a status line.&nbsp;&nbsp;That is when you type&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;and<br>
+there is more than one match.&nbsp;&nbsp;See&nbsp;<a class="Type" href="options.html#'wildmenu'">'wildmenu'</a>.<br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set ttimeout<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set ttimeoutlen=100</div>
+<br>
+This makes typing Esc take effect more quickly.&nbsp;&nbsp;Normally Vim waits a second<br>
+to see if the Esc is the start of an escape sequence.&nbsp;&nbsp;If you have a very slow<br>
+remote connection, increase the number.&nbsp;&nbsp;See&nbsp;<a class="Type" href="options.html#'ttimeout'">'ttimeout'</a>.<br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set display=truncate</div>
+<br>
+Show @@@ in the last line if it is truncated, instead of hiding the whole<br>
+like.&nbsp;&nbsp;See&nbsp;<a class="Type" href="options.html#'display'">'display'</a>.<br>
+<br>
+<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set incsearch</div>
 <br>
-Display the match for a search pattern when halfway typing it.<br>
+Display the match for a search pattern when halfway typing it.&nbsp;&nbsp;See<br>
+<a class="Type" href="options.html#'incsearch'">'incsearch'</a>.<br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set nrformats-=octal</div>
+<br>
+Do not recognize numbers starting with a zero as octal.&nbsp;&nbsp;See&nbsp;<a class="Type" href="options.html#'nrformats'">'nrformats'</a>.<br>
 <br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map Q gq</div>
@@ -163,23 +261,30 @@ it worked before Vim 5.0.&nbsp;&nbsp;Otherwise the &quot;Q&quot; command starts 
 will not need it.<br>
 <br>
 <br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inoremap &lt;C-U&gt; &lt;C-G&gt;u&lt;C-U&gt;</div>
+<br>
+<span class="Special">CTRL-U</span>&nbsp;in insert mode deletes all entered text in the current line.&nbsp;&nbsp;Use<br>
+<span class="Special">CTRL-G</span>&nbsp;u to first break undo, so that you can undo&nbsp;<span class="Special">CTRL-U</span>&nbsp;after inserting a<br>
+line break.&nbsp;&nbsp;Revert with &quot;:iunmap&nbsp;<span class="Special">&lt;C-U&gt;</span>&quot;.<br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('mouse')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set mouse=a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+Enable using the mouse if available.&nbsp;&nbsp;See&nbsp;<a class="Type" href="options.html#'mouse'">'mouse'</a>.<br>
+<br>
+<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vnoremap _g y:exe &quot;grep /&quot; . escape(@&quot;, '\\/') . &quot;/ *.c *.h&quot;&lt;CR&gt;</div>
 <br>
 This mapping yanks the visually selected text and searches for it in C files.<br>
-This is a complicated mapping.&nbsp;&nbsp;You can see that mappings can be used to do<br>
-quite complicated things.&nbsp;&nbsp;Still, it is just a sequence of commands that are<br>
-executed like you typed them.<br>
+You can see that a mapping can be used to do quite complicated things.&nbsp;&nbsp;Still,<br>
+it is just a sequence of commands that are executed like you typed them.<br>
 <br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if &amp;t_Co &gt; 2 || has(&quot;gui_running&quot;)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;syntax on<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set hlsearch<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;syntax on</div>
 <br>
-This switches on syntax highlighting, but only if colors are available.&nbsp;&nbsp;And<br>
-the&nbsp;<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;option tells Vim to highlight matches with the last used search<br>
-pattern.&nbsp;&nbsp;The &quot;if&quot; command is very useful to set options only when some<br>
-condition is met.&nbsp;&nbsp;More about that in&nbsp;<a class="Identifier" href="usr_41.html">usr_41.txt</a>.<br>
+Enable highlighting files in color.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="syntax.html#syntax">syntax</a>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#vimrc-filetype" name="vimrc-filetype">vimrc-filetype</a>&nbsp;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filetype plugin indent on</div>
@@ -207,20 +312,11 @@ This switches on three very clever mechanisms:<br>
 &nbsp;&nbsp; filetypes.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="filetype.html#:filetype-indent-on">:filetype-indent-on</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'indentexpr'">'indentexpr'</a>.<br>
 <br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autocmd FileType text setlocal textwidth=78</div>
-<br>
-This makes Vim break text to avoid lines getting longer than 78 characters.<br>
-But only for files that have been detected to be plain text.&nbsp;&nbsp;There are<br>
-actually two parts here.&nbsp;&nbsp;&quot;autocmd FileType text&quot; is an autocommand.&nbsp;&nbsp;This<br>
-defines that when the file type is set to &quot;text&quot; the following command is<br>
-automatically executed.&nbsp;&nbsp;&quot;setlocal textwidth=78&quot; sets the&nbsp;<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;option<br>
-to 78, but only locally in one file.<br>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#restore-cursor" name="restore-cursor">restore-cursor</a>&nbsp;<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autocmd BufReadPost *<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ if line(&quot;'\&quot;&quot;) &gt; 1 &amp;&amp; line(&quot;'\&quot;&quot;) &lt;= line(&quot;$&quot;) |<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp; exe &quot;normal! g`\&quot;&quot; |<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ endif</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#restore-cursor" name="restore-cursor">restore-cursor</a>&nbsp;<a class="Constant" href="usr_05.html#last-position-jump" name="last-position-jump">last-position-jump</a>&nbsp;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;autocmd BufReadPost *<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ if line(&quot;'\&quot;&quot;) &gt;= 1 &amp;&amp; line(&quot;'\&quot;&quot;) &lt;= line(&quot;$&quot;) &amp;&amp; &amp;ft !~# 'commit'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ |&nbsp;&nbsp; exe &quot;normal! g`\&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ | endif</div>
 <br>
 Another autocommand.&nbsp;&nbsp;This time it is used after reading any file.&nbsp;&nbsp;The<br>
 complicated stuff after it checks if the '&quot; mark is defined, and jumps to it<br>
@@ -229,8 +325,22 @@ from the previous line.&nbsp;&nbsp;That avoids a line getting very long.<br>
 See&nbsp;<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>.&nbsp;&nbsp;This only works in a Vim script file, not when<br>
 typing commands at the command-line.<br>
 <br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ | wincmd p | diffthis</div>
+<br>
+This adds the &quot;:DiffOrig&quot; command.&nbsp;&nbsp;Use this in a modified buffer to see the<br>
+differences with the file it was loaded from.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="diff.html#diff">diff</a>.<br>
+<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set nolangremap</div>
+<br>
+Prevent that the langmap option applies to characters that result from a<br>
+mapping.&nbsp;&nbsp;If set (default), this may break plugins (but it's backward<br>
+compatible).&nbsp;&nbsp;See&nbsp;<a class="Type" href="options.html#'langremap'">'langremap'</a>.<br>
+<br>
 <span class="PreProc">==============================================================================</span><br>
-<a class="Constant" href="usr_05.html#05.3" name="05.3">05.3</a>&nbsp;&nbsp;Simple mappings<br>
+<a class="Constant" href="usr_05.html#05.4" name="05.4">05.4</a>&nbsp;&nbsp;Simple mappings<br>
 <br>
 A mapping enables you to bind a set of Vim commands to a single key.&nbsp;&nbsp;Suppose,<br>
 for example, that you need to surround certain words with curly braces.&nbsp;&nbsp;In<br>
@@ -277,7 +387,7 @@ The &quot;:map&quot; command (with no arguments) lists your current mappings.&nb
 least the ones for Normal mode.&nbsp;&nbsp;More about mappings in section&nbsp;<a class="Identifier" href="usr_40.html#40.1">40.1</a>.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-<a class="Constant" href="usr_05.html#05.4" name="05.4">05.4</a>&nbsp;&nbsp;Adding a package&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#add-package" name="add-package">add-package</a>&nbsp;<a class="Constant" href="usr_05.html#matchit-install" name="matchit-install">matchit-install</a><br>
+<a class="Constant" href="usr_05.html#05.5" name="05.5">05.5</a>&nbsp;&nbsp;Adding a package&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#add-package" name="add-package">add-package</a>&nbsp;<a class="Constant" href="usr_05.html#matchit-install" name="matchit-install">matchit-install</a><br>
 <br>
 A package is a set of files that you can add to Vim.&nbsp;&nbsp;There are two kinds of<br>
 packages: optional and automatically loaded on startup.<br>
@@ -315,7 +425,7 @@ an archive or as a repository.&nbsp;&nbsp;For an archive you can follow these st
 More information about packages can be found here:&nbsp;<a class="Identifier" href="repeat.html#packages">packages</a>.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-<a class="Constant" href="usr_05.html#05.5" name="05.5">05.5</a>&nbsp;&nbsp;Adding a plugin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#add-plugin" name="add-plugin">add-plugin</a>&nbsp;<a class="Constant" href="usr_05.html#plugin" name="plugin">plugin</a><br>
+<a class="Constant" href="usr_05.html#05.6" name="05.6">05.6</a>&nbsp;&nbsp;Adding a plugin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#add-plugin" name="add-plugin">add-plugin</a>&nbsp;<a class="Constant" href="usr_05.html#plugin" name="plugin">plugin</a><br>
 <br>
 Vim's functionality can be extended by adding plugins.&nbsp;&nbsp;A plugin is nothing<br>
 more than a Vim script file that is loaded automatically when Vim starts.&nbsp;&nbsp;You<br>
@@ -467,7 +577,7 @@ Further reading:<br>
 <a class="Identifier" href="filetype.html#new-filetype">new-filetype</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How to detect a new file type.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-<a class="Constant" href="usr_05.html#05.6" name="05.6">05.6</a>&nbsp;&nbsp;Adding a help file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#add-local-help" name="add-local-help">add-local-help</a><br>
+<a class="Constant" href="usr_05.html#05.7" name="05.7">05.7</a>&nbsp;&nbsp;Adding a help file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#add-local-help" name="add-local-help">add-local-help</a><br>
 <br>
 If you are lucky, the plugin you installed also comes with a help file.&nbsp;&nbsp;We<br>
 will explain how to install the help file, so that you can easily find help<br>
@@ -512,7 +622,7 @@ them through the tag.<br>
 For writing a local help file, see&nbsp;<a class="Identifier" href="usr_41.html#write-local-help">write-local-help</a>.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-<a class="Constant" href="usr_05.html#05.7" name="05.7">05.7</a>&nbsp;&nbsp;The option window<br>
+<a class="Constant" href="usr_05.html#05.8" name="05.8">05.8</a>&nbsp;&nbsp;The option window<br>
 <br>
 If you are looking for an option that does what you want, you can search in<br>
 the help files here:&nbsp;<a class="Identifier" href="options.html#options">options</a>.&nbsp;&nbsp;Another way is by using this command:<br>
@@ -551,7 +661,7 @@ border.&nbsp;&nbsp;This is what the&nbsp;<a class="Type" href="options.html#'scr
 from the window border where scrolling starts.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-<a class="Constant" href="usr_05.html#05.8" name="05.8">05.8</a>&nbsp;&nbsp;Often used options<br>
+<a class="Constant" href="usr_05.html#05.9" name="05.9">05.9</a>&nbsp;&nbsp;Often used options<br>
 <br>
 There are an awful lot of options.&nbsp;&nbsp;Most of them you will hardly ever use.<br>
 Some of the more useful ones will be mentioned here.&nbsp;&nbsp;Don't forget you can<br>

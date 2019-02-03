@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jan 26<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Feb 02<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,6 +43,8 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Timer test doesn't work on MS-Windows console, any way to make it work?<br>
+<br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - Get E20 when using command history to get &quot;'&lt;,'&gt;s/a/b&quot; and no Visual area<br>
 &nbsp;&nbsp;was set. (#3837)<br>
@@ -66,6 +68,7 @@ Terminal debugger:<br>
 - Add option to not open the program window.&nbsp;&nbsp;It's not used when attaching to<br>
 &nbsp;&nbsp;an already running program. (M. Kelly)<br>
 - When only gdb window exists, on &quot;quit&quot; edit another buffer.<br>
+- Use a sign group<br>
 - Termdebug does not work when Vim was build with mzscheme: gdb hangs just<br>
 &nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
 &nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
@@ -112,47 +115,17 @@ Problem with Visual yank when&nbsp;<a class="Type" href="options.html#'linebreak
 Patch with tests, but it's not clear how it is supposed to work. (tommm, 2018<br>
 Nov 17)&nbsp;&nbsp;Asked about this, Dec 22. Christian will have a look.<br>
 <br>
-Key mapping times out when using a timer in Gvim. (Michael Henry, 2018 Sep 9,<br>
-#3417)<br>
-Another report, with reproduction steps. (#3799)<br>
-Is this fixed by 8.1.0761?<br>
-<br>
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
 - WINVER conflict, should use 0x0600 by default?<br>
 <br>
-js_decode() does not handle infinity properly. (Dominique Pelle, 2019 Jan 10,<br>
-#3788)<br>
-<br>
-Patch to avoid skipping buffers when loading a session. (Jason Franklin, 2019<br>
-Jan 20)<br>
-<br>
-Patch to update example of how to restore the cursor. (Ken Takata, 2019 Jan<br>
-21)<br>
-<br>
-Patch to fix problems with timer in GUI. (Ozaki Kiichi, #3817)<br>
-Should also fix #3824.<br>
-Change the order in which GUI handles events?&nbsp;&nbsp;Make it work like os_unix.c,<br>
-check timer on lower level, check for pending messages higher up.<br>
-<br>
-Signs:<br>
--&nbsp;&nbsp; screen not redrawn correctly. (Dominique Pelle, 2019 Jan 14, #3803)<br>
--&nbsp;&nbsp; Use a sign group in the Termdebug plugin.<br>
--&nbsp;&nbsp; Avoid that &quot;sign unplace id&quot; does a redraw right away, esp. when there is<br>
-&nbsp;&nbsp;&nbsp;&nbsp;a sequence of these commands. (Andy Stewart, 2018 Mar 16)<br>
-<br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
-<br>
-Patch to recognize more systems with has().&nbsp;&nbsp;(Ozaki Kiichi, #3855)<br>
 <br>
 Merge checking for&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'concealcursor'">'concealcursor'</a>, see neovim #9492.<br>
 <br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
-<br>
-Patch for xxd to make it work with 64 bit numbers. (Christer Jense, 2019 Jan<br>
-11, #3791)<br>
 <br>
 Win32 key codes are messy.&nbsp;&nbsp;Mike Williams tried to fix that, but now old<br>
 mappings no longer work.&nbsp;&nbsp;Create a new terminal for the better solution?<br>
@@ -182,12 +155,6 @@ similar to check_due_timer().&nbsp;&nbsp;Also see #3809.<br>
 C syntax: {} inside () causes following {} to be highlighted as error.<br>
 (Michalis Giannakidis, 2006 Jun 1)<br>
 <br>
-Patch on #3690 to fix that &quot;wincmd p&quot; does not always behave properly.<br>
-(Christian Brabandt, 2018 Dec 17)<br>
-<br>
-Patch: When using %v in&nbsp;<a class="Type" href="options.html#'errorformat'">'errorformat'</a>, assume the number is the screen column<br>
-not bytes, also handle multi-byte charactes. (Yegappan Lakshmanan, #3700)<br>
-<br>
 Support setting the character displayed below the last line?&nbsp;&nbsp;Neovim uses<br>
 &quot;eob:X&quot; in&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>.<br>
 <br>
@@ -202,36 +169,23 @@ balloonexpr() on MS-Windows GUI doesn't handle accented chars? (nivaemail,<br>
 2018 Sep 14)<br>
 Another request: #3811.<br>
 <br>
-Patch for MinGW build with static libraries. (Ken Takata, 2018 Dec 16)<br>
-<br>
-Patch to add new regexp classes :ident:, :keyword:, :fname:.<br>
-(ichizok, 2016 Jan 12, #1373)<br>
-<br>
-Patch to add &quot;termsig&quot; - signal that caused job to end. (Ozaki Kiichi, 2019<br>
-Jan 10, #3786)<br>
-<br>
 More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
-<br>
-Patch for this: (Aron Widforss, 2018 Oct 13, #3539)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;missing a test.<br>
-7&nbsp;&nbsp; Make&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;a global-local option, so that it can be different in the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;quickfix window, for example. (Gary Holloway)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Also do&nbsp;<a class="Type" href="options.html#'sidescrolloff'">'sidescrolloff'</a>.<br>
-<br>
-Patch for ConPTY support, new one: #3794 Does this work now?<br>
-(Nobuhiro Takasaki)<br>
-<br>
-Issue #3649: Retrying the X server connection once may be insufficient.<br>
-Since patch 8.1.0615 we try reconnecting five times.&nbsp;&nbsp;Does it work?<br>
 <br>
 nvo-mode mapping works on Windows, not on Linux. (#3678)<br>
 <br>
 Patch to be able to separately map&nbsp;<span class="Special">CTRL-H</span>&nbsp;and BS on Windows.<br>
 (Linwei, 2017 Jul 11, #1833)<br>
 <br>
+Patch to improve readability of complicated if(). (ichizok, 2019 Jan 29,<br>
+#3879)<br>
+<br>
 Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
 Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'confirm'">'confirm'</a>&nbsp;is set a &quot;silent q&quot; doesn't show the prompt.&nbsp;&nbsp;It should in this<br>
+case. (Nate Peterson, 2019 Jan 31, #3892)<br>
+For &quot;silent! q&quot; it should not prompt and just fail.<br>
 <br>
 Using&nbsp;<span class="Special">CTRL-L</span>&nbsp;to add a character to the search string doesn't work for the last<br>
 character in the file. (Smylers, 2018 Nov 17, #3620)<br>
@@ -255,12 +209,15 @@ When&nbsp;<a class="Type" href="options.html#'sidescrolloff'">'sidescrolloff'</a
 scrolls back.&nbsp;&nbsp;Should allow for this scrolling, like&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;does when<br>
 using&nbsp;<span class="Special">CTRL-E</span>. (Yee Cheng Chin, #3721)<br>
 <br>
-Patch to add &quot;:vsbuffer&quot; - vertical split + :sbuffer. (Rob Pilling, 2019 Jan<br>
-17, #3816)&nbsp;&nbsp;Do we really need this?<br>
-<br>
 Invalid memory access with old regexp engine. (Dominique Pelle, 2018 Sep 3,<br>
 #3405)&nbsp;&nbsp;Introduced by 8.0.1517, which was fixing another memory access error.<br>
 (Sep 8)<br>
+<br>
+Patch to add complete_mode().&nbsp;&nbsp;Shougo - #3866.&nbsp;&nbsp;Alternate patch by Hirohito<br>
+Higashi, 2019 Jan 27, included now?<br>
+<br>
+Patch for ConPTY support, new one: #3794 Does this work now?&nbsp;&nbsp;It should.<br>
+(Nobuhiro Takasaki)<br>
 <br>
 Add function to make use of internal diff, working on two lists and returning<br>
 unified diff (list of lines).<br>
@@ -276,6 +233,8 @@ Make &quot;:interactive !cmd&quot; stop termcap mode, also when used in an autoc
 cursorline highlighting not removed after yanking in Visual mode.<br>
 (Matéo Zanibelli, 2018 Oct 30, #3578)<br>
 Patch by Christian, Oct 30.<br>
+<br>
+Patch to clean up CI configs. (Ozaki Kiichi, 2019 Feb 1, #3890)<br>
 <br>
 Memory leaks in test_channel? (or is it because of fork())<br>
 Using uninitialized value in test_crypt.<br>
@@ -297,6 +256,11 @@ Patch to add match count and current index &quot;3/44&quot; when using &quot;n&q
 <br>
 matchaddpos() gets slow with many matches.&nbsp;&nbsp;Proposal by Rick Howe, 2018 Jul<br>
 19.<br>
+<br>
+Should make&nbsp;<a class="Type" href="options.html#'listchars'">'listchars'</a>&nbsp;global-local.&nbsp;&nbsp;Local to window or to buffer?<br>
+Probably window.<br>
+Add something like&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>&nbsp;local to window, but allow for specifying a<br>
+highlight name.&nbsp;&nbsp;Esp. for the statusline.<br>
 <br>
 Sourceforge Vim pages still have content, redirect from empty page.<br>
 Check for PHP errors. (Wayne Davison, 2018 Oct 26)<br>
@@ -339,6 +303,9 @@ Further xdiff changes:<br>
 - add option to use external diff above a certain size.<br>
 <br>
 Difference between two regexp engines: #3373<br>
+<br>
+Patch to properly break CJK lines: #3875<br>
+Requires more tests.&nbsp;&nbsp;dbcs_ functions are not implemented.<br>
 <br>
 Patch to add ch_listen() (Yasuhiro Matsumoto, 2018 Nov 26, #3639)<br>
 What is the practical use for this?<br>
@@ -428,8 +395,6 @@ behave strangely, as if there is a gap and a vertical window separator.<br>
 <br>
 Make&nbsp;<span class="Special">{skip}</span>&nbsp;argument of searchpair() consistent with other places where we<br>
 pass an expression to evaluate.&nbsp;&nbsp;Allow passing zero for &quot;never skip&quot;.<br>
-<br>
-The&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;option is global, make it global-local. #3195<br>
 <br>
 Add an option similar to&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;to skip redrawing while executing a<br>
 script or function.<br>
