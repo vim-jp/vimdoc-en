@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Feb 02<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Feb 17<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,6 +43,11 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Patch to add farsi handling to arabic.c (Ali Gholami Rudi, 2009 May 2)<br>
+Added test, updates, June 23.<br>
+Updated for 7.4:&nbsp;<span class="Constant"><a href="http://litcave.rudi.ir/farsi_vim.diff">http://litcave.rudi.ir/farsi_vim.diff</a></span><br>
+Remark from Ameretat Reith (2014 Oct 13) with patch on top.<br>
+<br>
 Timer test doesn't work on MS-Windows console, any way to make it work?<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
@@ -79,15 +84,15 @@ Terminal debugger:<br>
 &nbsp;&nbsp;with another Vim instance.<br>
 <br>
 Terminal emulator window:<br>
+- When the job in the terminal doesn't use mouse events, let the scroll wheel<br>
+&nbsp;&nbsp;scroll the scrollback, like a terminal does at the shell prompt. #2490<br>
+&nbsp;&nbsp;And use modeless selection.&nbsp;&nbsp;#2962<br>
 - When Vim runs in the terminal and changes the title, the statusline needs to<br>
 &nbsp;&nbsp;be redrawn.<br>
 - GUI: When using &quot;:set go+=!&quot; a system() call causes the hit-enter prompt.<br>
 &nbsp;&nbsp;(#3327)<br>
 - Terminal API: Add more functionality? (Ozaki Kiichi 2018 May 13, #2907)<br>
 - GUI: hang until key typed. (#3530)<br>
-- When the job in the terminal doesn't use mouse events, let the scroll wheel<br>
-&nbsp;&nbsp;scroll the scrollback, like a terminal does at the shell prompt. #2490<br>
-&nbsp;&nbsp;And use modeless selection.&nbsp;&nbsp;#2962<br>
 - Allow for specifying the directory, with ++cwd=<span class="Special">{dir}</span>.<br>
 - With a vertical split only one window is updated. (Linwei, 2018 Jun 2,<br>
 &nbsp;&nbsp;#2977)<br>
@@ -122,17 +127,16 @@ Does not build with MinGW out of the box:<br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
 <br>
-Merge checking for&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'concealcursor'">'concealcursor'</a>, see neovim #9492.<br>
-<br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
-<br>
-Win32 key codes are messy.&nbsp;&nbsp;Mike Williams tried to fix that, but now old<br>
-mappings no longer work.&nbsp;&nbsp;Create a new terminal for the better solution?<br>
 <br>
 Improve fallback for menu translations, to avoid having to create lots of<br>
 files that source the actual file.&nbsp;&nbsp;E.g. menu_da_de -&gt; menu_da<br>
 Include part of #3242?<br>
+<br>
+Improvement for :terminal winpty/conpty option.&nbsp;&nbsp;Ozaki Kiichi, #3905<br>
+<br>
+Patch to change WIN32 macro names. (Hirohito Higashi, #3932)<br>
 <br>
 When a terminal exit_cb closes the window, a following typed key is lost, if<br>
 it's in a mapping. (2018 Oct 6, #2302, #3522)<br>
@@ -147,6 +151,9 @@ Internal diff doesn't handle binary file like external diff does. (Mike<br>
 Williams, 2018 Oct 30)<br>
 <br>
 Problem with :tlmenu: Detach item added with all modes?&nbsp;&nbsp;Issue #3563.<br>
+<br>
+Patch to reduce amount of memory used by functions that keep reference.<br>
+(ichizok, #3961)<br>
 <br>
 When using a timer callback vgetc_busy is reset, allowing for using input().<br>
 But in a channel callback this does not happen.&nbsp;&nbsp;We need to do something<br>
@@ -172,16 +179,42 @@ Another request: #3811.<br>
 More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
 <br>
+When using 'k' in&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a>&nbsp;gvim may open with a tiny window. (#3808)<br>
+Suggested patch on the issue.<br>
+<br>
 nvo-mode mapping works on Windows, not on Linux. (#3678)<br>
 <br>
 Patch to be able to separately map&nbsp;<span class="Special">CTRL-H</span>&nbsp;and BS on Windows.<br>
 (Linwei, 2017 Jul 11, #1833)<br>
 <br>
+Patch to fix encoding of messages on MS-Windows. (Yasuhiro Matsumoto, 2019 Feb<br>
+13, #3914)<br>
+<br>
+Patch to fix encoding conversion in messages. (#3969)<br>
+<br>
+Incsearch test fails when locale is &quot;C&quot;. (Dominique Pelle, #3986)<br>
+Also run all tests with C locale?<br>
+<br>
 Patch to improve readability of complicated if(). (ichizok, 2019 Jan 29,<br>
 #3879)<br>
 <br>
+&quot;vat&quot; doesn't work well on XML when the closing &gt; is on another line.<br>
+#3927<br>
+<br>
+Patch to include ARM64 support. (Leendert van Doorn, 2019 Feb 9)<br>
+<br>
+Patch to fix hang when opening file where an intermediate directory is not<br>
+readable on MS-Windows. (link on #3923)<br>
+<br>
 Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
 Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
+<br>
+Patch to add tagfunc().&nbsp;&nbsp;Cleaned up by Christian Brabandt, 2013 Jun 22.<br>
+New update 2017 Apr 10, #1628<br>
+<span class="Constant"><a href="https://github.com/chrisbra/vim-mq-patches/blob/master/tagfunc">https://github.com/chrisbra/vim-mq-patches/blob/master/tagfunc</a></span><br>
+Updated by Andy Massimino, 2018 Feb 7:<br>
+<span class="Constant"><a href="https://github.com/andymass/vim/commit/4e3aa0a5dab96d2799567622f3f537e357aa479e">https://github.com/andymass/vim/commit/4e3aa0a5dab96d2799567622f3f537e357aa479e</a></span>&nbsp;<br>
+Or should we make it asynchronous?<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'confirm'">'confirm'</a>&nbsp;is set a &quot;silent q&quot; doesn't show the prompt.&nbsp;&nbsp;It should in this<br>
 case. (Nate Peterson, 2019 Jan 31, #3892)<br>
@@ -192,15 +225,12 @@ character in the file. (Smylers, 2018 Nov 17, #3620)<br>
 Suggested patch by Hirohito Higashi, 2018 Nov 18.<br>
 <br>
 Using&nbsp;<span class="Special">CTRL-L</span>&nbsp;to add a character to the search string that contains \v,<br>
-punctiuation is repeated. (Smylers, 2018 Nov 17, #3621)<br>
+punctuation is repeated. (Smylers, 2018 Nov 17, #3621)<br>
 <br>
 Using&nbsp;<span class="Special">CTRL-L</span>&nbsp;during search only picks up the base character, not a combining<br>
 character. (Rick, 2018 Dec 11, #3682)<br>
 <br>
 ml_get error: (Israel Chauca Fuentes, 2018 Oct 17, #3550).<br>
-<br>
-Patch to convert temp file name. (Yasuhiro Matsumoto, #3520)<br>
-Not ready to include yet.<br>
 <br>
 Problem with two buffers with the same name a/b, if it didn't exist before and<br>
 is created outside of Vim. (dskloetg, 2018 Jul 16, #3219)<br>
@@ -216,11 +246,21 @@ Invalid memory access with old regexp engine. (Dominique Pelle, 2018 Sep 3,<br>
 Patch to add complete_mode().&nbsp;&nbsp;Shougo - #3866.&nbsp;&nbsp;Alternate patch by Hirohito<br>
 Higashi, 2019 Jan 27, included now?<br>
 <br>
+Patch to make winnr() return the window above/below/beside a window.<br>
+(Yegappan Lakshmanan, #3993)<br>
+<br>
 Patch for ConPTY support, new one: #3794 Does this work now?&nbsp;&nbsp;It should.<br>
 (Nobuhiro Takasaki)<br>
 <br>
 Add function to make use of internal diff, working on two lists and returning<br>
 unified diff (list of lines).<br>
+<br>
+When splitting a window with few text lines, the relative cursor position is<br>
+kept, which means part of the text isn't displayed.&nbsp;&nbsp;Better show all the text<br>
+when possible. (Dylan Lloyd, #3973)<br>
+<br>
+Tag stack is incorrect after&nbsp;<span class="Special">CTRL-T</span>&nbsp;and then :tag. (Andy Massimino, 2019 Feb<br>
+12, #3944)&nbsp;&nbsp;With Patch for a solution.&nbsp;&nbsp;Needs a test.<br>
 <br>
 Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (#3535)<br>
 &nbsp;&nbsp;Easier to use a&nbsp;<span class="MissingTag">'diffmaster'</span>&nbsp;option, is the extra complexity needed?<br>
@@ -236,6 +276,15 @@ Patch by Christian, Oct 30.<br>
 <br>
 Patch to clean up CI configs. (Ozaki Kiichi, 2019 Feb 1, #3890)<br>
 <br>
+Patch to filter marks. (Marcin Szamotulski, 2019 Feb 7, #3895)<br>
+<br>
+Patch to add environ(), gets a dict with all environment vars, and getenv(),<br>
+useful for environment vars that are not made of keyword chars.<br>
+(Yasuhiro Matsumoto, #2875)<br>
+<br>
+Patch to add optional arguments with default values.<br>
+(Andy Massimino, #3952)&nbsp;&nbsp;under development<br>
+<br>
 Memory leaks in test_channel? (or is it because of fork())<br>
 Using uninitialized value in test_crypt.<br>
 Memory leak in test_terminal:<br>
@@ -248,6 +297,7 @@ Memory leak in test_terminal:<br>
 ==23530==&nbsp;&nbsp;&nbsp;&nbsp;by 0x35C923: term_start (terminal.c:421)<br>
 ==23530==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2AFF30: mch_call_shell_terminal (os_unix.c:4377)<br>
 ==23530==&nbsp;&nbsp;&nbsp;&nbsp;by 0x2B16BE: mch_call_shell (os_unix.c:5383)<br>
+Memory leak in test_alot with pyeval() (allocating partial)<br>
 <br>
 gethostbyname() is old, use getaddrinfo() if available. (#3227)<br>
 <br>
@@ -256,6 +306,12 @@ Patch to add match count and current index &quot;3/44&quot; when using &quot;n&q
 <br>
 matchaddpos() gets slow with many matches.&nbsp;&nbsp;Proposal by Rick Howe, 2018 Jul<br>
 19.<br>
+<br>
+Patch to specify color for cterm=underline and cterm=undercurl, like &quot;guisp&quot;.<br>
+Does #2405 do this?<br>
+<br>
+Patch to add an interrupt() function: sets got_int.&nbsp;&nbsp;Useful in an autocommand<br>
+such as BufWritePre that checks the file name or contents.<br>
 <br>
 Should make&nbsp;<a class="Type" href="options.html#'listchars'">'listchars'</a>&nbsp;global-local.&nbsp;&nbsp;Local to window or to buffer?<br>
 Probably window.<br>
@@ -323,6 +379,11 @@ Better name?<br>
 MS-Windows: .lnk file not resolved properly when&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is set.<br>
 (lkintact, 2018 Sep 22, #3473)<br>
 <br>
+Merge checking for&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'concealcursor'">'concealcursor'</a>, see neovim #9492.<br>
+<br>
+Win32 key codes are messy.&nbsp;&nbsp;Mike Williams tried to fix that, but now old<br>
+mappings no longer work.&nbsp;&nbsp;Create a new terminal for the better solution?<br>
+<br>
 Script generated by :mksession does not work well if there are windows with<br>
 modified buffers<br>
 &nbsp;&nbsp;change &quot;silent only&quot; into &quot;silent only!&quot;<br>
@@ -354,6 +415,9 @@ Height of quickfix window is not retained with vertical splits. (Lifepillar,<br>
 <br>
 Window size is wrong when using quickfix window. (Lifepillar, 2018 Aug 24,<br>
 #2999)<br>
+<br>
+Add more testing of the GTK GUI.<br>
+- gtk_test_widget_click() can be used to simulate a click in a widget.<br>
 <br>
 Tests failing for &quot;make testgui&quot; with GTK:<br>
 - Test_setbufvar_options()<br>
@@ -827,10 +891,6 @@ Implement optional arguments for functions.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;call Foo(12, all = 0)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;call Foo(12, 15, 0)<br>
 <br>
-Change the Farsi code to work with UTF-8.&nbsp;&nbsp;Possibly combined with the Arabic<br>
-support, or similar.<br>
-Invalid read error in Farsi mode. (Dominique Pelle, 2009 Aug 2)<br>
-<br>
 Add a command to take a range of lines, filter them and put the output<br>
 somewhere else.&nbsp;&nbsp;:<span class="Special">{range}</span>copy&nbsp;<span class="Special">{dest}</span>&nbsp;!cmd<br>
 <br>
@@ -1009,9 +1069,6 @@ Patch for systemlist(), add empty item. (thinca, Sep 30, #1135)<br>
 Add an argument to choose binary or non-binary (like readfile()), when omitted<br>
 use the current behavior.<br>
 Include the test.<br>
-<br>
-Patch to add tagfunc().&nbsp;&nbsp;Cleaned up by Christian Brabandt, 2013 Jun 22.<br>
-New update 2017 Apr 10, #1628<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'keywordprg'">'keywordprg'</a>&nbsp;starts with &quot;:&quot; the argument is still escaped as a shell<br>
 command argument. (Romain Lafourcade, 2016 Oct 16, #1175)<br>
@@ -2084,12 +2141,6 @@ to avoid changing&nbsp;<a class="Type" href="options.html#'eventignore'">'eventi
 Patch for displaying 0x200c and 0x200d. (Ali Gholami Rudi, 2009 May 6)<br>
 Probably needs a bit of work.<br>
 <br>
-Patch to add farsi handling to arabic.c (Ali Gholami Rudi, 2009 May 2)<br>
-Added test, updates, June 23.<br>
-Updated for 7.4:&nbsp;<span class="Constant"><a href="http://litcave.rudi.ir/farsi_vim.diff">http://litcave.rudi.ir/farsi_vim.diff</a></span><br>
-With modification for Tatweel character:&nbsp;<span class="Constant"><a href="https://dpaste.de/VmFw">https://dpaste.de/VmFw</a></span><br>
-Remark from Ameretat Reith (2014 Oct 13)<br>
-<br>
 List of encoding aliases. (Takao Fujiwara, 2009 Jul 18)<br>
 Are they all OK?&nbsp;&nbsp;Update Jul 22.<br>
 <br>
@@ -3096,8 +3147,6 @@ Win32 GUI known bugs:<br>
 8&nbsp;&nbsp; The -P argument doesn't work very well with many MDI applications.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The last argument of CreateWindowEx() should be used, see MSDN docs.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Tutorial:&nbsp;<span class="Constant"><a href="http://win32assembly.online.fr/tut32.html">http://win32assembly.online.fr/tut32.html</a></span><br>
-8&nbsp;&nbsp; In eval.c, io.h is included when MSWIN32 is defined.&nbsp;&nbsp;Shouldn't this be<br>
-&nbsp;&nbsp;&nbsp;&nbsp;WIN32?&nbsp;&nbsp;Or can including io.h be moved to vim.h? (Dan Sharp)<br>
 6&nbsp;&nbsp; Win32 GUI: With &quot;-u NONE -U NONE&quot; and doing &quot;<span class="Special">CTRL-W</span>&nbsp;v&quot; &quot;<span class="Special">CTRL-W</span>&nbsp;o&quot;, the &quot;:&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;of &quot;:only&quot; is highlighted like the cursor.&nbsp;&nbsp;(Lipelis)<br>
 8&nbsp;&nbsp; When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is &quot;utf-8&quot;, should use&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;for both normal and wide<br>
