@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'autocmd'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="autocmd.html" name="autocmd.txt">autocmd.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Mar 13<br>
+<a class="Constant" href="autocmd.html" name="autocmd.txt">autocmd.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Apr 04<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -57,7 +57,7 @@ effects.&nbsp;&nbsp;Be careful not to destroy your text.<br>
 2. Defining autocommands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="autocmd.html#autocmd-define" name="autocmd-define">autocmd-define</a><br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="autocmd.html#:au" name=":au">:au</a>&nbsp;<a class="Constant" href="autocmd.html#:autocmd" name=":autocmd">:autocmd</a><br>
-:au[tocmd]&nbsp;<span class="Special">[group]</span>&nbsp;<span class="Special">{event}</span>&nbsp;<span class="Special">{pat}</span>&nbsp;<span class="Special">[nested]</span>&nbsp;<span class="Special">{cmd}</span><br>
+:au[tocmd]&nbsp;<span class="Special">[group]</span>&nbsp;<span class="Special">{event}</span>&nbsp;<span class="Special">{pat}</span>&nbsp;[++once] [++nested]&nbsp;<span class="Special">{cmd}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;<span class="Special">{cmd}</span>&nbsp;to the list of commands that Vim will<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute automatically on&nbsp;<span class="Special">{event}</span>&nbsp;for a file matching<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{pat}</span>&nbsp;<a class="Identifier" href="autocmd.html#autocmd-patterns">autocmd-patterns</a>.<br>
@@ -65,7 +65,13 @@ effects.&nbsp;&nbsp;Be careful not to destroy your text.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:autocmd and won't start a comment.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim always adds the&nbsp;<span class="Special">{cmd}</span>&nbsp;after existing autocommands,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;so that the autocommands execute in the order in which<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;they were given.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="autocmd.html#autocmd-nested">autocmd-nested</a>&nbsp;for&nbsp;<span class="Special">[nested]</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;they were given.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="autocmd.html#autocmd-nested">autocmd-nested</a>&nbsp;for [++nested].&nbsp;&nbsp;&quot;nested&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(without the ++) can also be used, for backwards<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;compatibility.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="autocmd.html#autocmd-once" name="autocmd-once">autocmd-once</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If [++once] is supplied the command is executed once,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;then removed (&quot;one shot&quot;).<br>
 <br>
 The special pattern&nbsp;<span class="Special">&lt;buffer&gt;</span>&nbsp;or &lt;buffer=<span class="Special">N</span>&gt; defines a buffer-local autocommand.<br>
 See&nbsp;<a class="Identifier" href="autocmd.html#autocmd-buflocal">autocmd-buflocal</a>.<br>
@@ -133,10 +139,11 @@ prompt.&nbsp;&nbsp;When one command outputs two messages this can happen anyway.
 <span class="PreProc">==============================================================================</span><br>
 3. Removing autocommands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="autocmd.html#autocmd-remove" name="autocmd-remove">autocmd-remove</a><br>
 <br>
-:au[tocmd]!&nbsp;<span class="Special">[group]</span>&nbsp;<span class="Special">{event}</span>&nbsp;<span class="Special">{pat}</span>&nbsp;<span class="Special">[nested]</span>&nbsp;<span class="Special">{cmd}</span><br>
+:au[tocmd]!&nbsp;<span class="Special">[group]</span>&nbsp;<span class="Special">{event}</span>&nbsp;<span class="Special">{pat}</span>&nbsp;[++once] [++nested]&nbsp;<span class="Special">{cmd}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove all autocommands associated with&nbsp;<span class="Special">{event}</span>&nbsp;and<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{pat}</span>, and add the command&nbsp;<span class="Special">{cmd}</span>.&nbsp;&nbsp;See<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="autocmd.html#autocmd-nested">autocmd-nested</a>&nbsp;for&nbsp;<span class="Special">[nested]</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{pat}</span>, and add the command&nbsp;<span class="Special">{cmd}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="autocmd.html#autocmd-once">autocmd-once</a>&nbsp;for [++once].<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="autocmd.html#autocmd-nested">autocmd-nested</a>&nbsp;for [++nested].<br>
 <br>
 :au[tocmd]!&nbsp;<span class="Special">[group]</span>&nbsp;<span class="Special">{event}</span>&nbsp;<span class="Special">{pat}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove all autocommands associated with&nbsp;<span class="Special">{event}</span>&nbsp;and<br>
@@ -1478,7 +1485,7 @@ By default, autocommands do not nest.&nbsp;&nbsp;For example, if you use &quot;:
 an autocommand, Vim does not execute the BufRead and BufWrite autocommands for<br>
 those commands.&nbsp;&nbsp;If you do want this, use the &quot;nested&quot; flag for those commands<br>
 in which you want nesting.&nbsp;&nbsp;For example:<br>
-<div class="helpExample">&nbsp;&nbsp;:autocmd FileChangedShell *.c nested e!</div>
+<div class="helpExample">&nbsp;&nbsp;:autocmd FileChangedShell *.c ++nested e!</div>
 The nesting is limited to 10 levels to get out of recursive loops.<br>
 <br>
 It's possible to use the &quot;:au&quot; command in an autocommand.&nbsp;&nbsp;This can be a<br>

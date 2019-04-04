@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Mar 23<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Apr 04<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -113,28 +113,18 @@ Support for popup widows:<br>
 - Use text properties to define highlighting.<br>
 - Proposal on issue #4063<br>
 <br>
+Notifications for text changes, could be used for LSP.<br>
+- New event, similar to TextChanged, but guaranteed to provide sequential<br>
+&nbsp;&nbsp;information of all text changes.<br>
+&nbsp;&nbsp;Possibly build on undo info (but undo itself is also a change).<br>
+&nbsp;&nbsp;How to deal with &quot;:%s/this/that&quot; ?<br>
+<br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)<br>
-<br>
-Patch to add complete_info()&nbsp;&nbsp;Shougo - #3866.&nbsp;&nbsp;Ready to include.&nbsp;&nbsp;Now #4106<br>
-<br>
-Problem with Visual yank when&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;are set.<br>
-Patch with tests, but it's not clear how it is supposed to work. (tommm, 2018<br>
-Nov 17)&nbsp;&nbsp;Asked about this, Dec 22. Christian will have a look.<br>
 <br>
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
 - WINVER conflict, should use 0x0600 by default?<br>
-<br>
-Patch for&nbsp;<a class="Type" href="options.html#'listchars'">'listchars'</a>&nbsp;when there is a composing character on a space.<br>
-How about when there is a double-width composing character on a space?<br>
-(Yasuhiro Matsumoto, #4046)<br>
-Test doesn't fail without patch?<br>
-<br>
-Patch to add ruby cflags. (#4050, fixes #1081)<br>
-Needs modification.<br>
-<br>
-Patch to add src/README.md.&nbsp;&nbsp;(WenxuanHuang, #4141)&nbsp;&nbsp;Replace README.txt?<br>
 <br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
@@ -164,22 +154,8 @@ Bug: script written with &quot;-W scriptout&quot; contains Key codes, while the 
 read with &quot;-s scriptin&quot; expects escape codes.&nbsp;&nbsp;Probably &quot;scriptout&quot; needs to<br>
 be adjusted. (Daniel Steinberg, 2019 Feb 24, #4041)<br>
 <br>
-Patch to move insert-expand code to insexpand.c. (Yegappan Lakshmanan, #4044)<br>
-<br>
-Patch for larger icons in installer. (#978)&nbsp;&nbsp;Still not good.<br>
-<br>
-Patch on issue #3964 to let sign column stop at the last buffer line.<br>
-(Christian Brabandt, 2019 Feb 24)<br>
-<br>
-Patch to use wide font functions. (Ken Takata, 2019 Feb 18, #4000)<br>
-<br>
-Patch on #4073, Andy Massimino.&nbsp;&nbsp;Is this a real problem?<br>
-<br>
 Bug: &quot;vipgw&quot; does not put cursor back where it belongs. (Jason Franklin, 2019<br>
 Mar 5)<br>
-<br>
-Patch to add blob2str() and str2blob(). (Yasuhiro Matsumoto, #4049)<br>
-Make docs clearer. Is it symmetric?<br>
 <br>
 When using a timer callback vgetc_busy is reset, allowing for using input().<br>
 But in a channel callback this does not happen.&nbsp;&nbsp;We need to do something<br>
@@ -201,7 +177,10 @@ Support setting the character displayed below the last line?&nbsp;&nbsp;Neovim u
 Check: __attribute__((format(printf, on semsg() and siemsg().&nbsp;&nbsp;Where was this<br>
 added?<br>
 <br>
-Patch to remove some unneeded {}. (Hirohito Higashi, #3982)<br>
+This modeline throws unexpected errors: (#4165)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;vim: syn=nosyntax<br>
+<br>
+Patch for listchars with multi-byte chars.&nbsp;&nbsp;#4197, discussion on #4046.<br>
 <br>
 Make balloon_show() work outside of&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>?&nbsp;&nbsp;Users expect it to work:<br>
 #2948. (related to #1512?)<br>
@@ -214,50 +193,38 @@ balloonexpr() on MS-Windows GUI doesn't handle accented chars? (nivaemail,<br>
 2018 Sep 14)<br>
 Another request: #3811.<br>
 <br>
-Patch for autoconf to add -fPIC for Fedora. (#4047)<br>
-<br>
-Height of quickfix window is not retained with vertical splits. (Lifepillar,<br>
-2018 Aug 24, #2998)<br>
-Patch on the issue by Hongbo Liu, 2019 Feb 19 #4013<br>
-<br>
 More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
 <br>
-Drop FEAT_TAG_OLDSTATIC?&nbsp;&nbsp;Anybody using this format should be able to get a<br>
-newer version of ctags.<br>
-<br>
 Still a E315 error when using terminal. (Masato Nishihata, #3959)<br>
 <br>
-When using 'k' in&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a>&nbsp;gvim may open with a tiny window. (#3808)<br>
-Suggested patch on the issue.<br>
+Running test_gui and test_gui_init with Motif sometimes kills the window<br>
+manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
+Athena is OK.<br>
+Motif: Build on Ubuntu can't enter any text in dialog text fields.<br>
 <br>
 nvo-mode mapping works on Windows, not on Linux. (#3678)<br>
 <br>
-Patch to have tutor check $LC_MESSAGES. (#4112)<br>
+Patch to add isinf(). (Ozaki Kiichi, #3787)<br>
 <br>
-Patch to fix modify_fname() does not work well with some&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>s.<br>
-(Ken Takata, #4007)<br>
+Patch to de-duplicate code and add error message.&nbsp;&nbsp;(Yegappan, #4207)<br>
 <br>
-Patch to add more info to OptionSet.&nbsp;&nbsp;Should mention what triggered the change<br>
-&quot;:set&quot;, &quot;:setlocal&quot;, &quot;:setglobal&quot;, &quot;modeline&quot;; and the old global value.<br>
-#4118<br>
-<br>
-Patch to make vim_getenv() work with wide API. (Ken Takata, #4008)<br>
-<br>
-How to make (async) complete function depending on completion type?<br>
-Patch on #4083 to do this with an autocommand.&nbsp;&nbsp;Probably want something else,<br>
-like&nbsp;<span class="MissingTag">'ominfunc'</span>.<br>
-<br>
-Patch to add equal field to complete items. (#3887)<br>
+No test for NULL after allocating memory: #4174<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/crypt.c&nbsp;&nbsp;line 256;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/crypt_zip.c line&nbsp;&nbsp;93;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/gui_gtk_f.c&nbsp;&nbsp;line 132;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/gui_gtk_x11 line&nbsp;&nbsp;1578;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/libvterm/src/state.c line 332;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/libvterm/src/state.c line 255;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/libvterm/src/state.c line 1618;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/libvterm/src/state.c line 1643<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/libvterm/src/termscreen.c line 83;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/ops.c&nbsp;&nbsp;line 6185;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/option.c&nbsp;&nbsp;line 12980;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/popupmnu.c line 1090;<br>
 <br>
 When using exclusive selection and vi&quot; that fails, cursor moves to the left.<br>
 Cursor should not move. (#4024)<br>
-<br>
-Patch to fix handling long line in tags file.&nbsp;&nbsp;#4051, #4084 (Andy Massimino)<br>
-<br>
-Patch to fix that executable() may fail on very long filename in MS-Windows.<br>
-(Ken Takata, 2016 Feb 1, update 2018 Oct 7, update 2019 Feb 19)<br>
-Now in pull request #4015.<br>
 <br>
 Patch to be able to separately map&nbsp;<span class="Special">CTRL-H</span>&nbsp;and BS on Windows.<br>
 (Linwei, 2017 Jul 11, #1833)<br>
@@ -280,9 +247,6 @@ Patch to improve readability of complicated if(). (ichizok, 2019 Jan 29,<br>
 <br>
 Patch to include ARM64 support. (Leendert van Doorn, 2019 Feb 9)<br>
 <br>
-Patch to fix hang when opening file where an intermediate directory is not<br>
-readable on MS-Windows. (link on #3923)<br>
-<br>
 Pasting foo} causes Vim to behave weird. (John Little, 2018 Jun 17)<br>
 Related to bracketed paste.&nbsp;&nbsp;I cannot reproduce it.<br>
 <br>
@@ -299,6 +263,44 @@ case. (Nate Peterson, 2019 Jan 31, #3892)<br>
 For &quot;silent! q&quot; it should not prompt and just fail.<br>
 <br>
 Patch to add readdir(). (Yasuhiro Matsumoto, #2439)<br>
+<br>
+Patch to add list2str() and str2list().&nbsp;&nbsp;#4190.&nbsp;&nbsp;Can be done with split/join<br>
+and map(), but not for composing characters.<br>
+<br>
+Patch to add equal field to complete items. (#3887)<br>
+Needs to sync to latest version, merge conflicts.<br>
+Summary:&nbsp;&nbsp;&nbsp;&nbsp;no way to avoid filtering for autocomlete function<br>
+Problem:&nbsp;&nbsp;&nbsp;&nbsp;No way to avoid filtering for autocomlete function, causing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flickering of the popup menu.<br>
+Solution:&nbsp;&nbsp; Add the &quot;equal&quot; field to complete items. (closes #3887)<br>
+<br>
+Patch to add CompleteChanged event: triggered when the complete popup menu<br>
+changes. #4176<br>
+<br>
+Problem with Visual yank when&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;are set.<br>
+Patch with tests, but it's not clear how it is supposed to work. (tommm, 2018<br>
+Nov 17)&nbsp;&nbsp;Asked about this, Dec 22. Christian will have a look.<br>
+<br>
+Patch to add ruby cflags. (#4050, fixes #1081)<br>
+Needs modification.<br>
+<br>
+Patch for larger icons in installer. (#978)&nbsp;&nbsp;Still not good.<br>
+<br>
+Some xterm responses are not properly handled: (Markus Gömmel, 2019 Apr 1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DCS 0 $ r Pt ST&nbsp;&nbsp;&nbsp;&nbsp;should be ignored.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DCS 0 + r/Pt/&nbsp;&nbsp;ST&nbsp;&nbsp;already ignored?<br>
+<br>
+Patch to add blob_encode() and blob_decode(). (Yasuhiro Matsumoto, #4049)<br>
+What do we need these for?<br>
+<br>
+Patch to add more info to OptionSet.&nbsp;&nbsp;Should mention what triggered the change<br>
+&quot;:set&quot;, &quot;:setlocal&quot;, &quot;:setglobal&quot;, &quot;modeline&quot;; and the old global value.<br>
+#4118.&nbsp;&nbsp;Proposed implementation: 2019 Mar 27.&nbsp;&nbsp;Tests fail, help update<br>
+missing.<br>
+<br>
+How to make (async) complete function depending on completion type?<br>
+Patch on #4083 to do this with an autocommand.&nbsp;&nbsp;Probably want something else,<br>
+like&nbsp;<a class="Type" href="options.html#'omnifunc'">'omnifunc'</a>.<br>
 <br>
 Using&nbsp;<span class="Special">CTRL-L</span>&nbsp;to add a character to the search string doesn't work for the last<br>
 character in the file. (Smylers, 2018 Nov 17, #3620)<br>
@@ -335,9 +337,6 @@ unified diff (list of lines).<br>
 When splitting a window with few text lines, the relative cursor position is<br>
 kept, which means part of the text isn't displayed.&nbsp;&nbsp;Better show all the text<br>
 when possible. (Dylan Lloyd, #3973)<br>
-<br>
-Tag stack is incorrect after&nbsp;<span class="Special">CTRL-T</span>&nbsp;and then :tag. (Andy Massimino, 2019 Feb<br>
-12, #3944)&nbsp;&nbsp;With Patch for a solution (Feb 23).&nbsp;&nbsp;Needs a test.<br>
 <br>
 Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (#3535)<br>
 &nbsp;&nbsp;Easier to use a&nbsp;<span class="MissingTag">'diffmaster'</span>&nbsp;option, is the extra complexity needed?<br>
@@ -845,9 +844,6 @@ Use gvimext.dll from the nightly build? (Issue #249)<br>
 <br>
 Problem with using :cd when remotely editing a file. (Gerd Wachsmuth, 2017 May<br>
 8, #1690)<br>
-<br>
-Running test_gui and test_gui_init with Motif sometimes kills the window<br>
-manager.&nbsp;&nbsp;Problem with Motif?<br>
 <br>
 Bogus characters inserted when triggering indent while changing text.<br>
 (Vitor Antunes, 2016 Nov 22, #1269)<br>
@@ -2235,8 +2231,6 @@ for GTK, how about others? (Ron Aaron, 2010 Apr 10)<br>
 <br>
 Patch for GTK buttons X1Mouse and X2Mouse. (Christian J. Robinson, 2010 Aug 9)<br>
 <br>
-Motif: Build on Ubuntu can't enter any text in dialog text fields.<br>
-<br>
 &quot;:tab split fname&quot; doesn't set the alternate file in the original window,<br>
 because win_valid() always returns FALSE.&nbsp;&nbsp;Below win_new_tabpage() in<br>
 ex_docmd.c.<br>
@@ -3108,6 +3102,10 @@ Awaiting updated patches:<br>
 -&nbsp;&nbsp; For GUI Find/Replace dialog support using a regexp.&nbsp;&nbsp;Patch for Motif<br>
 &nbsp;&nbsp;&nbsp;&nbsp;and GTK by degreneir (nov 10 and nov 18).<br>
 -&nbsp;&nbsp; Patch for &quot;paranoid mode&quot; by Kevin Collins, March 7.&nbsp;&nbsp;Needs much more work.<br>
+<br>
+Better&nbsp;<a class="Type" href="options.html#'rightleft'">'rightleft'</a>&nbsp;or BIDI support:<br>
+- Minimal Vi with bidi support:&nbsp;<span class="Constant"><a href="https://github.com/aligrudi/neatvi">https://github.com/aligrudi/neatvi</a></span><br>
+&nbsp;&nbsp;By Ali Gholami Rudi, also worked on arabic.c<br>
 <br>
 Quickfix/Location List:<br>
 -&nbsp;&nbsp; Window size is wrong when using quickfix window. (Lifepillar, 2018 Aug 24,<br>
