@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Apr 07<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Apr 20<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -196,7 +196,10 @@ Motif: Build on Ubuntu can't enter any text in dialog text fields.<br>
 <br>
 nvo-mode mapping works on Windows, not on Linux. (#3678)<br>
 <br>
-No test for NULL after allocating memory: #4174<br>
+Patch to make Command-V use&nbsp;<span class="Special">CTRL-R</span>_<span class="Special">CTRL-O</span>* on Mac, like on Windows.<br>
+(Ken Takata, #4266)<br>
+<br>
+No test for NULL after allocating memory: #4174 (martinkunevtoptal does this?)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;src/crypt.c&nbsp;&nbsp;line 256;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;src/crypt_zip.c line&nbsp;&nbsp;93;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;src/gui_gtk_f.c&nbsp;&nbsp;line 132;<br>
@@ -229,59 +232,16 @@ When&nbsp;<a class="Type" href="options.html#'confirm'">'confirm'</a>&nbsp;is se
 case. (Nate Peterson, 2019 Jan 31, #3892)<br>
 For &quot;silent! q&quot; it should not prompt and just fail.<br>
 <br>
-Patch to add CompleteChanged event: triggered when the complete popup menu<br>
-changes. #4176<br>
-<br>
-Patch to add tab-local directories. (Yegappan, #4212)<br>
-Wait a bit for comments.<br>
-<br>
-Problem with Visual yank when&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;are set.<br>
-Patch with tests, but it's not clear how it is supposed to work. (tommm, 2018<br>
-Nov 17)&nbsp;&nbsp;Asked about this, Dec 22. Christian will have a look.<br>
-<br>
-Patch to add ruby cflags. (#4050, fixes #1081)<br>
-Needs modification.<br>
-<br>
-Patch for larger icons in installer. (#978)&nbsp;&nbsp;Still not good.<br>
-<br>
-Patch to add tagfunc().&nbsp;&nbsp;Cleaned up by Christian Brabandt, 2013 Jun 22.<br>
-New update 2017 Apr 10, #1628<br>
-<span class="Constant"><a href="https://github.com/chrisbra/vim-mq-patches/blob/master/tagfunc">https://github.com/chrisbra/vim-mq-patches/blob/master/tagfunc</a></span><br>
-Updated by Andy Massimino, 2018 Feb 7:<br>
-<span class="Constant"><a href="https://github.com/andymass/vim/commit/4e3aa0a5dab96d2799567622f3f537e357aa479e">https://github.com/andymass/vim/commit/4e3aa0a5dab96d2799567622f3f537e357aa479e</a></span>&nbsp;<br>
-Or should we make it asynchronous?<br>
-Patch by Andy Massimino: #4010 - needs more work, tests are missing, docs need<br>
-updating, should probably return a string with extra info instad of dict<br>
-entries.<br>
-<br>
-Patch to fix that using &quot;5gj&quot; starting inside a closed fold does not work on<br>
-screen lines but on text lines. (Julius Hulsmann, #4095)&nbsp;&nbsp;Lacks a test.<br>
+Add&nbsp;<span class="Special">&lt;aevent&gt;</span>, which expands to the currently triggered autocommand event name.<br>
+(Daniel Hahler, #4232)&nbsp;&nbsp;Or add it to v:event (easier to use but slightly more<br>
+expensive).<br>
 <br>
 Some xterm responses are not properly handled: (Markus Gömmel, 2019 Apr 1)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;DCS 0 $ r Pt ST&nbsp;&nbsp;&nbsp;&nbsp;should be ignored.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;DCS 0 + r/Pt/&nbsp;&nbsp;ST&nbsp;&nbsp;already ignored?<br>
 <br>
-Patch to add blob_encode() and blob_decode(). (Yasuhiro Matsumoto, #4049)<br>
-What do we need these for?<br>
-<br>
-Patch to add more info to OptionSet.&nbsp;&nbsp;Should mention what triggered the change<br>
-&quot;:set&quot;, &quot;:setlocal&quot;, &quot;:setglobal&quot;, &quot;modeline&quot;; and the old global value.<br>
-#4118.&nbsp;&nbsp;Proposed implementation: 2019 Mar 27.&nbsp;&nbsp;Tests fail, help update<br>
-missing.<br>
-<br>
-How to make (async) complete function depending on completion type?<br>
-Patch on #4083 to do this with an autocommand.&nbsp;&nbsp;Probably want something else,<br>
-like&nbsp;<a class="Type" href="options.html#'omnifunc'">'omnifunc'</a>.<br>
-<br>
-Using&nbsp;<span class="Special">CTRL-L</span>&nbsp;to add a character to the search string doesn't work for the last<br>
-character in the file. (Smylers, 2018 Nov 17, #3620)<br>
-Suggested patch by Hirohito Higashi, 2018 Nov 18.<br>
-<br>
 Using&nbsp;<span class="Special">CTRL-L</span>&nbsp;to add a character to the search string that contains \v,<br>
 punctuation is repeated. (Smylers, 2018 Nov 17, #3621)<br>
-<br>
-Using&nbsp;<span class="Special">CTRL-L</span>&nbsp;during search only picks up the base character, not a combining<br>
-character. (Rick, 2018 Dec 11, #3682)<br>
 <br>
 ml_get error: (Israel Chauca Fuentes, 2018 Oct 17, #3550).<br>
 <br>
@@ -296,18 +256,15 @@ Invalid memory access with old regexp engine. (Dominique Pelle, 2018 Sep 3,<br>
 #3405)&nbsp;&nbsp;Introduced by 8.0.1517, which was fixing another memory access error.<br>
 (Sep 8)<br>
 <br>
-Patch to make winnr() return the window above/below/beside a window.<br>
-(Yegappan Lakshmanan, #3993)<br>
-<br>
-Patch for ConPTY support, new one: #3794 Does this work now?&nbsp;&nbsp;It should.<br>
-(Nobuhiro Takasaki)<br>
-<br>
 Add function to make use of internal diff, working on two lists and returning<br>
 unified diff (list of lines).<br>
 <br>
 When splitting a window with few text lines, the relative cursor position is<br>
 kept, which means part of the text isn't displayed.&nbsp;&nbsp;Better show all the text<br>
 when possible. (Dylan Lloyd, #3973)<br>
+<br>
+Patch to not recognize &quot;version&quot; as &quot;v:version&quot;, &quot;count&quot; as &quot;v:count&quot;.<br>
+Ken Takata, #4274.<br>
 <br>
 Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (#3535)<br>
 &nbsp;&nbsp;Easier to use a&nbsp;<span class="MissingTag">'diffmaster'</span>&nbsp;option, is the extra complexity needed?<br>
@@ -333,6 +290,35 @@ Add buffer argument to undotree(). (#4001)<br>
 <br>
 Patch to add optional arguments with default values.<br>
 (Andy Massimino, #3952)&nbsp;&nbsp;under development<br>
+<br>
+Patch to add tab-local directories. (Yegappan, #4212)<br>
+Good now?<br>
+<br>
+Patch to add more info to OptionSet.&nbsp;&nbsp;Should mention what triggered the change<br>
+&quot;:set&quot;, &quot;:setlocal&quot;, &quot;:setglobal&quot;, &quot;modeline&quot;; and the old global value.<br>
+#4118.&nbsp;&nbsp;Proposed implementation: 2019 Mar 27.&nbsp;&nbsp;Tests fail, help update<br>
+missing. Updated 2019 Apr 9<br>
+<br>
+Problem with Visual yank when&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;are set.<br>
+Patch with tests, but it's not clear how it is supposed to work. (tommm, 2018<br>
+Nov 17)&nbsp;&nbsp;Asked about this, Dec 22. Christian will have a look.<br>
+<br>
+Patch to add ruby cflags. (#4050, fixes #1081)<br>
+Needs modification.<br>
+<br>
+Patch for larger icons in installer. (#978)&nbsp;&nbsp;Still not good.<br>
+<br>
+Patch to add tagfunc().&nbsp;&nbsp;Cleaned up by Christian Brabandt, 2013 Jun 22.<br>
+New update 2017 Apr 10, #1628<br>
+<span class="Constant"><a href="https://github.com/chrisbra/vim-mq-patches/blob/master/tagfunc">https://github.com/chrisbra/vim-mq-patches/blob/master/tagfunc</a></span><br>
+Updated by Andy Massimino, 2018 Feb 7:<br>
+<span class="Constant"><a href="https://github.com/andymass/vim/commit/4e3aa0a5dab96d2799567622f3f537e357aa479e">https://github.com/andymass/vim/commit/4e3aa0a5dab96d2799567622f3f537e357aa479e</a></span>&nbsp;<br>
+Or should we make it asynchronous?<br>
+Patch by Andy Massimino: #4010 - needs a bit more work: produce errors when<br>
+something is wrong.<br>
+<br>
+Patch to fix that using &quot;5gj&quot; starting inside a closed fold does not work on<br>
+screen lines but on text lines. (Julius Hulsmann, #4095)&nbsp;&nbsp;Lacks a test.<br>
 <br>
 Memory leaks in test_channel? (or is it because of fork())<br>
 Using uninitialized value in test_crypt.<br>
@@ -363,7 +349,6 @@ Patch to add an interrupt() function: sets got_int.&nbsp;&nbsp;Useful in an auto
 such as BufWritePre that checks the file name or contents.<br>
 <br>
 More patches to check:<br>
-- #3797&nbsp;&nbsp;add test for #3789<br>
 - #4098&nbsp;&nbsp;improve Travis config<br>
 <br>
 Should make&nbsp;<a class="Type" href="options.html#'listchars'">'listchars'</a>&nbsp;global-local.&nbsp;&nbsp;Local to window or to buffer?<br>
