@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'gui'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="gui.html" name="gui.txt">gui.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jan 06<br>
+<a class="Constant" href="gui.html" name="gui.txt">gui.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Apr 28<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -16,8 +16,9 @@ Vim's Graphical User Interface&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 3. Mouse Control&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui.html#gui-mouse">gui-mouse</a><br>
 4. Making GUI Selections&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui.html#gui-selections">gui-selections</a><br>
 5. Menus&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui.html#menus">menus</a><br>
-6. Extras&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui.html#gui-extras">gui-extras</a><br>
-7. Shell Commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui.html#gui-shell">gui-shell</a><br>
+6. Font&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui.html#gui-font">gui-font</a><br>
+7. Extras&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui.html#gui-extras">gui-extras</a><br>
+8. Shell Commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="gui.html#gui-shell">gui-shell</a><br>
 <br>
 Other GUI documentation:<br>
 <a class="Identifier" href="gui_x11.html">gui_x11.txt</a>&nbsp;&nbsp; For specific items of the X11 GUI.<br>
@@ -1042,7 +1043,139 @@ make a selection.<br>
 <span class="Todo">Note</span>&nbsp;that a menu that starts with ']' will not be displayed.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-6. Extras&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui.html#gui-extras" name="gui-extras">gui-extras</a><br>
+6. Font<br>
+<br>
+This section describes font related options.<br>
+<br>
+<span class="Statement">GUIFONT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="gui.html#gui-font" name="gui-font">gui-font</a><br>
+<br>
+<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;is the option that tells Vim what font to use.&nbsp;&nbsp;In its simplest form<br>
+the value is just one font name.&nbsp;&nbsp;It can also be a list of font names<br>
+separated with commas.&nbsp;&nbsp;The first valid font is used.&nbsp;&nbsp;When no valid font can<br>
+be found you will get an error message.&nbsp;<br>
+<br>
+On systems where&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;is supported (X11) and&nbsp;<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;is not<br>
+empty, then&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;is not used.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="mbyte.html#xfontset">xfontset</a>.<br>
+<br>
+<span class="Todo">Note</span>: As to the GTK GUIs, no error is given against any invalid names, and the<br>
+first element of the list is always picked up and made use of.&nbsp;&nbsp;This is<br>
+because, instead of identifying a given name with a font, the GTK GUIs use it<br>
+to construct a pattern and try to look up a font which best matches the<br>
+pattern among available fonts, and this way, the matching never fails.&nbsp;&nbsp;An<br>
+invalid name doesn't matter because a number of font properties other than<br>
+name will do to get the matching done.<br>
+<br>
+Spaces after a comma are ignored.&nbsp;&nbsp;To include a comma in a font name precede<br>
+it with a backslash.&nbsp;&nbsp;Setting an option requires an extra backslash before a<br>
+space and a backslash.&nbsp;&nbsp;See also&nbsp;<a class="Identifier" href="options.html#option-backslash">option-backslash</a>.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:set guifont=Screen15,\ 7x13,font\\,with\\,commas</div>
+will make Vim try to use the font &quot;Screen15&quot; first, and if it fails it will<br>
+try to use &quot;7x13&quot; and then &quot;font,with,commas&quot; instead.<br>
+<br>
+If none of the fonts can be loaded, Vim will keep the current setting.&nbsp;&nbsp;If an<br>
+empty font list is given, Vim will try using other resource settings (for X,<br>
+it will use the Vim.font resource), and finally it will try some builtin<br>
+default which should always be there (&quot;7x13&quot; in the case of X).&nbsp;&nbsp;The font<br>
+names given should be &quot;normal&quot; fonts.&nbsp;&nbsp;Vim will try to find the related bold<br>
+and italic fonts.<br>
+<br>
+For Win32, GTK, Motif, Mac OS and Photon:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:set guifont=*</div>
+will bring up a font requester, where you can pick the font you want.<br>
+<br>
+The font name depends on the GUI used.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="gui.html#setting-guifont">setting-guifont</a>&nbsp;for a way to set<br>
+<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;for various systems.<br>
+<br>
+For the GTK+ 2 and 3 GUIs, the font name looks like this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:set guifont=Andale\ Mono\ 11</div>
+That's all.&nbsp;&nbsp;XLFDs are not used.&nbsp;&nbsp;For Chinese this is reported to work well:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;if has(&quot;gui_gtk2&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set guifont=Bitstream\ Vera\ Sans\ Mono\ 12,Fixed\ 12<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set guifontwide=Microsoft\ Yahei\ 12,WenQuanYi\ Zen\ Hei\ 12<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+(Replace gui_gtk2 with gui_gtk3 for the GTK+ 3 GUI)<br>
+<br>
+For Mac OSX you can use something like this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:set guifont=Monaco:h10</div>
+Also see&nbsp;<a class="Type" href="options.html#'macatsui'">'macatsui'</a>, it can help fix display problems.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui.html#E236" name="E236">E236</a><br>
+<span class="Todo">Note</span>&nbsp;that the fonts must be mono-spaced (all characters have the same width).<br>
+An exception is GTK: all fonts are accepted, but mono-spaced fonts look best.<br>
+<br>
+To preview a font on X11, you might be able to use the &quot;xfontsel&quot; program.<br>
+The &quot;xlsfonts&quot; program gives a list of all available fonts.<br>
+<br>
+For the Win32 GUI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui.html#E244" name="E244">E244</a>&nbsp;<a class="Constant" href="gui.html#E245" name="E245">E245</a><br>
+- Takes these options in the font name (use a ':' to separate the options):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hXX - height is XX (points, can be floating-point)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wXX - width is XX (points, can be floating-point)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WXX - weight is XX (see&nbsp;<span class="Todo">Note</span>&nbsp;on Weights below)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;&nbsp; - bold. This is equivalent to setting the weight to 700.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;&nbsp; - italic<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;u&nbsp;&nbsp; - underline<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;&nbsp; - strikeout<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cXX - character set XX.&nbsp;&nbsp;Valid charsets are: ANSI, ARABIC, BALTIC,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHINESEBIG5, DEFAULT, EASTEUROPE, GB2312, GREEK, HANGEUL,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEBREW, JOHAB, MAC, OEM, RUSSIAN, SHIFTJIS, SYMBOL, THAI,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TURKISH, VIETNAMESE ANSI and BALTIC.&nbsp;&nbsp;Normally you would use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;cDEFAULT&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;qXX - quality XX.&nbsp;&nbsp;Valid quality names are: PROOF, DRAFT, ANTIALIASED,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NONANTIALIASED, CLEARTYPE, DEFAULT.&nbsp;&nbsp;Normally you would use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;qDEFAULT&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Some quality values are not supported in legacy OSs.<br>
+- A '_' can be used in the place of a space, so you don't need to use<br>
+&nbsp;&nbsp;backslashes to escape the spaces.<br>
+Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:set guifont=courier_new:h12:w5:b:cRUSSIAN<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:set guifont=Andale_Mono:h7.5:w4.5</div>
+<br>
+See also&nbsp;<a class="Identifier" href="gui_x11.html#font-sizes">font-sizes</a>.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;on Weights: Fonts often come with a variety of weights. &quot;Normal&quot; weights<br>
+in Windows have a value of 400 and, left unspecified, this is the value that<br>
+will be used when attempting to find fonts. Windows will often match fonts<br>
+based on their weight with higher priority than the font name which means a<br>
+Book or Medium variant of a font might be used despite specifying a Light or<br>
+ExtraLight variant. If you are experiencing heavier weight substitution, then<br>
+explicitly setting a lower weight value may mitigate against this unwanted<br>
+substitution.<br>
+<br>
+<br>
+<span class="Statement">GUIFONTWIDE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="gui.html#gui-fontwide" name="gui-fontwide">gui-fontwide</a><br>
+<br>
+When not empty,&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;specifies a comma-separated list of fonts to be<br>
+used for double-width characters.&nbsp;&nbsp;The first font that can be loaded is<br>
+used.<br>
+<br>
+<span class="Todo">Note</span>: The size of these fonts must be exactly twice as wide as the one<br>
+specified with&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;and the same height.&nbsp;&nbsp;If there is a mismatch then<br>
+the text will not be drawn correctly.<br>
+<br>
+All GUI versions but GTK+:<br>
+<br>
+<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;is only used when&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is set to &quot;utf-8&quot; and<br>
+<a class="Type" href="options.html#'guifontset'">'guifontset'</a>&nbsp;is empty or invalid.<br>
+When&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>&nbsp;is set and a valid font is found in it and<br>
+<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;is empty Vim will attempt to find a matching<br>
+double-width font and set&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;to it.<br>
+<br>
+GTK+ GUI only:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui.html#guifontwide_gtk" name="guifontwide_gtk">guifontwide_gtk</a><br>
+<br>
+If set and valid,&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;is always used for double width<br>
+characters, even if&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not set to &quot;utf-8&quot;.<br>
+Vim does not attempt to find an appropriate value for&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a><br>
+automatically.&nbsp;&nbsp;If&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;is empty Pango/Xft will choose the<br>
+font for characters not available in&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>.&nbsp;&nbsp;Thus you do not need<br>
+to set&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;at all unless you want to override the choice<br>
+made by Pango/Xft.<br>
+<br>
+Windows +multibyte only:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui.html#guifontwide_win_mbyte" name="guifontwide_win_mbyte">guifontwide_win_mbyte</a><br>
+<br>
+If set and valid,&nbsp;<a class="Type" href="options.html#'guifontwide'">'guifontwide'</a>&nbsp;is used for IME instead of&nbsp;<a class="Type" href="options.html#'guifont'">'guifont'</a>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+7. Extras&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui.html#gui-extras" name="gui-extras">gui-extras</a><br>
 <br>
 This section describes other features which are related to the GUI.<br>
 <br>
@@ -1086,7 +1219,7 @@ A recommended Japanese font is MS Mincho.&nbsp;&nbsp;You can find info here:<br>
 <span class="Constant"><a href="http://www.lexikan.com/mincho.htm">http://www.lexikan.com/mincho.htm</a></span><br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-7. Shell Commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui.html#gui-shell" name="gui-shell">gui-shell</a><br>
+8. Shell Commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui.html#gui-shell" name="gui-shell">gui-shell</a><br>
 <br>
 For the X11 GUI the external commands are executed inside the gvim window.<br>
 See&nbsp;<a class="Identifier" href="gui_x11.html#gui-pty">gui-pty</a>.<br>

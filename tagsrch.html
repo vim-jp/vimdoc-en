@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'tagsrch'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="tagsrch.html" name="tagsrch.txt">tagsrch.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Mar 30<br>
+<a class="Constant" href="tagsrch.html" name="tagsrch.txt">tagsrch.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Apr 28<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -19,6 +19,7 @@ See section&nbsp;<a class="Identifier" href="usr_29.html#29.1">29.1</a>&nbsp;of 
 4. Tags details&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="tagsrch.html#tag-details">tag-details</a><br>
 5. Tags file format&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="tagsrch.html#tags-file-format">tags-file-format</a><br>
 6. Include file searches&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="tagsrch.html#include-search">include-search</a><br>
+7. Using&nbsp;<a class="Type" href="options.html#'tagfunc'">'tagfunc'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="tagsrch.html#tag-function">tag-function</a><br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 1. Jump to a tag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="tagsrch.html#tag-commands" name="tag-commands">tag-commands</a><br>
@@ -875,6 +876,72 @@ Common arguments for the commands above:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:isearch /string/ | echo &quot;the last one&quot;</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For a &quot;:djump&quot;, &quot;:dsplit&quot;, &quot;:dlist&quot; and &quot;:dsearch&quot; command the pattern<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is used as a literal string, not as a search pattern.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+7. Using&nbsp;<a class="Type" href="options.html#'tagfunc'">'tagfunc'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="tagsrch.html#tag-function" name="tag-function">tag-function</a><br>
+<br>
+It is possible to provide Vim with a function which will generate a list of<br>
+tags used for commands like&nbsp;<a class="Identifier" href="tagsrch.html#:tag">:tag</a>,&nbsp;<a class="Identifier" href="tagsrch.html#:tselect">:tselect</a>&nbsp;and Normal mode tag commands<br>
+like&nbsp;<a class="Identifier" href="tagsrch.html#CTRL-]">CTRL-]</a>.<br>
+<br>
+The function used for generating the taglist is specified by setting the<br>
+<a class="Type" href="options.html#'tagfunc'">'tagfunc'</a>&nbsp;option.&nbsp;&nbsp;The function will be called with three arguments:<br>
+&nbsp;&nbsp; a:pattern&nbsp;&nbsp;&nbsp;&nbsp;The tag identifier used during the tag search.<br>
+&nbsp;&nbsp; a:flags&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List of flags to control the function behavior.<br>
+&nbsp;&nbsp; a:info&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dict containing the following entries:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buf_ffname&nbsp;&nbsp;&nbsp;&nbsp;Full filename which can be used for priority.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user_data&nbsp;&nbsp;&nbsp;&nbsp; Custom data String, if stored in the tag<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stack previously by tagfunc.<br>
+<br>
+Currently two flags may be passed to the tag function:<br>
+&nbsp;&nbsp;'c'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The function was invoked by a normal command being processed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(mnemonic: the tag function may use the context around the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cursor to perform a better job of generating the tag list.)<br>
+&nbsp;&nbsp;'i'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In Insert mode, the user was completing a tag (with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-]">i_CTRL-X_CTRL-]</a>).<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that when&nbsp;<a class="Type" href="options.html#'tagfunc'">'tagfunc'</a>&nbsp;is set, the priority of the tags described in<br>
+<a class="Identifier" href="tagsrch.html#tag-priority">tag-priority</a>&nbsp;does not apply.&nbsp;&nbsp;Instead, the priority is exactly as the<br>
+ordering of the elements in the list returned by the function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="tagsrch.html#E987" name="E987">E987</a><br>
+The function should return a List of Dict entries.&nbsp;&nbsp;Each Dict must at least<br>
+include the following entries and each value must be a string:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the tag.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the file where the tag is defined.&nbsp;&nbsp;It is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;either relative to the current directory or a full path.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Ex command used to locate the tag in the file.&nbsp;&nbsp;This<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can be either an Ex search pattern or a line number.<br>
+<span class="Todo">Note</span>&nbsp;that the format is similar to that of&nbsp;<a class="Identifier" href="eval.html#taglist()">taglist()</a>, which makes it possible<br>
+to use its output to generate the result.<br>
+The following fields are optional:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;kind&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type of the tag.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user_data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String of custom data stored in the tag stack which<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can be used to disambiguate tags between operations.<br>
+<br>
+If the function returns&nbsp;<a class="Identifier" href="eval.html#v:null">v:null</a>&nbsp;instead of a List, a standard tag lookup will<br>
+be performed instead.<br>
+<br>
+It is not allowed to change the tagstack from inside&nbsp;<a class="Type" href="options.html#'tagfunc'">'tagfunc'</a>.&nbsp;&nbsp;<a class="Constant" href="tagsrch.html#E986" name="E986">E986</a>&nbsp;<br>
+<br>
+The following is a hypothetical example of a function used for&nbsp;<a class="Type" href="options.html#'tagfunc'">'tagfunc'</a>.&nbsp;&nbsp;It<br>
+uses the output of&nbsp;<a class="Identifier" href="eval.html#taglist()">taglist()</a>&nbsp;to generate the result: a list of tags in the<br>
+inverse order of file names.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function! TagFunc(pattern, flags, info)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function! CompareFilenames(item1, item2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let f1 = a:item1['filename']<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let f2 = a:item2['filename']<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return f1 &gt;=# f2 ?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ -1 : f1 &lt;=# f2 ? 1 : 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunction</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = taglist(a:pattern)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call sort(result, &quot;CompareFilenames&quot;)</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return result<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set tagfunc=TagFunc</div>
+<br>
 <br>
 &nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
 </div>
