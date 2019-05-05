@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Apr 20<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 May 05<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -150,6 +150,9 @@ Williams, 2018 Oct 30)<br>
 <br>
 Problem with :tlmenu: Detach item added with all modes?&nbsp;&nbsp;Issue #3563.<br>
 <br>
+The quoting of the&nbsp;<span class="Special">[command]</span>&nbsp;argument of :terminal is not clearly documented.<br>
+Give a few examples. (#4288)<br>
+<br>
 Bug: script written with &quot;-W scriptout&quot; contains Key codes, while the script<br>
 read with &quot;-s scriptin&quot; expects escape codes.&nbsp;&nbsp;Probably &quot;scriptout&quot; needs to<br>
 be adjusted. (Daniel Steinberg, 2019 Feb 24, #4041)<br>
@@ -170,8 +173,26 @@ Support setting the character displayed below the last line?&nbsp;&nbsp;Neovim u
 Check: __attribute__((format(printf, on semsg() and siemsg().&nbsp;&nbsp;Where was this<br>
 added?<br>
 <br>
+Add test for urxvt mouse codes.&nbsp;&nbsp;Also test that mouse coordinates can be<br>
+negative. (see #4326)<br>
+<br>
+<a class="Type" href="options.html#'cmdheight'">'cmdheight'</a>&nbsp;has a tab-local value, but it cannot be obtained with<br>
+<span class="Comment">:echo gettabwinvar(2, 1, '&amp;cmdheight')</span>&nbsp;returns the value for the _current_<br>
+tab page. (Ingo Karkat, #4324)<br>
+:call settabwinvar(1, 1, '&amp;cmdheight', 2) also doesn't work well.<br>
+<br>
+Add a chdir() function, which will set the window-local, tab-local or global<br>
+directory, first one that is currently used.&nbsp;&nbsp;Returns the current directory,<br>
+so that this works:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let save_dir = chdir(<span class="MissingTag">'somewhere'</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;call chdir(save_dir)<br>
+<br>
 This modeline throws unexpected errors: (#4165)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;vim: syn=nosyntax<br>
+<br>
+&quot;:doau SomeEvent&quot; gives &quot;No matching autocommands&quot;.&nbsp;&nbsp;This message doesn't give<br>
+a hint about how to fix it. (#4300)<br>
 <br>
 Make balloon_show() work outside of&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>?&nbsp;&nbsp;Users expect it to work:<br>
 #2948. (related to #1512?)<br>
@@ -189,29 +210,15 @@ More warnings from static analysis:<br>
 <br>
 Still a E315 error when using terminal. (Masato Nishihata, #3959)<br>
 <br>
+Use dict_iterate_start() / dict_iterate_next() instead of relying on the<br>
+internals of the dict structure.<br>
+<br>
 Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
 Athena is OK.<br>
 Motif: Build on Ubuntu can't enter any text in dialog text fields.<br>
 <br>
 nvo-mode mapping works on Windows, not on Linux. (#3678)<br>
-<br>
-Patch to make Command-V use&nbsp;<span class="Special">CTRL-R</span>_<span class="Special">CTRL-O</span>* on Mac, like on Windows.<br>
-(Ken Takata, #4266)<br>
-<br>
-No test for NULL after allocating memory: #4174 (martinkunevtoptal does this?)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/crypt.c&nbsp;&nbsp;line 256;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/crypt_zip.c line&nbsp;&nbsp;93;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/gui_gtk_f.c&nbsp;&nbsp;line 132;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/gui_gtk_x11 line&nbsp;&nbsp;1578;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/libvterm/src/state.c line 332;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/libvterm/src/state.c line 255;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/libvterm/src/state.c line 1618;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/libvterm/src/state.c line 1643<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/libvterm/src/termscreen.c line 83;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/ops.c&nbsp;&nbsp;line 6185;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/option.c&nbsp;&nbsp;line 12980;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/popupmnu.c line 1090;<br>
 <br>
 Missing tests for:<br>
 - add_termcap_entry()<br>
@@ -245,6 +252,9 @@ punctuation is repeated. (Smylers, 2018 Nov 17, #3621)<br>
 <br>
 ml_get error: (Israel Chauca Fuentes, 2018 Oct 17, #3550).<br>
 <br>
+Using single wide base character with double wide composing character gives<br>
+drawing errors.&nbsp;&nbsp;Fill up the base character?&nbsp;&nbsp;(Dominique, #4328)<br>
+<br>
 Problem with two buffers with the same name a/b, if it didn't exist before and<br>
 is created outside of Vim. (dskloetg, 2018 Jul 16, #3219)<br>
 <br>
@@ -263,24 +273,8 @@ When splitting a window with few text lines, the relative cursor position is<br>
 kept, which means part of the text isn't displayed.&nbsp;&nbsp;Better show all the text<br>
 when possible. (Dylan Lloyd, #3973)<br>
 <br>
-Patch to not recognize &quot;version&quot; as &quot;v:version&quot;, &quot;count&quot; as &quot;v:count&quot;.<br>
-Ken Takata, #4274.<br>
-<br>
-Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (#3535)<br>
-&nbsp;&nbsp;Easier to use a&nbsp;<span class="MissingTag">'diffmaster'</span>&nbsp;option, is the extra complexity needed?<br>
-<br>
-Patch to fix that bracketed paste remains after Vim exits. (2018 Oct 30, #3579)<br>
-<br>
 Make &quot;:interactive !cmd&quot; stop termcap mode, also when used in an autocommand.<br>
 (#3692)<br>
-<br>
-cursorline highlighting not removed after yanking in Visual mode.<br>
-(Matéo Zanibelli, 2018 Oct 30, #3578)<br>
-Patch by Christian, Oct 30.<br>
-<br>
-Patch to clean up CI configs. (Ozaki Kiichi, 2019 Feb 1, #3890)<br>
-<br>
-Patch to filter marks. (Marcin Szamotulski, 2019 Feb 7, #3895)<br>
 <br>
 Patch to add environ(), gets a dict with all environment vars, and getenv(),<br>
 useful for environment vars that are not made of keyword chars.<br>
@@ -288,37 +282,31 @@ useful for environment vars that are not made of keyword chars.<br>
 <br>
 Add buffer argument to undotree(). (#4001)<br>
 <br>
-Patch to add optional arguments with default values.<br>
-(Andy Massimino, #3952)&nbsp;&nbsp;under development<br>
+Patch to restore X11 connection. (#844)<br>
 <br>
-Patch to add tab-local directories. (Yegappan, #4212)<br>
-Good now?<br>
+Patch to add optional arguments with default values.<br>
+(Andy Massimino, #3952)&nbsp;&nbsp;Needs to be reviewed.<br>
 <br>
 Patch to add more info to OptionSet.&nbsp;&nbsp;Should mention what triggered the change<br>
 &quot;:set&quot;, &quot;:setlocal&quot;, &quot;:setglobal&quot;, &quot;modeline&quot;; and the old global value.<br>
-#4118.&nbsp;&nbsp;Proposed implementation: 2019 Mar 27.&nbsp;&nbsp;Tests fail, help update<br>
-missing. Updated 2019 Apr 9<br>
+#4118.&nbsp;&nbsp;Proposed implementation: 2019 Mar 27.<br>
+Updated 2019 Apr 9: ASAN fails.<br>
 <br>
 Problem with Visual yank when&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;are set.<br>
 Patch with tests, but it's not clear how it is supposed to work. (tommm, 2018<br>
 Nov 17)&nbsp;&nbsp;Asked about this, Dec 22. Christian will have a look.<br>
 <br>
-Patch to add ruby cflags. (#4050, fixes #1081)<br>
-Needs modification.<br>
-<br>
 Patch for larger icons in installer. (#978)&nbsp;&nbsp;Still not good.<br>
 <br>
-Patch to add tagfunc().&nbsp;&nbsp;Cleaned up by Christian Brabandt, 2013 Jun 22.<br>
-New update 2017 Apr 10, #1628<br>
-<span class="Constant"><a href="https://github.com/chrisbra/vim-mq-patches/blob/master/tagfunc">https://github.com/chrisbra/vim-mq-patches/blob/master/tagfunc</a></span><br>
-Updated by Andy Massimino, 2018 Feb 7:<br>
-<span class="Constant"><a href="https://github.com/andymass/vim/commit/4e3aa0a5dab96d2799567622f3f537e357aa479e">https://github.com/andymass/vim/commit/4e3aa0a5dab96d2799567622f3f537e357aa479e</a></span>&nbsp;<br>
-Or should we make it asynchronous?<br>
-Patch by Andy Massimino: #4010 - needs a bit more work: produce errors when<br>
-something is wrong.<br>
+Patch to add commands to jump to quickfix entry above/below the cursor.<br>
+(Yegappan Lakshmanan, #4316)&nbsp;&nbsp;Also do :cbefore and :cafter.<br>
 <br>
 Patch to fix that using &quot;5gj&quot; starting inside a closed fold does not work on<br>
 screen lines but on text lines. (Julius Hulsmann, #4095)&nbsp;&nbsp;Lacks a test.<br>
+<br>
+Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (#3535)<br>
+&nbsp;&nbsp;Easier to use a&nbsp;<span class="MissingTag">'diffmaster'</span>&nbsp;option, is the extra complexity needed?<br>
+&nbsp;&nbsp;Not ready to include.<br>
 <br>
 Memory leaks in test_channel? (or is it because of fork())<br>
 Using uninitialized value in test_crypt.<br>
@@ -335,9 +323,6 @@ Memory leak in test_terminal:<br>
 Memory leak in test_alot with pyeval() (allocating partial)<br>
 <br>
 gethostbyname() is old, use getaddrinfo() if available. (#3227)<br>
-<br>
-Patch to add match count and current index &quot;3/44&quot; when using &quot;n&quot; command.<br>
-(Christian Brabandt, on issue #453).&nbsp;&nbsp;Only when search string was typed?<br>
 <br>
 matchaddpos() gets slow with many matches.&nbsp;&nbsp;Proposal by Rick Howe, 2018 Jul<br>
 19.<br>
@@ -459,6 +444,11 @@ Patch to be able to use hex numbers with :digraph. (Lcd, 2015 Sep 6)<br>
 Update Sep 7.&nbsp;&nbsp;Update by Christian Brabandt, 2015 Sep 8, 2016 Feb 1.<br>
 Patch to be able to disable default digraphs (incomplete) (Eric Pruitt, 2018<br>
 Nov 22).<br>
+<br>
+Patch to list user digraphs. (Christian Brabandt, 2012 Apr 14)<br>
+<br>
+Patch to add digraph() function. (Christian Brabandt, 2013 Aug 22, update Aug<br>
+24)<br>
 <br>
 Try out background make plugin:&nbsp;<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/AndrewVos/vim-make-background">https://github.com/AndrewVos/vim-make-background</a></span><br>
@@ -716,10 +706,6 @@ The ++ options for the :edit command are also useful on the Vim command line.<br
 <br>
 When recovering a file, put the swap file name in b:recovered_swapfile.&nbsp;&nbsp;Then<br>
 a command can delete it.<br>
-<br>
-When a swap file exists, is not for a running process, is from the same<br>
-machine and recovering results in the same text, we could silently delete it.<br>
-#1237<br>
 <br>
 Overlong utf-8 sequence is displayed wrong. (Harm te Hennepe, 2017 Sep 14,<br>
 #2089)&nbsp;&nbsp;Patch with possible solution by Björn Linse.<br>
@@ -1024,6 +1010,8 @@ Regexp problems:<br>
 &nbsp;&nbsp;time is spent in addstate_here() copying the threads.&nbsp;&nbsp;Instead of copying,<br>
 &nbsp;&nbsp;let each thread point to the next one (by offset, the list is reallocated).<br>
 &nbsp;&nbsp;(Dominique Pelle, 2019 Feb 18)<br>
+- Old engine: using&nbsp;<a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;/\Zabc does not highlight the &quot;c&quot; if it has a<br>
+&nbsp;&nbsp;composing character.&nbsp;&nbsp;New engine is OK. (Tony Mechelynck, 2019 May 5)<br>
 - When search pattern has the base character both with and without combining<br>
 &nbsp;&nbsp;character, search fails.&nbsp;&nbsp;E.g. &quot;รรีบ&quot; in &quot;การรีบรักใคร&quot;. (agguser, #2312)<br>
 - [:space:] only matches ASCII spaces.&nbsp;&nbsp;Add [:white:] for all space-like<br>
@@ -1752,11 +1740,6 @@ New tests Jul 13.&nbsp;&nbsp; Update Jul 17.&nbsp;&nbsp;Discussion Jul 18.<br>
 When running Vim in silent ex mode, an existing swapfile causes Vim to wait<br>
 for a user action without a prompt. (Maarten Billemont, 2012 Feb 3)<br>
 Do give the prompt? Quit with an error?<br>
-<br>
-Patch to list user digraphs. (Christian Brabandt, 2012 Apr 14)<br>
-<br>
-Patch to add digraph() function. (Christian Brabandt, 2013 Aug 22, update Aug<br>
-24)<br>
 <br>
 Patch for input method status. (Hirohito Higashi, 2012 Apr 18)<br>
 <br>
@@ -4015,7 +3998,8 @@ Folding:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;secondary: zB zS zT zZ, z=)<br>
 8&nbsp;&nbsp; Vertical folds: looks like vertically split windows, but the cursor moves<br>
 &nbsp;&nbsp;&nbsp;&nbsp;through the vertical separator, separator moves when scrolling.<br>
-8&nbsp;&nbsp; Add &quot;z/&quot; and &quot;z?&quot; for searching in not folded text only.<br>
+8&nbsp;&nbsp; Add &quot;z/&quot; and &quot;z?&quot; for searching in not folded text only.&nbsp;&nbsp;Or use a regexp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;item, so that it can be used in any pattern.<br>
 8&nbsp;&nbsp; When a closed fold is displayed open because of&nbsp;<a class="Type" href="options.html#'foldminlines'">'foldminlines'</a>, the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;behavior of commands is still like the fold is closed.&nbsp;&nbsp;How to make the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;user aware of this?<br>
@@ -6006,7 +5990,7 @@ Various improvements:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used, remove the&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;at the end of lines in&nbsp;<span class="Special">[range]</span>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<span class="Special">CTRL-Z</span>&nbsp;at the end of the file is removed.&nbsp;&nbsp;If<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">[range]</span>&nbsp;is omitted, or it is the whole file, and all<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lines end in&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;<a class="Type" href="options.html#'textmode'">'textmode'</a>&nbsp;is set.&nbsp;&nbsp;<span class="Special">{not in Vi}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lines end in&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;<a class="Type" href="options.html#'textmode'">'textmode'</a>&nbsp;is set.<br>
 -&nbsp;&nbsp; Should integrate addstar() and file_pat_to_reg_pat().<br>
 -&nbsp;&nbsp; When working over a serial line with 7 bit characters, remove meta<br>
 &nbsp;&nbsp;&nbsp;&nbsp;characters from&nbsp;<a class="Type" href="options.html#'isprint'">'isprint'</a>.<br>
