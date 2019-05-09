@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vi_diff'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vi_diff.html" name="vi_diff.txt">vi_diff.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 May 05<br>
+<a class="Constant" href="vi_diff.html" name="vi_diff.txt">vi_diff.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 May 07<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -298,6 +298,12 @@ Command-line editing and history.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forward/backward one character.&nbsp;&nbsp;The shifted right/left cursor keys<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can be used to move forward/backward one word.&nbsp;&nbsp;<span class="Special">CTRL-B</span>/<span class="Special">CTRL-E</span>&nbsp;can be<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used to go to the begin/end of the command-line.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: can only alter the last character in the line}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: when hitting &lt;Esc&gt; the command-line is executed.&nbsp;&nbsp;This is</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">unexpected for most people; therefore it was changed in Vim.&nbsp;&nbsp;But when</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">the &lt;Esc&gt; is part of a mapping, the command-line is executed.&nbsp;&nbsp;If you</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">want the Vi behaviour also when typing &lt;Esc&gt;, use &quot;:cmap ^V&lt;Esc&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">^V^M&quot;}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="cmdline.html#cmdline-history">cmdline-history</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The command-lines are remembered.&nbsp;&nbsp;The up/down cursor keys can be used<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to recall previous command-lines.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'history'">'history'</a>&nbsp;option can be set to<br>
@@ -545,6 +551,8 @@ The&nbsp;<a class="Type" href="options.html#'tags'">'tags'</a>&nbsp;option can b
 tag files can be used.&nbsp;&nbsp;For file names that start with &quot;./&quot;, the &quot;./&quot; is<br>
 replaced with the path of the current file.&nbsp;&nbsp;This makes it possible to use a<br>
 tags file in the same directory as the file being edited.<br>
+<span class="Special">{Vi: always uses binary search in some versions}</span><br>
+<span class="Special">{Vi does not have the security prevention for commands in tag files}</span><br>
 <br>
 Previously used file names are remembered in the alternate file name list.<br>
 <span class="Special">CTRL-^</span>&nbsp;accepts a count, which is an index in this list.<br>
@@ -582,6 +590,8 @@ one space after a period (Vi inserts two spaces).<br>
 <br>
 &quot;cw&quot; can be used to change white space formed by several characters (Vi is<br>
 confusing: &quot;cw&quot; only changes one space, while &quot;dw&quot; deletes all white space).<br>
+<span class="Special">{Vi: &quot;cw&quot; when on a blank followed by other blanks changes only the first</span><br>
+<span class="Special">blank; this is probably a bug, because &quot;dw&quot; deletes all the blanks}</span><br>
 <br>
 &quot;o&quot; and &quot;O&quot; accept a count for repeating the insert (Vi clears a part of<br>
 display).<br>
@@ -650,7 +660,7 @@ of the window.<br>
 Uppercase marks can be used to jump between files.&nbsp;&nbsp;The &quot;:marks&quot; command lists<br>
 all currently set marks.&nbsp;&nbsp;The commands &quot;']&quot; and &quot;`]&quot; jump to the end of the<br>
 previous operator or end of the text inserted with the put command.&nbsp;&nbsp;&quot;'[&quot; and<br>
-&quot;`[&quot; do jump to the start.<br>
+&quot;`[&quot; do jump to the start.&nbsp;<span class="Special">{Vi: no uppercase marks}</span><br>
 <br>
 The&nbsp;<a class="Type" href="options.html#'shelltype'">'shelltype'</a>&nbsp;option can be set to reflect the type of shell used on the<br>
 Amiga.<br>
@@ -795,14 +805,16 @@ filesystem under Unix.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="options.h
 Error messages are shown at least one second (Vi overwrites error messages).<br>
 <br>
 If Vim gives the&nbsp;<a class="Identifier" href="message.html#hit-enter">hit-enter</a>&nbsp;prompt, you can hit any key.&nbsp;&nbsp;Characters other<br>
-than&nbsp;<span class="Special">&lt;CR&gt;</span>,&nbsp;<span class="Special">&lt;NL&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;Space&gt;</span>&nbsp;are interpreted as the (start of) a command.&nbsp;&nbsp;(Vi<br>
-only accepts a command starting with ':').<br>
+than&nbsp;<span class="Special">&lt;CR&gt;</span>,&nbsp;<span class="Special">&lt;NL&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;Space&gt;</span>&nbsp;are interpreted as the (start of) a command.<br>
+<span class="Special">{Vi: only &quot;:&quot; commands are interpreted}</span><br>
 <br>
 The contents of the numbered and unnamed registers is remembered when<br>
 changing files.<br>
 <br>
 The &quot;No lines in buffer&quot; message is a normal message instead of an error<br>
 message, since that may cause a mapping to be aborted.<br>
+<span class="Special">{Vi: error messages may be overwritten with other messages before you have a</span><br>
+<span class="Special">chance to read them}</span><br>
 <br>
 The AUX: device of the Amiga is supported.<br>
 <br>
@@ -831,7 +843,7 @@ else has been added by Vim.<br>
 <a class="Comment" href="change.html#:copy">:copy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; copy lines<br>
 <a class="Comment" href="change.html#:delete">:delete</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete lines<br>
 <a class="Comment" href="editing.html#:edit">:edit</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; edit a file<br>
-<a class="Comment" href="editing.html#:exit">:exit</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; same as &quot;:xit&quot;<br>
+<a class="Comment" href="editing.html#:exit">:exit</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; same as&nbsp;<a class="Comment" href="editing.html#:xit">:xit</a><br>
 <a class="Comment" href="editing.html#:file">:file</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; show or set the current file name; Vi&#0058; without the column number<br>
 <a class="Comment" href="repeat.html#:global">:global</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; execute commands for matching lines<br>
 <a class="Comment" href="insert.html#:insert">:insert</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; insert text<br>
@@ -841,17 +853,19 @@ else has been added by Vim.<br>
 <a class="Comment" href="map.html#:map">:map</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show or enter a mapping<br>
 <a class="Comment" href="motion.html#:mark">:mark</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set a mark<br>
 <a class="Comment" href="change.html#:move">:move</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; move lines<br>
-<a class="Comment" href="editing.html#:Next">:Next</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; go to previous file in the argument list; no count or ++opt<br>
-<a class="Comment" href="editing.html#:next">:next</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; go to next file in the argument list; no count or ++opt<br>
+<a class="Comment" href="editing.html#:Next">:Next</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; go to previous file in the argument list&nbsp;<span class="Special">{Vi: no count}</span><br>
+<a class="Comment" href="editing.html#:next">:next</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; go to next file in the argument list&nbsp;<span class="Special">{Vi: no count}</span><br>
 <a class="Comment" href="various.html#:number">:number</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print lines with line number<br>
 <a class="Comment" href="vi_diff.html#:open">:open</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; start open mode (not implemented in Vim)<br>
 <a class="Comment" href="tagsrch.html#:pop">:pop</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jump to older entry in tag stack (only in some versions)<br>
-<a class="Comment" href="recover.html#:preserve">:preserve</a>&nbsp;&nbsp;&nbsp;&nbsp; write all text to swap file<br>
+<a class="Comment" href="recover.html#:preserve">:preserve</a>&nbsp;&nbsp;&nbsp;&nbsp; write all text to swap file&nbsp;<span class="Special">{Vi: might also exit}</span><br>
+<a class="Comment" href="editing.html#:previous">:previous</a>&nbsp;&nbsp;&nbsp;&nbsp; same as&nbsp;<a class="Comment" href="editing.html#:Next">:Next</a>&nbsp;<span class="Special">{Vi: only in some versions}</span><br>
 <a class="Comment" href="various.html#:print">:print</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print lines<br>
 <a class="Comment" href="change.html#:put">:put</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert contents of register in the text<br>
 <a class="Comment" href="editing.html#:quit">:quit</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; quit Vi<br>
 <a class="Comment" href="insert.html#:read">:read</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; read file into the text<br>
-<a class="Comment" href="recover.html#:recover">:recover</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;recover a file from a swap file<br>
+<a class="Comment" href="recover.html#:recover">:recover</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;recover a file from a swap file&nbsp;<span class="Special">{Vi: recovers in another way</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">and sends mail if there is something to recover}</span><br>
 <a class="Comment" href="editing.html#:rewind">:rewind</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; go to the first file in the argument list; no ++opt<br>
 <a class="Comment" href="options.html#:set">:set</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set option; but not&nbsp;<span class="Comment">:set inv{option}</span>,&nbsp;<span class="Comment">:set option&amp;</span>,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:set all&amp;</span>,&nbsp;<span class="Comment">:set option+=value</span>,&nbsp;<span class="Comment">:set option^=value</span><br>
@@ -886,6 +900,9 @@ else has been added by Vim.<br>
 <a class="Comment" href="repeat.html#:@">:@</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute contents of a register; but not&nbsp;<a class="Comment" href="repeat.html#:@">:@</a>;&nbsp;<a class="Comment" href="repeat.html#:@@">:@@</a>&nbsp;only in<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;some versions<br>
 <br>
+Common for these commands is that Vi doesn't support the ++opt argument on<br>
+<a class="Comment" href="editing.html#:edit">:edit</a>&nbsp;and other commands that open a file.<br>
+<br>
 <br>
 <span class="PreProc">The following Normal mode commands are supported by Vi&#0058;</span><br>
 <br>
@@ -911,8 +928,8 @@ else has been added by Vim.<br>
 <a class="Identifier" href="scroll.html#CTRL-U">CTRL-U</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">N</span>&nbsp;lines Upwards (default: half a screen)<br>
 <a class="Identifier" href="scroll.html#CTRL-Y">CTRL-Y</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scroll&nbsp;<span class="Special">N</span>&nbsp;lines downwards<br>
 <a class="Identifier" href="starting.html#CTRL-Z">CTRL-Z</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;suspend program (or start new shell)<br>
-<a class="Identifier" href="tagsrch.html#CTRL-]">CTRL-]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:ta to ident under cursor<br>
-<a class="Identifier" href="editing.html#CTRL-^">CTRL-^</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edit alternate file; Vi&#0058; no count<br>
+<a class="Identifier" href="tagsrch.html#CTRL-]">CTRL-]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:ta to ident under cursor&nbsp;<span class="Special">{Vi: identifier after the cursor}</span><br>
+<a class="Identifier" href="editing.html#CTRL-^">CTRL-^</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edit alternate file&nbsp;<span class="Special">{Vi: no count}</span><br>
 <a class="Identifier" href="motion.html#<Space>">&lt;Space&gt;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; same as &quot;l&quot;<br>
 <a class="Identifier" href="change.html#!">!</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; filter Nmove text through the&nbsp;<span class="Special">{filter}</span>&nbsp;command<br>
 <a class="Identifier" href="change.html#!!">!!</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter&nbsp;<span class="Special">N</span>&nbsp;lines through the&nbsp;<span class="Special">{filter}</span>&nbsp;command<br>
@@ -942,6 +959,7 @@ else has been added by Vim.<br>
 <a class="Identifier" href="change.html#>>">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shift&nbsp;<span class="Special">N</span>&nbsp;lines one&nbsp;<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;rightwards<br>
 <a class="Identifier" href="pattern.html#?">?</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; search backward for the&nbsp;<span class="Special">N</span>th previous occurrence of&nbsp;<span class="Special">{pattern}</span><br>
 <a class="Identifier" href="repeat.html#@">@</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; execute the contents of register&nbsp;<span class="Special">{a-z}</span>&nbsp;<span class="Special">N</span>&nbsp;times<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: only named registers}</span><br>
 <a class="Identifier" href="repeat.html#@@">@@</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat the previous @<span class="Special">{a-z}</span>&nbsp;<span class="Special">N</span>&nbsp;times<br>
 <a class="Identifier" href="insert.html#A">A</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; append text after the end of the line&nbsp;<span class="Special">N</span>&nbsp;times<br>
 <a class="Identifier" href="motion.html#B">B</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor&nbsp;<span class="Special">N</span>&nbsp;WORDS backward<br>
@@ -958,8 +976,9 @@ else has been added by Vim.<br>
 <a class="Identifier" href="motion.html#M">M</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor to middle line of screen<br>
 <a class="Identifier" href="pattern.html#N">N</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; repeat the latest '/' or '?'&nbsp;<span class="Special">N</span>&nbsp;times in opposite direction<br>
 <a class="Identifier" href="insert.html#O">O</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; begin a new line above the cursor and insert text, repeat&nbsp;<span class="Special">N</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;times<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;times&nbsp;<span class="Special">{Vi: blank [count] screen lines}</span><br>
 <a class="Identifier" href="change.html#P">P</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; put the text [from register x] before the cursor&nbsp;<span class="Special">N</span>&nbsp;times<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: no count}</span><br>
 <a class="Identifier" href="intro.html#Q">Q</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; switch to &quot;Ex&quot; mode<br>
 <a class="Identifier" href="change.html#R">R</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enter replace mode: overtype existing characters, repeat the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;entered text&nbsp;<span class="Special">N</span>-1 times<br>
@@ -967,6 +986,7 @@ else has been added by Vim.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;cc&quot;.<br>
 <a class="Identifier" href="motion.html#T">T</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor till after&nbsp;<span class="Special">N</span>th occurrence of&nbsp;<span class="Special">{char}</span>&nbsp;to the left<br>
 <a class="Identifier" href="undo.html#U">U</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; undo all latest changes on one line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: while not moved off of the last modified line}</span><br>
 <a class="Identifier" href="motion.html#W">W</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor&nbsp;<span class="Special">N</span>&nbsp;WORDS forward<br>
 <a class="Identifier" href="change.html#X">X</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete&nbsp;<span class="Special">N</span>&nbsp;characters before the cursor [into register x]<br>
 <a class="Identifier" href="change.html#Y">Y</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; yank&nbsp;<span class="Special">N</span>&nbsp;lines [into register x]; synonym for &quot;yy&quot;<br>
@@ -992,8 +1012,11 @@ else has been added by Vim.<br>
 <a class="Identifier" href="motion.html#m">m</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set mark&nbsp;<span class="Special">{A-Za-z}</span>&nbsp;at cursor position<br>
 <a class="Identifier" href="pattern.html#n">n</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; repeat the latest '/' or '?'&nbsp;<span class="Special">N</span>&nbsp;times<br>
 <a class="Identifier" href="insert.html#o">o</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; begin a new line below the cursor and insert text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: blank [count] screen lines}</span><br>
 <a class="Identifier" href="change.html#p">p</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; put the text [from register x] after the cursor&nbsp;<span class="Special">N</span>&nbsp;times<br>
-<a class="Identifier" href="change.html#r">r</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; replace&nbsp;<span class="Special">N</span>&nbsp;chars with&nbsp;<span class="Special">{char}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: no count}</span><br>
+<a class="Identifier" href="change.html#r">r</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; replace&nbsp;<span class="Special">N</span>&nbsp;chars with&nbsp;<span class="Special">{char}</span>&nbsp;<span class="Special">{Vi: CTRL-V &lt;CR&gt; still replaces</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">with a line break, cannot replace something with a &lt;CR&gt;}</span><br>
 <a class="Identifier" href="change.html#s">s</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (substitute) delete&nbsp;<span class="Special">N</span>&nbsp;characters [into register x] and start<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert<br>
 <a class="Identifier" href="motion.html#t">t</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor till before&nbsp;<span class="Special">N</span>th occurrence of&nbsp;<span class="Special">{char}</span>&nbsp;to the right<br>
@@ -1011,17 +1034,21 @@ else has been added by Vim.<br>
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor to column&nbsp;<span class="Special">N</span><br>
 <a class="Identifier" href="motion.html#}">}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor&nbsp;<span class="Special">N</span>&nbsp;paragraphs forward<br>
 <a class="Identifier" href="change.html#~">~</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; switch case of&nbsp;<span class="Special">N</span>&nbsp;characters under the cursor; Vim&#0058; depends on<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'tildeop'">'tildeop'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'tildeop'">'tildeop'</a>&nbsp;<span class="Special">{Vi: no count, no 'tildeop'}</span><br>
 <a class="Identifier" href="change.html#<Del>">&lt;Del&gt;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; same as &quot;x&quot;<br>
 <br>
 <br>
 <span class="PreProc">The following commands are supported in Insert mode by Vi&#0058;</span><br>
 <br>
 <span class="Special">CTRL-@</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert previously inserted text and stop insert<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: only when typed as first char, only up to 128 chars}</span><br>
 <span class="Special">CTRL-C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quit insert mode, without checking for abbreviation, unless<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'insertmode'">'insertmode'</a>&nbsp;set.<br>
 <span class="Special">CTRL-D</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete one shiftwidth of indent in the current line<br>
-<span class="Special">&lt;BS&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete character before the cursor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: CTRL-D works only when used after autoindent}</span><br>
+<span class="Special">&lt;BS&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete character before the cursor&nbsp;<span class="Special">{Vi: does not delete</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">autoindents, does not cross lines, does not delete past start</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">position of insert}</span><br>
 <span class="Special">CTRL-H</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same as&nbsp;<span class="Special">&lt;BS&gt;</span><br>
 <span class="Special">&lt;Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; insert a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;character<br>
 <span class="Special">CTRL-I</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same as&nbsp;<span class="Special">&lt;Tab&gt;</span><br>
@@ -1029,8 +1056,9 @@ else has been added by Vim.<br>
 <span class="Special">CTRL-J</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same as&nbsp;<span class="Special">&lt;CR&gt;</span><br>
 <span class="Special">&lt;CR&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begin new line<br>
 <span class="Special">CTRL-M</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same as&nbsp;<span class="Special">&lt;CR&gt;</span><br>
-<span class="Special">CTRL-T</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert one shiftwidth of indent in current line<br>
-<span class="Special">CTRL-V</span>&nbsp;<span class="Special">{char}</span>&nbsp;&nbsp; insert next non-digit literally<br>
+<span class="Special">CTRL-T</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert one shiftwidth of indent in current line&nbsp;<span class="Special">{Vi: only when</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">in indent}</span><br>
+<span class="Special">CTRL-V</span>&nbsp;<span class="Special">{char}</span>&nbsp;&nbsp; insert next non-digit literally&nbsp;<span class="Special">{Vi: no decimal byte entry}</span><br>
 <span class="Special">CTRL-W</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete word before the cursor<br>
 <span class="Special">CTRL-Z</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when&nbsp;<a class="Type" href="options.html#'insertmode'">'insertmode'</a>&nbsp;set: suspend Vim<br>
 <span class="Special">&lt;Esc&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; end insert mode (unless&nbsp;<a class="Type" href="options.html#'insertmode'">'insertmode'</a>&nbsp;set)<br>
@@ -1044,13 +1072,21 @@ else has been added by Vim.<br>
 <span class="PreProc">The following options are supported by Vi&#0058;</span><br>
 <br>
 <a class="Type" href="options.html#'autoindent'">'autoindent'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'ai'">'ai'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;take indent for new line from previous line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi does this slightly differently: After the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">indent is deleted when typing &lt;Esc&gt; or &lt;CR&gt;, the</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">cursor position when moving up or down is after</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">the deleted indent; Vi puts the cursor somewhere</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">in the deleted indent}</span>.<br>
 <a class="Type" href="options.html#'autowrite'">'autowrite'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'aw'">'aw'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;automatically write file if changed<br>
 <a class="Type" href="options.html#'directory'">'directory'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'dir'">'dir'</a>&nbsp;&nbsp;&nbsp;&nbsp; list of directory names for the swap file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: directory to put temp file in, defaults to</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&quot;/tmp&quot;}</span><br>
 <a class="Type" href="options.html#'edcompatible'">'edcompatible'</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'ed'">'ed'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;toggle flags of &quot;:substitute&quot; command<br>
 <a class="Type" href="options.html#'errorbells'">'errorbells'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'eb'">'eb'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ring the bell for error messages<br>
 <a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'ic'">'ic'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ignore case in search patterns<br>
 <a class="Type" href="options.html#'lines'">'lines'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; number of lines in the display<br>
-<a class="Type" href="options.html#'lisp'">'lisp'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;automatic indenting for Lisp<br>
+<a class="Type" href="options.html#'lisp'">'lisp'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;automatic indenting for Lisp&nbsp;<span class="Special">{Vi: Does it a little</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">bit differently}</span><br>
 <a class="Type" href="options.html#'list'">'list'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;EOL&gt;</span><br>
 <a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; changes special characters in search patterns<br>
 <a class="Type" href="options.html#'modeline'">'modeline'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'ml'">'ml'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;recognize&nbsp;<a class="Type" href="options.html#'modelines'">'modelines'</a>&nbsp;at start or end of file<br>
@@ -1071,6 +1107,7 @@ else has been added by Vim.<br>
 <a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'ts'">'ts'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of spaces that&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;in file uses<br>
 <a class="Type" href="options.html#'taglength'">'taglength'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'tl'">'tl'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of significant characters for a tag<br>
 <a class="Type" href="options.html#'tags'">'tags'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'tag'">'tag'</a>&nbsp;&nbsp;&nbsp;&nbsp; list of file names used by the tag command<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: default is &quot;tags /usr/lib/tags&quot;}</span><br>
 <a class="Type" href="options.html#'tagstack'">'tagstack'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'tgst'">'tgst'</a>&nbsp;&nbsp;&nbsp;&nbsp;push tags onto the tag stack&nbsp;<span class="Special">{not in all versions</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">of Vi}</span><br>
 <a class="Type" href="options.html#'term'">'term'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name of the terminal<br>
@@ -1085,6 +1122,7 @@ else has been added by Vim.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi also uses the option to specify the number of</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">displayed lines}</span><br>
 <a class="Type" href="options.html#'wrapmargin'">'wrapmargin'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'wm'">'wm'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;chars from the right where wrapping starts<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{Vi: works differently and less usefully}</span><br>
 <a class="Type" href="options.html#'wrapscan'">'wrapscan'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'ws'">'ws'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;searches wrap around the end of the file<br>
 <a class="Type" href="options.html#'writeany'">'writeany'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'wa'">'wa'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;write to file with no need for &quot;!&quot; override<br>
 <br>
