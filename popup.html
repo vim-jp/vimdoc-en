@@ -75,6 +75,7 @@ By default the&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;o
 there is not enough space, some text may be invisible.<br>
 <br>
 <br>
+<br>
 TODO:<br>
 <br>
 Example how to use syntax highlighting of a code snippet.<br>
@@ -89,11 +90,17 @@ Probably 2. is the best choice.<br>
 <br>
 IMPLEMENTATION:<br>
 - Code is in popupwin.c<br>
-- implement popup_getposition(<span class="Special">{id}</span>), use in tests<br>
+- when creating the window set options to Vim default? (verify with&nbsp;<a class="Type" href="options.html#'number'">'number'</a>)<br>
+- Do not show tilde below last line.<br>
 - Implement filter.<br>
+&nbsp;&nbsp;Check that popup_close() works in the filter.<br>
 - Handle screen resize in screenalloc().<br>
 - Make redrawing more efficient and avoid flicker.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Fix redrawing problem with completion.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Fix redrawing problem when scrolling non-current window<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Fix redrawing the statusline on top of a popup<br>
 - Properly figure out the size and position.<br>
+- Can the buffer be re-used, to avoid using up lots of buffer numbers?<br>
 - Implement all the unimplemented options and features.<br>
 <br>
 <br>
@@ -230,21 +237,16 @@ popup_getoptions(<span class="Special">{id}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the&nbsp;<span class="Special">{options}</span>&nbsp;for popup&nbsp;<span class="Special">{id}</span>.<br>
 <br>
 popup_getposition(<span class="Special">{id}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="popup.html#popup_getposition()" name="popup_getposition()">popup_getposition()</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not implemented yet}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the position and size of popup&nbsp;<span class="Special">{id}</span>.&nbsp;&nbsp;Returns a Dict<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with these entries:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;col&nbsp;&nbsp;&nbsp;&nbsp; screen column of the popup, one-based<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line&nbsp;&nbsp;&nbsp;&nbsp;screen line of the popup, one-based<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width&nbsp;&nbsp; width of the popup in screen cells<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height&nbsp;&nbsp;height of the popup in screen cells<br>
-<br>
-win_execute(<span class="Special">{id}</span>,&nbsp;<span class="Special">{command}</span>)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not implemented yet}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like&nbsp;<a class="Comment" href="eval.html#execute()">execute()</a>&nbsp;but in the context of window&nbsp;<span class="Special">{id}</span>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The window will temporarily be made the current window,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;without triggering autocommands.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call win_execute(winid, 'syntax enable')</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that these are the actual screen positions.&nbsp;&nbsp;They differ<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from the values in&nbsp;<a class="Comment" href="popup.html#popup_getoptions()">popup_getoptions()</a>&nbsp;for the sizing and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;positioning mechanism applied.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If popup window&nbsp;<span class="Special">{id}</span>&nbsp;is not found an empty Dict is returned.<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="popup.html#:popupclear" name=":popupclear">:popupclear</a>&nbsp;<a class="Constant" href="popup.html#:popupc" name=":popupc">:popupc</a><br>
@@ -269,6 +271,10 @@ It is possible to change these options, but anything might break then, so<br>
 better leave them alone.<br>
 <br>
 The window does have a cursor position, but the cursor is not displayed.<br>
+<br>
+To execute a command in the context of the popup window and buffer use<br>
+<a class="Comment" href="eval.html#win_execute()">win_execute()</a>.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call win_execute(winid, 'syntax enable')</div>
 <br>
 Options can be set on the window with&nbsp;<a class="Comment" href="eval.html#setwinvar()">setwinvar()</a>, e.g.:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call setwinvar(winid, '&amp;wrap', 0)</div>
