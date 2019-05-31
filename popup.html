@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'popup'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="popup.html" name="popup.txt">popup.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 May 26<br>
+<a class="Constant" href="popup.html" name="popup.txt">popup.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 May 31<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -18,9 +18,7 @@ THIS IS UNDER DESIGN - ANYTHING MAY STILL CHANGE&nbsp;&nbsp;<br>
 3. Examples&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="popup.html#popup-examples">popup-examples</a><br>
 <br>
 <br>
-<span class="Special">{not available if the&nbsp;</span><a class="Identifier" href="various.html#+eval">+eval</a><span class="Special">&nbsp;feature was disabled at compile time}</span><br>
-<span class="Special">{not able to use text properties if the&nbsp;</span><a class="Identifier" href="various.html#+textprop">+textprop</a><span class="Special">&nbsp;feature was disabled at</span><br>
-<span class="Special">compile time}</span><br>
+<span class="Special">{not available if the&nbsp;</span><a class="Identifier" href="various.html#+textprop">+textprop</a><span class="Special">&nbsp;feature was disabled at compile time}</span><br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 1. Introduction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="popup.html#popup-intro" name="popup-intro">popup-intro</a><br>
@@ -65,14 +63,21 @@ If this is not what you are looking for, check out other popup functionality:<br
 <br>
 The height of the window is normally equal to the number of, possibly<br>
 wrapping, lines in the buffer.&nbsp;&nbsp;It can be limited with the &quot;maxheight&quot;<br>
-property.&nbsp;&nbsp;You can use empty lines to increase the height.<br>
+property.&nbsp;&nbsp;You can use empty lines to increase the height or the &quot;minheight&quot;<br>
+property.<br>
 <br>
 The width of the window is normally equal to the longest line in the buffer.<br>
 It can be limited with the &quot;maxwidth&quot; property.&nbsp;&nbsp;You can use spaces to<br>
-increase the width.<br>
+increase the width or the &quot;minwidth&quot; property.<br>
 <br>
 By default the&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;option is set, so that no text disappears.&nbsp;&nbsp;However, if<br>
 there is not enough space, some text may be invisible.<br>
+<br>
+Vim tries to show the popup in the location you specify.&nbsp;&nbsp;In some cases, e.g.<br>
+when the popup would go outside of the Vim window, it will show it somewhere<br>
+else.&nbsp;&nbsp;E.g. if you use&nbsp;<a class="Comment" href="popup.html#popup_atcursor()">popup_atcursor()</a>&nbsp;the popup normally shows just above<br>
+the current cursor position, but if the cursor is close to the top of the Vim<br>
+window it will be placed below the cursor position.<br>
 <br>
 <br>
 <br>
@@ -97,9 +102,13 @@ IMPLEMENTATION:<br>
 - Handle screen resize in screenalloc().<br>
 - Make redrawing more efficient and avoid flicker.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Store popup info in a mask, use the mask in screen_line()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Keep mask until next update_screen(), find differences and redraw affected<br>
+&nbsp;&nbsp;&nbsp;&nbsp;windows/lines<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Fix redrawing problem with completion.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Fix redrawing problem when scrolling non-current window<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Fix redrawing the statusline on top of a popup<br>
+- Disable commands, feedkeys(),&nbsp;<span class="Special">CTRL-W</span>, etc. in a popup window.&nbsp;&nbsp;Or whitelist<br>
+&nbsp;&nbsp;commands that are allowed?<br>
 - Figure out the size and position better.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;if wrapping splits a double-wide character<br>
 &nbsp;&nbsp;&nbsp;&nbsp;if wrapping inserts indent<br>
@@ -119,7 +128,7 @@ popup_create(<span class="Special">{text}</span>,&nbsp;<span class="Special">{op
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- a string<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- a list of strings<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- a list of text lines with text properties<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not implemented yet}</span><br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{options}</span>&nbsp;is a dictionary with many possible entries.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="popup.html#popup_create-usage">popup_create-usage</a>&nbsp;for details.<br>
 <br>
@@ -415,7 +424,7 @@ So we get:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name of the text property type, as added with<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#prop_type_add()">prop_type_add()</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transparent&nbsp;&nbsp;&nbsp;&nbsp; do not show these characters, show the text under it;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if there is an border character to the right or below<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if there is a border character to the right or below<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it will be made transparent as well<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not implemented yet}</span><br>
 <br>
