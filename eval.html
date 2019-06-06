@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'eval'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="eval.html" name="eval.txt">eval.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 May 30<br>
+<a class="Constant" href="eval.html" name="eval.txt">eval.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jun 06<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -10339,6 +10339,8 @@ win_execute(<span class="Special">{id}</span>,&nbsp;<span class="Special">{comma
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call win_execute(winid, 'set syntax=python')</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Doing the same with&nbsp;<a class="Comment" href="eval.html#setwinvar()">setwinvar()</a>&nbsp;would not trigger<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autocommands and not actually show syntax highlighting.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#E994" name="E994">E994</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Not all commands are allowed in popup windows.<br>
 <br>
 win_findbuf(<span class="Special">{bufnr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#win_findbuf()" name="win_findbuf()">win_findbuf()</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a list with&nbsp;<a class="Identifier" href="windows.html#window-ID">window-ID</a>s for windows that contain<br>
@@ -11583,7 +11585,7 @@ text...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;opposite of&nbsp;<a class="Identifier" href="eval.html#:lockvar">:lockvar</a>.<br>
 <br>
 <br>
-:if&nbsp;<span class="Special">{expr1}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#:if" name=":if">:if</a>&nbsp;<a class="Constant" href="eval.html#:endif" name=":endif">:endif</a>&nbsp;<a class="Constant" href="eval.html#:en" name=":en">:en</a>&nbsp;<a class="Constant" href="eval.html#E171" name="E171">E171</a>&nbsp;<a class="Constant" href="eval.html#E579" name="E579">E579</a>&nbsp;<a class="Constant" href="eval.html#E580" name="E580">E580</a><br>
+:if&nbsp;<span class="Special">{expr1}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#:if" name=":if">:if</a>&nbsp;<a class="Constant" href="eval.html#:end" name=":end">:end</a>&nbsp;<a class="Constant" href="eval.html#:endif" name=":endif">:endif</a>&nbsp;<a class="Constant" href="eval.html#:en" name=":en">:en</a>&nbsp;<a class="Constant" href="eval.html#E171" name="E171">E171</a>&nbsp;<a class="Constant" href="eval.html#E579" name="E579">E579</a>&nbsp;<a class="Constant" href="eval.html#E580" name="E580">E580</a><br>
 :en[dif]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute the commands until the next matching &quot;:else&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or &quot;:endif&quot; if&nbsp;<span class="Special">{expr1}</span>&nbsp;evaluates to non-zero.<br>
 <br>
@@ -13066,8 +13068,16 @@ missing:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;echo &quot;You will _never_ see this message&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:endif</div>
 <br>
-To execute a command only when the&nbsp;<a class="Identifier" href="various.html#+eval">+eval</a>&nbsp;feature is disabled requires a trick,<br>
-as this example shows:<br>
+To execute a command only when the&nbsp;<a class="Identifier" href="various.html#+eval">+eval</a>&nbsp;feature is disabled can be done in<br>
+two ways.&nbsp;&nbsp;The simplest is to exit the script (or Vim) prematurely:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &quot;commands executed with +eval&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; finish<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args&nbsp;&nbsp;&quot; command executed without +eval</div>
+<br>
+If you do not want to abort loading the script you can use a trick, as this<br>
+example shows:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;silent! while 0<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set history=111<br>
