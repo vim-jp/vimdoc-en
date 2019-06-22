@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jun 10<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jun 19<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -47,11 +47,6 @@ Ongoing work on text properties, see src/textprop.c<br>
 <br>
 Popup windows are being implemented, see&nbsp;<a class="Identifier" href="popup.html#popup-window">popup-window</a>.<br>
 <br>
-Include tests:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;test_assert.vim<br>
-&nbsp;&nbsp;&nbsp;&nbsp;test_paste.vim<br>
-&nbsp;&nbsp;&nbsp;&nbsp;shared.vim<br>
-<br>
 Patch to fix session file when using multiple tabs. (Jason Franklin, 2019 May<br>
 20)<br>
 Also put :argadd commands at the start for all buffers, so that their order<br>
@@ -62,7 +57,8 @@ Patch to add v:searchstat. (Takuya Fujiwara, #4446)&nbsp;&nbsp;Should be indepen
 <br>
 Listener causes extra } to be inserted. (Paul Jolly, #4455)<br>
 <br>
-Improvement to Travis config: Ozaki Kiichi, #4521<br>
+Refactor: Move common things out of evalfunc.c, it's too big.<br>
+E.g. vim_localtime().<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - Get E20 when using command history to get &quot;'&lt;,'&gt;s/a/b&quot; and no Visual area<br>
@@ -98,6 +94,8 @@ Terminal debugger:<br>
 &nbsp;&nbsp;with another Vim instance.<br>
 <br>
 Terminal emulator window:<br>
+- When typing &quot;exit&quot; in a terminal window with a shell and it's the only<br>
+&nbsp;&nbsp;window, should exit Vim instead of editing another buffer. (#4539)<br>
 - When the job in the terminal doesn't use mouse events, let the scroll wheel<br>
 &nbsp;&nbsp;scroll the scrollback, like a terminal does at the shell prompt. #2490<br>
 &nbsp;&nbsp;And use modeless selection.&nbsp;&nbsp;#2962<br>
@@ -130,10 +128,12 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
-Add a way to play simple sounds?&nbsp;&nbsp;libcanberra appears to be widely spread.<br>
+Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
 <br>
 Patch to use forward slash for completion even when&nbsp;<a class="Type" href="options.html#'shellslash'">'shellslash'</a>&nbsp;is set.<br>
 Adds&nbsp;<span class="MissingTag">'completepathslash'</span>.&nbsp;&nbsp;(Yasuhiro Matsumoto, 2018 Nov 15, #3612)<br>
+<br>
+Patch to add win_splitmove() function. (Andy Massimino, #4561)<br>
 <br>
 Completion mixes results from the current buffer with tags and other files.<br>
 Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still search for results.&nbsp;&nbsp;E.g., type &quot;b_&quot; in<br>
@@ -164,6 +164,8 @@ Does not build with MinGW out of the box:<br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
 <br>
+Columns and Rows are long, they should be int.<br>
+<br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
 <br>
@@ -177,9 +179,6 @@ it's in a mapping. (2018 Oct 6, #2302, #3522)<br>
 Internal diff doesn't handle binary file like external diff does. (Mike<br>
 Williams, 2018 Oct 30)<br>
 <br>
-Add &quot;number&quot; to&nbsp;<a class="Type" href="options.html#'signcolumn'">'signcolumn'</a>: Put signs in the number column if it exists.<br>
-Otherwise behave like &quot;yes&quot;. (Adam Stankiewicz, #4515)<br>
-<br>
 Problem with :tlmenu: Detach item added with all modes?&nbsp;&nbsp;Issue #3563.<br>
 <br>
 Patch to use timers in matchparen. (Daniel Hahler, #1338)<br>
@@ -192,6 +191,8 @@ Bug: script written with &quot;-W scriptout&quot; contains Key codes, while the 
 read with &quot;-s scriptin&quot; expects escape codes.&nbsp;&nbsp;Probably &quot;scriptout&quot; needs to<br>
 be adjusted. (Daniel Steinberg, 2019 Feb 24, #4041)<br>
 <br>
+&quot;:registers&quot; should indicate char/block/linewise.&nbsp;&nbsp;(Ayberk Aydin, #4546)<br>
+<br>
 Patch for ambiguous width characters in libvterm on MS-Windows 10.<br>
 (Nobuhiro Takasaki, #4411)<br>
 <br>
@@ -199,6 +200,9 @@ Problem with colors in terminal window. (Jason Franklin, 2019 May 12)<br>
 <br>
 Bug: &quot;vipgw&quot; does not put cursor back where it belongs. (Jason Franklin, 2019<br>
 Mar 5)<br>
+<br>
+Some composing characters actually add a cell width to the character they are<br>
+on top off, making the whole thing two characters wide. (#4526)<br>
 <br>
 Should we include some part of pull request #4505, not increment changedtick<br>
 in some cases?&nbsp;&nbsp;E.g. for &quot;:write&quot; when the changed flag was already off, the<br>
@@ -260,6 +264,8 @@ More warnings from static analysis:<br>
 <span class="Constant"><a href="https://lgtm.com/projects/g/vim/vim/alerts/?mode=list">https://lgtm.com/projects/g/vim/vim/alerts/?mode=list</a></span><br>
 <br>
 Still a E315 error when using terminal. (Masato Nishihata, #3959)<br>
+<br>
+Not existing directory in CDPATH leads to two shell calls. (#4525)<br>
 <br>
 Use dict_iterate_start() / dict_iterate_next() instead of relying on the<br>
 internals of the dict structure.<br>
@@ -435,6 +441,9 @@ MS-Windows: .lnk file not resolved properly when&nbsp;<a class="Type" href="opti
 (lkintact, 2018 Sep 22, #3473)<br>
 <br>
 Merge checking for&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'concealcursor'">'concealcursor'</a>, see neovim #9492.<br>
+<br>
+Request to add sign_setlist() to make it faster to add a lot of signs, e.g.<br>
+when adding a sign for every quickfix entry. (#4557)<br>
 <br>
 Win32 key codes are messy.&nbsp;&nbsp;Mike Williams tried to fix that, but now old<br>
 mappings no longer work.&nbsp;&nbsp;Create a new terminal for the better solution?<br>
