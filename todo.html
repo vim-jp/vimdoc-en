@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jun 19<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jul 04<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -52,13 +52,40 @@ Patch to fix session file when using multiple tabs. (Jason Franklin, 2019 May<br
 Also put :argadd commands at the start for all buffers, so that their order<br>
 remains equal?&nbsp;&nbsp;Then %argdel to clean it up.&nbsp;&nbsp;Do try this with&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;set.<br>
 <br>
-Patch to add v:searchstat. (Takuya Fujiwara, #4446)&nbsp;&nbsp;Should be independent of<br>
-<a class="Type" href="options.html#'shortmess'">'shortmess'</a>, filled on demand and cached until search changes.<br>
-<br>
 Listener causes extra } to be inserted. (Paul Jolly, #4455)<br>
 <br>
 Refactor: Move common things out of evalfunc.c, it's too big.<br>
-E.g. vim_localtime().<br>
+<br>
+Template string: review #4491<br>
+<br>
+Terminal test fails when vim is configured with some features. (Dominique,<br>
+#4597)<br>
+<br>
+Popup windows:<br>
+- Implement flip option<br>
+- Have a way to scroll to the bottom? (#4577)<br>
+- Why does&nbsp;<a class="Type" href="options.html#'nrformats'">'nrformats'</a>&nbsp;leak from the popup window buffer???<br>
+- Disable commands, feedkeys(),&nbsp;<span class="Special">CTRL-W</span>, etc. in a popup window.<br>
+&nbsp;&nbsp;Use ERROR_IF_POPUP_WINDOW for more commands.<br>
+- Add&nbsp;<span class="MissingTag">'balloonpopup'</span>: instead of showing text, let the callback open a popup<br>
+&nbsp;&nbsp;window and return the window ID.&nbsp;&nbsp; The popup will then be closed when the<br>
+&nbsp;&nbsp;mouse moves, except when it moves inside the popup.<br>
+- For the &quot;moved&quot; property also include mouse movement?<br>
+- Can the buffer be re-used if it was the last one, to avoid using up lots of<br>
+&nbsp;&nbsp;buffer numbers?<br>
+- Have an option to attach the popup to a text position, like text properties<br>
+&nbsp;&nbsp;do. (#4560)<br>
+- Make redrawing more efficient and avoid flicker:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- put popup menu also put in popup_mask?<br>
+- Invoke filter with character before mapping?<br>
+- Figure out the size and position better.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if wrapping splits a double-wide character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if wrapping inserts indent<br>
+- When drawing on top half a double-wide character, display &quot;&gt;&quot; or &quot;&lt;&quot; in the<br>
+&nbsp;&nbsp;incomplete cell.<br>
+- Use a popup window for the &quot;info&quot; item of completion instead of using a<br>
+&nbsp;&nbsp;preview window.&nbsp;&nbsp;Ideas in issue #4544.<br>
+&nbsp;&nbsp;How to add highlighting?<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - Get E20 when using command history to get &quot;'&lt;,'&gt;s/a/b&quot; and no Visual area<br>
@@ -141,8 +168,13 @@ terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
 Should do current file first and not split it up when more results are found.<br>
 (Also #1890)<br>
 <br>
+Patch to use timers in matchparen. (Daniel Hahler, #1338)<br>
+Ready to include now?<br>
+<br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)<br>
+<br>
+Patch to the code to get sign information. (Yegappan Lakshmanan, #4586)<br>
 <br>
 &quot;:bnext&quot; in a help buffer is supposed to go to the next help buffer, but it<br>
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
@@ -176,16 +208,18 @@ Include part of #3242?<br>
 When a terminal exit_cb closes the window, a following typed key is lost, if<br>
 it's in a mapping. (2018 Oct 6, #2302, #3522)<br>
 <br>
+Patch for Inno Setup: #2739<br>
+<br>
 Internal diff doesn't handle binary file like external diff does. (Mike<br>
 Williams, 2018 Oct 30)<br>
 <br>
 Problem with :tlmenu: Detach item added with all modes?&nbsp;&nbsp;Issue #3563.<br>
 <br>
-Patch to use timers in matchparen. (Daniel Hahler, #1338)<br>
-Ready to include now?<br>
-<br>
 The quoting of the&nbsp;<span class="Special">[command]</span>&nbsp;argument of :terminal is not clearly documented.<br>
 Give a few examples. (#4288)<br>
+<br>
+Opening a file with --remote-tab-silent that matches&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbsp;does not<br>
+work, results in (E479: No match&quot;. (#4610)<br>
 <br>
 Bug: script written with &quot;-W scriptout&quot; contains Key codes, while the script<br>
 read with &quot;-s scriptin&quot; expects escape codes.&nbsp;&nbsp;Probably &quot;scriptout&quot; needs to<br>
