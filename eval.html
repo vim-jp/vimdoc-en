@@ -2540,6 +2540,7 @@ or(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{expr}</span>
 pathshorten(<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String&nbsp;&nbsp;shorten directory names in a path<br>
 perleval(<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any&nbsp;&nbsp;&nbsp;&nbsp; evaluate&nbsp;<a class="Identifier" href="if_perl.html#Perl">Perl</a>&nbsp;expression<br>
 popup_atcursor(<span class="Special">{what}</span>,&nbsp;<span class="Special">{options}</span>) Number create popup window near the cursor<br>
+popup_beval(<span class="Special">{what}</span>,&nbsp;<span class="Special">{options}</span>)&nbsp;&nbsp;Number&nbsp;&nbsp;create popup window for&nbsp;<a class="Type" href="options.html#'ballooneval'">'ballooneval'</a><br>
 popup_clear()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; none&nbsp;&nbsp;&nbsp;&nbsp;close all popup windows<br>
 popup_close(<span class="Special">{id}</span>&nbsp;[,&nbsp;<span class="Special">{result}</span>])&nbsp;&nbsp;none&nbsp;&nbsp;&nbsp;&nbsp;close popup window&nbsp;<span class="Special">{id}</span><br>
 popup_create(<span class="Special">{what}</span>,&nbsp;<span class="Special">{options}</span>) Number&nbsp;&nbsp;create a popup window<br>
@@ -2618,6 +2619,7 @@ screenattr(<span class="Special">{row}</span>,&nbsp;<span class="Special">{col}<
 screenchar(<span class="Special">{row}</span>,&nbsp;<span class="Special">{col}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;&nbsp;character at screen position<br>
 screenchars(<span class="Special">{row}</span>,&nbsp;<span class="Special">{col}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; List&nbsp;&nbsp;&nbsp;&nbsp;List of characters at screen position<br>
 screencol()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Number&nbsp;&nbsp;current cursor column<br>
+screenpos(<span class="Special">{winid}</span>,&nbsp;<span class="Special">{lnum}</span>,&nbsp;<span class="Special">{col}</span>) Dict&nbsp;&nbsp;screen row and col of a text character<br>
 screenrow()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Number&nbsp;&nbsp;current cursor row<br>
 screenstring(<span class="Special">{row}</span>,&nbsp;<span class="Special">{col}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String&nbsp;&nbsp;characters at screen position<br>
 search(<span class="Special">{pattern}</span>&nbsp;[,&nbsp;<span class="Special">{flags}</span>&nbsp;[,&nbsp;<span class="Special">{stopline}</span>&nbsp;[,&nbsp;<span class="Special">{timeout}</span>]]])<br>
@@ -7911,6 +7913,23 @@ screencol()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the following mappings:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;expr&gt; GG &quot;:echom &quot;.screencol().&quot;\n&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;silent&gt; GG :echom screencol()&lt;CR&gt;</div>
+<br>
+screenpos(<span class="Special">{winid}</span>,&nbsp;<span class="Special">{lnum}</span>,&nbsp;<span class="Special">{col}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#screenpos()" name="screenpos()">screenpos()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The result is a Dict with the screen position of the text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;character in window&nbsp;<span class="Special">{winid}</span>&nbsp;at buffer line&nbsp;<span class="Special">{lnum}</span>&nbsp;and column<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{col}</span>.&nbsp;&nbsp;<span class="Special">{col}</span>&nbsp;is a one-based byte index.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Dict has these members:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;row&nbsp;&nbsp;&nbsp;&nbsp; screen row<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;col&nbsp;&nbsp;&nbsp;&nbsp; first screen column<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endcol&nbsp;&nbsp;last screen column<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;curscol cursor screen column<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the specified position is not visible, all values are zero.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;endcol&quot; value differs from &quot;col&quot; when the character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;occupies more than one screen cell.&nbsp;&nbsp;E.g. for a Tab &quot;col&quot; can<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be 1 and &quot;endcol&quot; can be 8.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;curscol&quot; value is where the cursor would be placed.&nbsp;&nbsp;For<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a Tab it would be the same as &quot;endcol&quot;, while for a double<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width character it would be the same as &quot;col&quot;.<br>
 <br>
 screenrow()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#screenrow()" name="screenrow()">screenrow()</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The result is a Number, which is the current screen row of the<br>
