@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jul 04<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jul 13<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,33 +43,26 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Ongoing work on text properties, see src/textprop.c<br>
-<br>
-Popup windows are being implemented, see&nbsp;<a class="Identifier" href="popup.html#popup-window">popup-window</a>.<br>
-<br>
 Patch to fix session file when using multiple tabs. (Jason Franklin, 2019 May<br>
 20)<br>
 Also put :argadd commands at the start for all buffers, so that their order<br>
 remains equal?&nbsp;&nbsp;Then %argdel to clean it up.&nbsp;&nbsp;Do try this with&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;set.<br>
 <br>
-Listener causes extra } to be inserted. (Paul Jolly, #4455)<br>
+Shorten the command used in test Makefile. (Daniel Hahler, #4643)<br>
 <br>
 Refactor: Move common things out of evalfunc.c, it's too big.<br>
-<br>
-Template string: review #4491<br>
-<br>
-Terminal test fails when vim is configured with some features. (Dominique,<br>
-#4597)<br>
+Move function specs out of eval.txt, it's too big.<br>
 <br>
 Popup windows:<br>
+- Default popup_menu padding: only left&amp;right.<br>
+- Add&nbsp;<span class="MissingTag">'previewpopup'</span>: open preview in a popupwindow.<br>
+&nbsp;&nbsp;Values: dict options as a string?&nbsp;&nbsp;&quot;line:20,maxwidth:60,maxheight:20&quot;<br>
 - Implement flip option<br>
-- Have a way to scroll to the bottom? (#4577)<br>
+- Have a way to scroll to the bottom, e.g. set&nbsp;<span class="MissingTag">'firstline'</span>&nbsp;to -1? (#4577)<br>
 - Why does&nbsp;<a class="Type" href="options.html#'nrformats'">'nrformats'</a>&nbsp;leak from the popup window buffer???<br>
+&nbsp;&nbsp;Happens in Test_simple_popup() at the second screendump.<br>
 - Disable commands, feedkeys(),&nbsp;<span class="Special">CTRL-W</span>, etc. in a popup window.<br>
 &nbsp;&nbsp;Use ERROR_IF_POPUP_WINDOW for more commands.<br>
-- Add&nbsp;<span class="MissingTag">'balloonpopup'</span>: instead of showing text, let the callback open a popup<br>
-&nbsp;&nbsp;window and return the window ID.&nbsp;&nbsp; The popup will then be closed when the<br>
-&nbsp;&nbsp;mouse moves, except when it moves inside the popup.<br>
 - For the &quot;moved&quot; property also include mouse movement?<br>
 - Can the buffer be re-used if it was the last one, to avoid using up lots of<br>
 &nbsp;&nbsp;buffer numbers?<br>
@@ -155,12 +148,19 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
+Error numbers available: E172, E221, E242, E249, E260, E274, E275, E276,<br>
+E278, E279, E281, E290, E291, E292, E361, E362, E366, E396, E450, E451, E452,<br>
+E453, E454, E460, E489, E491, E56, E57, E565, E569, E578, E610, E611, E653,<br>
+E654, E693, E706, E856, E857, E860, E861, E863, E889, E900, E959<br>
+<br>
 Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
 <br>
 Patch to use forward slash for completion even when&nbsp;<a class="Type" href="options.html#'shellslash'">'shellslash'</a>&nbsp;is set.<br>
 Adds&nbsp;<span class="MissingTag">'completepathslash'</span>.&nbsp;&nbsp;(Yasuhiro Matsumoto, 2018 Nov 15, #3612)<br>
 <br>
 Patch to add win_splitmove() function. (Andy Massimino, #4561)<br>
+<br>
+Resolve() works incorrectly under windows. (#4661)<br>
 <br>
 Completion mixes results from the current buffer with tags and other files.<br>
 Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still search for results.&nbsp;&nbsp;E.g., type &quot;b_&quot; in<br>
@@ -174,7 +174,7 @@ Ready to include now?<br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)<br>
 <br>
-Patch to the code to get sign information. (Yegappan Lakshmanan, #4586)<br>
+Patch for Template string: #4491&nbsp;&nbsp;Not ready yet.&nbsp;&nbsp;New pull: #4634<br>
 <br>
 &quot;:bnext&quot; in a help buffer is supposed to go to the next help buffer, but it<br>
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
@@ -231,6 +231,25 @@ Patch for ambiguous width characters in libvterm on MS-Windows 10.<br>
 (Nobuhiro Takasaki, #4411)<br>
 <br>
 Problem with colors in terminal window. (Jason Franklin, 2019 May 12)<br>
+<br>
+Lifepillar: Updated/cleaned up color schemes:<br>
+<span class="Constant"><a href="https://github.com/lifepillar/vim8-colorschemes">https://github.com/lifepillar/vim8-colorschemes</a></span>.<br>
+<br>
+Include a few color schemes, based on popularity:<br>
+<span class="Constant"><a href="http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search">http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search</a></span><br>
+<span class="Constant"><a href="http://vimawesome.com/?q=tag:color-scheme">http://vimawesome.com/?q=tag:color-scheme</a></span><br>
+Use names that indicate their appearance (Christian Brabandt, 2017 Aug 3)<br>
+- monokai - Xia Crusoe (2017 Aug 4)&nbsp;<br>
+- seoul256 - Christian Brabandt (2017 Aug 3)<br>
+- gruvbox -&nbsp;&nbsp;Christian Brabandt (2017 Aug 3) (simplified version from<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lifepillar, 2018 Jan 22, #2573)<br>
+- janah - Marco Hinz (2017 Aug 4)<br>
+- apprentice - Romain Lafourcade (2017 Aug 6)&nbsp;&nbsp;remarks about help file #1964<br>
+Suggested by Hiroki Kokubun:<br>
+-&nbsp;<span class="Special">[Iceberg]</span>(<span class="Constant"><a href="https://github.com/cocopon/iceberg.vim">https://github.com/cocopon/iceberg.vim</a></span>) (my one)<br>
+-&nbsp;<span class="Special">[hybrid]</span>(<span class="Constant"><a href="https://github.com/w0ng/vim-hybrid">https://github.com/w0ng/vim-hybrid</a></span>)<br>
+Include solarized color scheme?, it does not support termguicolors.<br>
+- Sanitized version of pablo (Lifepillar, 2017 Nov 21)<br>
 <br>
 Bug: &quot;vipgw&quot; does not put cursor back where it belongs. (Jason Franklin, 2019<br>
 Mar 5)<br>
@@ -313,6 +332,10 @@ nvo-mode mapping works on Windows, not on Linux. (#3678)<br>
 <br>
 Missing tests for:<br>
 - add_termcap_entry()<br>
+<br>
+Redo only remembers the last change.&nbsp;&nbsp;Could use &quot;<span class="Special">{count}</span>g.&quot; to redo an older<br>
+change.&nbsp;&nbsp;How does the user know which change?&nbsp;&nbsp;At least have a way to list<br>
+them: &quot;:repeats&quot;.&nbsp;&nbsp;Add to history, like search history and command line history.<br>
 <br>
 When using exclusive selection and vi&quot; that fails, cursor moves to the left.<br>
 Cursor should not move. (#4024)<br>
@@ -795,22 +818,6 @@ Also: Get an error message from free() in the process that owns the selection.<b
 Seems to happen when the selection is requested the second time, but before<br>
 clip_x11_convert_selection_cb() is invoked, thus in X library code.<br>
 Kazunobu Kuriyama is working on a proper fix. (2017 Jul 25)<br>
-<br>
-Include a few color schemes, based on popularity:<br>
-<span class="Constant"><a href="http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search">http://www.vim.org/scripts/script_search_results.php?keywords=&amp;script_type=color+scheme&amp;order_by=rating&amp;direction=descending&amp;search=search</a></span><br>
-<span class="Constant"><a href="http://vimawesome.com/?q=tag:color-scheme">http://vimawesome.com/?q=tag:color-scheme</a></span><br>
-Use names that indicate their appearance (Christian Brabandt, 2017 Aug 3)<br>
-- monokai - Xia Crusoe (2017 Aug 4)&nbsp;<br>
-- seoul256 - Christian Brabandt (2017 Aug 3)<br>
-- gruvbox -&nbsp;&nbsp;Christian Brabandt (2017 Aug 3) (simplified version from<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lifepillar, 2018 Jan 22, #2573)<br>
-- janah - Marco Hinz (2017 Aug 4)<br>
-- apprentice - Romain Lafourcade (2017 Aug 6)&nbsp;&nbsp;remarks about help file #1964<br>
-Suggested by Hiroki Kokubun:<br>
--&nbsp;<span class="Special">[Iceberg]</span>(<span class="Constant"><a href="https://github.com/cocopon/iceberg.vim">https://github.com/cocopon/iceberg.vim</a></span>) (my one)<br>
--&nbsp;<span class="Special">[hybrid]</span>(<span class="Constant"><a href="https://github.com/w0ng/vim-hybrid">https://github.com/w0ng/vim-hybrid</a></span>)<br>
-Include solarized color scheme?, it does not support termguicolors.<br>
-- Sanitized version of pablo (Lifepillar, 2017 Nov 21)<br>
 <br>
 Problem with three-piece comment. (Michael Lee, 2017 May 11, #1696)<br>
 <br>
@@ -1525,10 +1532,6 @@ Patch for building a 32bit Vim with 64bit MingW compiler.<br>
 <br>
 Patch: On MS-Windows shellescape() may have to triple double quotes.<br>
 (Ingo Karkat, 2015 Jan 16)<br>
-<br>
-Redo only remembers the last change.&nbsp;&nbsp;Could use &quot;<span class="Special">{count}</span>g.&quot; to redo an older<br>
-change.&nbsp;&nbsp;How does the user know which change?&nbsp;&nbsp;At least have a way to list<br>
-them: &quot;:repeats&quot;.<br>
 <br>
 Patch for glob(), adding slash to normal files. (Ingo Karkat, 2014 Dec 22)<br>
 <br>
