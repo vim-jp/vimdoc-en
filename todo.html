@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jul 13<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jul 19<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -48,15 +48,20 @@ Patch to fix session file when using multiple tabs. (Jason Franklin, 2019 May<br
 Also put :argadd commands at the start for all buffers, so that their order<br>
 remains equal?&nbsp;&nbsp;Then %argdel to clean it up.&nbsp;&nbsp;Do try this with&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;set.<br>
 <br>
-Shorten the command used in test Makefile. (Daniel Hahler, #4643)<br>
-<br>
 Refactor: Move common things out of evalfunc.c, it's too big.<br>
 Move function specs out of eval.txt, it's too big.<br>
 <br>
+Convert comments in option.h<br>
+<br>
+Patch to convert encoding of strftime(). (Ken Takata, #4685, fixes #4681)<br>
+<br>
+Patch to Move viminfo related functions to a separate file: #4686<br>
+<br>
 Popup windows:<br>
-- Default popup_menu padding: only left&amp;right.<br>
-- Add&nbsp;<a class="Type" href="options.html#'previewpopup'">'previewpopup'</a>: open preview in a popupwindow.<br>
-&nbsp;&nbsp;Values: dict options as a string?&nbsp;&nbsp;&quot;line:20,maxwidth:60,maxheight:20&quot;<br>
+- avoid preview popup going outside of the screen<br>
+- add popup_getpreview() - get ID of preview window<br>
+- bug: double click in scrollbar starts selection<br>
+- Allow resizing from the bottom-right corner<br>
 - Implement flip option<br>
 - Have a way to scroll to the bottom, e.g. set&nbsp;<span class="MissingTag">'firstline'</span>&nbsp;to -1? (#4577)<br>
 - Why does&nbsp;<a class="Type" href="options.html#'nrformats'">'nrformats'</a>&nbsp;leak from the popup window buffer???<br>
@@ -153,6 +158,9 @@ E278, E279, E281, E290, E291, E292, E361, E362, E366, E396, E450, E451, E452,<br
 E453, E454, E460, E489, E491, E56, E57, E565, E569, E578, E610, E611, E653,<br>
 E654, E693, E706, E856, E857, E860, E861, E863, E889, E900, E959<br>
 <br>
+Problem with German spell file.&nbsp;&nbsp;Hint for solution by Klaus-Peter Schreiner in<br>
+#4314, solves the Rasenmäher problem.<br>
+<br>
 Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
 <br>
 Patch to use forward slash for completion even when&nbsp;<a class="Type" href="options.html#'shellslash'">'shellslash'</a>&nbsp;is set.<br>
@@ -174,17 +182,23 @@ Ready to include now?<br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)<br>
 <br>
+Patch to support&nbsp;<span class="MissingTag">'cursorlineopt'</span>&nbsp;- only highlight the line number of the<br>
+cursor line: #4693<br>
+<br>
 Patch for Template string: #4491&nbsp;&nbsp;Not ready yet.&nbsp;&nbsp;New pull: #4634<br>
 <br>
 &quot;:bnext&quot; in a help buffer is supposed to go to the next help buffer, but it<br>
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
 unlisted. (#4478)<br>
 <br>
-Problem with German spell file.&nbsp;&nbsp;Hint for solution by Klaus-Peter Schreiner in<br>
-#4314, solves the Rasenmäher problem.<br>
-<br>
 Problem showing a line if the number column width changes when using &quot;o&quot;.<br>
 (Mateusz Morusiewicz, #4245)<br>
+<br>
+When using :packadd for a replacement language plugin, it is loaded after the<br>
+default one.&nbsp;&nbsp;#4698<br>
+<br>
+When using :packadd files under &quot;later&quot; are not used, which is inconsistent<br>
+with packages under &quot;start&quot;. (xtal8, #1994)<br>
 <br>
 Visual highlight not removed when&nbsp;<span class="MissingTag">'dipslay'</span>&nbsp;is &quot;lastline&quot; and line doesn't<br>
 fit. (Kevin Lawler, #4457)<br>
@@ -253,6 +267,14 @@ Include solarized color scheme?, it does not support termguicolors.<br>
 <br>
 Bug: &quot;vipgw&quot; does not put cursor back where it belongs. (Jason Franklin, 2019<br>
 Mar 5)<br>
+<br>
+Many users don't like&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;to match so many words. (#4667, #1611)<br>
+- when the match with the first word is partial, don't add other words on that<br>
+&nbsp;&nbsp;line.<br>
+- support other file formats, such as comma separated.&nbsp;&nbsp;Indicate by a prefix<br>
+&nbsp;&nbsp;to the file in the&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;option.<br>
+-&nbsp;<span class="MissingTag">'threglookexp'</span>&nbsp;option: only match with first word in thesaurus file.<br>
+&nbsp;&nbsp;(Jakson A. Aquino, 2006 Jun 14)<br>
 <br>
 Some composing characters actually add a cell width to the character they are<br>
 on top off, making the whole thing two characters wide. (#4526)<br>
@@ -606,9 +628,6 @@ Patch in #3377 (Thomas Dziedzic)<br>
 With&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;&quot;indent&quot; and appending an empty line, what follows isn't<br>
 included in the existing fold.&nbsp;&nbsp;Deleting the empty line and undo fixes it.<br>
 (Oleg Koshovetc, 2018 Jul 15, #3214)<br>
-<br>
-When using :packadd files under &quot;later&quot; are not used, which is inconsistent<br>
-with packages under &quot;start&quot;. (xtal8, #1994)<br>
 <br>
 Patch to support &quot;xxd -ps&quot;. (Erik Auerswald, 2018 May 1)<br>
 Lacks a test.<br>
@@ -3021,8 +3040,6 @@ More patches:<br>
 -&nbsp;&nbsp; Add&nbsp;<span class="MissingTag">'cscopeignorecase'</span>&nbsp;option. (Liang Wenzhi, 2006 Sept 3)<br>
 -&nbsp;&nbsp; Extra argument to strtrans() to translate special keys to their name (Eric<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Arnold, 2006 May 22)<br>
--&nbsp;&nbsp;&nbsp;<span class="MissingTag">'threglookexp'</span>&nbsp;option: only match with first word in thesaurus file.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(Jakson A. Aquino, 2006 Jun 14)<br>
 -&nbsp;&nbsp; Mac: indicate whether a buffer was modified. (Nicolas Weber, 2006 Jun 30)<br>
 -&nbsp;&nbsp; Allow negative&nbsp;<span class="MissingTag">'nrwidth'</span>&nbsp;for left aligning. (Nathan Laredo, 2006 Aug 16)<br>
 -&nbsp;&nbsp; ml_append_string(): efficiently append to an existing line. (Brad<br>
