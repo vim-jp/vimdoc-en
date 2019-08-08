@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Jul 30<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Aug 08<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,12 +43,25 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+<br>
+Methods:<br>
+- Support lambda?&nbsp;&nbsp;#4768<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo (10.0 / 100.0)-&gt;{x -&gt; x * 100}<br>
+- Define a user defined function for a specific type only?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Len(expr) method=list,dict<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return a:expr-&gt;len()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo [1, 2, 3]-&gt;Len()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Len([1, 2, 3])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error!<br>
+<br>
 Popup windows:<br>
-- Always show the right border, not only when there is a close button?<br>
-- bug: double click in scrollbar starts selection<br>
+- :pedit from help doesn't reset help flag, see pedit example<br>
+- check popupmenu using preview window<br>
 - modeless selection fails over ssh and with putty.&nbsp;&nbsp;Mouse dragging not<br>
 &nbsp;&nbsp;supported?&nbsp;&nbsp;Can we force it on?<br>
-- Allow resizing from the bottom-right corner<br>
+- modeless selection extends into the scrollbar. (#4773)<br>
 - Implement flip option<br>
 - Have a way to scroll to the bottom, e.g. set&nbsp;<span class="MissingTag">'firstline'</span>&nbsp;to -1? (#4577)<br>
 - Why does&nbsp;<a class="Type" href="options.html#'nrformats'">'nrformats'</a>&nbsp;leak from the popup window buffer???<br>
@@ -62,7 +75,7 @@ Popup windows:<br>
 &nbsp;&nbsp;do. (#4560)<br>
 - Make redrawing more efficient and avoid flicker:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- put popup menu also put in popup_mask?<br>
-- Invoke filter with character before mapping?<br>
+- Invoke filter with character before mapping?&nbsp;&nbsp;#4759<br>
 - Figure out the size and position better.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;if wrapping splits a double-wide character<br>
 &nbsp;&nbsp;&nbsp;&nbsp;if wrapping inserts indent<br>
@@ -140,15 +153,10 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
-Error numbers available: E260, E274, E275, E276,<br>
+Error numbers available: E274, E275, E276,<br>
 E278, E279, E290, E292, E362, E366, E450, E451, E452,<br>
 E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
 E654, E856, E857, E860, E861, E863, E889, E900<br>
-<br>
-Patch on issue #4661 to fix resolve(). (Ken Takata)<br>
-<span class="Constant"><a href="https://gist.github.com/k-takata/52d0a677ca9a27bdbaed21d77533244e">https://gist.github.com/k-takata/52d0a677ca9a27bdbaed21d77533244e</a></span><br>
-<br>
-Patch to split of map.c from getchar.c (Yegappan, #4740)<br>
 <br>
 Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
 <br>
@@ -193,6 +201,9 @@ unlisted. (#4478)<br>
 <br>
 Make&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;global-local.<br>
 <br>
+The :syntax cchar value can only be a single character.&nbsp;&nbsp;It would be useful to<br>
+support combining characters. (Charles Campbell)&nbsp;&nbsp;Also #4687<br>
+<br>
 Problem showing a line if the number column width changes when using &quot;o&quot;.<br>
 (Mateusz Morusiewicz, #4245)<br>
 <br>
@@ -201,6 +212,8 @@ default one.&nbsp;&nbsp;#4698<br>
 <br>
 When using :packadd files under &quot;later&quot; are not used, which is inconsistent<br>
 with packages under &quot;start&quot;. (xtal8, #1994)<br>
+<br>
+Modeless selection doesn't work in gvim. (#4783)<br>
 <br>
 Visual highlight not removed when&nbsp;<span class="MissingTag">'dipslay'</span>&nbsp;is &quot;lastline&quot; and line doesn't<br>
 fit. (Kevin Lawler, #4457)<br>
@@ -226,8 +239,13 @@ it's in a mapping. (2018 Oct 6, #2302, #3522)<br>
 <br>
 Patch for Inno Setup: #2739<br>
 <br>
+Would be nice to set tab-local values for&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>.&nbsp;&nbsp;Use<br>
+t:diffexpr_option t:diffopt_option? (#4782)<br>
+<br>
 Internal diff doesn't handle binary file like external diff does. (Mike<br>
 Williams, 2018 Oct 30)<br>
+<br>
+'[ mark in wrong column after put. (#4776)<br>
 <br>
 &quot;exepath('bin/cmd')&quot; does not work while &quot;:!bin/cmd&quot; does work.<br>
 (Daniel Hahler, #4710)&nbsp;&nbsp;and executable('bin/cmd') returns 1<br>
@@ -248,6 +266,8 @@ be adjusted. (Daniel Steinberg, 2019 Feb 24, #4041)<br>
 <br>
 Patch for ambiguous width characters in libvterm on MS-Windows 10.<br>
 (Nobuhiro Takasaki, #4411)<br>
+<br>
+Window size changes after closing a tab. (#4741)<br>
 <br>
 Problem with colors in terminal window. (Jason Franklin, 2019 May 12)<br>
 <br>
@@ -284,6 +304,8 @@ Many users don't like&nbsp;<a class="Type" href="options.html#'thesaurus'">'thes
 Some composing characters actually add a cell width to the character they are<br>
 on top off, making the whole thing two characters wide. (#4526)<br>
 <br>
+Add CmdwinLeavePost (#4762).&nbsp;&nbsp;Also add WinLeavePost then?<br>
+<br>
 Should we include some part of pull request #4505, not increment changedtick<br>
 in some cases?&nbsp;&nbsp;E.g. for &quot;:write&quot; when the changed flag was already off, the<br>
 buffer didn't change at all.<br>
@@ -317,24 +339,6 @@ added?<br>
 <br>
 Add test for urxvt mouse codes.&nbsp;&nbsp;Also test that mouse coordinates can be<br>
 negative. (see #4326)<br>
-<br>
-All functions are global, which makes functions like get() and len() awkward.<br>
-For the future use the ~get() and ~len() syntax.&nbsp;&nbsp;It also allows for<br>
-chaining:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;mylist~get(idx)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;mylist~uniq()~len()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;mydict~get(idx)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;mystring~len()</div>
-Or use -&gt; (like C pointer dereference)<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;mylist-&gt;get(idx)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;mylist-&gt;uniq()-&gt;len()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;mydict-&gt;get(idx)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;mystring-&gt;len()</div>
-Alternatives for ~:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;^&nbsp;&nbsp;list^get()&nbsp;&nbsp;&nbsp;&nbsp;could also be used<br>
-&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;list.get()&nbsp;&nbsp;&nbsp;&nbsp;already means &quot;member&quot; in Dict<br>
-&nbsp;&nbsp;&nbsp;&nbsp;$&nbsp;&nbsp;list$get()&nbsp;&nbsp;&nbsp;&nbsp;harder to read<br>
-&nbsp;&nbsp;&nbsp;&nbsp;@&nbsp;&nbsp;list@get()&nbsp;&nbsp;&nbsp;&nbsp;harder to read<br>
 <br>
 <a class="Type" href="options.html#'cmdheight'">'cmdheight'</a>&nbsp;has a tab-local value, but it cannot be obtained with<br>
 <span class="Comment">:echo gettabwinvar(2, 1, '&amp;cmdheight')</span>&nbsp;returns the value for the _current_<br>
@@ -1908,9 +1912,6 @@ need to make the change in where RET_WIN_BUF_CHARTABSIZE() is called.<br>
 Syntax region with&nbsp;<span class="MissingTag">'concealends'</span>&nbsp;and a&nbsp;<span class="MissingTag">'cchar'</span>&nbsp;value,&nbsp;<a class="Type" href="options.html#'conceallevel'">'conceallevel'</a>&nbsp;set to 2,<br>
 only one of the two ends gets the cchar displayed. (Brett Stahlman, 2010 Aug<br>
 21, Ben Fritz, 2010 Sep 14)<br>
-<br>
-The :syntax cchar value can only be a single character.&nbsp;&nbsp;It would be useful to<br>
-support combining characters. (Charles Campbell)<br>
 <br>
 <a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;works on a text line only.&nbsp;&nbsp;Add&nbsp;<span class="MissingTag">'cursorscreenline'</span>&nbsp;for<br>
 highlighting the screen line. (Christian Brabandt, 2012 Mar 31)<br>
