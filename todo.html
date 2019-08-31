@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Aug 17<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Aug 30<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,30 +44,21 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Popup windows:<br>
-- check popupmenu using preview window&nbsp;&nbsp;#4544&nbsp;&nbsp;overlaps complete menu<br>
-&nbsp;&nbsp;&nbsp;&nbsp;set completeopt+=preview<br>
 - Implement flip option<br>
-- Have a way to scroll to the bottom, e.g. set&nbsp;<span class="MissingTag">'firstline'</span>&nbsp;to -1? (#4577)<br>
 - Why does&nbsp;<a class="Type" href="options.html#'nrformats'">'nrformats'</a>&nbsp;leak from the popup window buffer???<br>
 &nbsp;&nbsp;Happens in Test_simple_popup() at the second screendump.<br>
-- Disable commands, feedkeys(),&nbsp;<span class="Special">CTRL-W</span>, etc. in a popup window.<br>
-&nbsp;&nbsp;Use ERROR_IF_POPUP_WINDOW for more commands.<br>
 - For the &quot;moved&quot; property also include mouse movement?<br>
-- Can the buffer be re-used if it was the last one, to avoid using up lots of<br>
-&nbsp;&nbsp;buffer numbers?<br>
-- Have an option to attach the popup to a text position, like text properties<br>
-&nbsp;&nbsp;do. (#4560)<br>
 - Make redrawing more efficient and avoid flicker:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- put popup menu also put in popup_mask?<br>
-- Invoke filter with character before mapping?&nbsp;&nbsp;#4759<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- put popup menu also in popup_mask?<br>
+- Any other commands to disable in a popup window?<br>
+&nbsp;&nbsp;Use ERROR_IF_POPUP_WINDOW for more commands.<br>
 - Figure out the size and position better.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;if wrapping splits a double-wide character<br>
 &nbsp;&nbsp;&nbsp;&nbsp;if wrapping inserts indent<br>
 - When drawing on top half a double-wide character, display &quot;&gt;&quot; or &quot;&lt;&quot; in the<br>
 &nbsp;&nbsp;incomplete cell.<br>
-- Use a popup window for the &quot;info&quot; item of completion instead of using a<br>
-&nbsp;&nbsp;preview window.&nbsp;&nbsp;Ideas in issue #4544.<br>
-&nbsp;&nbsp;How to add highlighting?<br>
+<br>
+Text properties: See comment at top of src/textprop.c.<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - Get E20 when using command history to get &quot;'&lt;,'&gt;s/a/b&quot; and no Visual area<br>
@@ -142,6 +133,8 @@ E278, E279, E290, E292, E362, E366, E450, E451, E452,<br>
 E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
 E654, E856, E857, E860, E861, E863, E889, E900<br>
 <br>
+Remove check for cmd_silent when calling search_stat()? (Gary Johnson)<br>
+<br>
 undo result wrong: Masato Nishihata, #4798<br>
 <br>
 Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
@@ -154,9 +147,6 @@ Patch to fix session file when using multiple tabs. (Jason Franklin, 2019 May<br
 20)<br>
 Also put :argadd commands at the start for all buffers, so that their order<br>
 remains equal?&nbsp;&nbsp;Then %argdel to clean it up.&nbsp;&nbsp;Do try this with&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;set.<br>
-<br>
-Make heredoc-let a bit more restrictive:<br>
-<span class="Constant"><a href="https://github.com/vim/vim/issues/4705">https://github.com/vim/vim/issues/4705</a></span><br>
 <br>
 Completion mixes results from the current buffer with tags and other files.<br>
 Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still search for results.&nbsp;&nbsp;E.g., type &quot;b_&quot; in<br>
@@ -183,6 +173,8 @@ Patch for Template string: #4491&nbsp;&nbsp;Not ready yet.&nbsp;&nbsp;New pull: 
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
 unlisted. (#4478)<br>
 <br>
+Patch to fix using zero sc_sid. (#4877)<br>
+<br>
 Make&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;global-local.<br>
 <br>
 The :syntax cchar value can only be a single character.&nbsp;&nbsp;It would be useful to<br>
@@ -193,6 +185,8 @@ Problem showing a line if the number column width changes when using &quot;o&quo
 <br>
 When using :packadd for a replacement language plugin, it is loaded after the<br>
 default one.&nbsp;&nbsp;#4698<br>
+<br>
+Patch from Namsh to allow building with both XIM and hangulin. (2019 Aug 29)<br>
 <br>
 When using :packadd files under &quot;later&quot; are not used, which is inconsistent<br>
 with packages under &quot;start&quot;. (xtal8, #1994)<br>
@@ -529,6 +523,8 @@ MS-Windows: .lnk file not resolved properly when&nbsp;<a class="Type" href="opti
 (lkintact, 2018 Sep 22, #3473)<br>
 <br>
 Merge checking for&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'concealcursor'">'concealcursor'</a>, see neovim #9492.<br>
+<br>
+Display error when a conceal match uses '\%&gt;1l'. (#4854)<br>
 <br>
 Request to add sign_setlist() to make it faster to add a lot of signs, e.g.<br>
 when adding a sign for every quickfix entry. (#4557)<br>
@@ -1080,6 +1076,7 @@ sort() is not stable when using numeric/float sort (Nikolay Pavlov, 2016 Sep<br>
 4#1038)<br>
 <br>
 +channel:<br>
+- Add a in_cb, invoked when the write buffer has become empty. (Matteo Landi)<br>
 - Add a separate timeout for opening a socket.&nbsp;&nbsp;Currently it's fixed at 50<br>
 &nbsp;&nbsp;msec, which is too small for a remote connection. (tverniquet, #2130)<br>
 - Problem with stderr on Windows? (Vincent Rischmann, 2016 Aug 31, #1026)<br>
