@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Sep 07<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Sep 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -42,6 +42,8 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 (replace 1234 with the issue/pull number)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
+<br>
+Split off part of option.c: #4918<br>
 <br>
 Popup windows:<br>
 - Implement flip option<br>
@@ -137,13 +139,11 @@ Remove check for cmd_silent when calling search_stat()? (Gary Johnson)<br>
 <br>
 undo result wrong: Masato Nishihata, #4798<br>
 <br>
+Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</span>&quot; undo.<br>
+<br>
 Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
 <br>
-Patch to add win_splitmove() function. (Andy Massimino, #4561)<br>
-<br>
 Patch for #4733: #4734.&nbsp;&nbsp;Test needs improvements.<br>
-<br>
-Add CmdwinLeavePost (#4762).&nbsp;&nbsp;Also add WinLeavePost then?<br>
 <br>
 Patch to fix session file when using multiple tabs. (Jason Franklin, 2019 May<br>
 20)<br>
@@ -161,15 +161,6 @@ Ready to include now?<br>
 <br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)<br>
-<br>
-Patch to support&nbsp;<a class="Type" href="options.html#'cursorlineopt'">'cursorlineopt'</a>&nbsp;- only highlight the line number of the<br>
-cursor line: #4693<br>
-<br>
-Let plugins know how much space is available in the last line before<br>
-triggering the hit-enter prompt.&nbsp;&nbsp;Internally called &quot;sc_col&quot;.<br>
-(Daniel Hahler, #4732)<br>
-<br>
-Patch for Template string: #4491&nbsp;&nbsp;Not ready yet.&nbsp;&nbsp;New pull: #4634<br>
 <br>
 &quot;:bnext&quot; in a help buffer is supposed to go to the next help buffer, but it<br>
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
@@ -196,8 +187,17 @@ with packages under &quot;start&quot;. (xtal8, #1994)<br>
 Modeless selection doesn't work in gvim. (#4783)<br>
 Caused by patch 8.1.1534.<br>
 <br>
+Patch to add random number generator. (Hong Xu, 2010 Nov 8, update Nov 10)<br>
+Alternative from Christian Brabandt. (2010 Sep 19)<br>
+New one from Yasuhiro Matsumoto, #1277.<br>
+<br>
 Visual highlight not removed when&nbsp;<span class="MissingTag">'dipslay'</span>&nbsp;is &quot;lastline&quot; and line doesn't<br>
 fit. (Kevin Lawler, #4457)<br>
+<br>
+Patch to add interrupt(). (Yasuhiro Matsumoto, #2834)<br>
+<br>
+Patch to add per-tabpage and per-window previous directory: &quot;lcd -&quot; and &quot;tcd<br>
+-&quot;. (Yegappan Lakshmanan, #4362)<br>
 <br>
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
@@ -207,6 +207,11 @@ Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
 <br>
 Check_external_diff() is used too often. (Daniel Hahler, #4800)<br>
+<br>
+Incorrect formatting with autoindent. (Sebastian Gniazdowski, #4909)<br>
+<br>
+Patch to sort buffers on b_last_used time.&nbsp;&nbsp;(Andy Massimino, #4722)<br>
+Needs a test.<br>
 <br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
@@ -315,6 +320,9 @@ Support setting the character displayed below the last line?&nbsp;&nbsp;Neovim u
 <br>
 Check: __attribute__((format(printf, on semsg() and siemsg().&nbsp;&nbsp;Where was this<br>
 added?<br>
+<br>
+Patch to add a flatten() function.&nbsp;&nbsp;#3676.&nbsp;&nbsp;Check that the doc explains the<br>
+maxdepth argument (applies to the input &quot;recursiveness&quot;).<br>
 <br>
 Add test for urxvt mouse codes.&nbsp;&nbsp;Also test that mouse coordinates can be<br>
 negative. (see #4326)<br>
@@ -643,6 +651,9 @@ Column number is wrong when using&nbsp;<a class="Type" href="options.html#'lineb
 Jan 15, #2555)<br>
 <br>
 &quot;:bufdo e&quot; disabled syntax HL in windows other than the current. (BPJ)<br>
+<br>
+Patch for Template string: #4491.&nbsp;&nbsp;New pull: #4634<br>
+It's an awful lot of code for something that is just a bit nicer syntax.<br>
 <br>
 Check argument of systemlist(). (Pavlov)<br>
 <br>
@@ -993,10 +1004,6 @@ somewhere else.&nbsp;&nbsp;:<span class="Special">{range}</span>copy&nbsp;<span 
 <br>
 Patch to fix that empty first tab is not in session.<br>
 (Hirohito Higashi, 2016 Nov 25, #1282)<br>
-<br>
-Patch to add random number generator. (Hong Xu, 2010 Nov 8, update Nov 10)<br>
-Alternative from Christian Brabandt. (2010 Sep 19)<br>
-New one from Yasuhiro Matsumoto, #1277.<br>
 <br>
 Patch to fix escaping of job arguments. (Yasuhiro Matsumoto, 2016 Oct 5)<br>
 Update Oct 14:&nbsp;<span class="Constant"><a href="https://gist.github.com/mattn/d47e7d3bfe5ade4be86062b565a4bfca">https://gist.github.com/mattn/d47e7d3bfe5ade4be86062b565a4bfca</a></span><br>
