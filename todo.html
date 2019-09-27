@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Sep 19<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Sep 27<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,14 +43,6 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Add test for state().<br>
-Add test for using SafeState and SafeStateAgain autocommand.<br>
-Then plugin can:<br>
-- When callback is invoked and state() returns non-empty, add to work queue<br>
-- When SafeState autocommand event triggers, process work queue<br>
-<br>
-Fix for &quot;x&quot; should be done by fixing &quot;dl&quot; ?&nbsp;&nbsp;8.1.2052<br>
-<br>
 <a class="Type" href="options.html#'completeopt'">'completeopt'</a>&nbsp;&quot;popup&quot; variant that uses a callback after the popup has been<br>
 created, so the contents can be changed.&nbsp;&nbsp;Make it hidden, callback<br>
 or later has to make it visible. #4924&nbsp;&nbsp;Setting the buffer contents later<br>
@@ -73,6 +65,7 @@ Popup windows:<br>
 &nbsp;&nbsp;incomplete cell.<br>
 <br>
 Text properties: See comment at top of src/textprop.c.<br>
+- Implement prop_find() #4970<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
 - Get E20 when using command history to get &quot;'&lt;,'&gt;s/a/b&quot; and no Visual area<br>
@@ -117,7 +110,6 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;be redrawn.<br>
 - GUI: When using &quot;:set go+=!&quot; a system() call causes the hit-enter prompt.<br>
 &nbsp;&nbsp;(#3327)<br>
-- Terminal API: Add more functionality? (Ozaki Kiichi 2018 May 13, #2907)<br>
 - GUI: hang until key typed. (#3530)<br>
 - Allow for specifying the directory, with ++cwd=<span class="Special">{dir}</span>.<br>
 - With a vertical split only one window is updated. (Linwei, 2018 Jun 2,<br>
@@ -143,9 +135,14 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
 Error numbers available:<br>
-E278, E279, E290, E292, E362, E366, E450, E451, E452,<br>
+E279, E290, E292, E362, E366, E450, E451, E452,<br>
 E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
 E654, E856, E857, E860, E861, E863, E889, E900<br>
+<br>
+Running test_gui and test_gui_init with Motif sometimes kills the window<br>
+manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
+Athena is OK.<br>
+Motif: Build on Ubuntu can't enter any text in dialog text fields.<br>
 <br>
 Improve running tests on MS-Windows: #4922<br>
 <br>
@@ -161,6 +158,11 @@ Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</
 Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
 <br>
 Patch for #4733: #4734.&nbsp;&nbsp;Test needs improvements.<br>
+<br>
+Patch to sort buffers on b_last_used time.&nbsp;&nbsp;(Andy Massimino, #4722)<br>
+<br>
+Patch to highlight the line number differently below the cursor line. (Shaun<br>
+Brady, #624)<br>
 <br>
 Patch to fix session file when using multiple tabs. (Jason Franklin, 2019 May<br>
 20)<br>
@@ -185,10 +187,25 @@ unlisted. (#4478)<br>
 <br>
 Patch to fix using zero sc_sid. (#4877)<br>
 <br>
+Universal solution to detect if t_RS is working, using cursor position.<br>
+Koichi Iwamoto, #2126<br>
+<br>
 Make&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;global-local.<br>
 <br>
 The :syntax cchar value can only be a single character.&nbsp;&nbsp;It would be useful to<br>
 support combining characters. (Charles Campbell)&nbsp;&nbsp;Also #4687<br>
+<br>
+Patch to make gM move to middle of line. (Yasuhiro Matsumoto, Sep 8, #2070)<br>
+<br>
+Patch to add v:argv, arguments that Vim was started with. (Dmitri<br>
+Vereshchagin, #1322)<br>
+<br>
+New value &quot;uselast&quot; for&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>. (Lemonboy, 2017 Apr 23, #1652)<br>
+<br>
+Include Haiku port. (Adrien Destugues, Siarzhuk Zharski, 2013 Oct 24)<br>
+It can replace the BeOS code, which is likely not used anymore.<br>
+Now on github: #1856.&nbsp;&nbsp;Updated Oct 2017<br>
+Got permission to include this under the Vim license.<br>
 <br>
 Problem showing a line if the number column width changes when using &quot;o&quot;.<br>
 (Mateusz Morusiewicz, #4245)<br>
@@ -196,7 +213,11 @@ Problem showing a line if the number column width changes when using &quot;o&quo
 When using :packadd for a replacement language plugin, it is loaded after the<br>
 default one.&nbsp;&nbsp;#4698<br>
 <br>
+Patch to remove FORTIFY_SOURCE also from CPPFLAGS. (Benedikt Morbach, #2786)<br>
+<br>
 Patch from Namsh to allow building with both XIM and hangulin. (2019 Aug 29)<br>
+<br>
+Patch to fix redirect of shell on MS-Windows. (Yasuhiro Matsumoto, #2054)<br>
 <br>
 When using :packadd files under &quot;later&quot; are not used, which is inconsistent<br>
 with packages under &quot;start&quot;. (xtal8, #1994)<br>
@@ -223,15 +244,29 @@ Does not build with MinGW out of the box:<br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
 <br>
+Patch to configure BUILD_DATE for reproducible builds. (James McCoy, #513)<br>
+<br>
+Patch to add MODIFIED_BY to MSVC build file. (Chen Lei, 2016 Nov 24, #1275)<br>
+<br>
 Check_external_diff() is used too often. (Daniel Hahler, #4800)<br>
 <br>
 Incorrect formatting with autoindent. (Sebastian Gniazdowski, #4909)<br>
 <br>
-Patch to sort buffers on b_last_used time.&nbsp;&nbsp;(Andy Massimino, #4722)<br>
-Needs a test.<br>
+Patch to add the :bvimgrep command.&nbsp;&nbsp;(Christian Brabandt, 2014 Nov 12)<br>
+Updated 2016 Jun 10, #858&nbsp;&nbsp;Update 2017 Mar 28: use&nbsp;<span class="Special">&lt;buffer&gt;</span><br>
 <br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
+<br>
+Patch to support CamelCase for spell checking: See a lower-to-upper case<br>
+change as a word boundary. (btucker-MPCData, 2016 Nov 6, #1235)<br>
+patch for&nbsp;<span class="MissingTag">'spellcamelcase'</span>&nbsp;option: spellcheck each CamelCased word.<br>
+(Ben Tucker, 2016 Dec 2)<br>
+<br>
+Patch to add&nbsp;<span class="Special">{skip}</span>&nbsp;argument to search(). (Christian Brabandt, 2016 Feb 24)<br>
+Update 2016 Jun 10, #861<br>
+<br>
+Patch to add &quot;cmdline&quot; completion to getcompletion(). (Shougo, Oct 1, #1140)<br>
 <br>
 Improve fallback for menu translations, to avoid having to create lots of<br>
 files that source the actual file.&nbsp;&nbsp;E.g. menu_da_de -&gt; menu_da<br>
@@ -240,7 +275,21 @@ Include part of #3242?<br>
 When a terminal exit_cb closes the window, a following typed key is lost, if<br>
 it's in a mapping. (2018 Oct 6, #2302, #3522)<br>
 <br>
-Patch for Inno Setup: #2739<br>
+Patch to have text objects defined by arbitrary single characters. (Daniel<br>
+Thau, 2013 Nov 20, 2014 Jan 29, 2014 Jan 31)<br>
+Added tests (James McCoy, 2016 Aug 3, #958).&nbsp;&nbsp;Still needs more work.<br>
+<br>
+Patch for multi-byte characters in langmap and applying a mapping on them.<br>
+(Christian Brabandt, 2015 Jun 12, update July 25)<br>
+Is this the right solution?&nbsp;&nbsp;Need to cleanup langmap behavior:<br>
+- in vgetorpeek() apply langmap to the typeahead buffer and put the result in<br>
+&nbsp;&nbsp;a copy-buffer, only when langmap is appropriate for the current mode. Then<br>
+&nbsp;&nbsp;check for mapping and let gotchars() work on the copy-buffer.<br>
+- Remove LANGMAP_ADJUST() in other parts of the code.&nbsp;&nbsp;Make sure the mode is<br>
+&nbsp;&nbsp;covered by the above change.<br>
+So that replaying the register doesn't use keymap/langmap and still does the<br>
+same thing.&nbsp;&nbsp;Remarks on PR #543 (Roland Puntaier).<br>
+Also see #737: langmap not applied to replaying recording.<br>
 <br>
 Would be nice to set tab-local values for&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>.&nbsp;&nbsp;Use<br>
 t:diffexpr_option t:diffopt_option? (#4782)<br>
@@ -260,6 +309,11 @@ Give a few examples. (#4288)<br>
 <br>
 Opening a file with --remote-tab-silent that matches&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbsp;does not<br>
 work, results in (E479: No match&quot;. (#4610)<br>
+<br>
+Patch for this (Tristan Konolige, #1011, only adds the option, no implem.):<br>
+7&nbsp;&nbsp; Add an option to add one pixel column to the character width?&nbsp;&nbsp;Lucida<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Console italic is wider than the normal font (&quot;d&quot; overlaps with next char).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Opposite of&nbsp;<a class="Type" href="options.html#'linespace'">'linespace'</a>:&nbsp;<span class="MissingTag">'columnspace'</span>.<br>
 <br>
 Bug: script written with &quot;-W scriptout&quot; contains Key codes, while the script<br>
 read with &quot;-s scriptin&quot; expects escape codes.&nbsp;&nbsp;Probably &quot;scriptout&quot; needs to<br>
@@ -375,11 +429,6 @@ Not existing directory in CDPATH leads to two shell calls. (#4525)<br>
 <br>
 Use dict_iterate_start() / dict_iterate_next() instead of relying on the<br>
 internals of the dict structure.<br>
-<br>
-Running test_gui and test_gui_init with Motif sometimes kills the window<br>
-manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
-Athena is OK.<br>
-Motif: Build on Ubuntu can't enter any text in dialog text fields.<br>
 <br>
 nvo-mode mapping works on Windows, not on Linux. (#3678)<br>
 <br>
@@ -539,7 +588,7 @@ When the last line wraps, selecting with the mouse below that line only<br>
 includes the first screen line. (2018 Aug 23, #3368)<br>
 <br>
 Refactored HTML indent file. (Michael Lee, #1821)<br>
-Ask to write a test first.<br>
+Asked to write a test.<br>
 <br>
 MS-Windows: .lnk file not resolved properly when&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is set.<br>
 (lkintact, 2018 Sep 22, #3473)<br>
@@ -625,9 +674,6 @@ pass an expression to evaluate.&nbsp;&nbsp;Allow passing zero for &quot;never sk
 <br>
 Add an option similar to&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;to skip redrawing while executing a<br>
 script or function.<br>
-<br>
-Universal solution to detect if t_RS is working, using cursor position.<br>
-Koichi Iwamoto, #2126<br>
 <br>
 When using a menu item while the &quot;more&quot; prompt is displayed doesn't work well.<br>
 E.g. after using help-&gt;version.&nbsp;&nbsp;Have a key that ends the &quot;more&quot; prompt and<br>
@@ -825,14 +871,7 @@ The &quot;:move&quot; command does not honor closed folds. (Ryan Lue, #2351)<br>
 Patch to fix increment/decrement not working properly when&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;is<br>
 set. (Hirohito Higashi, 2016 Aug 1, #923)<br>
 <br>
-Patch to make gM move to middle of line. (Yasuhiro Matsumoto, Sep 8, #2070)<br>
-<br>
 Cannot copy modeless selection when cursor is inside it. (lkintact, #2300)<br>
-<br>
-Include Haiku port. (Adrien Destugues, Siarzhuk Zharski, 2013 Oct 24)<br>
-It can replace the BeOS code, which is likely not used anymore.<br>
-Now on github: #1856.&nbsp;&nbsp;Updated Oct 2017<br>
-Got permission to include this under the Vim license.<br>
 <br>
 Test_writefile_fails_conversion failure on Solaris because if different iconv<br>
 behavior.&nbsp;&nbsp;Skip when &quot;uname&quot; returns &quot;SunOS&quot;? (Pavel Heimlich, #1872)<br>
@@ -929,8 +968,6 @@ Memory leak in test97?&nbsp;&nbsp;The string is actually freed.&nbsp;&nbsp;Weird
 <br>
 assert_fails() can only check for the first error.&nbsp;&nbsp;Make it possible to have<br>
 it catch multiple errors and check all of them.<br>
-<br>
-New value &quot;uselast&quot; for&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>. (Lemonboy, 2017 Apr 23, #1652)<br>
 <br>
 Add a toolbar in the terminal.&nbsp;&nbsp;Can be global, above all windows, or specific<br>
 for one window.<br>
@@ -1074,10 +1111,6 @@ Patch to make it possible to extend a list with itself.<br>
 <br>
 Patch to add Zstandard compressed file support. (Nick Terrell, 2016 Oct 24)<br>
 <br>
-Patch to add MODIFIED_BY to MSVC build file. (Chen Lei, 2016 Nov 24, #1275)<br>
-<br>
-Patch to change argument of :marks. (LemonBoy, 2017 Jan 29, #1426)<br>
-<br>
 On Windows buffer completion sees backslash as escape char instead of path<br>
 separator. (Toffanim, 2016 Nov 24, #1274)<br>
 <br>
@@ -1177,8 +1210,6 @@ Regexp problems:<br>
 &nbsp;&nbsp;Another one: echom matchstr(&quot; sdfsfsf\n sfdsdfsdf&quot;,'[^\n]*')<br>
 &nbsp;&nbsp;(2017 May 15, #1252)<br>
 <br>
-Patch to add &quot;cmdline&quot; completion to getcompletion(). (Shougo, Oct 1, #1140)<br>
-<br>
 Feature request: Complete members of a dictionary. (Luc Hermitte, 2017 Jan 4,<br>
 #1350)<br>
 <br>
@@ -1193,11 +1224,6 @@ Include the test.<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'keywordprg'">'keywordprg'</a>&nbsp;starts with &quot;:&quot; the argument is still escaped as a shell<br>
 command argument. (Romain Lafourcade, 2016 Oct 16, #1175)<br>
-<br>
-Patch to support CamelCase for spell checking: See a lower-to-upper case<br>
-change as a word boundary. (btucker-MPCData, 2016 Nov 6, #1235)<br>
-patch for&nbsp;<span class="MissingTag">'spellcamelcase'</span>&nbsp;option: spellcheck each CamelCased word.<br>
-(Ben Tucker, 2016 Dec 2)<br>
 <br>
 Idea from Sven: record sequence of keys.&nbsp;&nbsp;Useful to show others what they are<br>
 doing (look over the shoulder), and also to see what happened.<br>
@@ -1281,9 +1307,6 @@ Reject the value? #710.<br>
 When doing &quot;vi buf.md&quot; a BufNew autocommand for *.md is not triggered.<br>
 Because of using the initial buffer? (Dun Peal, 2016 May 12)<br>
 <br>
-Patch to add the :bvimgrep command.&nbsp;&nbsp;(Christian Brabandt, 2014 Nov 12)<br>
-Updated 2016 Jun 10, #858&nbsp;&nbsp;Update 2017 Mar 28: use&nbsp;<span class="Special">&lt;buffer&gt;</span><br>
-<br>
 Add redrawtabline command. (Naruhiko Nishino, 2016 Jun 11)<br>
 <br>
 Neovim patch for utfc_ptr2char_len()&nbsp;<span class="Constant"><a href="https://github.com/neovim/neovim/pull/4574">https://github.com/neovim/neovim/pull/4574</a></span><br>
@@ -1345,10 +1368,6 @@ Also need to run update-desktop-database (Kuriyama Kazunobu, 2015 Nov 4)<br>
 Test object i{ and it do not behave the same. #1379<br>
 Do not include the linebreak at the start?<br>
 <br>
-Patch to have text objects defined by arbitrary single characters. (Daniel<br>
-Thau, 2013 Nov 20, 2014 Jan 29, 2014 Jan 31)<br>
-Added tests (James McCoy, 2016 Aug 3).&nbsp;&nbsp;Still needs more work.<br>
-<br>
 Feature request: add the &quot;al&quot; text object, to manipulate a screen line.<br>
 Especially useful when using&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a><br>
 <br>
@@ -1363,9 +1382,6 @@ If &quot;:bd&quot; also closes a Tab page then the &quot; mark is not set.&nbsp;
 <br>
 Patch to avoid redrawing tabline when the popup menu is visible.<br>
 (Christian Brabandt, 2016 Jan 28)<br>
-<br>
-Patch to add&nbsp;<span class="Special">{skip}</span>&nbsp;argument to search(). (Christian Brabandt, 2016 Feb 24)<br>
-Update 2016 Jun 10, #861<br>
 <br>
 Patch to show search statistics. (Christian Brabandt, 2016 Jul 22)<br>
 <br>
@@ -1484,18 +1500,6 @@ Patch to fix checking global option value when not using it.<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;is set repeating a Visual operation counts the size of the<br>
 <a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;text as part of the operation. (Axel Bender, 2015 Jul 20)<br>
-<br>
-Patch for multi-byte characters in langmap and applying a mapping on them.<br>
-(Christian Brabandt, 2015 Jun 12, update July 25)<br>
-Is this the right solution?&nbsp;&nbsp;Need to cleanup langmap behavior:<br>
-- in vgetorpeek() apply langmap to the typeahead buffer and put the result in<br>
-&nbsp;&nbsp;a copy-buffer, only when langmap is appropriate for the current mode. Then<br>
-&nbsp;&nbsp;check for mapping and let gotchars() work on the copy-buffer.<br>
-- Remove LANGMAP_ADJUST() in other parts of the code.&nbsp;&nbsp;Make sure the mode is<br>
-&nbsp;&nbsp;covered by the above change.<br>
-So that replaying the register doesn't use keymap/langmap and still does the<br>
-same thing.&nbsp;&nbsp;Remarks on issue 543 (Roland Puntaier).<br>
-Also see #737: langmap not applied to replaying recording.<br>
 <br>
 Patch to add grepfile(). (Scott Prager, 2015 May 26)<br>
 Work in progress.<br>
@@ -3311,9 +3315,6 @@ Win32 GUI known bugs:<br>
 8&nbsp;&nbsp; When the&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>&nbsp;cannot be executed, should give an appropriate error msg.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Esp. for a filter command, currently it only complains the file could not<br>
 &nbsp;&nbsp;&nbsp;&nbsp;be read.<br>
-7&nbsp;&nbsp; Add an option to add one pixel column to the character width?&nbsp;&nbsp;Lucida<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Console italic is wider than the normal font (&quot;d&quot; overlaps with next char).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Opposite of&nbsp;<a class="Type" href="options.html#'linespace'">'linespace'</a>:&nbsp;<span class="MissingTag">'columnspace'</span>.<br>
 7&nbsp;&nbsp; At the hit-enter prompt scrolling now no longer works.&nbsp;&nbsp;Need to use the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;keyboard to get around this.&nbsp;&nbsp;Pretend&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;was hit when the user tries to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;scroll?<br>
