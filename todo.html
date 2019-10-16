@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Sep 27<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Oct 16<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -52,7 +52,10 @@ Popup windows:<br>
 - Use popup (or popup menu) for command line completion<br>
 - Implement flip option<br>
 - Why does&nbsp;<a class="Type" href="options.html#'nrformats'">'nrformats'</a>&nbsp;leak from the popup window buffer???<br>
-&nbsp;&nbsp;Happens in Test_simple_popup() at the second screendump.<br>
+&nbsp;&nbsp;Happens in Test_simple_popup() at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call VerifyScreenDump(buf, 'Test_popupwin_04a', {})<br>
+&nbsp;&nbsp;Only when this line is in defaults.vim:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;set nrformats-=octal<br>
 - For the &quot;moved&quot; property also include mouse movement?<br>
 - Make redrawing more efficient and avoid flicker:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- put popup menu also in popup_mask?<br>
@@ -81,7 +84,7 @@ Text properties: See comment at top of src/textprop.c.<br>
 &nbsp;&nbsp;Then :%s?foo should take the first match above the cursor line.<br>
 <br>
 Prompt buffer:<br>
-- Add a command line history.<br>
+- Add a command line history, using up/down keys.&nbsp;&nbsp;#5010<br>
 - delay next prompt until plugin gives OK?<br>
 - add prompt_addtext(<span class="Special">{buf}</span>,&nbsp;<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp; none&nbsp;&nbsp;&nbsp;&nbsp;add text to a prompt buffer<br>
 <br>
@@ -139,6 +142,21 @@ E279, E290, E292, E362, E366, E450, E451, E452,<br>
 E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
 E654, E856, E857, E860, E861, E863, E889, E900<br>
 <br>
+Try out enabling modifyOtherKeys in xterm:<br>
+&nbsp;&nbsp;&nbsp;&nbsp; CSI &gt; 4 ; 2 m<br>
+Need to disable when going to cooked mode:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CSI &gt; 4 ; m<br>
+Known problems:<br>
+-&nbsp;&nbsp;<span class="Special">CTRL-V</span>&nbsp;key inserts Esc sequence<br>
+<br>
+Patch to skip tests that don't work when run as root. (James McCoy, #5020)<br>
+Or just bail out completely?<br>
+<br>
+Patch to test right click. (Dominique Pelle, #5018)<br>
+<br>
+Python output doesn't stop when got_int is set. #5053<br>
+Check got_int in write_output() in if_py_both.h?<br>
+<br>
 Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
 Athena is OK.<br>
@@ -146,8 +164,13 @@ Motif: Build on Ubuntu can't enter any text in dialog text fields.<br>
 <br>
 Improve running tests on MS-Windows: #4922<br>
 <br>
-Patch to properly break CJK lines: #3875<br>
-Ready to include now?<br>
+In a function these two lines are different:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let [a, b, c] =&lt;&lt; trim END&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fails<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let [a,b,c] =&lt;&lt; trim END&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;works<br>
+issue #5051<br>
+<br>
+Patch to properly break CJK lines: Anton Kochkov, #3875<br>
+Should be ready to include now.<br>
 <br>
 Remove check for cmd_silent when calling search_stat()? (Gary Johnson)<br>
 <br>
@@ -164,10 +187,13 @@ Patch to sort buffers on b_last_used time.&nbsp;&nbsp;(Andy Massimino, #4722)<br
 Patch to highlight the line number differently below the cursor line. (Shaun<br>
 Brady, #624)<br>
 <br>
+Patch to add more tests for cmd.exe: #4928<br>
+<br>
 Patch to fix session file when using multiple tabs. (Jason Franklin, 2019 May<br>
 20)<br>
 Also put :argadd commands at the start for all buffers, so that their order<br>
 remains equal?&nbsp;&nbsp;Then %argdel to clean it up.&nbsp;&nbsp;Do try this with&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;set.<br>
+Also #4994: window-local options not always restored, related to using :badd.<br>
 <br>
 Completion mixes results from the current buffer with tags and other files.<br>
 Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still search for results.&nbsp;&nbsp;E.g., type &quot;b_&quot; in<br>
@@ -181,11 +207,16 @@ Ready to include now?<br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)<br>
 <br>
+&quot;:helptags ALL&quot; should skip directories where &quot;tags&quot; cannot be written.<br>
+(Matěj Cepl, #5026)<br>
+<br>
 &quot;:bnext&quot; in a help buffer is supposed to go to the next help buffer, but it<br>
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
 unlisted. (#4478)<br>
 <br>
 Patch to fix using zero sc_sid. (#4877)<br>
+<br>
+Enable&nbsp;<a class="Type" href="options.html#'termbidi'">'termbidi'</a>&nbsp;if $VTE_VERSION &gt;= 5703 ?<br>
 <br>
 Universal solution to detect if t_RS is working, using cursor position.<br>
 Koichi Iwamoto, #2126<br>
@@ -217,8 +248,6 @@ Patch to remove FORTIFY_SOURCE also from CPPFLAGS. (Benedikt Morbach, #2786)<br>
 <br>
 Patch from Namsh to allow building with both XIM and hangulin. (2019 Aug 29)<br>
 <br>
-Patch to fix redirect of shell on MS-Windows. (Yasuhiro Matsumoto, #2054)<br>
-<br>
 When using :packadd files under &quot;later&quot; are not used, which is inconsistent<br>
 with packages under &quot;start&quot;. (xtal8, #1994)<br>
 <br>
@@ -247,6 +276,14 @@ Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 Patch to configure BUILD_DATE for reproducible builds. (James McCoy, #513)<br>
 <br>
 Patch to add MODIFIED_BY to MSVC build file. (Chen Lei, 2016 Nov 24, #1275)<br>
+<br>
+xterm should be able to pass focus changes to Vim, so that Vim can check for<br>
+buffers that changed.&nbsp;&nbsp;Perhaps in misc.c, function selectwindow().<br>
+Xterm 224 supports it!<br>
+Patch to make FocusGained and FocusLost work in modern terminals. (Hayaki<br>
+Saito, 2013 Apr 24) Update 2016 Aug 12.<br>
+Also see issue #609.<br>
+We could add the enable/disable sequences to t_ti/t_te or t_ks/t_ke.<br>
 <br>
 Check_external_diff() is used too often. (Daniel Hahler, #4800)<br>
 <br>
@@ -301,6 +338,8 @@ Williams, 2018 Oct 30)<br>
 <br>
 &quot;exepath('bin/cmd')&quot; does not work while &quot;:!bin/cmd&quot; does work.<br>
 (Daniel Hahler, #4710)&nbsp;&nbsp;and executable('bin/cmd') returns 1<br>
+<br>
+Error drawing the number column when&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;is set. (#3893)<br>
 <br>
 Problem with :tlmenu: Detach item added with all modes?&nbsp;&nbsp;Issue #3563.<br>
 <br>
@@ -1609,14 +1648,6 @@ compatible with Vim spell files.&nbsp;&nbsp;The old files can no longer be downl
 Spell checking: Add a feature to only consider two spaces after a dot to start<br>
 a new sentence.&nbsp;&nbsp;Don't give the capitalization error when there is one space.<br>
 <br>
-xterm should be able to pass focus changes to Vim, so that Vim can check for<br>
-buffers that changed.&nbsp;&nbsp;Perhaps in misc.c, function selectwindow().<br>
-Xterm 224 supports it!<br>
-Patch to make FocusGained and FocusLost work in modern terminals. (Hayaki<br>
-Saito, 2013 Apr 24) Update 2016 Aug 12.<br>
-Also see issue #609.<br>
-We could add the enable/disable sequences to t_ti/t_te or t_ks/t_ke.<br>
-<br>
 Idea: For a window in the middle (has window above and below it), use<br>
 right-mouse-drag on the status line to move a window up/down without changing<br>
 its height?&nbsp;&nbsp;It's like dragging the status bar above it at the same time.<br>
@@ -2159,10 +2190,6 @@ Looks like only bash can do it. (Yakov Lerner)<br>
 <br>
 Cscope &quot;cs add&quot; stopped working somewhat before 7.2.438. (Gary Johnson, 2010<br>
 Jun 29)&nbsp;&nbsp;Caused by 7.2.433?<br>
-<br>
-I often see pasted text (from Firefox, to Vim in xterm) appear twice.<br>
-Also, Vim in xterm sometimes loses copy/paste ability (probably after running<br>
-an external command).<br>
 <br>
 Jumplist doesn't work properly in Insert mode? (Jean Johner, 2010 Mar 20)<br>
 <br>
@@ -2759,10 +2786,6 @@ If the variable &quot;g:x#y#z&quot; exists completion after &quot;:echo g:x#&quo
 Feature request: Command to go to previous tab, like what&nbsp;<span class="Special">CTRL-W</span>&nbsp;p does for<br>
 windows. (Adam George)<br>
 <br>
-F1 - F4 in an xterm produce a different escape sequence when used with a<br>
-modifier key.&nbsp;&nbsp;Need to catch three different sequences.&nbsp;&nbsp;Use K_ZF1, like<br>
-K_ZHOME? (Dickey, 2007 Dec 2)<br>
-<br>
 In debug mode, using&nbsp;<span class="Special">CTRL-R</span>&nbsp;= to evaluate a function causes stepping through<br>
 the function. (Hari Krishna Dara, 2006 Jun 28)<br>
 <br>
@@ -2897,12 +2920,6 @@ Setting&nbsp;<a class="Type" href="options.html#'background'">'background'</a>&n
 This is undesired,&nbsp;<a class="Type" href="options.html#'background'">'background'</a>&nbsp;is supposed to tell Vim what the background<br>
 color is, not reset it.<br>
 <br>
-Linux distributions:<br>
-- Suggest compiling xterm with --enable-tcap-query, so that nr of colors is<br>
-&nbsp;&nbsp;known to Vim.&nbsp;&nbsp;88 colors instead of 16 works better.&nbsp;&nbsp;See &quot;:help<br>
-&nbsp;&nbsp;xfree-xterm&quot;.<br>
-- Suggest including bare &quot;vi&quot; and &quot;vim&quot; with X11, syntax, etc.<br>
-<br>
 Completion menu: For a wrapping line, completing a long file name, only the<br>
 start of the path is shown in the menu.&nbsp;&nbsp;Should move the menu to the right to<br>
 show more text of the completions.&nbsp;&nbsp;Shorten the items that don't fit in the<br>
@@ -2916,12 +2933,6 @@ the buffer is displayed. (Antonios Tsakiridis)<br>
 <br>
 When &quot;:cn&quot; moves to an error in the same line the message isn't shortened.<br>
 Only skip shortening for &quot;:cc&quot;?<br>
-<br>
-Write &quot;making vim work better&quot; for the docs (mostly pointers):&nbsp;<a class="Constant" href="todo.html#nice" name="nice">nice</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;- sourcing $VIMRUNTIME/vimrc_example.vim<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- setting&nbsp;<a class="Type" href="options.html#'mouse'">'mouse'</a>&nbsp;to &quot;a&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- getting colors in xterm<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- compiling Vim with X11, GUI, etc.<br>
 <br>
 Problem with &quot;:call&quot; and dictionary function. Hari Krishna Dara, Charles<br>
 Campbell 2006 Jul 06.<br>
@@ -3016,11 +3027,6 @@ When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is 
 typed characters to be redrawn.&nbsp;&nbsp;Caused by patch 7.1.329. (Tyler Spivey, 2008<br>
 Sep 3, 11)<br>
 <br>
-When Vim in an xterm owns the selection and the user does &quot;:shell&quot; Vim doesn't<br>
-respond to selection requests.&nbsp;&nbsp;Invoking XtDisownSelection() before executing<br>
-the shell doesn't help.&nbsp;&nbsp;Would require forking and doing a message loop, like<br>
-what happens for the GUI.<br>
-<br>
 &quot;:vimgrep&quot; does not recognize a recursive symlink.&nbsp;&nbsp;Is it possible to detect<br>
 this, at least for Unix (using device/inode)?<br>
 <br>
@@ -3109,11 +3115,6 @@ Awaiting updated patches:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;use the patch that keeps using HLF_8 if HLF_WS has not<br>
 &nbsp;&nbsp;&nbsp;&nbsp;been given values.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Add section in help files for these highlight groups?<br>
-8&nbsp;&nbsp; &quot;fg&quot; and &quot;bg&quot; don't work in an xterm.&nbsp;&nbsp;Get default colors from xterm<br>
-&nbsp;&nbsp;&nbsp;&nbsp;with an ESC sequence.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;xterm can send colors for many things.&nbsp;&nbsp;E.g. for the cursor:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Esc&gt;</span>]12;?<span class="Special">&lt;Bel&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;Can use this to get the background color and restore the colors on exit.<br>
 7&nbsp;&nbsp; Add &quot;DefaultFG&quot; and &quot;DefaultBG&quot; for the colors of the menu. (Marcin<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Dalecki has a patch for Motif and Carbon)<br>
 -&nbsp;&nbsp; Add possibility to highlight specific columns (for Fortran).&nbsp;&nbsp;Or put a<br>
@@ -3707,7 +3708,6 @@ Macintosh:<br>
 8&nbsp;&nbsp; Xterm sends ^[[H for&nbsp;<span class="Special">&lt;Home&gt;</span>&nbsp;and ^[[F for&nbsp;<span class="Special">&lt;End&gt;</span>&nbsp;in some mode.&nbsp;&nbsp;Also<br>
 &nbsp;&nbsp;&nbsp;&nbsp;recognize these keys?&nbsp;&nbsp;Mostly useful for xterm simulators, like gnometerm.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<span class="Constant"><a href="http://dickey.his.com/xterm/xterm.faq.html#xterm_pc_style">http://dickey.his.com/xterm/xterm.faq.html#xterm_pc_style</a></span>.<br>
-8&nbsp;&nbsp; For xterm also recognize keypad up/down/left/right and insert.<br>
 8&nbsp;&nbsp; '[ and '] should be set to start/end of line when using a linewise operator<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(e.g., &quot;:w&quot;).<br>
 8&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-A</span>&nbsp;can't handle big &quot;long&quot; numbers, they become negative.&nbsp;&nbsp;Check for<br>
@@ -3722,10 +3722,6 @@ Macintosh:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;filesystem, an illegal file name may be created: &quot;.vim&quot;.<br>
 8&nbsp;&nbsp; For each buffer that is opened, the viminfo file is opened and read to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;check for file marks.&nbsp;&nbsp;This can be slow.<br>
-7&nbsp;&nbsp; In xterm, recognize both vt100 and vt220 cursor keys.&nbsp;&nbsp;Change<br>
-&nbsp;&nbsp;&nbsp;&nbsp;add_termcode() to not remove an existing entry for a name, when it's<br>
-&nbsp;&nbsp;&nbsp;&nbsp;needed.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Need a generic solution to recognize different codes for the same key.<br>
 8&nbsp;&nbsp; Core dump within signal function: gdb doesn't show stack backtrace!&nbsp;&nbsp;Option<br>
 &nbsp;&nbsp;&nbsp;&nbsp;to skip catch_signals()?<br>
 9&nbsp;&nbsp; Repeating a &quot;cw&quot; with &quot;.&quot; doesn't work if the text was pasted from the<br>
