@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'insert'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="insert.html" name="insert.txt">insert.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Sep 27<br>
+<a class="Constant" href="insert.html" name="insert.txt">insert.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Oct 20<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -1143,6 +1143,27 @@ below the text, and the bottom of the menu otherwise.<br>
 After the info popup is created it can be found with&nbsp;<a class="Identifier" href="popup.html#popup_findinfo()">popup_findinfo()</a>&nbsp;and<br>
 properties can be changed with&nbsp;<a class="Identifier" href="popup.html#popup_setoptions()">popup_setoptions()</a>.<br>
 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#complete-popuphidden" name="complete-popuphidden">complete-popuphidden</a><br>
+If the information for the popup is obtained asynchronously, use &quot;popuphidden&quot;<br>
+in&nbsp;<a class="Type" href="options.html#'completeopt'">'completeopt'</a>.&nbsp;&nbsp;The info popup will then be initally hidden and<br>
+<a class="Identifier" href="popup.html#popup_show()">popup_show()</a>&nbsp;must be called once it has been filled with the info.&nbsp;&nbsp;This can<br>
+be done with a&nbsp;<a class="Identifier" href="autocmd.html#CompleteChanged">CompleteChanged</a>&nbsp;autocommand, something like this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set completeopt+=popuphidden<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au CompleteChanged * call UpdateCompleteInfo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func UpdateCompleteInfo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Cancel any pending info fetch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let item = v:event.completed_item<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Start fetching info for the item then call ShowCompleteInfo(info)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func ShowCompleteInfo(info)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let id = popup_findinfo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if id<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call popup_settext(id, 'async info: ' .. a:info)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call popup_show(id)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#complete-item-kind" name="complete-item-kind">complete-item-kind</a><br>
 The &quot;kind&quot; item uses a single letter to indicate the kind of completion.&nbsp;&nbsp;This<br>
 may be used to show the completion differently (different color or icon).<br>
 Currently these types can be used:<br>
