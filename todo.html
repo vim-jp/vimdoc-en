@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Oct 26<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Nov 02<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -45,7 +45,27 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <br>
 Termdebug:&nbsp;&nbsp;Ctrl-W . doesn't work with modifyOtherKeys set.<br>
 <br>
+Cannot scroll popup window with mouse in GUI? (#5138)<br>
+<br>
+Add a way to make &quot;:term cmd&quot; run &quot;cmd&quot; in a shell, instead of executing it<br>
+directly.&nbsp;&nbsp;Perhaps &quot;:term ++shell cmd&quot;. (issue #3340)<br>
+<br>
+Include netrw 166a?<br>
+<br>
+In a function these two lines are different:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let [a, b, c] =&lt;&lt; trim END&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fails<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let [a,b,c] =&lt;&lt; trim END&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;works<br>
+issue #5051<br>
+<br>
+Make&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;global-local.<br>
+<br>
+Update libvterm on github, rename termscreen.c back to screen.c.<br>
+<br>
+Graduate FEAT_TAG_BINS and make LSIZE for tags bigger.<br>
+<br>
 Popup windows:<br>
+- When using &quot;botleft&quot; for &quot;pos&quot; and there is not enough space, positioning<br>
+&nbsp;&nbsp;goes below, but this must not happen if there is less space there. #5151<br>
 - Use popup (or popup menu) for command line completion<br>
 - Implement flip option<br>
 - Make redrawing more efficient and avoid flicker:<br>
@@ -59,14 +79,14 @@ Popup windows:<br>
 &nbsp;&nbsp;incomplete cell.<br>
 <br>
 Text properties:<br>
-- Implement prop_find() #4970<br>
+- Implement prop_find() issue #4970<br>
 - Adjusting column/length when inserting text<br>
 - Text properties spanning more than one line<br>
-- prop_find()<br>
+- See remakrs at top of src/textprop.c<br>
 <br>
-<a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s: (#3321)<br>
+<a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s:&nbsp;<br>
 - Get E20 when using command history to get &quot;'&lt;,'&gt;s/a/b&quot; and no Visual area<br>
-&nbsp;&nbsp;was set. (#3837)<br>
+&nbsp;&nbsp;was set. (issue #3837)<br>
 - :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
 &nbsp;&nbsp;correct line (it uses the last but one line) (Lifepillar, Aug 18, #3345)<br>
 - :s@pat/tern@ doesn't include &quot;/&quot; in the pattern. (Takahiro Yoshihara, #3637)<br>
@@ -78,7 +98,7 @@ Text properties:<br>
 &nbsp;&nbsp;Then :%s?foo should take the first match above the cursor line.<br>
 <br>
 Prompt buffer:<br>
-- Add a command line history, using up/down keys.&nbsp;&nbsp;#5010<br>
+- Add a command line history, using up/down keys.&nbsp;&nbsp;issue #5010<br>
 - delay next prompt until plugin gives OK?<br>
 - add prompt_addtext(<span class="Special">{buf}</span>,&nbsp;<span class="Special">{expr}</span>)&nbsp;&nbsp;&nbsp;&nbsp; none&nbsp;&nbsp;&nbsp;&nbsp;add text to a prompt buffer<br>
 <br>
@@ -91,7 +111,7 @@ Terminal debugger:<br>
 - Termdebug does not work when Vim was build with mzscheme: gdb hangs just<br>
 &nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
 &nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
-- Add support for lldb?&nbsp;&nbsp;#3565<br>
+- Add support for lldb?&nbsp;&nbsp;issue #3565<br>
 - Could we do something similar for debugging Vim scripts?&nbsp;&nbsp;At least see the<br>
 &nbsp;&nbsp;script while stepping through it.&nbsp;&nbsp;Simple version would use an extra window.<br>
 &nbsp;&nbsp;More complete solution would actually run Vim in a Terminal and control it<br>
@@ -109,8 +129,6 @@ Terminal emulator window:<br>
 - Allow for specifying the directory, with ++cwd=<span class="Special">{dir}</span>.<br>
 - With a vertical split only one window is updated. (Linwei, 2018 Jun 2,<br>
 &nbsp;&nbsp;#2977)<br>
-- Add a way to make &quot;:term cmd&quot; run &quot;cmd&quot; in a shell, instead of executing it<br>
-&nbsp;&nbsp;directly.&nbsp;&nbsp;Perhaps &quot;:term ++shell cmd&quot;. (#3340)<br>
 - When pasting should call vterm_keyboard_start_paste(), e.g. when using<br>
 &nbsp;&nbsp;K_MIDDLEMOUSE, calling insert_reg().<br>
 - Users expect parsing the :term argument like a shell does, also support<br>
@@ -134,18 +152,10 @@ E279, E290, E292, E362, E366, E450, E451, E452,<br>
 E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
 E654, E856, E857, E860, E861, E863, E889, E900<br>
 <br>
-&quot;gN&quot; does not work properly with single-char search pattern. (Jaehwang Jerry<br>
-Jung, #5075)<br>
-<br>
 Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
 Athena is OK.<br>
 Motif: Build on Ubuntu can't enter any text in dialog text fields.<br>
-<br>
-In a function these two lines are different:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let [a, b, c] =&lt;&lt; trim END&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fails<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let [a,b,c] =&lt;&lt; trim END&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;works<br>
-issue #5051<br>
 <br>
 Patch to properly break CJK lines: Anton Kochkov, #3875<br>
 Flag in&nbsp;<a class="Type" href="options.html#'formatoptions'">'formatoptions'</a>&nbsp;is not used in the tests.<br>
@@ -158,14 +168,9 @@ Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</
 <br>
 Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
 <br>
-Patch for #4733: #4734.&nbsp;&nbsp;Test needs improvements.<br>
-<br>
-Patch to sort buffers on b_last_used time.&nbsp;&nbsp;(Andy Massimino, #4722)<br>
-<br>
-Patch to highlight the line number differently below the cursor line. (Shaun<br>
-Brady, #624)<br>
-<br>
-Patch to add more tests for cmd.exe: #4928<br>
+Patch to user manual: #5098.&nbsp;&nbsp;Comments by DC Slagel:<br>
+- semicolon use should be OK.<br>
+- Keep capital after colon.<br>
 <br>
 Patch to fix session file when using multiple tabs. (Jason Franklin, 2019 May<br>
 20)<br>
@@ -179,9 +184,6 @@ terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
 Should do current file first and not split it up when more results are found.<br>
 (Also #1890)<br>
 <br>
-Patch to use timers in matchparen. (Daniel Hahler, #1338)<br>
-Ready to include now?<br>
-<br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)<br>
 <br>
@@ -192,24 +194,15 @@ Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'"
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
 unlisted. (#4478)<br>
 <br>
-Patch to fix using zero sc_sid. (#4877)<br>
-<br>
 Enable&nbsp;<a class="Type" href="options.html#'termbidi'">'termbidi'</a>&nbsp;if $VTE_VERSION &gt;= 5703 ?<br>
 <br>
 Universal solution to detect if t_RS is working, using cursor position.<br>
 Koichi Iwamoto, #2126<br>
 <br>
-Make&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;global-local.<br>
-<br>
 The :syntax cchar value can only be a single character.&nbsp;&nbsp;It would be useful to<br>
 support combining characters. (Charles Campbell)&nbsp;&nbsp;Also #4687<br>
 <br>
-Patch to make gM move to middle of line. (Yasuhiro Matsumoto, Sep 8, #2070)<br>
-<br>
-Patch to add v:argv, arguments that Vim was started with. (Dmitri<br>
-Vereshchagin, #1322)<br>
-<br>
-New value &quot;uselast&quot; for&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>. (Lemonboy, 2017 Apr 23, #1652)<br>
+Patch: New value &quot;uselast&quot; for&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>. (Lemonboy, 2017 Apr 23, #1652)<br>
 <br>
 Include Haiku port. (Adrien Destugues, Siarzhuk Zharski, 2013 Oct 24)<br>
 It can replace the BeOS code, which is likely not used anymore.<br>
@@ -337,6 +330,12 @@ Patch for this (Tristan Konolige, #1011, only adds the option, no implem.):<br>
 Bug: script written with &quot;-W scriptout&quot; contains Key codes, while the script<br>
 read with &quot;-s scriptin&quot; expects escape codes.&nbsp;&nbsp;Probably &quot;scriptout&quot; needs to<br>
 be adjusted. (Daniel Steinberg, 2019 Feb 24, #4041)<br>
+<br>
+Add a string to the&nbsp;<a class="Type" href="options.html#'display'">'display'</a>&nbsp;option (&quot;smoothscroll&quot; ?) to make&nbsp;<span class="Special">CTRL-E</span>&nbsp;and<br>
+<span class="Special">CTRL-Y</span>&nbsp;scroll one screen line, also if this means the first line doesn't start<br>
+with the first character (like what happens with a last line that doesn't<br>
+fit).&nbsp;&nbsp;Display &quot;&lt;&lt;&lt;&quot; at the start of the first visible line (like &quot;@@@&quot; is<br>
+displayed in the last line). (Arseny Nasokin,&nbsp;&nbsp;#5154)<br>
 <br>
 Patch for ambiguous width characters in libvterm on MS-Windows 10.<br>
 (Nobuhiro Takasaki, #4411)<br>
@@ -1151,6 +1150,9 @@ sort() is not stable when using numeric/float sort (Nikolay Pavlov, 2016 Sep<br>
 <br>
 +channel:<br>
 - Add a in_cb, invoked when the write buffer has become empty. (Matteo Landi)<br>
+- Add ch_readlines(): for a channel in NL mode, reads as many lines as are<br>
+&nbsp;&nbsp;available.&nbsp;&nbsp;Should be more efficient than looping over ch_read() with<br>
+&nbsp;&nbsp;ch_status() to check for more.<br>
 - Add a separate timeout for opening a socket.&nbsp;&nbsp;Currently it's fixed at 50<br>
 &nbsp;&nbsp;msec, which is too small for a remote connection. (tverniquet, #2130)<br>
 - Problem with stderr on Windows? (Vincent Rischmann, 2016 Aug 31, #1026)<br>
@@ -4634,9 +4636,6 @@ Messages:<br>
 <br>
 <br>
 Screen updating:<br>
-7&nbsp;&nbsp; Add a string to the&nbsp;<a class="Type" href="options.html#'display'">'display'</a>&nbsp;option to make&nbsp;<span class="Special">CTRL-E</span>&nbsp;and&nbsp;<span class="Special">CTRL-Y</span>&nbsp;scroll one<br>
-&nbsp;&nbsp;&nbsp;&nbsp;screen line, also if this means the first line doesn't start with the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;first character (like what happens with a single line that doesn't fit).<br>
 -&nbsp;&nbsp; screen_line():<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- insert/delete character stuff.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- improve delete rest of line (spaces at end of line).<br>
