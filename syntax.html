@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'syntax'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="syntax.html" name="syntax.txt">syntax.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Oct 27<br>
+<a class="Constant" href="syntax.html" name="syntax.txt">syntax.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.1.</span>&nbsp;&nbsp;Last change: 2019 Nov 14<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -481,6 +481,16 @@ conversion. See&nbsp;<a class="Identifier" href="starting.html#-E">-E</a>&nbsp;a
 script to replace all the -c commands and use it with the -u flag instead of<br>
 specifying each command separately.<br>
 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#hl-TOhtmlProgress" name="hl-TOhtmlProgress">hl-TOhtmlProgress</a>&nbsp;<a class="Constant" href="syntax.html#TOhtml-progress-color" name="TOhtml-progress-color">TOhtml-progress-color</a><br>
+When displayed, the progress bar will show colored boxes along the statusline<br>
+as the HTML conversion proceeds. By default, the background color as the<br>
+current &quot;DiffDelete&quot; highlight group is used. If &quot;DiffDelete&quot; and &quot;StatusLine&quot;<br>
+have the same background color, TOhtml will automatically adjust the color to<br>
+differ. If you do not like the automatically selected colors, you can define<br>
+your own highlight colors for the progress bar. Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hi TOhtmlProgress guifg=#c0ffee ctermbg=7</div>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#g:html_number_lines" name="g:html_number_lines">g:html_number_lines</a><br>
 Default: current&nbsp;<a class="Type" href="options.html#'number'">'number'</a>&nbsp;setting.<br>
 When 0, buffer text is displayed in the generated HTML without line numbering.<br>
@@ -512,8 +522,8 @@ For example:<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#g:html_use_css" name="g:html_use_css">g:html_use_css</a><br>
 Default: 1.<br>
-When 1, generate valid HTML 4.01 markup with CSS1 styling, supported in all<br>
-modern browsers and most old browsers.<br>
+When 1, generate valid HTML 5 markup with CSS styling, supported in all modern<br>
+browsers and many old browsers.<br>
 When 0, generate&nbsp;<span class="Special">&lt;font&gt;</span>&nbsp;tags and similar outdated markup. This is not<br>
 recommended but it may work better in really old browsers, email clients,<br>
 forum posts, and similar situations where basic CSS support is unavailable.<br>
@@ -585,23 +595,43 @@ affected in this way as follows:<br>
 Example, to make the fold column and line numbers uncopyable:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let g:html_prevent_copy = &quot;fn&quot;</div>
 <br>
-This feature is currently implemented by inserting read-only&nbsp;<span class="Special">&lt;input&gt;</span>&nbsp;elements<br>
-into the markup to contain the uncopyable areas. This does not work well in<br>
-all cases. When pasting to some applications which understand HTML, the<br>
-<span class="Special">&lt;input&gt;</span>&nbsp;elements also get pasted. But plain-text paste destinations should<br>
-always work.<br>
+The method used to prevent copying in the generated page depends on the value<br>
+of&nbsp;<a class="Identifier" href="syntax.html#g:html_use_input_for_pc">g:html_use_input_for_pc</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#g:html_use_input_for_pc" name="g:html_use_input_for_pc">g:html_use_input_for_pc</a><br>
+Default: &quot;fallback&quot;<br>
+If&nbsp;<a class="Identifier" href="syntax.html#g:html_prevent_copy">g:html_prevent_copy</a>&nbsp;is non-empty, then:<br>
+<br>
+When &quot;all&quot;, read-only&nbsp;<span class="Special">&lt;input&gt;</span>&nbsp;elements are used in place of normal text for<br>
+uncopyable regions. In some browsers, especially older browsers, after<br>
+selecting an entire page and copying the selection, the&nbsp;<span class="Special">&lt;input&gt;</span>&nbsp;tags are not<br>
+pasted with the page text. If&nbsp;<a class="Identifier" href="syntax.html#g:html_no_invalid">g:html_no_invalid</a>&nbsp;is 0, the&nbsp;<span class="Special">&lt;input&gt;</span>&nbsp;tags have<br>
+invalid type; this works in more browsers, but the page will not validate.<br>
+<span class="Todo">Note</span>: this method does NOT work in recent versions of Chrome and equivalent<br>
+browsers; the&nbsp;<span class="Special">&lt;input&gt;</span>&nbsp;tags get pasted with the text.<br>
+<br>
+When &quot;fallback&quot; (default value), the same&nbsp;<span class="Special">&lt;input&gt;</span>&nbsp;elements are generated for<br>
+older browsers, but newer browsers (detected by CSS feature query) hide the<br>
+<span class="Special">&lt;input&gt;</span>&nbsp;elements and instead use generated content in an ::before pseudoelement<br>
+to display the uncopyable text. This method should work with the largest<br>
+number of browsers, both old and new.<br>
+<br>
+When &quot;none&quot;, the&nbsp;<span class="Special">&lt;input&gt;</span>&nbsp;elements are not generated at all. Only the<br>
+generated-content method is used. This means that old browsers, notably<br>
+Internet Explorer, will either copy the text intended not to be copyable, or<br>
+the non-copyable text may not appear at all. However, this is the most<br>
+standards-based method, and there will be much less markup.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#g:html_no_invalid" name="g:html_no_invalid">g:html_no_invalid</a><br>
 Default: 0.<br>
-When 0, if&nbsp;<a class="Identifier" href="syntax.html#g:html_prevent_copy">g:html_prevent_copy</a>&nbsp;is non-empty, an invalid attribute is<br>
-intentionally inserted into the&nbsp;<span class="Special">&lt;input&gt;</span>&nbsp;element for the uncopyable areas. This<br>
-increases the number of applications you can paste to without also pasting the<br>
-<span class="Special">&lt;input&gt;</span>&nbsp;elements. Specifically, Microsoft Word will not paste the&nbsp;<span class="Special">&lt;input&gt;</span><br>
-elements if they contain this invalid attribute.<br>
-When 1, no invalid markup is ever intentionally inserted, and the generated<br>
-page should validate. However, be careful pasting into Microsoft Word when<br>
-<a class="Identifier" href="syntax.html#g:html_prevent_copy">g:html_prevent_copy</a>&nbsp;is non-empty; it can be hard to get rid of the&nbsp;<span class="Special">&lt;input&gt;</span><br>
-elements which get pasted.<br>
+When 0, if&nbsp;<a class="Identifier" href="syntax.html#g:html_prevent_copy">g:html_prevent_copy</a>&nbsp;is non-empty and&nbsp;<a class="Identifier" href="syntax.html#g:html_use_input_for_pc">g:html_use_input_for_pc</a>&nbsp;is<br>
+not &quot;none&quot;, an invalid attribute is intentionally inserted into the&nbsp;<span class="Special">&lt;input&gt;</span><br>
+element for the uncopyable areas. This prevents pasting the&nbsp;<span class="Special">&lt;input&gt;</span>&nbsp;elements<br>
+in some applications. Specifically, some versions of Microsoft Word will not<br>
+paste the&nbsp;<span class="Special">&lt;input&gt;</span>&nbsp;elements if they contain this invalid attribute. When 1, no<br>
+invalid markup is inserted, and the generated page should validate. However,<br>
+<span class="Special">&lt;input&gt;</span>&nbsp;elements may be pasted into some applications and can be difficult to<br>
+remove afterward.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#g:html_hover_unfold" name="g:html_hover_unfold">g:html_hover_unfold</a><br>
 Default: 0.<br>
