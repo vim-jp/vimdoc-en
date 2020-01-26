@@ -1,0 +1,567 @@
+---
+layout: vimdoc
+helpname: 'vim9'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2019 Dec 06<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
+<br>
+<br>
+THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
+<br>
+Vim9 script commands and expressions.<br>
+<br>
+Most expression help is in&nbsp;<a class="Identifier" href="eval.html">eval.txt</a>.&nbsp;&nbsp;This file is about the new syntax and<br>
+features in Vim9 script.<br>
+<br>
+THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
+<br>
+<br>
+1&nbsp;&nbsp; What is Vim9 script?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-script">vim9-script</a><br>
+2.&nbsp;&nbsp;Differences&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-differences">vim9-differences</a><br>
+3.&nbsp;&nbsp;New style functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#fast-functions">fast-functions</a><br>
+4.&nbsp;&nbsp;Types&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-types">vim9-types</a><br>
+5.&nbsp;&nbsp;Namespace, Import and Export&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9script">vim9script</a><br>
+<br>
+9.&nbsp;&nbsp;Rationale&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-rationale">vim9-rationale</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+1. What is Vim9 script?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-script" name="vim9-script">vim9-script</a><br>
+<br>
+THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
+<br>
+Vim script has been growing over time, while keeping backwards compatibility.<br>
+That means bad choices from the past often can't be changed.&nbsp;&nbsp;Execution is<br>
+quite slow, every line is parsed every time it is executed.<br>
+<br>
+The main goal of Vim9 script is to drastically improve performance.&nbsp;&nbsp;An<br>
+increase in execution speed of 10 to 100 times can be expected.&nbsp;&nbsp;A secondary<br>
+goal is to avoid Vim-specific constructs and get closer to commonly used<br>
+programming languages, such as JavaScript, TypeScript and Java.<br>
+<br>
+The performance improvements can only be achieved by not being 100% backwards<br>
+compatible.&nbsp;&nbsp;For example, in a function the arguments are not available in the<br>
+&quot;a:&quot; dictionary, as creating that dictionary adds quite a lot of overhead.<br>
+Other differences are more subtle, such as how errors are handled.<br>
+<br>
+The Vim9 script syntax and semantics are used in:<br>
+- a function defined with the&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;command<br>
+- a script file where the first command is&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a><br>
+<br>
+When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;in a Vim9 script file the legacy syntax is used.<br>
+However, this is discouraged.<br>
+<br>
+Vim9 script and legacy Vim script can be mixed.&nbsp;&nbsp;There is no need to rewrite<br>
+old scripts, they keep working as before.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+2. Differences from legacy Vim script&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-differences" name="vim9-differences">vim9-differences</a><br>
+<br>
+THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
+<br>
+<span class="PreProc">Vim9 functions</span><br>
+<br>
+<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;has no extra arguments like&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;does: &quot;range&quot;, &quot;abort&quot;, &quot;dict&quot;<br>
+or &quot;closure&quot;.&nbsp;&nbsp;A&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function always aborts on an error, does not get a<br>
+range passed and cannot be a &quot;dict&quot; function.<br>
+<br>
+In the function body:<br>
+- Arguments are accessed by name, without &quot;a:&quot;.<br>
+- There is no &quot;a:&quot; dictionary or &quot;a:000&quot; list.&nbsp;&nbsp;Variable arguments are defined<br>
+&nbsp;&nbsp;with a name and have a list type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def MyFunc(...itemlist: list&lt;type&gt;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for item in itemlist<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</div>
+<br>
+<br>
+<span class="PreProc">Variable declarations with :let and :const</span><br>
+<br>
+Local variables need to be declared with&nbsp;<a class="Comment" href="eval.html#:let">:let</a>.&nbsp;&nbsp;Local constants need to be<br>
+declared with&nbsp;<a class="Comment" href="eval.html#:const">:const</a>.&nbsp;&nbsp;We refer to both as &quot;variables&quot;.<br>
+<br>
+Variables can be local to a script, function or code block:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let script_var = 123<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeFunc()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let func_var = script_var<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if cond<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let block_var = func_var<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...</div>
+<br>
+The variables are only visible in the block where they are defined and nested<br>
+blocks.&nbsp;&nbsp;Once the block ends the variable is no longer accessible:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if cond<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let inner = 5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let inner = 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo inner&nbsp;&nbsp;&quot; Error!</div>
+<br>
+The declaration must be done earlier:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let inner: number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if cond<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; inner = 5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; inner = 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo inner</div>
+<br>
+To intentionally use a variable that won't be available later, a block can be<br>
+used:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let temp = 'temp'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo temp&nbsp;&nbsp;&quot; Error!</div>
+<br>
+An existing variable cannot be assigend to with&nbsp;<a class="Comment" href="eval.html#:let">:let</a>, since that implies a<br>
+declaration.&nbsp;&nbsp;An exception is global variables: these can be both used with<br>
+and without&nbsp;<a class="Comment" href="eval.html#:let">:let</a>, because there is no rule about where they are declared.<br>
+<br>
+Variables cannot shadow previously defined variables.<br>
+Variables may shadow Ex commands, rename the variable if needed.<br>
+<br>
+Since &quot;&amp;opt = value&quot; is now assigning a value to option &quot;opt&quot;, &quot;:&amp;&quot; cannot be<br>
+used to repeat a&nbsp;<a class="Comment" href="change.html#:substitute">:substitute</a>&nbsp;command.<br>
+<br>
+<br>
+<span class="PreProc">Omitting :call and :eval</span><br>
+<br>
+Functions can be called without&nbsp;<a class="Comment" href="eval.html#:call">:call</a>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;writefile(lines, 'file')</div>
+Using&nbsp;<a class="Comment" href="eval.html#:call">:call</a>&nbsp;is still posible, but this is discouraged.<br>
+<br>
+A method call without&nbsp;<a class="Comment" href="eval.html#eval">eval</a>&nbsp;is possible, so long as the start is an<br>
+identifier or can't be an Ex command.&nbsp;&nbsp;It does not work for string constants:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList-&gt;add(123)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; works<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:myList-&gt;add(123)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; works<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1, 2, 3]-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; works<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#{a: 1, b: 2}-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; works<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{'a': 1, 'b': 2}-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp; &quot; works<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foobar&quot;-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; does NOT work<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eval &quot;foobar&quot;-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; works</div>
+<br>
+<br>
+<span class="PreProc">No curly braces expansion</span><br>
+<br>
+<a class="Identifier" href="eval.html#curly-braces-names">curly-braces-names</a>&nbsp;cannot be used.<br>
+<br>
+<br>
+<span class="PreProc">Comperators</span><br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>&nbsp;option is not used for comperators that use strings.<br>
+<br>
+<br>
+<span class="PreProc">White space</span><br>
+<br>
+Vim9 script enforces proper use of white space.&nbsp;&nbsp;This is no longer allowed:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var=234&nbsp;&nbsp;&nbsp;&nbsp; &quot; Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var= 234&nbsp;&nbsp;&nbsp;&nbsp;&quot; Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var =234&nbsp;&nbsp;&nbsp;&nbsp;&quot; Error!</div>
+There must be white space before and after the &quot;=&quot;:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var = 234&nbsp;&nbsp; &quot; OK</div>
+<br>
+White space is required around most operators.<br>
+<br>
+White space is not allowed:<br>
+- Between a function name and the &quot;(&quot;:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Func (arg)&nbsp;&nbsp;&nbsp;&nbsp;&quot; Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Func<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ (arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Func(arg)&nbsp;&nbsp;&nbsp;&nbsp; &quot; OK<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Func(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; OK</div>
+<br>
+<br>
+<span class="PreProc">Conditions and expressions</span><br>
+<br>
+Conditions and expression are mostly working like they do in JavaScript.&nbsp;&nbsp;A<br>
+difference is made where JavaScript does not work like most people expect.<br>
+Specifically, an empty list is falsey.<br>
+<br>
+Any type of variable can be used as a condition, there is no error, not even<br>
+for using a list or job.&nbsp;&nbsp;This is very much like JavaScript, but there are a<br>
+few exceptions.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TRUE when</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-zero<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; non-zero<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-empty<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;blob&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-empty<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-empty (different from JavaScript)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dictionary&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-empty (different from JavaScript)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;funcref&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when not NULL<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;partial&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when not NULL<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;special&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; v:true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;job&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when not NULL<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when not NULL<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when not NULL<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;object&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when not NULL (TODO: when isTrue() returns v:true)<br>
+<br>
+The boolean operators &quot;||&quot; and &quot;&amp;&amp;&quot; do not change the value:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 || 2&nbsp;&nbsp; == 8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 || 2&nbsp;&nbsp; == 2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 || ''&nbsp;&nbsp;== ''<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &amp;&amp; 2&nbsp;&nbsp; == 2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &amp;&amp; 2&nbsp;&nbsp; == 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[] &amp;&amp; 2&nbsp;&nbsp;== []</div>
+<br>
+When using&nbsp;<span class="Comment">..</span>&nbsp;for string concatenation the arguments are always converted to<br>
+string.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. 123&nbsp;&nbsp;== 'hello 123'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. v:true&nbsp;&nbsp;== 'hello true'</div>
+<br>
+In Vim9 script one can use &quot;true&quot; for v:true and &quot;false&quot; for v:false.<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+3. New style functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#fast-functions" name="fast-functions">fast-functions</a><br>
+<br>
+THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:def" name=":def">:def</a><br>
+:def[!]&nbsp;<span class="Special">{name}</span>(<span class="Special">[arguments]</span>)[:&nbsp;<span class="Special">{return-type}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Define a new function by the name&nbsp;<span class="Special">{name}</span>.&nbsp;&nbsp;The body of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the function follows in the next lines, until the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matching&nbsp;<a class="Comment" href="vim9.html#:enddef">:enddef</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">{return-type}</span>&nbsp;is omitted the return type will be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;decided upon by the first encountered&nbsp;<a class="Comment" href="eval.html#:return">return</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statement in the function.&nbsp;&nbsp;E.g., for:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 'message'</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The return type will be &quot;string&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{arguments}</span>&nbsp;is a sequence of zero or more argument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;declarations.&nbsp;&nbsp;There are three forms:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{name}</span>:&nbsp;<span class="Special">{type}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{name}</span>&nbsp;=&nbsp;<span class="Special">{value}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{name}</span>:&nbsp;<span class="Special">{type}</span>&nbsp;=&nbsp;<span class="Special">{value}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first form is a mandatory argument, the caller<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;must always provide them.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The second and third form are optional arguments.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When the caller omits an argument the&nbsp;<span class="Special">{value}</span>&nbsp;is used.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!] is used as with&nbsp;<a class="Comment" href="eval.html#:function">:function</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:enddef" name=":enddef">:enddef</a><br>
+:enddef&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; End of a function defined with&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>.<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+4. Types&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-types" name="vim9-types">vim9-types</a><br>
+<br>
+THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
+<br>
+The following builtin types are supported:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;blob<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list<span class="Special">&lt;type&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dict<span class="Special">&lt;type&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a: type, b: type): type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;job<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;channel<br>
+<br>
+Not supported yet:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tuple&lt;a: type, b: type, ...&gt;<br>
+<br>
+These types can be used in declarations, but no variable will have this type:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type|type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any<br>
+<br>
+There is no array type, use list<span class="Special">&lt;type&gt;</span>&nbsp;instead.&nbsp;&nbsp;For a list constant an<br>
+efficient implementation is used that avoids allocating lot of small pieces of<br>
+memory.<br>
+<br>
+A function defined with&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;must declare the return type.&nbsp;&nbsp;If there is no<br>
+type then the function doesn't return anything.&nbsp;&nbsp;&quot;void&quot; is used in type<br>
+declarations.<br>
+<br>
+Custom types can be defined with&nbsp;<span class="Comment">:type</span>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type MyList list&lt;string&gt;</div>
+<span class="Special">{not implemented yet}</span><br>
+<br>
+And classes and interfaces can be used as types:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:class MyClass<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let mine: MyClass</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:interface MyInterface<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let mine: MyInterface</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:class MyTemplate&lt;Targ&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let mine: MyTemplate&lt;number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let mine: MyTemplate&lt;string&gt;</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:class MyInterface&lt;Targ&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let mine: MyInterface&lt;number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let mine: MyInterface&lt;string&gt;</div>
+<span class="Special">{not implemented yet}</span><br>
+<br>
+<br>
+Type inference&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#type-inference" name="type-inference">type-inference</a><br>
+<br>
+In general: Whenever the type is clear it can be omitted.&nbsp;&nbsp;For example, when<br>
+declaring a variable and giving it a value:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var = 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; infers number type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var = 'hello'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; infers string type</div>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+5.&nbsp;&nbsp;Namespace, Import and Export<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9script" name="vim9script">vim9script</a>&nbsp;<a class="Constant" href="vim9.html#vim9-export" name="vim9-export">vim9-export</a>&nbsp;<a class="Constant" href="vim9.html#vim9-import" name="vim9-import">vim9-import</a><br>
+<br>
+THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
+<br>
+A Vim9 script can be written to be imported.&nbsp;&nbsp;This means that everything in<br>
+the script is local, unless exported.&nbsp;&nbsp;Those exported items, and only those<br>
+items, can then be imported in another script.<br>
+<br>
+<br>
+<span class="PreProc">Namespace</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:vim9script" name=":vim9script">:vim9script</a>&nbsp;<a class="Constant" href="vim9.html#:vim9" name=":vim9">:vim9</a><br>
+To recognize an file that can be imported the&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;statement must<br>
+appear as the first statement in the file.&nbsp;&nbsp;It tells Vim to interpret the<br>
+script in its own namespace, instead of the global namespace.&nbsp;&nbsp;If a file<br>
+starts with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let myvar = 'yes'</div>
+Then &quot;myvar&quot; will only exist in this file.&nbsp;&nbsp;While without&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;it would<br>
+be available as&nbsp;<span class="Comment">g:myvar</span>&nbsp;from any other script and function.<br>
+<br>
+The variables at the file level are very much like the script-local &quot;s:&quot;<br>
+variables in legacy Vim script, but the &quot;s:&quot; is omitted.<br>
+<br>
+In Vim9 script the global &quot;g:&quot; namespace can still be used as before.<br>
+<br>
+A side effect of&nbsp;<a class="Comment" href="vim9.html#:vim9script">:vim9script</a>&nbsp;is that the&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;option is set to the<br>
+Vim default value, like with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set cpo&amp;vim</div>
+One of the effects is that&nbsp;<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>&nbsp;is always enabled.<br>
+The original value of&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;is restored at the end of the script.<br>
+<br>
+<br>
+<span class="PreProc">Export</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:export" name=":export">:export</a>&nbsp;<a class="Constant" href="vim9.html#:exp" name=":exp">:exp</a><br>
+Exporting one item can be written as:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export const EXPORTED_CONST = 1234<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export let someValue = ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export def MyFunc() ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export class MyClass ...</div>
+<br>
+As this suggests, only constants, variables,&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions and classes can<br>
+be exported.<br>
+<br>
+Alternatively, an export statement can be used to export several already<br>
+defined (otherwise script-local) items:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export {EXPORTED_CONST, someValue, MyFunc, MyClass}</div>
+<br>
+<br>
+<span class="PreProc">Import</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:import" name=":import">:import</a>&nbsp;<a class="Constant" href="vim9.html#:imp" name=":imp">:imp</a><br>
+The exported items can be imported individually in another Vim9 script:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import EXPORTED_CONST from &quot;thatscript.vim&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import MyClass from &quot;myclass.vim&quot;</div>
+<br>
+To import multiple items at the same time:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import {someValue, MyClass} from &quot;thatscript.vim&quot;</div>
+<br>
+In case the name is ambigiuous, another name can be specified:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import MyClass as ThatClass from &quot;myclass.vim&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import {someValue, MyClass as ThatClass} from &quot;myclass.vim&quot;</div>
+<br>
+To import all exported items under a specific identifier:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import * as That from 'thatscript.vim'</div>
+<br>
+Then you can use &quot;That.EXPORTED_CONST&quot;, &quot;That.someValue&quot;, etc.&nbsp;&nbsp;You are free<br>
+to choose the name &quot;That&quot;, but it is highly recommended to use the name of the<br>
+script file to avoid confusion.<br>
+<br>
+The script name after&nbsp;<a class="Comment" href="vim9.html#:import">import</a>&nbsp;can be:<br>
+- A relative path, starting &quot;.&quot; or &quot;..&quot;.&nbsp;&nbsp;This finds a file relative to the<br>
+&nbsp;&nbsp;location of the script file itself.&nbsp;&nbsp;This is useful to split up a large<br>
+&nbsp;&nbsp;plugin into several files.<br>
+- An absolute path, starting with &quot;/&quot; on Unix or &quot;D:/&quot; on MS-Windows.&nbsp;&nbsp;This<br>
+&nbsp;&nbsp;will be rarely used.<br>
+- A path not being relative or absolute.&nbsp;&nbsp;This will be found in the<br>
+&nbsp;&nbsp;&quot;import&quot; subdirectories of&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;entries.&nbsp;&nbsp;The name will usually be<br>
+&nbsp;&nbsp;longer and unique, to avoid loading the wrong file.<br>
+<br>
+Once a vim9 script file has been imported, the result is cached and used the<br>
+next time the same script is imported.&nbsp;&nbsp;It will not be read again.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:import-cycle" name=":import-cycle">:import-cycle</a><br>
+The&nbsp;<a class="Comment" href="vim9.html#:import">import</a>&nbsp;commands are executed when encountered.&nbsp;&nbsp;If that script (directly<br>
+or indirectly) imports the current script, then items defined after the<br>
+<a class="Comment" href="vim9.html#:import">import</a>&nbsp;won't be processed yet.&nbsp;&nbsp;Therefore cyclic imports can exist, but may<br>
+result in undefined items.<br>
+<br>
+<br>
+<span class="PreProc">Import in an autoload script</span><br>
+<br>
+For optimal startup speed, loading scripts should be postponed until they are<br>
+actually needed.&nbsp;&nbsp;A recommended mechamism:<br>
+<br>
+1. In the plugin define user commands, functions and/or mappings that refer to<br>
+&nbsp;&nbsp; an autoload script.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command -nargs=1 SearchForStuff call searchfor#Stuff(&lt;f-args&gt;)</div>
+<br>
+&nbsp;&nbsp;&nbsp; This goes in .../plugin/anyname.vim.&nbsp;&nbsp;&quot;anyname.vim&quot; can be freely chosen.<br>
+<br>
+2. In the autocommand script do the actual work.&nbsp;&nbsp;You can import items from<br>
+&nbsp;&nbsp; other files to split up functionality in appropriate pieces.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import FilterFunc from &quot;../import/someother.vim&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def searchfor#Stuff(arg: string)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let filtered = FilterFunc(arg)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...</div>
+&nbsp;&nbsp;&nbsp; This goes in .../autoload/searchfor.vim.&nbsp;&nbsp;&quot;searchfor&quot; in the file name<br>
+&nbsp;&nbsp; must be exactly the same as the prefix for the function name, that is how<br>
+&nbsp;&nbsp; Vim finds the file.<br>
+<br>
+3. Other functionality, possibly shared between plugins, contains the exported<br>
+&nbsp;&nbsp; items and any private items.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let localVar = 'local'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export def FilterFunc(arg: string): string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</div>
+&nbsp;&nbsp;&nbsp; This goes in .../import/someother.vim.<br>
+<br>
+<br>
+<span class="PreProc">Import in legacy Vim script</span><br>
+<br>
+If an&nbsp;<a class="Comment" href="vim9.html#:import">import</a>&nbsp;statement is used in legacy Vim script, for identifier the<br>
+script-local &quot;s:&quot; namespace will be used, even when &quot;s:&quot; is not specified.<br>
+<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+9. Rationale&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-rationale" name="vim9-rationale">vim9-rationale</a><br>
+<br>
+<span class="PreProc">The :def command</span><br>
+<br>
+Plugin writers have asked for a much faster Vim script.&nbsp;&nbsp;Investigation have<br>
+shown that keeping the existing semantics of funtion calls make this close to<br>
+impossible, because of the overhead involved with calling a function, setting<br>
+up the local function scope and executing lines.&nbsp;&nbsp;There are many details that<br>
+need to be handled, such as error messages and exceptions.&nbsp;&nbsp;The need to create<br>
+a dictionary for a: and l: scopes, the a:000 list and several others add too<br>
+much overhead that cannot be avoided.<br>
+<br>
+Therefore the&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;method to define a new-style function had to be added,<br>
+which allows for a function with different semantics.&nbsp;&nbsp;Most things still work<br>
+as before, but some parts do not.&nbsp;&nbsp;A new way to define a function was<br>
+considered the best way to separate the old-style code from Vim9 script code.<br>
+<br>
+Using &quot;def&quot; to define a function comes from Python. Other languages use<br>
+&quot;function&quot; which clashes with legacy Vim script.<br>
+<br>
+<br>
+<span class="PreProc">Type checking</span><br>
+<br>
+When compiling lines of Vim commands into instructions as much as possible<br>
+should be done at compile time.&nbsp;&nbsp;Postponing it to runtime makes the execution<br>
+slower and means mistakes are found only later.&nbsp;&nbsp;For example, when<br>
+encountering the &quot;+&quot; character and compiling this into a generic add<br>
+instruction, at execution time the instruction would have to inspect the type<br>
+of the arguments and decide what kind of addition to do.&nbsp;&nbsp;And when the<br>
+type is dictionary throw an error.&nbsp;&nbsp;If the types are known to be numbers then<br>
+an &quot;add number&quot; instruction can be used, which is faster.&nbsp;&nbsp;The error can be<br>
+given at compile time, no error handling is needed at runtime.<br>
+<br>
+The syntax for types is similar to Java, since it is easy to understand and<br>
+widely used.&nbsp;&nbsp;The type names are what was used in Vim before, with some<br>
+additions such as &quot;void&quot; and &quot;bool&quot;.<br>
+<br>
+<br>
+<span class="PreProc">JavaScript/TypeScript syntax and semantics</span><br>
+<br>
+Script writers have complained that the Vim script syntax is unexpectedly<br>
+different from what they are used to.&nbsp;&nbsp;To reduce this complaint popular<br>
+languages will be used as an example.&nbsp;&nbsp;At the same time, we do not want to<br>
+abondon the well-known parts of legacy Vim script.<br>
+<br>
+Since Vim already uses&nbsp;<a class="Comment" href="eval.html#:let">:let</a>&nbsp;and&nbsp;<a class="Comment" href="eval.html#:const">:const</a>&nbsp;and optional type checking is<br>
+desirable, the JavaScript/TypeScript syntax fits best for variable<br>
+declarations.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const greeting = 'hello'&nbsp;&nbsp;&quot; string type is inferred<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let name: string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name = 'John'</div>
+<br>
+Expression evaluation was already close to what JavaScript and other languages<br>
+are doing.&nbsp;&nbsp;Some details are unexpected and can be fixed.&nbsp;&nbsp;For example how the<br>
+|| and &amp;&amp; operators work.&nbsp;&nbsp;Legacy Vim script:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = 44<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return result || 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; returns 1</div>
+<br>
+Vim9 script works like JavaScript, keep the value:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = 44<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return result || 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; returns 44</div>
+<br>
+On the other hand, overloading &quot;+&quot; to use both for addition and string<br>
+concatenation goes against legacy Vim script and often leads to mistakes.<br>
+For that reason we will keep using &quot;..&quot; for string concatenation.&nbsp;&nbsp;Lua also<br>
+uses &quot;..&quot; this way.<br>
+<br>
+<br>
+<span class="PreProc">Import and Export</span><br>
+<br>
+A problem of legacy Vim script is that by default all functions and variables<br>
+are global.&nbsp;&nbsp;It is possible to make them script-local, but then they are not<br>
+available in other scripts.<br>
+<br>
+In Vim9 script a mechanism very similar to the Javascript import and export<br>
+mechanism is supported.&nbsp;&nbsp;It is a variant to the existing&nbsp;<a class="Comment" href="repeat.html#:source">:source</a>&nbsp;command<br>
+that works like one would expect:<br>
+- Instead of making everything global by default, everything is script-local,<br>
+&nbsp;&nbsp;unless exported.<br>
+- When importing a script the symbols that are imported are listed, avoiding<br>
+&nbsp;&nbsp;name conflicts and failures if later functionality is added.<br>
+- The mechanism allows for writing a big, long script with a very clear API:<br>
+&nbsp;&nbsp;the exported function(s) and class(es).<br>
+- By using relative paths loading can be much faster for an import inside of a<br>
+&nbsp;&nbsp;package, no need to search many directories.<br>
+- Once an import has been used, it can be cached and loading it again can be<br>
+&nbsp;&nbsp;avoided.<br>
+- The Vim-specific use of &quot;s:&quot; to make things script-local can be dropped.<br>
+<br>
+<br>
+<span class="PreProc">Classes</span><br>
+<br>
+Vim supports interfaces to Perl, Python, Lua, Tcl and a few others.&nbsp;&nbsp;But<br>
+these have never become widespread.&nbsp;&nbsp;When Vim 9 was designed a decision was<br>
+made to phase out these interfaces and concentrate on Vim script, while<br>
+encouraging plugin authors to write code in any language and run it as an<br>
+external tool, using jobs and channels.<br>
+<br>
+Still, using an external tool has disadvantages.&nbsp;&nbsp;An alternative is to convert<br>
+the tool into Vim script.&nbsp;&nbsp;For that to be possible without too much<br>
+translation, and keeping the code fast at the same time, the constructs of the<br>
+tool need to be supported.&nbsp;&nbsp;Since most languages support classes the lack of<br>
+class support in Vim is then a problem.<br>
+<br>
+Previously Vim supported a kind-of object oriented programming by adding<br>
+methods to a dictionary.&nbsp;&nbsp;With some care this could be made to work, but it<br>
+does not look like real classes.&nbsp;&nbsp;On top of that, it's very slow, because of<br>
+the use of dictionaries.<br>
+<br>
+The support of classes in Vim9 script is a &quot;minimal common functionality&quot; of<br>
+class support in most languages.&nbsp;&nbsp;It works mostly like Java, which is the most<br>
+popular programming language.<br>
+<br>
+<br>
+<br>
+&nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
+</div>
