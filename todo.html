@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jan 23<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Feb 04<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -45,10 +45,44 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <br>
 Include ipv6 syntax changes?&nbsp;&nbsp;(DJ Lucas, #5360)<br>
 <br>
+Add win_type(), which &quot;popup&quot; and &quot;cmdline&quot; as values?<br>
+<br>
+Vim9 script:<br>
+- test s:var +=&nbsp;<span class="MissingTag">'some'</span><br>
+&nbsp;&nbsp;test exported +=&nbsp;<span class="MissingTag">'some'</span><br>
+- implement default values for optional arguments<br>
+&nbsp;&nbsp;Generate instructions at start of function, skip over if argument provided?<br>
+- Disallow unlet for local/script/imported vars<br>
+- :func inside vim9script must still use a:arg<br>
+- Check that import in legacy script works and puts item in s:<br>
+- Error in any command in &quot;vim9script&quot; aborts sourcing.<br>
+- Find a way to test expressions in legacy and Vim9 script without duplication<br>
+- Test each level of expressions properly, with type checking<br>
+- Test the<br>
+- Test try/catch and throw better, also nested.<br>
+&nbsp;&nbsp;Test return inside try/finally jumps to finally and then returns.<br>
+- call autoload function.<br>
+- Type checking arguments when calling :def function<br>
+- can use func as reference:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeFunc() ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(list, SomeFunc)<br>
+- define function and create funcref in one step:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ref = def(arg: type): rettype<br>
+&nbsp;&nbsp;Also extends lambda<br>
+- Test: Function declared inside a :def function is local, disappears at the<br>
+&nbsp;&nbsp;end of the function.&nbsp;&nbsp;Unless g: is used, just like with variables.<br>
+- Can we omit \ for line continuation inside (), {}, ?<br>
+&nbsp;&nbsp;Requires parsing while reading a function.&nbsp;&nbsp;Like fgetline in do_one_cmd()?<br>
+- implement :type<br>
+- implement class<br>
+- implement interface<br>
+- predefined class: Promise<span class="Special">&lt;T&gt;</span><br>
+- import statement for type declaration?<br>
+- Make accessing varargs faster: arg[expr]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVAL expr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varags idx)<br>
+<br>
 Popup windows:<br>
-- Make it possible to put a terminal window in a popup.&nbsp;&nbsp;Would always grab key<br>
-&nbsp;&nbsp;input?&nbsp;&nbsp;Sort-of possible by creating a hidden terminal and opening a popup<br>
-&nbsp;&nbsp;with that buffer: #4063.<br>
 - Use popup (or popup menu) for command line completion<br>
 - When using a popup for the info of a completion menu, and there is not<br>
 &nbsp;&nbsp;enough space, let the popup overlap with the menu. (#4544)<br>
@@ -60,6 +94,8 @@ Popup windows:<br>
 - Figure out the size and position better if wrapping inserts indent<br>
 <br>
 Text properties:<br>
+- Combining text property with&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;does not always work (Billie<br>
+&nbsp;&nbsp;Cleek, #5533)<br>
 - Text properties spanning more than one line<br>
 - See remarks at top of src/textprop.c<br>
 <br>
@@ -126,9 +162,8 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
 Error numbers available:<br>
-E450, E451, E452,<br>
-E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
-E654, E856, E857, E860, E861, E863, E889, E900<br>
+E451, E452, E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
+E654, E856, E857, E860, E861, E900<br>
 <br>
 Patch to move duplicated code to a function. (Yegappan Lakshmanan, #5330)<br>
 <br>
@@ -147,15 +182,19 @@ Needs better docs.&nbsp;&nbsp;Is there a better name?<br>
 <br>
 undo result wrong: Masato Nishihata, #4798<br>
 <br>
+When&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;is set sometimes the title is not updated.<br>
+(Jason Franklin, 2020 Feb 3)&nbsp;&nbsp;Looks like a race condition.<br>
+<br>
 Patch to add function to return the text used in the quickfix window.<br>
 (Yegappan, #5465)<br>
+<br>
+Patch for Template string: #4491.&nbsp;&nbsp;New pull: #4634<br>
+Implementation is too inefficient, avoid using lambda.<br>
 <br>
 Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</span>&quot; undo.<br>
 <br>
 :unmap&nbsp;<span class="Special">&lt;c-n&gt;</span>&nbsp;gives error but does remove the mapping. (Antony Scriven, 2019<br>
 Dec 19)<br>
-<br>
-Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
 <br>
 Patch to fix session file when using multiple tab pages. (Jason Franklin, 2019<br>
 May 20)<br>
@@ -199,6 +238,8 @@ Enable&nbsp;<a class="Type" href="options.html#'termbidi'">'termbidi'</a>&nbsp;i
 Universal solution to detect if t_RS is working, using cursor position.<br>
 Koichi Iwamoto, #2126<br>
 <br>
+Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
+<br>
 Python 3.8 doesn't work. (Antonios Hadjigeorgalis, #5509)<br>
 <br>
 The :syntax cchar value can only be a single character.&nbsp;&nbsp;It would be useful to<br>
@@ -208,6 +249,8 @@ Include Haiku port. (Adrien Destugues, Siarzhuk Zharski, 2013 Oct 24)<br>
 It can replace the BeOS code, which is likely not used anymore.<br>
 Now on github: #1856.&nbsp;&nbsp;Updated Oct 2017<br>
 Got permission to include this under the Vim license.<br>
+<br>
+&quot;--cleanFOO&quot; does not result in an error. (#5537)<br>
 <br>
 Add &quot;t&quot; action to settagstack(): truncate and add new entries. (#5405)<br>
 <br>
@@ -273,9 +316,6 @@ Patch by Alex Dobrynin, 2007 Jun 3.&nbsp;&nbsp;Also fixes other scroll wheel pro
 <br>
 Add a WindowScrolled event.&nbsp;&nbsp;Trigger around the same time as CursorMoved.<br>
 Can be used to update highlighting. #3127&nbsp;&nbsp;#5181<br>
-<br>
-Patch for Template string: #4491.&nbsp;&nbsp;New pull: #4634<br>
-Implementation is too inefficient, avoid using lambda.<br>
 <br>
 Incorrect formatting with autoindent. (Sebastian Gniazdowski, #4909)<br>
 <br>
@@ -816,9 +856,6 @@ option_save(<span class="Special">{list}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 &quot;gvim --remote&quot; from a directory with non-word characters changes the current<br>
 directory (Paulo Marcel Coelho Arabic, 2017 Oct 30, #2266)<br>
 Also see #1689.<br>
-<br>
-crash when removing an element while inside map(). (Nikolai Pavlov, 2018 Feb<br>
-17, #2652)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;is &quot;all&quot; and&nbsp;<a class="Type" href="options.html#'cursorcolumn'">'cursorcolumn'</a>&nbsp;is set, the wrong column may be<br>
 highlighted. (van-de-bugger, 2018 Jan 23, #2576)<br>
