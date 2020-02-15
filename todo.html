@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Feb 04<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Feb 15<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -45,15 +45,15 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <br>
 Include ipv6 syntax changes?&nbsp;&nbsp;(DJ Lucas, #5360)<br>
 <br>
-Add win_type(), which &quot;popup&quot; and &quot;cmdline&quot; as values?<br>
+Avoid modifyOtherKeys temporarily:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call modify_other_keys(v:false)&nbsp;&nbsp;&quot; disable modifyOtherKeys<br>
+Should fix #5617.<br>
 <br>
 Vim9 script:<br>
-- test s:var +=&nbsp;<span class="MissingTag">'some'</span><br>
-&nbsp;&nbsp;test exported +=&nbsp;<span class="MissingTag">'some'</span><br>
-- implement default values for optional arguments<br>
-&nbsp;&nbsp;Generate instructions at start of function, skip over if argument provided?<br>
+- &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
 - Disallow unlet for local/script/imported vars<br>
 - :func inside vim9script must still use a:arg<br>
+- Make &quot;++nr&quot; work.<br>
 - Check that import in legacy script works and puts item in s:<br>
 - Error in any command in &quot;vim9script&quot; aborts sourcing.<br>
 - Find a way to test expressions in legacy and Vim9 script without duplication<br>
@@ -63,6 +63,7 @@ Vim9 script:<br>
 &nbsp;&nbsp;Test return inside try/finally jumps to finally and then returns.<br>
 - call autoload function.<br>
 - Type checking arguments when calling :def function<br>
+- Implement more expressions, e.g. [a:b]<br>
 - can use func as reference:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeFunc() ...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(list, SomeFunc)<br>
@@ -169,6 +170,10 @@ Patch to move duplicated code to a function. (Yegappan Lakshmanan, #5330)<br>
 <br>
 Patch to use more FOR_ALL_ macros and use them. (Yegappan Lakshmanan, #5339)<br>
 <br>
+Patch to explain use of &quot;%&quot; in :!.&nbsp;&nbsp;(#5591)<br>
+<br>
+Patch to add &quot;-d&quot; to xxd. (#5616)<br>
+<br>
 Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
 Athena is OK.<br>
@@ -179,6 +184,8 @@ Flag in&nbsp;<a class="Type" href="options.html#'formatoptions'">'formatoptions'
 <br>
 Patch to add&nbsp;<span class="MissingTag">'vtp'</span>&nbsp;option. (#5344)<br>
 Needs better docs.&nbsp;&nbsp;Is there a better name?<br>
+<br>
+Patch for Haiku support. (Emir Sarı, #5605)<br>
 <br>
 undo result wrong: Masato Nishihata, #4798<br>
 <br>
@@ -191,10 +198,20 @@ Patch to add function to return the text used in the quickfix window.<br>
 Patch for Template string: #4491.&nbsp;&nbsp;New pull: #4634<br>
 Implementation is too inefficient, avoid using lambda.<br>
 <br>
+Patch to add readdirex() (Ken Takata, #5619)<br>
+<br>
+Request to support&nbsp;<span class="Special">&lt;Cmd&gt;</span>&nbsp;in mappings, similar to how Neovim does this.<br>
+(Daniel Hahler, #4784)<br>
+<br>
 Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</span>&quot; undo.<br>
 <br>
 :unmap&nbsp;<span class="Special">&lt;c-n&gt;</span>&nbsp;gives error but does remove the mapping. (Antony Scriven, 2019<br>
 Dec 19)<br>
+<br>
+Dos uninstal may delete vim.bat from the wrong directory (e.g., when someone<br>
+makes his own wrapper).&nbsp;&nbsp;Add a magic string with the version number to the<br>
+.bat file and check for it in the uninstaller.&nbsp;&nbsp;E.g.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# uninstall key: vim8.1*<br>
 <br>
 Patch to fix session file when using multiple tab pages. (Jason Franklin, 2019<br>
 May 20)<br>
@@ -221,6 +238,11 @@ ex_next() should pass flag to do_argfile(), then to do_ecmd().<br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)<br>
 <br>
+FR: add search_status(), the current values displayed for search (current<br>
+match, total matches). (#5631)<br>
+Patch to provide search stats in a variable, so that it can be used in the<br>
+statusline. (Fujiwara Takuya, #4446)<br>
+<br>
 &quot;:helptags ALL&quot; should skip directories where &quot;tags&quot; cannot be written.<br>
 (Matěj Cepl, #5026)<br>
 <br>
@@ -230,8 +252,7 @@ unlisted. (#4478)<br>
 <br>
 Patch to include reduce() function. (#5481)<br>
 <br>
-Patch to provide search stats in a variable, so that it can be used in the<br>
-statusline. (Fujiwara Takuya, #4446)<br>
+Statusline highlighting error, off by one. (#5599)<br>
 <br>
 Enable&nbsp;<a class="Type" href="options.html#'termbidi'">'termbidi'</a>&nbsp;if $VTE_VERSION &gt;= 5703 ?<br>
 <br>
@@ -1114,11 +1135,9 @@ Make a function to check for function-like type?<br>
 Screen updated delayed when using&nbsp;<span class="Special">CTRL-O</span>&nbsp;u in Insert mode.<br>
 (Barlik, #1191)&nbsp;&nbsp;Perhaps because status message?<br>
 <br>
-Implement optional arguments for functions.<br>
+Implement named arguments for functions:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;func Foo(start, count = 1 all = 1)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;call Foo(12)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;call Foo(12, all = 0)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;call Foo(12, 15, 0)<br>
 <br>
 Add a command to take a range of lines, filter them and put the output<br>
 somewhere else.&nbsp;&nbsp;:<span class="Special">{range}</span>copy&nbsp;<span class="Special">{dest}</span>&nbsp;!cmd<br>
@@ -2762,11 +2781,6 @@ argument list or opening each file in a separate tab.<br>
 <br>
 Windows installer: licence text should not use indent, causes bad word wrap.<br>
 (Benjamin Fritz, 2010 Aug 16)<br>
-<br>
-Dos uninstal may delete vim.bat from the wrong directory (e.g., when someone<br>
-makes his own wrapper).&nbsp;&nbsp;Add a magic string with the version number to the<br>
-.bat file and check for it in the uninstaller.&nbsp;&nbsp;E.g.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# uninstall key: vim8.1*<br>
 <br>
 Changes for Win32 makefile. (Mike Williams, 2007 Jan 22, Alexei Alexandrov,<br>
 2007 Feb 8)<br>
@@ -4496,8 +4510,6 @@ Vim script language:<br>
 8&nbsp;&nbsp; Pass the command line arguments to Vim scripts in some way.&nbsp;&nbsp;As v:args<br>
 &nbsp;&nbsp;&nbsp;&nbsp;List?&nbsp;&nbsp;Or extra parameter to argv()?<br>
 8&nbsp;&nbsp; Add command arguments with three dashes, passed on to Vim scripts.<br>
-9&nbsp;&nbsp; Add optional arguments to user functions:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:func myFunc(arg1, arg2, arg3 = &quot;blah&quot;, arg4 = 17)<br>
 6&nbsp;&nbsp; User functions: Functions local to buffer &quot;b:func()&quot;?<br>
 8&nbsp;&nbsp; For Strings add &quot;:let var[<span class="Special">{expr}</span>] =&nbsp;<span class="Special">{expr}</span>&quot;.&nbsp;&nbsp;When past the end of &quot;var&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;just ignore.<br>
