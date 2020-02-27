@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Feb 15<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Feb 25<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,15 +43,20 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Include ipv6 syntax changes?&nbsp;&nbsp;(DJ Lucas, #5360)<br>
-<br>
-Avoid modifyOtherKeys temporarily:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call modify_other_keys(v:false)&nbsp;&nbsp;&quot; disable modifyOtherKeys<br>
-Should fix #5617.<br>
+Patch for this (#5696):<br>
+- Empty text prop which includes start/end does not grow when inserting text.<br>
+&nbsp;&nbsp;(Axel Forsman, #5679)<br>
 <br>
 Vim9 script:<br>
+- &quot;func&quot; inside &quot;vim9script&quot; doesn't work?&nbsp;&nbsp;(Ben Jackson, #5670)<br>
+- Completion for :disassemble<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
+- Make &quot;g:imported = Export.exported&quot; work in Vim9 script.<br>
+- Make Foo.Bar() work to call the dict function. (#5676)<br>
+- make &quot;let var: string&quot; work in a vim9script.<br>
 - Disallow unlet for local/script/imported vars<br>
+- Support type for &quot;:let&quot;/&quot;:const&quot; at script level for Vim9 script.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Ben Jackson, #5671)<br>
 - :func inside vim9script must still use a:arg<br>
 - Make &quot;++nr&quot; work.<br>
 - Check that import in legacy script works and puts item in s:<br>
@@ -84,20 +89,25 @@ Vim9 script:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varags idx)<br>
 <br>
 Popup windows:<br>
+- With terminal in popup, allow for popup_hide() to temporarily hide it.?<br>
 - Use popup (or popup menu) for command line completion<br>
 - When using a popup for the info of a completion menu, and there is not<br>
 &nbsp;&nbsp;enough space, let the popup overlap with the menu. (#4544)<br>
 - Implement flip option.<br>
 - Make redrawing more efficient and avoid flicker:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- put popup menu also in popup_mask?<br>
+- Match does not have right BG color if line length equals popup width.<br>
+&nbsp;&nbsp;(#5658)<br>
 - Any other commands to disable in a popup window?<br>
 &nbsp;&nbsp;Use ERROR_IF_POPUP_WINDOW for these.<br>
 - Figure out the size and position better if wrapping inserts indent<br>
 <br>
 Text properties:<br>
+- prop_find() may not find text property at start of the line. (#5663)<br>
+- Get E685 with a sequence of commands. (#5674)<br>
 - Combining text property with&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;does not always work (Billie<br>
 &nbsp;&nbsp;Cleek, #5533)<br>
-- Text properties spanning more than one line<br>
+- Text properties spanning more than one line.&nbsp;&nbsp;#5683<br>
 - See remarks at top of src/textprop.c<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s:<br>
@@ -166,13 +176,16 @@ Error numbers available:<br>
 E451, E452, E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
 E654, E856, E857, E860, E861, E900<br>
 <br>
-Patch to move duplicated code to a function. (Yegappan Lakshmanan, #5330)<br>
+Patch to fix drawing error with DirectX. (James Grant, #5688)<br>
+Causes flicker on resizing.<br>
 <br>
 Patch to use more FOR_ALL_ macros and use them. (Yegappan Lakshmanan, #5339)<br>
 <br>
-Patch to explain use of &quot;%&quot; in :!.&nbsp;&nbsp;(#5591)<br>
+Patch to explain use of &quot;%&quot; in :!.&nbsp;&nbsp;(David Briscoe, #5591)<br>
 <br>
 Patch to add &quot;-d&quot; to xxd. (#5616)<br>
+<br>
+Patch to add Turkish manual. (Emir Sarı, #5641)<br>
 <br>
 Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
@@ -192,6 +205,11 @@ undo result wrong: Masato Nishihata, #4798<br>
 When&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;is set sometimes the title is not updated.<br>
 (Jason Franklin, 2020 Feb 3)&nbsp;&nbsp;Looks like a race condition.<br>
 <br>
+Strange sequence of BufWipeout and BufNew events while doing omni-complete.<br>
+(Paul Jolly, #5656)<br>
+Get BufDelete without preceding BufNew. (Paul Jolly, #5694)<br>
+BufWinenter event not fired when saving unnamed buffer. (Paul Jolly, #5655)<br>
+<br>
 Patch to add function to return the text used in the quickfix window.<br>
 (Yegappan, #5465)<br>
 <br>
@@ -207,11 +225,6 @@ Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</
 <br>
 :unmap&nbsp;<span class="Special">&lt;c-n&gt;</span>&nbsp;gives error but does remove the mapping. (Antony Scriven, 2019<br>
 Dec 19)<br>
-<br>
-Dos uninstal may delete vim.bat from the wrong directory (e.g., when someone<br>
-makes his own wrapper).&nbsp;&nbsp;Add a magic string with the version number to the<br>
-.bat file and check for it in the uninstaller.&nbsp;&nbsp;E.g.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# uninstall key: vim8.1*<br>
 <br>
 Patch to fix session file when using multiple tab pages. (Jason Franklin, 2019<br>
 May 20)<br>
@@ -235,6 +248,8 @@ Should do current file first and not split it up when more results are found.<br
 Undo history wrong when &quot;:next file&quot; re-uses a buffer. (#5426)<br>
 ex_next() should pass flag to do_argfile(), then to do_ecmd().<br>
 <br>
+Patch to add &quot;<span class="Todo">note</span>&quot; type to quickfix. (#5527)&nbsp;&nbsp;Missing tests.<br>
+<br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)<br>
 <br>
@@ -242,9 +257,6 @@ FR: add search_status(), the current values displayed for search (current<br>
 match, total matches). (#5631)<br>
 Patch to provide search stats in a variable, so that it can be used in the<br>
 statusline. (Fujiwara Takuya, #4446)<br>
-<br>
-&quot;:helptags ALL&quot; should skip directories where &quot;tags&quot; cannot be written.<br>
-(Matěj Cepl, #5026)<br>
 <br>
 &quot;:bnext&quot; in a help buffer is supposed to go to the next help buffer, but it<br>
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
@@ -306,6 +318,8 @@ Does not build with MinGW out of the box:<br>
 <br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
+<br>
+Display messed up with matchparen, wrapping and scrolling. (#5638)<br>
 <br>
 Patch to configure BUILD_DATE for reproducible builds. (James McCoy, #513)<br>
 <br>
