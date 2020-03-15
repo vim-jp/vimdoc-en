@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Mar 01<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Mar 13<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,10 +43,23 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+When starting a terminal popup the size defaults to nothing. Should have a<br>
+sensible default, e.g. four lines of 30 chars.<br>
+call popup_create(term_start(&amp;shell, #{hidden: 1}), #{})<br>
+<br>
+Test_terminal_in_popup() still sometimes fails with &quot;All&quot; instead of &quot;Top&quot;.<br>
+<br>
+Patch to fix vimtutor problems on Windows (Wu Yongwei, #5774)<br>
+<br>
+Additional tests for menu. (Yegappan, #5760)<br>
+Introduces menu_info(), check that out.<br>
+<br>
 Vim9 script:<br>
-- better implementation for partial and tests.<br>
+- Add vim9 commands to index, so that vim.vim will get them automatically.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;See email from Charles March 11 2020.<br>
 - &quot;func&quot; inside &quot;vim9script&quot; doesn't work?&nbsp;&nbsp;(Ben Jackson, #5670)<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
+- better implementation for partial and tests for that.<br>
 - Make &quot;g:imported = Export.exported&quot; work in Vim9 script.<br>
 - Make Foo.Bar() work to call the dict function. (#5676)<br>
 - make &quot;let var: string&quot; work in a vim9script.<br>
@@ -85,7 +98,14 @@ Vim9 script:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varags idx)<br>
 <br>
 Popup windows:<br>
+- popup_clear() and popup_close() should close the terminal popup, and<br>
+&nbsp;&nbsp; make the buffer hidden. #5745<br>
 - With terminal in popup, allow for popup_hide() to temporarily hide it.?<br>
+- With some sequence get get hidden finished terminal buffer. (#5768)<br>
+- Fire some autocommand event after a new popup window was created and<br>
+&nbsp;&nbsp;positioned?&nbsp;&nbsp;PopupNew?&nbsp;&nbsp;Could be used to set some options or move it out of<br>
+&nbsp;&nbsp;the way. (#5737)<br>
+&nbsp;&nbsp;However, it may also cause trouble, changing the popup of another plugin.<br>
 - Use popup (or popup menu) for command line completion<br>
 - When using a popup for the info of a completion menu, and there is not<br>
 &nbsp;&nbsp;enough space, let the popup overlap with the menu. (#4544)<br>
@@ -99,7 +119,7 @@ Popup windows:<br>
 - Figure out the size and position better if wrapping inserts indent<br>
 <br>
 Text properties:<br>
-- prop_find() may not find text property at start of the line. (#5663)<br>
+- &quot;cc&quot; does not call inserted_bytes(). (Axel Forsman, #5763)<br>
 - Get E685 with a sequence of commands. (#5674)<br>
 - Combining text property with&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;does not always work (Billie<br>
 &nbsp;&nbsp;Cleek, #5533)<br>
@@ -170,7 +190,7 @@ Terminal emulator window:<br>
 <br>
 Error numbers available:<br>
 E451, E452, E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
-E654, E856, E857, E860, E861, E900<br>
+E654, E856, E857, E861, E900<br>
 <br>
 Patch to fix drawing error with DirectX. (James Grant, #5688)<br>
 Causes flicker on resizing.<br>
@@ -179,9 +199,14 @@ Patch to use more FOR_ALL_ macros and use them. (Yegappan Lakshmanan, #5339)<br>
 <br>
 Patch to explain use of &quot;%&quot; in :!.&nbsp;&nbsp;(David Briscoe, #5591)<br>
 <br>
+Patch to improve Windows terminal support. (Nobuhiro Takasaki, #5546)<br>
+Ready to include.<br>
+<br>
 Patch to add &quot;-d&quot; to xxd. (#5616)<br>
 <br>
 Patch to add Turkish manual. (Emir Sarı, #5641)<br>
+<br>
+File marks merging has duplicates since 7.4.1925. (Ingo Karkat, #5733)<br>
 <br>
 Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
@@ -196,20 +221,24 @@ Needs better docs.&nbsp;&nbsp;Is there a better name?<br>
 <br>
 undo result wrong: Masato Nishihata, #4798<br>
 <br>
+Patch for Template string: #4491.&nbsp;&nbsp;New pull: #4634<br>
+Ready to include?&nbsp;&nbsp;Review the code.<br>
+<br>
 When&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;is set sometimes the title is not updated.<br>
 (Jason Franklin, 2020 Feb 3)&nbsp;&nbsp;Looks like a race condition.<br>
 <br>
 Strange sequence of BufWipeout and BufNew events while doing omni-complete.<br>
 (Paul Jolly, #5656)<br>
 Get BufDelete without preceding BufNew. (Paul Jolly, #5694)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Later more requests for what to track.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Should we add new events that don't allow any buffer manipulation?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Really only for dealing with appearing and disappearing buffers, load and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unload.<br>
 BufWinenter event not fired when saving unnamed buffer. (Paul Jolly, #5655)<br>
 Another spurious BufDelete. (Dani Dickstein, #5701)<br>
 <br>
 Patch to add function to return the text used in the quickfix window.<br>
 (Yegappan, #5465)<br>
-<br>
-Patch for Template string: #4491.&nbsp;&nbsp;New pull: #4634<br>
-Implementation is too inefficient, avoid using lambda.<br>
 <br>
 Patch to add readdirex() (Ken Takata, #5619)<br>
 <br>
@@ -252,6 +281,12 @@ FR: add search_status(), the current values displayed for search (current<br>
 match, total matches). (#5631)<br>
 Patch to provide search stats in a variable, so that it can be used in the<br>
 statusline. (Fujiwara Takuya, #4446)<br>
+<br>
+Patch for ambiguous width characters in libvterm on MS-Windows 10.<br>
+(Nobuhiro Takasaki, #4411)<br>
+<br>
+behavior of i_CTRl-R_<span class="Special">CTRL-R</span>&nbsp;differs from documentation. (Paul Desmond Parker,<br>
+#5771)<br>
 <br>
 &quot;:bnext&quot; in a help buffer is supposed to go to the next help buffer, but it<br>
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
@@ -310,6 +345,7 @@ Patch to add per-tabpage and per-window previous directory: &quot;lcd -&quot; an
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
 - WINVER conflict, should use 0x0600 by default?<br>
+- INT_MAX not defined: need to include &lt;limits.h&gt; in vim.h<br>
 <br>
 Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
@@ -435,9 +471,6 @@ Add a string to the&nbsp;<a class="Type" href="options.html#'display'">'display'
 with the first character (like what happens with a last line that doesn't<br>
 fit).&nbsp;&nbsp;Display &quot;&lt;&lt;&lt;&quot; at the start of the first visible line (like &quot;@@@&quot; is<br>
 displayed in the last line). (Arseny Nasokin,&nbsp;&nbsp;#5154)<br>
-<br>
-Patch for ambiguous width characters in libvterm on MS-Windows 10.<br>
-(Nobuhiro Takasaki, #4411)<br>
 <br>
 Window size changes after closing a tab. (#4741)<br>
 <br>
