@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Mar 27<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Apr 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,9 +44,19 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Vim9 script:<br>
+func and partial types:<br>
+- check using func type with default arguments and varargs.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func(type, type?, ...): rettype<br>
+- Type checking arguments when calling :def function and test<br>
+- Calling unknown user function does not give proper error message:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert_equal('123text', RefDef2Arg())&nbsp;&nbsp;typo for &quot;RetDef2Arg&quot;<br>
 - &quot;func&quot; inside &quot;vim9script&quot; doesn't work?&nbsp;&nbsp;(Ben Jackson, #5670)<br>
-- &quot;let x = x + 1&quot; should say that &quot;x&quot; is not defined (declare local after<br>
-&nbsp;&nbsp;evaluating expresion).<br>
+- :func inside vim9script must still use a:arg<br>
+- define function and create funcref in one step:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ref = def(arg: type): rettype<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;body<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+Also:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
 - better implementation for partial and tests for that.<br>
 - Make &quot;g:imported = Export.exported&quot; work in Vim9 script.<br>
@@ -55,7 +65,6 @@ Vim9 script:<br>
 - Disallow unlet for local/script/imported vars<br>
 - Support type for &quot;:let&quot;/&quot;:const&quot; at script level for Vim9 script.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(Ben Jackson, #5671)<br>
-- :func inside vim9script must still use a:arg<br>
 - Make &quot;++nr&quot; work.<br>
 - Check that import in legacy script works and puts item in s:<br>
 - Error in any command in &quot;vim9script&quot; aborts sourcing.<br>
@@ -65,23 +74,19 @@ Vim9 script:<br>
 - Test try/catch and throw better, also nested.<br>
 &nbsp;&nbsp;Test return inside try/finally jumps to finally and then returns.<br>
 - call autoload function.<br>
-- Type checking arguments when calling :def function<br>
 - Implement more expressions, e.g. [a:b]<br>
 - can use func as reference:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeFunc() ...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(list, SomeFunc)<br>
-- define function and create funcref in one step:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ref = def(arg: type): rettype<br>
-&nbsp;&nbsp;Also extends lambda<br>
 - Test: Function declared inside a :def function is local, disappears at the<br>
 &nbsp;&nbsp;end of the function.&nbsp;&nbsp;Unless g: is used, just like with variables.<br>
 - Can we omit \ for line continuation inside (), {}, ?<br>
 &nbsp;&nbsp;Requires parsing while reading a function.&nbsp;&nbsp;Like fgetline in do_one_cmd()?<br>
 - implement :type<br>
+- import type declaration?<br>
 - implement class<br>
 - implement interface<br>
 - predefined class: Promise<span class="Special">&lt;T&gt;</span><br>
-- import statement for type declaration?<br>
 - Make accessing varargs faster: arg[expr]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVAL expr<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varags idx)<br>
@@ -111,6 +116,8 @@ Popup windows:<br>
 - Figure out the size and position better if wrapping inserts indent<br>
 <br>
 Text properties:<br>
+- Patch to fix that split / join does not update properties properly (Axel<br>
+&nbsp;&nbsp;Forsman, #5839)&nbsp;&nbsp;Alternative: #5875.<br>
 - &quot;cc&quot; does not call inserted_bytes(). (Axel Forsman, #5763)<br>
 - Get E685 with a sequence of commands. (#5674)<br>
 - Combining text property with&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;does not always work (Billie<br>
@@ -181,17 +188,22 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
 Error numbers available:<br>
-E451, E452, E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
+E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
 E654, E856, E857, E861, E900<br>
+<br>
+Buffer autocommands are a bit inconsistent.&nbsp;&nbsp;Add a separate set of<br>
+autocommands for the buffer lifecycle:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;BufIsCreated&nbsp;&nbsp;(after buffer ID exists)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;BufIsLoaded&nbsp;&nbsp; (after buffer ID has content)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;BufIsUnloaded (after buffer ID no longer has)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;BufIsWiped&nbsp;&nbsp;&nbsp;&nbsp;(after buffer ID was wiped)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;BufIsRenamed&nbsp;&nbsp;(after buffer ID gets another name)<br>
+The buffer list and windows are locked, no changes possible<br>
 <br>
 Patch to fix drawing error with DirectX. (James Grant, #5688)<br>
 Causes flicker on resizing.<br>
 <br>
-Patch to make lambda functions faster (Ken Takata)<br>
-<span class="Constant"><a href="https://github.com/vim/vim/pull/5727">https://github.com/vim/vim/pull/5727</a></span><br>
-&nbsp;LGTM remark: size derived from user input (getenv).&nbsp;&nbsp;Don't see how.<br>
-<br>
-Patch to use more FOR_ALL_ macros and use them. (Yegappan Lakshmanan, #5339)<br>
+In gvim always set t_Co to 16777216 (#5903)<br>
 <br>
 Patch to explain use of &quot;%&quot; in :!.&nbsp;&nbsp;(David Briscoe, #5591)<br>
 <br>
