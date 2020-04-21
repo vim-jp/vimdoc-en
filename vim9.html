@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Apr 09<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Apr 19<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -71,6 +71,10 @@ comment can also start with #.&nbsp;&nbsp;Normally this is a command to list tex
 numbers, but you can also use&nbsp;<a class="Comment" href="various.html#:number">:number</a>&nbsp;for that.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let count = 0&nbsp;&nbsp;# number of occurences of Ni!</div>
 <br>
+To improve readability there must be a space between the command and the #<br>
+that starts a comment.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that #{ is the start of a dictionary, therefore<br>
+it cannot start a comment.<br>
+<br>
 <br>
 <span class="PreProc">Vim9 functions</span><br>
 <br>
@@ -85,6 +89,29 @@ In the function body:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def MyFunc(...itemlist: list&lt;type&gt;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for item in itemlist<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</div>
+<br>
+<br>
+<span class="PreProc">Functions are script-local by default</span><br>
+<br>
+When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a new function at the script level<br>
+in a Vim9 script, the function is local to the script, as if &quot;s:&quot; was<br>
+prefixed.&nbsp;&nbsp;To define a global function the &quot;g:&quot; prefix must be used.<br>
+<br>
+When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a new function inside a function,<br>
+the function is local to the function.&nbsp;&nbsp;It is not possible to define a<br>
+script-local function inside a function. To define a global function the &quot;g:&quot;<br>
+prefix must be used.<br>
+<br>
+When referring to a function and no &quot;s:&quot; or &quot;g:&quot; prefix is used, Vim will<br>
+search for the function in this order:<br>
+- Local to the current function scope.<br>
+- Local to the current script file.<br>
+- Imported functions, see&nbsp;<a class="Comment" href="vim9.html#:import">:import</a>.<br>
+- Global.<br>
+<br>
+Global functions can be defined and deleted at nearly any time.&nbsp;&nbsp;In Vim9<br>
+script script-local functions are defined once when the script is sourced and<br>
+cannot be deleted.<br>
 <br>
 <br>
 <span class="PreProc">Variable declarations with :let and :const</span><br>
@@ -473,9 +500,12 @@ Then &quot;myvar&quot; will only exist in this file.&nbsp;&nbsp;While without&nb
 be available as&nbsp;<span class="Comment">g:myvar</span>&nbsp;from any other script and function.<br>
 <br>
 The variables at the file level are very much like the script-local &quot;s:&quot;<br>
-variables in legacy Vim script, but the &quot;s:&quot; is omitted.<br>
+variables in legacy Vim script, but the &quot;s:&quot; is omitted.&nbsp;&nbsp;And they cannot be<br>
+deleted.<br>
 <br>
-In Vim9 script the global &quot;g:&quot; namespace can still be used as before.<br>
+In Vim9 script the global &quot;g:&quot; namespace can still be used as before.&nbsp;&nbsp;And the<br>
+&quot;w:&quot;, &quot;b:&quot; and &quot;t:&quot; namespaces.&nbsp;&nbsp;These have in common that variables are not<br>
+declared and they can be deleted.<br>
 <br>
 A side effect of&nbsp;<a class="Comment" href="vim9.html#:vim9script">:vim9script</a>&nbsp;is that the&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;option is set to the<br>
 Vim default value, like with:<br>
