@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Apr 20<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Apr 30<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,38 +44,59 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Vim9 script:<br>
-more tests for # comments:<br>
-&nbsp;&nbsp;check all calls to ends_excmd() and test that space before # is needed.<br>
-&nbsp;&nbsp;next: ex_findpat()<br>
-func and partial types:<br>
-- Calling unknown user function does not give proper error message:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert_equal('123text', RefDef2Arg())&nbsp;&nbsp;typo for &quot;RetDef2Arg&quot;<br>
-- &quot;func&quot; inside &quot;vim9script&quot; doesn't work?&nbsp;&nbsp;(Ben Jackson, #5670)<br>
-- :func inside vim9script must still use a:arg<br>
-- define function and create funcref in one step:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ref = def(arg: type): rettype<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;body<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+Big changes, need design:<br>
+- Make closures work:<br>
+&nbsp;&nbsp;Grab the part of the stack that has the arguments and local vars.<br>
+&nbsp;&nbsp;Pass a pointer and offset to the closure where this stack fragment is (frame<br>
+&nbsp;&nbsp;pointer).<br>
+&nbsp;&nbsp;When a closure disappears at end of the function - nothing to do.<br>
+&nbsp;&nbsp;When a closure remains at end of the function: copy frame, attach to closure.<br>
+- At the vim9 script level: Allow using a function that is defined later.<br>
+&nbsp;&nbsp;Requires compiling functions only when the whole script has been sourced.<br>
+&nbsp;&nbsp;Like Javascript &quot;hoisting&quot;, but only at the script level:<br>
+&nbsp;&nbsp;1. Discovery phase: Read the file to find all functions, variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp; declarations and imports If a variable has a constant expression we get<br>
+&nbsp;&nbsp;&nbsp;&nbsp; the type, otherwise it will be &quot;any&quot;.&nbsp;&nbsp;Follow imports recursively.<br>
+&nbsp;&nbsp;2. Compilation phase: compile :def function bodies, using declared types<br>
+&nbsp;&nbsp;3. Execution phase: Execute imports when encountered. (skip over functions)<br>
+- When sourcing a script again, also delete script-local variables.<br>
+Making everything work:<br>
 - Test that a script-local function in Vim9 script cannot be deleted.<br>
 - Test that a function defined inside a :def function is local to that<br>
 &nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
 &nbsp;&nbsp;defined.<br>
-Also:<br>
-- When wildcards are expanded, find&nbsp;<span class="Comment">=expr</span>&nbsp;and evaluate it before invoking<br>
-&nbsp;&nbsp;the command. For example:&nbsp;&nbsp;:edit&nbsp;<span class="Comment">=filename</span><br>
+- Check that when using a user function name without prefix, it does not find<br>
+&nbsp;&nbsp;a global function.&nbsp;&nbsp;Prefixing g: is required.<br>
+- Compile let [var, var] = expr<br>
+- Compile replacement of :s command: s/pat/\=expr/<br>
+- Compile redir to local variable: var_redir_start().<br>
+- Compile builtin functions that access local variables:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;islocked()<br>
+- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :next, :argedit, :argadd, :argdelete, :drop<br>
+- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :vimgrep, :vimgrepadd, :lvimgrep, :lvimgrepadd<br>
+- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :mkspell<br>
+- Support type for &quot;:let&quot;/&quot;:const&quot; at script level for Vim9 script.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Ben Jackson, #5671)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Can we share the code from ex_let_const() between direct execution and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;compiling?<br>
+- Disallow unlet for local/script/imported vars<br>
+- Make &quot;++nr&quot; work.<br>
+- expandcmd() with&nbsp;<span class="Comment">=expr</span>&nbsp;in filename uses legacy expression.<br>
+- eval_expr() in ex_cexpr()<br>
+- eval_expr() call in dbg_parsearg() and debuggy_find()<br>
+New syntax and functionality:<br>
+- define function and create funcref in one step:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ref = def(arg: type): rettype<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;body<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+Improve error checking:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
-- Check all Ex commands, give error if they use an expression and should be<br>
-&nbsp;&nbsp;compiled.<br>
+Also:<br>
 - For range: make table of first ASCII character with flag to quickly check if<br>
 &nbsp;&nbsp;it can be a Vim9 command. E.g. &quot;+&quot; can, but &quot;.&quot; can't.<br>
 - better implementation for partial and tests for that.<br>
 - Make &quot;g:imported = Export.exported&quot; work in Vim9 script.<br>
 - Make Foo.Bar() work to call the dict function. (#5676)<br>
-- Support type for &quot;:let&quot;/&quot;:const&quot; at script level for Vim9 script.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(Ben Jackson, #5671)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Can we share the code for :let between direct execution and compiling?<br>
-- Disallow unlet for local/script/imported vars<br>
-- Make &quot;++nr&quot; work.<br>
 - Check that import in legacy script works and puts item in s:<br>
 - Error in any command in &quot;vim9script&quot; aborts sourcing.<br>
 - Find a way to test expressions in legacy and Vim9 script without duplication<br>
@@ -98,6 +119,13 @@ Also:<br>
 - Make accessing varargs faster: arg[expr]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVAL expr<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varags idx)<br>
+Further improvements:<br>
+- compile options that are an expression, e.g. &quot;expr:&quot; in&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>,<br>
+&nbsp;&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>,&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>,&nbsp;<a class="Type" href="options.html#'printexpr'">'printexpr'</a>,&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>,&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>,&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>,<br>
+&nbsp;&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>,&nbsp;<a class="Type" href="options.html#'includeexpr'">'includeexpr'</a>,&nbsp;<a class="Type" href="options.html#'indentexpr'">'indentexpr'</a>,&nbsp;<a class="Type" href="options.html#'formatexpr'">'formatexpr'</a>.<br>
+- compile get_lambda_tv() in popup_add_timeout()<br>
+- compile &quot;skip&quot; argument of searchpair()<br>
+- compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
 <br>
 Popup windows:<br>
 - With some sequence get get hidden finished terminal buffer. (#5768)<br>
@@ -203,7 +231,7 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
 Error numbers available:<br>
-E453, E454, E460, E489, E491, E565, E578, E610, E611, E653,<br>
+E453, E454, E460, E489, E491, E610, E611, E653,<br>
 E856, E857, E861, E900<br>
 <br>
 Buffer autocommands are a bit inconsistent.&nbsp;&nbsp;Add a separate set of<br>
@@ -227,7 +255,12 @@ Ready to include.<br>
 <br>
 Patch to add &quot;-d&quot; to xxd. (#5616)<br>
 <br>
+Patch for the Haiku port: #5961<br>
+<br>
 Patch to add Turkish manual. (Emir Sarı, #5641)<br>
+<br>
+Patch to support different color for undercurl in cterm.<br>
+(Timur Celik, #6011)<br>
 <br>
 Patch to support cindent option to handle pragmas differently.<br>
 (Max Rumpf, #5468)<br>
@@ -238,6 +271,9 @@ Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
 Athena is OK.<br>
 Motif: Build on Ubuntu can't enter any text in dialog text fields.<br>
+<br>
+:map output does not clear the reset of the command line.<br>
+(#5623, also see #5962)<br>
 <br>
 Patch to properly break CJK lines: Anton Kochkov, #3875<br>
 Flag in&nbsp;<a class="Type" href="options.html#'formatoptions'">'formatoptions'</a>&nbsp;is not used in the tests.<br>
@@ -253,7 +289,10 @@ Ready to include?&nbsp;&nbsp;Review the code.<br>
 When&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;is set sometimes the title is not updated.<br>
 (Jason Franklin, 2020 Feb 3)&nbsp;&nbsp;Looks like a race condition.<br>
 <br>
-Patch to delete BeOS code. (#5817)<br>
+Patch to delete BeOS code. (#5817)&nbsp;&nbsp;Anyone who wants to keep it?<br>
+<br>
+With bash &quot;:make&quot; does not set v:shell_error.&nbsp;&nbsp;Possible solution: set<br>
+<a class="Type" href="options.html#'shellpipe'">'shellpipe'</a>&nbsp;to &quot;2&gt;&amp;1| tee %s; exit $<span class="Special">{PIPESTATUS[0]}</span>&quot;&nbsp;&nbsp;#5994<br>
 <br>
 Strange sequence of BufWipeout and BufNew events while doing omni-complete.<br>
 (Paul Jolly, #5656)<br>
@@ -322,6 +361,8 @@ unlisted. (#4478)<br>
 <br>
 Patch to include reduce() function. (#5481)<br>
 <br>
+When SIGTSTP is ignored, don't let&nbsp;<span class="Special">CTRL-Z</span>&nbsp;suspend Vim? (Kurtis Rader, #5990)<br>
+<br>
 Statusline highlighting error, off by one. (#5599)<br>
 <br>
 Enable&nbsp;<a class="Type" href="options.html#'termbidi'">'termbidi'</a>&nbsp;if $VTE_VERSION &gt;= 5703 ?<br>
@@ -335,11 +376,6 @@ Python 3.8 doesn't work. (Antonios Hadjigeorgalis, #5509)<br>
 <br>
 The :syntax cchar value can only be a single character.&nbsp;&nbsp;It would be useful to<br>
 support combining characters. (Charles Campbell)&nbsp;&nbsp;Also #4687<br>
-<br>
-Include Haiku port. (Adrien Destugues, Siarzhuk Zharski, 2013 Oct 24)<br>
-It can replace the BeOS code, which is likely not used anymore.<br>
-Now on github: #1856.&nbsp;&nbsp;Updated Oct 2017<br>
-Got permission to include this under the Vim license.<br>
 <br>
 &quot;--cleanFOO&quot; does not result in an error. (#5537)<br>
 <br>

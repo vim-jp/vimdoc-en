@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Apr 19<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Apr 30<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -11,7 +11,7 @@ helpname: 'vim9'
 <br>
 THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
-Vim9 script commands and expressions.<br>
+Vim9 script commands and expressions.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9" name="vim9">vim9</a><br>
 <br>
 Most expression help is in&nbsp;<a class="Identifier" href="eval.html">eval.txt</a>.&nbsp;&nbsp;This file is about the new syntax and<br>
 features in Vim9 script.<br>
@@ -33,29 +33,32 @@ THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
 THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
-Vim script has been growing over time, while keeping backwards compatibility.<br>
-That means bad choices from the past often can't be changed.&nbsp;&nbsp;Execution is<br>
-quite slow, every line is parsed every time it is executed.<br>
+Vim script has been growing over time, while preserving backwards<br>
+compatibility.&nbsp;&nbsp;That means bad choices from the past often can't be changed<br>
+and compability with Vi restricts possible solutions.&nbsp;&nbsp;Execution is quite<br>
+slow, each line is parsed every time it is executed.<br>
 <br>
-The main goal of Vim9 script is to drastically improve performance.&nbsp;&nbsp;An<br>
-increase in execution speed of 10 to 100 times can be expected.&nbsp;&nbsp;A secondary<br>
-goal is to avoid Vim-specific constructs and get closer to commonly used<br>
-programming languages, such as JavaScript, TypeScript and Java.<br>
+The main goal of Vim9 script is to drastically improve performance.&nbsp;&nbsp;This is<br>
+accomplished by compiling commands into instructions that can be efficiently<br>
+executed.&nbsp;&nbsp;An increase in execution speed of 10 to 100 times can be expected.<br>
+<br>
+A secondary goal is to avoid Vim-specific constructs and get closer to<br>
+commonly used programming languages, such as JavaScript, TypeScript and Java.<br>
 <br>
 The performance improvements can only be achieved by not being 100% backwards<br>
 compatible.&nbsp;&nbsp;For example, in a function the arguments are not available in the<br>
-&quot;a:&quot; dictionary, as creating that dictionary adds quite a lot of overhead.<br>
-Other differences are more subtle, such as how errors are handled.<br>
+&quot;a:&quot; dictionary, because creating that dictionary adds quite a lot of<br>
+overhead.&nbsp;&nbsp;Other differences are more subtle, such as how errors are handled.<br>
 <br>
 The Vim9 script syntax and semantics are used in:<br>
 - a function defined with the&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;command<br>
 - a script file where the first command is&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a><br>
 <br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;in a Vim9 script file the legacy syntax is used.<br>
-However, this is discouraged.<br>
+However, this can be confusing and is therefore discouraged.<br>
 <br>
-Vim9 script and legacy Vim script can be mixed.&nbsp;&nbsp;There is no need to rewrite<br>
-old scripts, they keep working as before.<br>
+Vim9 script and legacy Vim script can be mixed.&nbsp;&nbsp;There is no requirement to<br>
+rewrite old scripts, they keep working as before.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
@@ -67,9 +70,9 @@ THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
 In Vim script comments normally start with double quote.&nbsp;&nbsp;That can also be the<br>
 start of a string, thus in many places it cannot be used.&nbsp;&nbsp;In Vim9 script a<br>
-comment can also start with #.&nbsp;&nbsp;Normally this is a command to list text with<br>
+comment can also start with #.&nbsp;&nbsp;In Vi this is a command to list text with<br>
 numbers, but you can also use&nbsp;<a class="Comment" href="various.html#:number">:number</a>&nbsp;for that.<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let count = 0&nbsp;&nbsp;# number of occurences of Ni!</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let count = 0&nbsp;&nbsp;# number of occurences</div>
 <br>
 To improve readability there must be a space between the command and the #<br>
 that starts a comment.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that #{ is the start of a dictionary, therefore<br>
@@ -78,40 +81,59 @@ it cannot start a comment.<br>
 <br>
 <span class="PreProc">Vim9 functions</span><br>
 <br>
+A function defined with&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;is compiled.&nbsp;&nbsp;Execution is many times faster,<br>
+often 10x to 100x times.<br>
+<br>
+Many errors are already found when compiling, before the function is called.<br>
+The syntax is strict, to enforce code that is easy to read and understand.<br>
+<br>
 <a class="Comment" href="vim9.html#:def">:def</a>&nbsp;has no extra arguments like&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;does: &quot;range&quot;, &quot;abort&quot;, &quot;dict&quot;<br>
 or &quot;closure&quot;.&nbsp;&nbsp;A&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function always aborts on an error, does not get a<br>
 range passed and cannot be a &quot;dict&quot; function.<br>
 <br>
-In the function body:<br>
-- Arguments are accessed by name, without &quot;a:&quot;.<br>
-- There is no &quot;a:&quot; dictionary or &quot;a:000&quot; list.&nbsp;&nbsp;Variable arguments are defined<br>
-&nbsp;&nbsp;with a name and have a list type:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def MyFunc(...itemlist: list&lt;type&gt;)<br>
+The argument types and return type need to be specified.&nbsp;&nbsp;The &quot;any&quot; type can<br>
+be used, type checking will then be done at runtime, like with legacy<br>
+functions.<br>
+<br>
+Arguments are accessed by name, without &quot;a:&quot;.&nbsp;&nbsp;There is no &quot;a:&quot; dictionary or<br>
+&quot;a:000&quot; list.<br>
+<br>
+Variable arguments are defined as the last argument, with a name and have a<br>
+list type, similar to Typescript.&nbsp;&nbsp;For example, a list of numbers:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def MyFunc(...itemlist: list&lt;number&gt;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for item in itemlist<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</div>
 <br>
 <br>
-<span class="PreProc">Functions are script-local by default</span><br>
+<span class="PreProc">Functions and variables are script-local by default</span><br>
 <br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a new function at the script level<br>
 in a Vim9 script, the function is local to the script, as if &quot;s:&quot; was<br>
-prefixed.&nbsp;&nbsp;To define a global function the &quot;g:&quot; prefix must be used.<br>
+prefixed.&nbsp;&nbsp;Using the &quot;s:&quot; prefix is optional.<br>
+<br>
+To define or use a global function or variable the &quot;g:&quot; prefix must be used.<br>
 <br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a new function inside a function,<br>
 the function is local to the function.&nbsp;&nbsp;It is not possible to define a<br>
-script-local function inside a function. To define a global function the &quot;g:&quot;<br>
-prefix must be used.<br>
+script-local function inside a function. It is possible to define a global<br>
+function, using the &quot;g:&quot; prefix.<br>
 <br>
 When referring to a function and no &quot;s:&quot; or &quot;g:&quot; prefix is used, Vim will<br>
 search for the function in this order:<br>
-- Local to the current function scope.<br>
+- Local to the current scope and outer scopes up to the function scope.<br>
 - Local to the current script file.<br>
 - Imported functions, see&nbsp;<a class="Comment" href="vim9.html#:import">:import</a>.<br>
-- Global.<br>
+In all cases the function must be defined before used.&nbsp;&nbsp;To make a call cycle a<br>
+global function needs to be used. (TODO: can we fix this?)<br>
+<br>
+The result is that functions and variables without a namespace can always be<br>
+found in the script, either defined there or imported.&nbsp;&nbsp;Global functions and<br>
+variables could be defined anywhere (good luck finding where!).<br>
 <br>
 Global functions can be defined and deleted at nearly any time.&nbsp;&nbsp;In Vim9<br>
 script script-local functions are defined once when the script is sourced and<br>
-cannot be deleted.<br>
+cannot be deleted.&nbsp;&nbsp;Except that when the same script is sourced again all<br>
+existing script-local functions and variables are deleted.<br>
 <br>
 <br>
 <span class="PreProc">Variable declarations with :let and :const</span><br>
@@ -161,12 +183,12 @@ and without&nbsp;<a class="Comment" href="eval.html#:let">:let</a>, because ther
 Variables cannot shadow previously defined variables.<br>
 Variables may shadow Ex commands, rename the variable if needed.<br>
 <br>
-Global variables must be prefixed with &quot;g:&quot;, also at the script level.<br>
-However, global user defined functions are used without &quot;g:&quot;.<br>
+Global variables and user defined functions must be prefixed with &quot;g:&quot;, also<br>
+at the script level.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let script_local = 'text'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:global = 'value'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let Funcref = ThatFunction</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let Funcref = g:ThatFunction</div>
 <br>
 Since &quot;&amp;opt = value&quot; is now assigning a value to option &quot;opt&quot;, &quot;:&amp;&quot; cannot be<br>
 used to repeat a&nbsp;<a class="Comment" href="change.html#:substitute">:substitute</a>&nbsp;command.<br>
