@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Apr 30<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 May 07<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,22 +44,22 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Vim9 script:<br>
-Big changes, need design:<br>
+Big changes, may need design:<br>
 - Make closures work:<br>
-&nbsp;&nbsp;Grab the part of the stack that has the arguments and local vars.<br>
-&nbsp;&nbsp;Pass a pointer and offset to the closure where this stack fragment is (frame<br>
-&nbsp;&nbsp;pointer).<br>
-&nbsp;&nbsp;When a closure disappears at end of the function - nothing to do.<br>
-&nbsp;&nbsp;When a closure remains at end of the function: copy frame, attach to closure.<br>
+&nbsp;&nbsp;- call closure from not compiled context<br>
+&nbsp;&nbsp;- Create closure in a loop.&nbsp;&nbsp;Need to make a list of them.<br>
+- Having constant expr evaluation separate does not scale.<br>
+&nbsp;&nbsp;First parse the expression, then simplify, then generate code.<br>
 - At the vim9 script level: Allow using a function that is defined later.<br>
 &nbsp;&nbsp;Requires compiling functions only when the whole script has been sourced.<br>
 &nbsp;&nbsp;Like Javascript &quot;hoisting&quot;, but only at the script level:<br>
+&nbsp;&nbsp;0. If script was sourced before, clear all script-local functions and<br>
+&nbsp;&nbsp;&nbsp;&nbsp; variables. (variables still to be implemented)<br>
 &nbsp;&nbsp;1. Discovery phase: Read the file to find all functions, variable<br>
 &nbsp;&nbsp;&nbsp;&nbsp; declarations and imports If a variable has a constant expression we get<br>
 &nbsp;&nbsp;&nbsp;&nbsp; the type, otherwise it will be &quot;any&quot;.&nbsp;&nbsp;Follow imports recursively.<br>
 &nbsp;&nbsp;2. Compilation phase: compile :def function bodies, using declared types<br>
 &nbsp;&nbsp;3. Execution phase: Execute imports when encountered. (skip over functions)<br>
-- When sourcing a script again, also delete script-local variables.<br>
 Making everything work:<br>
 - Test that a script-local function in Vim9 script cannot be deleted.<br>
 - Test that a function defined inside a :def function is local to that<br>
@@ -85,10 +85,6 @@ Making everything work:<br>
 - eval_expr() in ex_cexpr()<br>
 - eval_expr() call in dbg_parsearg() and debuggy_find()<br>
 New syntax and functionality:<br>
-- define function and create funcref in one step:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ref = def(arg: type): rettype<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;body<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
 Improve error checking:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
 Also:<br>
@@ -123,6 +119,10 @@ Further improvements:<br>
 - compile options that are an expression, e.g. &quot;expr:&quot; in&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>,<br>
 &nbsp;&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>,&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>,&nbsp;<a class="Type" href="options.html#'printexpr'">'printexpr'</a>,&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>,&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>,&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>,<br>
 &nbsp;&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>,&nbsp;<a class="Type" href="options.html#'includeexpr'">'includeexpr'</a>,&nbsp;<a class="Type" href="options.html#'indentexpr'">'indentexpr'</a>,&nbsp;<a class="Type" href="options.html#'formatexpr'">'formatexpr'</a>.<br>
+- Make inline function work, to be used as a funcref:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ref = def(arg: type): rettype<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;body<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
 - compile get_lambda_tv() in popup_add_timeout()<br>
 - compile &quot;skip&quot; argument of searchpair()<br>
 - compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
@@ -259,8 +259,13 @@ Patch for the Haiku port: #5961<br>
 <br>
 Patch to add Turkish manual. (Emir Sarı, #5641)<br>
 <br>
+Patch to add getmarklist() (Yegappan, #6032)<br>
+<br>
 Patch to support different color for undercurl in cterm.<br>
 (Timur Celik, #6011)<br>
+<br>
+When SIGTSTP is ignored, don't let&nbsp;<span class="Special">CTRL-Z</span>&nbsp;suspend Vim? (Kurtis Rader, #5990)<br>
+Fixed by patch #6026.&nbsp;&nbsp;Makes tests fail...<br>
 <br>
 Patch to support cindent option to handle pragmas differently.<br>
 (Max Rumpf, #5468)<br>
@@ -360,8 +365,6 @@ goes to any buffer, and then :bnext skips help buffers, since they are<br>
 unlisted. (#4478)<br>
 <br>
 Patch to include reduce() function. (#5481)<br>
-<br>
-When SIGTSTP is ignored, don't let&nbsp;<span class="Special">CTRL-Z</span>&nbsp;suspend Vim? (Kurtis Rader, #5990)<br>
 <br>
 Statusline highlighting error, off by one. (#5599)<br>
 <br>

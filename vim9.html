@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Apr 30<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 May 06<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -130,10 +130,56 @@ The result is that functions and variables without a namespace can always be<br>
 found in the script, either defined there or imported.&nbsp;&nbsp;Global functions and<br>
 variables could be defined anywhere (good luck finding where!).<br>
 <br>
-Global functions can be defined and deleted at nearly any time.&nbsp;&nbsp;In Vim9<br>
-script script-local functions are defined once when the script is sourced and<br>
-cannot be deleted.&nbsp;&nbsp;Except that when the same script is sourced again all<br>
-existing script-local functions and variables are deleted.<br>
+Global functions can be still be defined and deleted at nearly any time.&nbsp;&nbsp;In<br>
+Vim9 script script-local functions are defined once when the script is sourced<br>
+and cannot be deleted.<br>
+<br>
+<br>
+<span class="PreProc">Four phases when loading a Vim9 script</span><br>
+<br>
+In legacy script the functions are created when encountered, but parsed only<br>
+when used.&nbsp;&nbsp;This allows for defining functions in any order and having them<br>
+call each other:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func One()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call Two()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Two()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if cond<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call One()&nbsp;&nbsp;&quot; recursive call<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call One()</div>
+<br>
+In Vim9 script the functions are compiled.&nbsp;&nbsp;If using the same functions as the<br>
+above example it is not possible to compile function One without knowing that<br>
+function Two exists. Or this would require a runtime check, which is slow and<br>
+does not allow for compile time type checking.<br>
+<br>
+When sourcing a Vim9 script this happens in four phases:<br>
+1. Cleanup: If the script was sourced before all script-local variables,<br>
+&nbsp;&nbsp; imports and functions are deleted.<br>
+2. Discovery: The script is read and encountered functions, imports and<br>
+&nbsp;&nbsp; variables are recognized.&nbsp;&nbsp;The type is parsed.&nbsp;&nbsp;Variable initializers that<br>
+&nbsp;&nbsp; are a constant are evaluated, this can give the type of the variable.<br>
+3. Compilation: Functions are compiled.&nbsp;&nbsp;The script-local functions, imports<br>
+&nbsp;&nbsp; and variables from the discovery phase are recognized and types are<br>
+&nbsp;&nbsp; checked.<br>
+4. Execution: the commands in the script are executed. Functions are skipped<br>
+&nbsp;&nbsp; over.&nbsp;&nbsp;Variable initializers are evaluated, unless they are a constant.<br>
+<br>
+The result is that items defined at the script level can be used anywhere in<br>
+the script. This allows for putting the main function at the top:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SubOne()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SubTwo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SubOne()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SubTwo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that script-local variables should either have a type defined or have a<br>
+constant initializer.&nbsp;&nbsp;Otherwise an error is given for the type being unknown.<br>
 <br>
 <br>
 <span class="PreProc">Variable declarations with :let and :const</span><br>
