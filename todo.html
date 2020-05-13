@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 May 07<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 May 11<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,23 +43,22 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Patch to test TERM signal. (Dominique, #6055)<br>
+<br>
+Include src/po/vim.pot<br>
+<br>
 Vim9 script:<br>
-Big changes, may need design:<br>
-- Make closures work:<br>
+Make closures work:<br>
 &nbsp;&nbsp;- call closure from not compiled context<br>
 &nbsp;&nbsp;- Create closure in a loop.&nbsp;&nbsp;Need to make a list of them.<br>
-- Having constant expr evaluation separate does not scale.<br>
-&nbsp;&nbsp;First parse the expression, then simplify, then generate code.<br>
-- At the vim9 script level: Allow using a function that is defined later.<br>
-&nbsp;&nbsp;Requires compiling functions only when the whole script has been sourced.<br>
-&nbsp;&nbsp;Like Javascript &quot;hoisting&quot;, but only at the script level:<br>
-&nbsp;&nbsp;0. If script was sourced before, clear all script-local functions and<br>
-&nbsp;&nbsp;&nbsp;&nbsp; variables. (variables still to be implemented)<br>
-&nbsp;&nbsp;1. Discovery phase: Read the file to find all functions, variable<br>
-&nbsp;&nbsp;&nbsp;&nbsp; declarations and imports If a variable has a constant expression we get<br>
-&nbsp;&nbsp;&nbsp;&nbsp; the type, otherwise it will be &quot;any&quot;.&nbsp;&nbsp;Follow imports recursively.<br>
-&nbsp;&nbsp;2. Compilation phase: compile :def function bodies, using declared types<br>
-&nbsp;&nbsp;3. Execution phase: Execute imports when encountered. (skip over functions)<br>
+Forward declarations:<br>
+&nbsp;&nbsp;- Cleanup when sourcing a script again: all script-local variables, imports<br>
+&nbsp;&nbsp;&nbsp;&nbsp;and functions are deleted.<br>
+&nbsp;&nbsp;- make sure only constants in declarations are executed, no function calls.<br>
+&nbsp;&nbsp;- Declare a variable at script level without an assignment.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var: string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Error without a type or assignment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var&nbsp;&nbsp;# error!<br>
 Making everything work:<br>
 - Test that a script-local function in Vim9 script cannot be deleted.<br>
 - Test that a function defined inside a :def function is local to that<br>
@@ -67,7 +66,13 @@ Making everything work:<br>
 &nbsp;&nbsp;defined.<br>
 - Check that when using a user function name without prefix, it does not find<br>
 &nbsp;&nbsp;a global function.&nbsp;&nbsp;Prefixing g: is required.<br>
-- Compile let [var, var] = expr<br>
+- Compile: let [var, var] = expr<br>
+- Compile: for [key, value] in items(map)<br>
+- Assignment to dict doesn't work:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ret: dict<span class="Special">&lt;string&gt;</span>&nbsp;= #{}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[i] = string(i)<br>
+- Appending to dict item doesn't work:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let d[i] ..= value<br>
 - Compile replacement of :s command: s/pat/\=expr/<br>
 - Compile redir to local variable: var_redir_start().<br>
 - Compile builtin functions that access local variables:<br>
@@ -84,6 +89,7 @@ Making everything work:<br>
 - expandcmd() with&nbsp;<span class="Comment">=expr</span>&nbsp;in filename uses legacy expression.<br>
 - eval_expr() in ex_cexpr()<br>
 - eval_expr() call in dbg_parsearg() and debuggy_find()<br>
+- Make &quot;true&quot; and &quot;false&quot; work in vim9script<br>
 New syntax and functionality:<br>
 Improve error checking:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
@@ -259,13 +265,13 @@ Patch for the Haiku port: #5961<br>
 <br>
 Patch to add Turkish manual. (Emir Sarı, #5641)<br>
 <br>
+Patch to add lua sleep function. (Prabir Shrestha, #6057)<br>
+Alternative: use vim.call and vim.fn: #6063<br>
+<br>
 Patch to add getmarklist() (Yegappan, #6032)<br>
 <br>
 Patch to support different color for undercurl in cterm.<br>
 (Timur Celik, #6011)<br>
-<br>
-When SIGTSTP is ignored, don't let&nbsp;<span class="Special">CTRL-Z</span>&nbsp;suspend Vim? (Kurtis Rader, #5990)<br>
-Fixed by patch #6026.&nbsp;&nbsp;Makes tests fail...<br>
 <br>
 Patch to support cindent option to handle pragmas differently.<br>
 (Max Rumpf, #5468)<br>
@@ -298,6 +304,10 @@ Patch to delete BeOS code. (#5817)&nbsp;&nbsp;Anyone who wants to keep it?<br>
 <br>
 With bash &quot;:make&quot; does not set v:shell_error.&nbsp;&nbsp;Possible solution: set<br>
 <a class="Type" href="options.html#'shellpipe'">'shellpipe'</a>&nbsp;to &quot;2&gt;&amp;1| tee %s; exit $<span class="Special">{PIPESTATUS[0]}</span>&quot;&nbsp;&nbsp;#5994<br>
+<br>
+When changing the crypt key the buffer should be considered modified.<br>
+Like when changing&nbsp;<a class="Type" href="options.html#'fileformat'">'fileformat'</a>.&nbsp;&nbsp;Save the old key in save_file_ff().<br>
+(Ninu-Ciprian Marginean)<br>
 <br>
 Strange sequence of BufWipeout and BufNew events while doing omni-complete.<br>
 (Paul Jolly, #5656)<br>
