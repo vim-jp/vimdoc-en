@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 May 11<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 May 26<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,27 +43,19 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Patch to test TERM signal. (Dominique, #6055)<br>
-<br>
-Include src/po/vim.pot<br>
+Include src/po/vim.pot ?<br>
 <br>
 Vim9 script:<br>
-Make closures work:<br>
-&nbsp;&nbsp;- call closure from not compiled context<br>
-&nbsp;&nbsp;- Create closure in a loop.&nbsp;&nbsp;Need to make a list of them.<br>
-Forward declarations:<br>
-&nbsp;&nbsp;- Cleanup when sourcing a script again: all script-local variables, imports<br>
-&nbsp;&nbsp;&nbsp;&nbsp;and functions are deleted.<br>
-&nbsp;&nbsp;- make sure only constants in declarations are executed, no function calls.<br>
-&nbsp;&nbsp;- Declare a variable at script level without an assignment.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var: string<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Error without a type or assignment<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var&nbsp;&nbsp;# error!<br>
 Making everything work:<br>
+- possible memory leak in test_vim9_func through compile_nested_function.<br>
+- memory leaks in test_vim9_expr<br>
+- memory leaks in test_vim9_script<br>
 - Test that a script-local function in Vim9 script cannot be deleted.<br>
+- Make &quot;true&quot; and &quot;false&quot; work in vim9script<br>
 - Test that a function defined inside a :def function is local to that<br>
 &nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
 &nbsp;&nbsp;defined.<br>
+- make 0 ==&nbsp;<span class="MissingTag">'string'</span>&nbsp;fail on the script level, like inside :def.<br>
 - Check that when using a user function name without prefix, it does not find<br>
 &nbsp;&nbsp;a global function.&nbsp;&nbsp;Prefixing g: is required.<br>
 - Compile: let [var, var] = expr<br>
@@ -80,16 +72,21 @@ Making everything work:<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :next, :argedit, :argadd, :argdelete, :drop<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :vimgrep, :vimgrepadd, :lvimgrep, :lvimgrepadd<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :mkspell<br>
+- When evaluating constants for script variables, some functions could work:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has(<span class="MissingTag">'asdf'</span>), len(<span class="MissingTag">'string'</span>)<br>
 - Support type for &quot;:let&quot;/&quot;:const&quot; at script level for Vim9 script.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(Ben Jackson, #5671)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Can we share the code from ex_let_const() between direct execution and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;compiling?<br>
 - Disallow unlet for local/script/imported vars<br>
 - Make &quot;++nr&quot; work.<br>
+- Make closures work:<br>
+&nbsp;&nbsp;- Create closure in a loop.&nbsp;&nbsp;Need to make a list of them.<br>
 - expandcmd() with&nbsp;<span class="Comment">=expr</span>&nbsp;in filename uses legacy expression.<br>
 - eval_expr() in ex_cexpr()<br>
 - eval_expr() call in dbg_parsearg() and debuggy_find()<br>
-- Make &quot;true&quot; and &quot;false&quot; work in vim9script<br>
+- has() is compiled as a constant, but some checks are dynamic.<br>
+&nbsp;&nbsp;Check for dynamic values, such as &quot;gui_running&quot;.<br>
 New syntax and functionality:<br>
 Improve error checking:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
@@ -118,6 +115,7 @@ Also:<br>
 - implement class<br>
 - implement interface<br>
 - predefined class: Promise<span class="Special">&lt;T&gt;</span><br>
+- implement enum<br>
 - Make accessing varargs faster: arg[expr]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVAL expr<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varags idx)<br>
@@ -130,10 +128,12 @@ Further improvements:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;body<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
 - compile get_lambda_tv() in popup_add_timeout()<br>
+- inline call to map() and filter()<br>
 - compile &quot;skip&quot; argument of searchpair()<br>
 - compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
 <br>
 Popup windows:<br>
+- Can put focus in another window using API and &quot;drop&quot;. (#6077)<br>
 - With some sequence get get hidden finished terminal buffer. (#5768)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Cannot close popup terminal (#5744)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Buffer can't be wiped, gets status &quot;aF&quot;. (#5764)<br>
@@ -206,8 +206,12 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;background process, the window remains open, because the channel still<br>
 &nbsp;&nbsp;exists (and output still shows).&nbsp;&nbsp;Perhaps close the window when an explicit<br>
 &nbsp;&nbsp;++close was used? (#5931)<br>
+- Using &quot;<span class="Special">CTRL-W</span>&nbsp;:confirm quite&quot; and selecting &quot;yes&quot; should work like &quot;:quit!&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Harm te Hennepe, #6129)<br>
 - When the job in the terminal doesn't use mouse events, let the scroll wheel<br>
 &nbsp;&nbsp;scroll the scrollback, like a terminal does at the shell prompt. #2490<br>
+&nbsp;&nbsp;A bit like using&nbsp;<span class="Special">CTRL-W</span>&nbsp;<span class="Special">N</span>&nbsp;first.<br>
+&nbsp;&nbsp;Jump back like with &quot;a&quot; when any key is typed.<br>
 &nbsp;&nbsp;And use modeless selection.&nbsp;&nbsp;#2962<br>
 - Use&nbsp;<span class="Special">CTRL-W</span>&nbsp;<span class="Special">CTRL-K</span>&nbsp;to enter a digraph? #5371<br>
 - When Vim runs in the terminal and changes the title, the statusline needs to<br>
@@ -237,8 +241,10 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
 Error numbers available:<br>
-E453, E454, E460, E489, E491, E610, E611, E653,<br>
-E856, E857, E861, E900<br>
+E453, E454, E489, E610, E611, E653, E856, E857, E861, E900<br>
+<br>
+Patch to fix that typval related code is spread out. (Yegappan Lakshmanan,<br>
+#6093)<br>
 <br>
 Buffer autocommands are a bit inconsistent.&nbsp;&nbsp;Add a separate set of<br>
 autocommands for the buffer lifecycle:<br>
@@ -259,6 +265,10 @@ Patch to explain use of &quot;%&quot; in :!.&nbsp;&nbsp;(David Briscoe, #5591)<b
 Patch to improve Windows terminal support. (Nobuhiro Takasaki, #5546)<br>
 Ready to include.<br>
 <br>
+Patch to improve use of Lua path. (Prabir Shrestha, #6098)<br>
+<br>
+Patch to make exepath() work better on MS-Windows. (#6115)<br>
+<br>
 Patch to add &quot;-d&quot; to xxd. (#5616)<br>
 <br>
 Patch for the Haiku port: #5961<br>
@@ -276,12 +286,17 @@ Patch to support different color for undercurl in cterm.<br>
 Patch to support cindent option to handle pragmas differently.<br>
 (Max Rumpf, #5468)<br>
 <br>
+Patch to add &quot;:syn foldlevel&quot; to use fold level further down the line.<br>
+(Brad King, 2016 Oct 19, update 2017 Jan 30, now in #6087)<br>
+<br>
 File marks merging has duplicates since 7.4.1925. (Ingo Karkat, #5733)<br>
 <br>
-Running test_gui and test_gui_init with Motif sometimes kills the window<br>
-manager.&nbsp;&nbsp;Problem with Motif? Now test_gui crashes in submenu_change().<br>
+&quot;make test_gui&quot; crashed in submenu_change(). Fix and remove workaround in<br>
+add_pixmap_args().<br>
 Athena is OK.<br>
 Motif: Build on Ubuntu can't enter any text in dialog text fields.<br>
+Running test_gui and test_gui_init with Motif sometimes kills the window<br>
+manager.&nbsp;&nbsp;Problem with Motif?<br>
 <br>
 :map output does not clear the reset of the command line.<br>
 (#5623, also see #5962)<br>
@@ -291,6 +306,9 @@ Flag in&nbsp;<a class="Type" href="options.html#'formatoptions'">'formatoptions'
 <br>
 Patch to add&nbsp;<span class="MissingTag">'vtp'</span>&nbsp;option. (#5344)<br>
 Needs better docs.&nbsp;&nbsp;Is there a better name?<br>
+<br>
+Patch to add argument to trim() to only trim start or end of a string.<br>
+(Yegappan, #6126)<br>
 <br>
 undo result wrong: Masato Nishihata, #4798<br>
 <br>
@@ -304,6 +322,14 @@ Patch to delete BeOS code. (#5817)&nbsp;&nbsp;Anyone who wants to keep it?<br>
 <br>
 With bash &quot;:make&quot; does not set v:shell_error.&nbsp;&nbsp;Possible solution: set<br>
 <a class="Type" href="options.html#'shellpipe'">'shellpipe'</a>&nbsp;to &quot;2&gt;&amp;1| tee %s; exit $<span class="Special">{PIPESTATUS[0]}</span>&quot;&nbsp;&nbsp;#5994<br>
+<br>
+Using mode() when &quot;/pat&quot; is used in Visual mode returns &quot;v&quot; instead of &quot;c&quot;,<br>
+which is not useful.&nbsp;&nbsp;Return &quot;c/v&quot; instead.&nbsp;&nbsp;And &quot;c/o&quot; when using &quot;d/pat&quot;.<br>
+#6127<br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'fileignorecase'">'fileignorecase'</a>&nbsp;is set &quot;:e testfile.c&quot; works to edit TestFile.c, but<br>
+&quot;:find testfile.c&quot; does not ignore case.<br>
+Might be related to #6088.<br>
 <br>
 When changing the crypt key the buffer should be considered modified.<br>
 Like when changing&nbsp;<a class="Type" href="options.html#'fileformat'">'fileformat'</a>.&nbsp;&nbsp;Save the old key in save_file_ff().<br>
@@ -323,6 +349,8 @@ Patch to add function to return the text used in the quickfix window.<br>
 (Yegappan, #5465)<br>
 <br>
 Patch to add readdirex() (Ken Takata, #5619)<br>
+<br>
+Wrong error when using local arglist. (Harm te Hennepe, #6133)<br>
 <br>
 Request to support&nbsp;<span class="Special">&lt;Cmd&gt;</span>&nbsp;in mappings, similar to how Neovim does this.<br>
 (Daniel Hahler, #4784)<br>
@@ -393,6 +421,9 @@ support combining characters. (Charles Campbell)&nbsp;&nbsp;Also #4687<br>
 &quot;--cleanFOO&quot; does not result in an error. (#5537)<br>
 <br>
 Add &quot;t&quot; action to settagstack(): truncate and add new entries. (#5405)<br>
+<br>
+When&nbsp;<a class="Type" href="options.html#'relativenumber'">'relativenumber'</a>&nbsp;is set the line just below a diff change doesn't get<br>
+updated. (#6138)<br>
 <br>
 Result of synID() sometimes wrong in help files. (#5252)<br>
 <br>
@@ -1334,6 +1365,8 @@ sort() is not stable when using numeric/float sort (Nikolay Pavlov, 2016 Sep<br>
 - Add ch_readlines(): for a channel in NL mode, reads as many lines as are<br>
 &nbsp;&nbsp;available.&nbsp;&nbsp;Should be more efficient than looping over ch_read() with<br>
 &nbsp;&nbsp;ch_status() to check for more.<br>
+- If buffer contents is changed in a callback, set w_redr_status so that it<br>
+&nbsp;&nbsp;gets redrawn in redraw_after_callback(). #6120<br>
 - Add a separate timeout for opening a socket.&nbsp;&nbsp;Currently it's fixed at 50<br>
 &nbsp;&nbsp;msec, which is too small for a remote connection. (tverniquet, #2130)<br>
 - Problem with stderr on Windows? (Vincent Rischmann, 2016 Aug 31, #1026)<br>
@@ -1456,9 +1489,6 @@ ml_get errors when reloading file. (Chris Desjardins, 2016 Apr 19)<br>
 Also with latest version.<br>
 <br>
 Cannot delete a file with square brackets with delete(). (#696)<br>
-<br>
-Patch to add &quot;:syn foldlevel&quot; to use fold level further down the line.<br>
-(Brad King, 2016 Oct 19, update 2017 Jan 30)<br>
 <br>
 Completion for input() does not expand environment variables. (chdiza, 2016<br>
 Jul 25, #948)<br>
