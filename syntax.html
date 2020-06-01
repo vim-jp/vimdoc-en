@@ -3641,6 +3641,26 @@ When several syntax items may match, these rules are used:<br>
 :sy[ntax] case<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show either &quot;syntax case match&quot; or &quot;syntax case ignore&quot; (translated).<br>
 <br>
+<br>
+<span class="Statement">DEFINING FOLDLEVEL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="syntax.html#:syn-foldlevel" name=":syn-foldlevel">:syn-foldlevel</a><br>
+<br>
+:sy[ntax] foldlevel [start | minimum]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This defines how the foldlevel of a line is computed when using<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foldmethod=syntax (see&nbsp;<a class="Identifier" href="fold.html#fold-syntax">fold-syntax</a>&nbsp;and&nbsp;<a class="Identifier" href="syntax.html#:syn-fold">:syn-fold</a>):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use level of item containing start of line.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;minimum:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use lowest local-minimum level of items on line.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The default is&nbsp;<span class="MissingTag">'start'</span>.&nbsp;&nbsp;Use&nbsp;<span class="MissingTag">'minimum'</span>&nbsp;to search a line horizontally<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for the lowest level contained on the line that is followed by a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;higher level.&nbsp;&nbsp;This produces more natural folds when syntax items<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;may close and open horizontally within a line.<br>
+<br>
+:sy[ntax] foldlevel<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show either &quot;syntax foldlevel start&quot; or &quot;syntax foldlevel minimum&quot;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not meaningful when Vim was compiled without&nbsp;</span><a class="Identifier" href="various.html#+folding">+folding</a><span class="Special">&nbsp;feature}</span><br>
+<br>
 <span class="Statement">SPELL CHECKING&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="syntax.html#:syn-spell" name=":syn-spell">:syn-spell</a><br>
 <br>
 :sy[ntax] spell [toplevel | notoplevel | default]<br>
@@ -4104,6 +4124,8 @@ This will make each {} block form one fold.<br>
 The fold will start on the line where the item starts, and end where the item<br>
 ends.&nbsp;&nbsp;If the start and end are within the same line, there is no fold.<br>
 The&nbsp;<a class="Type" href="options.html#'foldnestmax'">'foldnestmax'</a>&nbsp;option limits the nesting of syntax folds.<br>
+See&nbsp;<a class="Identifier" href="syntax.html#:syn-foldlevel">:syn-foldlevel</a>&nbsp;to control how the foldlevel of a line is computed<br>
+from its syntax items.<br>
 <span class="Special">{not available when Vim was compiled without&nbsp;</span><a class="Identifier" href="various.html#+folding">+folding</a><span class="Special">&nbsp;feature}</span><br>
 <br>
 <br>
@@ -4906,6 +4928,10 @@ cterm=<span class="Special">{attr-list}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs
 <br>
 ctermfg=<span class="Special">{color-nr}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#highlight-ctermfg" name="highlight-ctermfg">highlight-ctermfg</a>&nbsp;<a class="Constant" href="syntax.html#E421" name="E421">E421</a><br>
 ctermbg=<span class="Special">{color-nr}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#highlight-ctermbg" name="highlight-ctermbg">highlight-ctermbg</a><br>
+ctermul=<span class="Special">{color-nr}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#highlight-ctermul" name="highlight-ctermul">highlight-ctermul</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;These give the foreground (ctermfg), background (ctermbg) and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;underline (ctermul) color to use in the terminal.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<span class="Special">{color-nr}</span>&nbsp;argument is a color number.&nbsp;&nbsp;Its range is zero to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(not including) the number given by the termcap entry &quot;Co&quot;.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The actual color with this number depends on the type of terminal<br>
@@ -4983,11 +5009,11 @@ ctermbg=<span class="Special">{color-nr}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;needs to reset the color when exiting.&nbsp;&nbsp;This is done with the &quot;op&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;termcap entry&nbsp;<a class="Identifier" href="term.html#t_op">t_op</a>.&nbsp;&nbsp;If this doesn't work correctly, try setting the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="term.html#'t_op'">'t_op'</a>&nbsp;option in your .vimrc.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#E419" name="E419">E419</a>&nbsp;<a class="Constant" href="syntax.html#E420" name="E420">E420</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When Vim knows the normal foreground and background colors, &quot;fg&quot; and<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;bg&quot; can be used as color names.&nbsp;&nbsp;This only works after setting the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;colors for the Normal group and for the MS-Windows console.&nbsp;&nbsp;Example,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for reverse video:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="syntax.html#E419" name="E419">E419</a>&nbsp;<a class="Constant" href="syntax.html#E420" name="E420">E420</a>&nbsp;<a class="Constant" href="syntax.html#E453" name="E453">E453</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When Vim knows the normal foreground, background and underline colors,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;fg&quot;, &quot;bg&quot; and &quot;ul&quot; can be used as color names.&nbsp;&nbsp;This only works after<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setting the colors for the Normal group and for the MS-Windows<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.&nbsp;&nbsp;Example, for reverse video:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:highlight Visual ctermfg=bg ctermbg=fg</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that the colors are used that are valid at the moment this<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command are given.&nbsp;&nbsp;If the Normal group colors are changed later, the<br>

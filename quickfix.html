@@ -20,6 +20,7 @@ This subject is introduced in section&nbsp;<a class="Identifier" href="usr_30.ht
 7. The error format&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="quickfix.html#error-file-format">error-file-format</a><br>
 8. The directory stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="quickfix.html#quickfix-directory-stack">quickfix-directory-stack</a><br>
 9. Specific error file formats&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="quickfix.html#errorformats">errorformats</a><br>
+10. Customizing the quickfix window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="quickfix.html#quickfix-window-function">quickfix-window-function</a><br>
 <br>
 The quickfix commands are not available when the&nbsp;<a class="Identifier" href="various.html#+quickfix">+quickfix</a>&nbsp;feature was<br>
 disabled at compile time.<br>
@@ -1926,6 +1927,59 @@ error messages into a format that quickfix mode will understand.&nbsp;&nbsp;See 
 start of the file about how to use it.&nbsp;&nbsp;(This script is deprecated, see<br>
 <a class="Identifier" href="quickfix.html#compiler-perl">compiler-perl</a>.)<br>
 <br>
+<span class="PreProc">=============================================================================</span><br>
+10. Customizing the quickfix window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="quickfix.html#quickfix-window-function" name="quickfix-window-function">quickfix-window-function</a><br>
+<br>
+The default format for the lines displayed in the quickfix window and location<br>
+list window is:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;filename&gt;</span>|<span class="Special">&lt;lnum&gt;</span>&nbsp;col&nbsp;<span class="Special">&lt;col&gt;</span>|<span class="Special">&lt;text&gt;</span><br>
+<br>
+The values displayed in each line correspond to the &quot;bufnr&quot;, &quot;lnum&quot;, &quot;col&quot; and<br>
+&quot;text&quot; fields returned by the&nbsp;<a class="Identifier" href="eval.html#getqflist()">getqflist()</a>&nbsp;function.<br>
+<br>
+For some quickfix/location lists, the displayed text need to be customized.<br>
+For example, if only the filename is present for a quickfix entry, then the<br>
+two &quot;|&quot; field separator characters after the filename are not needed.&nbsp;&nbsp;Another<br>
+use case is to customize the path displayed for a filename. By default, the<br>
+complete path (which may be too long) is displayed for files which are not<br>
+under the current directory tree. The file path may need to be simplified to a<br>
+common parent directory.<br>
+<br>
+The displayed text can be customized by setting the&nbsp;<a class="Type" href="options.html#'quickfixtextfunc'">'quickfixtextfunc'</a>&nbsp;option<br>
+to a Vim function.&nbsp;&nbsp;This function will be called with a dict argument for<br>
+every entry in a quickfix or a location list. The dict argument will have the<br>
+following fields:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;quickfix&nbsp;&nbsp;&nbsp;&nbsp;set to 1 when called for a quickfix list and 0 when called for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a location list.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quickfix or location list identifier<br>
+&nbsp;&nbsp;&nbsp;&nbsp;idx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; index of the entry in the quickfix or location list<br>
+<br>
+The function should return a single line of text to display in the quickfix<br>
+window for the entry identified by idx. The function can obtain information<br>
+about the current entry using the&nbsp;<a class="Identifier" href="eval.html#getqflist()">getqflist()</a>&nbsp;function and specifying the<br>
+quickfix list identifier &quot;id&quot; and the entry index &quot;idx&quot;.<br>
+<br>
+If a quickfix or location list specific customization is needed, then the<br>
+<a class="Type" href="options.html#'quickfixtextfunc'">'quickfixtextfunc'</a>&nbsp;attribute of the list can be set using the&nbsp;<a class="Identifier" href="eval.html#setqflist()">setqflist()</a>&nbsp;or<br>
+<a class="Identifier" href="eval.html#setloclist()">setloclist()</a>&nbsp;function. This overrides the global&nbsp;<a class="Type" href="options.html#'quickfixtextfunc'">'quickfixtextfunc'</a>&nbsp;option.<br>
+<br>
+The example below displays the list of old files (<a class="Identifier" href="eval.html#v:oldfiles">v:oldfiles</a>) in a quickfix<br>
+window. As there is no line, column number and error text information<br>
+associated with each entry, the&nbsp;<a class="Type" href="options.html#'quickfixtextfunc'">'quickfixtextfunc'</a>&nbsp;function returns only the<br>
+filename.<br>
+Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&quot; create a quickfix list from v:oldfiles<br>
+&nbsp;&nbsp;&nbsp;&nbsp;call setqflist([], ' ', {'lines' : v:oldfiles, 'efm' : '%f',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'quickfixtextfunc' : 'QfOldFiles'})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;func QfOldFiles(info)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; get information about the specific quickfix entry<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let e = getqflist({'id' : a:info.id, 'idx' : a:info.idx,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'items' : 1}).items[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; return the simplified file name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return fnamemodify(bufname(e.bufnr), ':p:.')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
 <br>
 <br>
 &nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
