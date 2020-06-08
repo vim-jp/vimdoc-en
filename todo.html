@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 May 26<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jun 07<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,6 +44,9 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Include src/po/vim.pot ?<br>
+<br>
+If there are no complaints, remove more typecasts from vim_strnsave() length<br>
+argument.<br>
 <br>
 Vim9 script:<br>
 Making everything work:<br>
@@ -133,7 +136,6 @@ Further improvements:<br>
 - compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
 <br>
 Popup windows:<br>
-- Can put focus in another window using API and &quot;drop&quot;. (#6077)<br>
 - With some sequence get get hidden finished terminal buffer. (#5768)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Cannot close popup terminal (#5744)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Buffer can't be wiped, gets status &quot;aF&quot;. (#5764)<br>
@@ -159,8 +161,6 @@ Popup windows:<br>
 - Figure out the size and position better if wrapping inserts indent<br>
 <br>
 Text properties:<br>
-- Patch to fix that split / join does not update properties properly (Axel<br>
-&nbsp;&nbsp;Forsman, #5839)&nbsp;&nbsp;Alternative: #5875.<br>
 - :goto does not go to the right place when test properties are present.<br>
 &nbsp;&nbsp;(#5930)<br>
 - &quot;cc&quot; does not call inserted_bytes(). (Axel Forsman, #5763)<br>
@@ -202,6 +202,7 @@ Terminal debugger:<br>
 &nbsp;&nbsp;with another Vim instance.<br>
 <br>
 Terminal emulator window:<br>
+- No support for underline color, t_8u.<br>
 - When started with &quot;:terminal ++close&quot; and the shell exits but there is a<br>
 &nbsp;&nbsp;background process, the window remains open, because the channel still<br>
 &nbsp;&nbsp;exists (and output still shows).&nbsp;&nbsp;Perhaps close the window when an explicit<br>
@@ -241,10 +242,7 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
 Error numbers available:<br>
-E453, E454, E489, E610, E611, E653, E856, E857, E861, E900<br>
-<br>
-Patch to fix that typval related code is spread out. (Yegappan Lakshmanan,<br>
-#6093)<br>
+E489, E610, E611, E653, E856, E857, E861, E900<br>
 <br>
 Buffer autocommands are a bit inconsistent.&nbsp;&nbsp;Add a separate set of<br>
 autocommands for the buffer lifecycle:<br>
@@ -255,39 +253,12 @@ autocommands for the buffer lifecycle:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;BufIsRenamed&nbsp;&nbsp;(after buffer ID gets another name)<br>
 The buffer list and windows are locked, no changes possible<br>
 <br>
+How about removing Atari MiNT support?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src/Make_mint.mak, src/os_mint.h, matches with __MINT__<br>
+<br>
 Patch to fix drawing error with DirectX. (James Grant, #5688)<br>
-Causes flicker on resizing.<br>
-<br>
-Patch to support ipv6 for channel. (Ozaki Kiichi, #5893)<br>
-<br>
-Patch to explain use of &quot;%&quot; in :!.&nbsp;&nbsp;(David Briscoe, #5591)<br>
-<br>
-Patch to improve Windows terminal support. (Nobuhiro Takasaki, #5546)<br>
-Ready to include.<br>
-<br>
-Patch to improve use of Lua path. (Prabir Shrestha, #6098)<br>
-<br>
-Patch to make exepath() work better on MS-Windows. (#6115)<br>
-<br>
-Patch to add &quot;-d&quot; to xxd. (#5616)<br>
-<br>
-Patch for the Haiku port: #5961<br>
-<br>
-Patch to add Turkish manual. (Emir Sarı, #5641)<br>
-<br>
-Patch to add lua sleep function. (Prabir Shrestha, #6057)<br>
-Alternative: use vim.call and vim.fn: #6063<br>
-<br>
-Patch to add getmarklist() (Yegappan, #6032)<br>
-<br>
-Patch to support different color for undercurl in cterm.<br>
-(Timur Celik, #6011)<br>
-<br>
-Patch to support cindent option to handle pragmas differently.<br>
-(Max Rumpf, #5468)<br>
-<br>
-Patch to add &quot;:syn foldlevel&quot; to use fold level further down the line.<br>
-(Brad King, 2016 Oct 19, update 2017 Jan 30, now in #6087)<br>
+Causes flicker on resizing. Workaround from Ken Takata.<br>
+How about only setting the attribute when part of the Vim window is offscreen?<br>
 <br>
 File marks merging has duplicates since 7.4.1925. (Ingo Karkat, #5733)<br>
 <br>
@@ -301,24 +272,13 @@ manager.&nbsp;&nbsp;Problem with Motif?<br>
 :map output does not clear the reset of the command line.<br>
 (#5623, also see #5962)<br>
 <br>
-Patch to properly break CJK lines: Anton Kochkov, #3875<br>
-Flag in&nbsp;<a class="Type" href="options.html#'formatoptions'">'formatoptions'</a>&nbsp;is not used in the tests.<br>
-<br>
-Patch to add&nbsp;<span class="MissingTag">'vtp'</span>&nbsp;option. (#5344)<br>
-Needs better docs.&nbsp;&nbsp;Is there a better name?<br>
-<br>
-Patch to add argument to trim() to only trim start or end of a string.<br>
-(Yegappan, #6126)<br>
+Problem with auto-formatting - inserting space and putting cursor before added<br>
+character. (#6154)<br>
 <br>
 undo result wrong: Masato Nishihata, #4798<br>
 <br>
-Patch for Template string: #4491.&nbsp;&nbsp;New pull: #4634<br>
-Ready to include?&nbsp;&nbsp;Review the code.<br>
-<br>
 When&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;is set sometimes the title is not updated.<br>
 (Jason Franklin, 2020 Feb 3)&nbsp;&nbsp;Looks like a race condition.<br>
-<br>
-Patch to delete BeOS code. (#5817)&nbsp;&nbsp;Anyone who wants to keep it?<br>
 <br>
 With bash &quot;:make&quot; does not set v:shell_error.&nbsp;&nbsp;Possible solution: set<br>
 <a class="Type" href="options.html#'shellpipe'">'shellpipe'</a>&nbsp;to &quot;2&gt;&amp;1| tee %s; exit $<span class="Special">{PIPESTATUS[0]}</span>&quot;&nbsp;&nbsp;#5994<br>
@@ -345,11 +305,6 @@ Get BufDelete without preceding BufNew. (Paul Jolly, #5694)<br>
 BufWinenter event not fired when saving unnamed buffer. (Paul Jolly, #5655)<br>
 Another spurious BufDelete. (Dani Dickstein, #5701)<br>
 <br>
-Patch to add function to return the text used in the quickfix window.<br>
-(Yegappan, #5465)<br>
-<br>
-Patch to add readdirex() (Ken Takata, #5619)<br>
-<br>
 Wrong error when using local arglist. (Harm te Hennepe, #6133)<br>
 <br>
 Request to support&nbsp;<span class="Special">&lt;Cmd&gt;</span>&nbsp;in mappings, similar to how Neovim does this.<br>
@@ -359,6 +314,9 @@ Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</
 <br>
 :unmap&nbsp;<span class="Special">&lt;c-n&gt;</span>&nbsp;gives error but does remove the mapping. (Antony Scriven, 2019<br>
 Dec 19)<br>
+<br>
+Patch to add an option to enable/disable VTP.&nbsp;&nbsp;(Nobuhiro Takasaki, #5344)<br>
+Should have three values: empty, &quot;off&quot;, &quot;on&quot;.&nbsp;&nbsp;Name it&nbsp;<span class="MissingTag">'winterm'</span>?<br>
 <br>
 Patch to fix session file when using multiple tab pages. (Jason Franklin, 2019<br>
 May 20)<br>
@@ -370,9 +328,6 @@ Also #5326: netrw buffers are not restored.<br>
 When&nbsp;<a class="Type" href="options.html#'backupdir'">'backupdir'</a>&nbsp;has a path ending in double slash (meaning: use full path of<br>
 the file) combined with&nbsp;<a class="Type" href="options.html#'patchmode'">'patchmode'</a>&nbsp;the file name is wrong. (#5791)<br>
 <br>
-Patch to make &quot;:verbose pwd&quot; show the scope of the directory. (Takuya<br>
-Fujiwara, #5469)<br>
-<br>
 Completion mixes results from the current buffer with tags and other files.<br>
 Happens when typing&nbsp;<span class="Special">CTRL-N</span>&nbsp;while still searching for results.&nbsp;&nbsp;E.g., type &quot;b_&quot;<br>
 in terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
@@ -382,18 +337,12 @@ Should do current file first and not split it up when more results are found.<br
 Undo history wrong when &quot;:next file&quot; re-uses a buffer. (#5426)<br>
 ex_next() should pass flag to do_argfile(), then to do_ecmd().<br>
 <br>
-Patch to add &quot;<span class="Todo">note</span>&quot; type to quickfix. (#5527)&nbsp;&nbsp;Missing tests.<br>
+Help for &quot;:argadd fname&quot; says that if &quot;fname&quot; is already in the argument list<br>
+that entry is used.&nbsp;&nbsp;But instead it's always added. (#6210)<br>
+Add flag AL_FIND_ADD, if there is one argument find it in the list.<br>
 <br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)<br>
-<br>
-FR: add search_status(), the current values displayed for search (current<br>
-match, total matches). (#5631)<br>
-Patch to provide search stats in a variable, so that it can be used in the<br>
-statusline. (Fujiwara Takuya, #4446)<br>
-<br>
-Patch for ambiguous width characters in libvterm on MS-Windows 10.<br>
-(Nobuhiro Takasaki, #4411)<br>
 <br>
 behavior of i_CTRl-R_<span class="Special">CTRL-R</span>&nbsp;differs from documentation. (Paul Desmond Parker,<br>
 #5771)<br>
@@ -402,9 +351,14 @@ behavior of i_CTRl-R_<span class="Special">CTRL-R</span>&nbsp;differs from docum
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
 unlisted. (#4478)<br>
 <br>
-Patch to include reduce() function. (#5481)<br>
+Patch for Template string: #4634<br>
+Copies the text twice, not very efficient.&nbsp;&nbsp;Requires a separate implementation<br>
+for Vim9 script, compiling the string parts and expressions.<br>
 <br>
 Statusline highlighting error, off by one. (#5599)<br>
+<br>
+&quot;:find&quot; with&nbsp;<a class="Type" href="options.html#'path'">'path'</a>&nbsp;set to &quot;data*&quot; does not find files, while completion does<br>
+find them. (Max Kukartsev, #6218)<br>
 <br>
 Enable&nbsp;<a class="Type" href="options.html#'termbidi'">'termbidi'</a>&nbsp;if $VTE_VERSION &gt;= 5703 ?<br>
 <br>
@@ -419,6 +373,9 @@ The :syntax cchar value can only be a single character.&nbsp;&nbsp;It would be u
 support combining characters. (Charles Campbell)&nbsp;&nbsp;Also #4687<br>
 <br>
 &quot;--cleanFOO&quot; does not result in an error. (#5537)<br>
+<br>
+Output from assert_equalfile() doesn't give a hint about what's different.<br>
+Assuming the files are text, print the line with the difference.<br>
 <br>
 Add &quot;t&quot; action to settagstack(): truncate and add new entries. (#5405)<br>
 <br>
@@ -439,7 +396,7 @@ When using :packadd files under &quot;later&quot; are not used, which is inconsi
 with packages under &quot;start&quot;. (xtal8, #1994)<br>
 <br>
 Patch to add new motion ]( and ]{.&nbsp;&nbsp;(Yasuhiro Matsumoto, #5320)<br>
-Or make &quot;v&quot; prefix work?&nbsp;<br>
+Better: use the &quot;z&quot; prefix.<br>
 <br>
 Modeless selection doesn't work in gvim. (#4783)<br>
 Caused by patch 8.1.1534.<br>
@@ -447,8 +404,7 @@ Caused by patch 8.1.1534.<br>
 Visual highlight not removed when&nbsp;<span class="MissingTag">'dipslay'</span>&nbsp;is &quot;lastline&quot; and line doesn't<br>
 fit. (Kevin Lawler, #4457)<br>
 <br>
-Patch to add per-tabpage and per-window previous directory: &quot;lcd -&quot; and &quot;tcd<br>
--&quot;. (Yegappan Lakshmanan, #4362)<br>
+Current position in the changelist should be local to the buffer. (#2173)<br>
 <br>
 Does not build with MinGW out of the box:<br>
 - _stat64 is not defined, need to use &quot;struct stat&quot; in vim.h<br>
@@ -459,14 +415,6 @@ Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
 <br>
 Display messed up with matchparen, wrapping and scrolling. (#5638)<br>
-<br>
-Patch to configure BUILD_DATE for reproducible builds. (James McCoy, #513)<br>
-<br>
-Patch to add MODIFIED_BY to MSVC build file. (Chen Lei, 2016 Nov 24, #1275)<br>
-<br>
-Patch to support &quot;0o&quot; for octal numbers. (Ken Takata, #5304)<br>
-<br>
-Patch to enable IXON, avoid that&nbsp;<span class="Special">CTRL-S</span>&nbsp;stops terminal output. (#5775)<br>
 <br>
 When getting a focus event halfway a mapping this aborts the mapping.&nbsp;&nbsp;E.g.<br>
 when &quot;qq&quot; is mapped and after the first &quot;q&quot; the mouse is moved outside of the<br>
@@ -505,9 +453,6 @@ Patch to support CamelCase for spell checking: See a lower-to-upper case<br>
 change as a word boundary. (btucker-MPCData, 2016 Nov 6, #1235)<br>
 patch for&nbsp;<span class="MissingTag">'spellcamelcase'</span>&nbsp;option: spellcheck each CamelCased word.<br>
 (Ben Tucker, 2016 Dec 2)<br>
-<br>
-Patch to add&nbsp;<span class="Special">{skip}</span>&nbsp;argument to search(). (Christian Brabandt, 2016 Feb 24)<br>
-Update 2016 Jun 10, #861<br>
 <br>
 Patch to add &quot;cmdline&quot; completion to getcompletion(). (Shougo, Oct 1, #1140)<br>
 <br>
@@ -622,10 +567,6 @@ on top off, making the whole thing two characters wide. (#4526)<br>
 Should we include some part of pull request #4505, not increment changedtick<br>
 in some cases?&nbsp;&nbsp;E.g. for &quot;:write&quot; when the changed flag was already off, the<br>
 buffer didn't change at all.<br>
-<br>
-Patch to add getreginfo() and setreg() with an option to set the unnamed<br>
-register &quot;&quot;, So that registers can be saved and fully restored.<br>
-(Andy Massimino, 2018 Aug 24, #3370)<br>
 <br>
 Line numbers in profile are off when function was defined with &quot;:execute&quot;.<br>
 (Daniel Hahler, #4511)<br>
@@ -791,9 +732,6 @@ screen lines but on text lines. (Julius Hulsmann, #4095)&nbsp;&nbsp;Lacks a test
 Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (#3535)<br>
 &nbsp;&nbsp;Easier to use a&nbsp;<span class="MissingTag">'diffmaster'</span>&nbsp;option, is the extra complexity needed?<br>
 &nbsp;&nbsp;Not ready to include.<br>
-<br>
-Patch to specify color for cterm=underline and cterm=undercurl, like &quot;guisp&quot;.<br>
-Patch #2405 does something like this, but in the wrong way.<br>
 <br>
 home_replace() uses $HOME instead of &quot;homedir&quot;. (Cesar Martins, 2018 Aug 9)<br>
 <br>
@@ -1466,9 +1404,6 @@ doing (look over the shoulder), and also to see what happened.<br>
 Probably list of keystrokes, with some annotations for mode changes.<br>
 Could store in logfile to be able to analyse it with an external command.<br>
 E.g. to see when's the last time a plugin command was used.<br>
-<br>
-execute() cannot be used with command completion. (Daniel Hahler, 2016 Oct 1,<br>
-#1141)<br>
 <br>
 cmap using execute() has side effects. (Killthemule, 2016 Aug 17, #983)<br>
 <br>
@@ -2199,9 +2134,6 @@ When setqflist() uses a filename that triggers a BufReadCmd autocommand Vim<br>
 doesn't jump to the correct line with :cfirst. (ZyX,&nbsp;&nbsp;2011 Sep 18)<br>
 <br>
 Behavior of i&quot; and a&quot; text objects isn't logical. (Ben Fritz, 2013 Nov 19)<br>
-<br>
-maparg() does not show the&nbsp;<span class="Special">&lt;script&gt;</span>&nbsp;flag.&nbsp;&nbsp;When temporarily changing a<br>
-mapping, how to restore the script ID?<br>
 <br>
 Bug in try/catch: return with invalid compare throws error that isn't caught.<br>
 (ZyX, 2011 Jan 26)<br>
@@ -4983,9 +4915,6 @@ Win32 GUI:<br>
 <br>
 <br>
 GUI:<br>
-8&nbsp;&nbsp; Make inputdialog() work for Photon, Amiga.<br>
--&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C--&gt;</span>&nbsp;cannot be mapped.&nbsp;&nbsp;Should be possible to recognize this as a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;normal &quot;-&quot; with the Ctrl modifier.<br>
 7&nbsp;&nbsp; Implement &quot;:popup&quot; for other systems than Windows.<br>
 8&nbsp;&nbsp; Implement &quot;:tearoff&quot; for other systems than Win32 GUI.<br>
 6&nbsp;&nbsp; Implement &quot;:untearoff&quot;: hide a torn-off menu.<br>

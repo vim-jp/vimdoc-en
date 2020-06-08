@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'channel'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="channel.html" name="channel.txt">channel.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2019 Dec 07<br>
+<a class="Constant" href="channel.html" name="channel.txt">channel.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jun 01<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -1240,8 +1240,8 @@ If you want to type input for the job in a Vim window you have a few options:<br
 - Use a terminal window.&nbsp;&nbsp;This works well if what you type goes directly to<br>
 &nbsp;&nbsp;the job and the job output is directly displayed in the window.<br>
 &nbsp;&nbsp;See&nbsp;<a class="Identifier" href="terminal.html#terminal-window">terminal-window</a>.<br>
-- Use a prompt window. This works well when entering a line for the job in Vim<br>
-&nbsp;&nbsp;while displaying (possibly filtered) output from the job.<br>
+- Use a window with a prompt buffer. This works well when entering a line for<br>
+&nbsp;&nbsp;the job in Vim while displaying (possibly filtered) output from the job.<br>
 <br>
 A prompt buffer is created by setting&nbsp;<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;to &quot;prompt&quot;. You would<br>
 normally only do that in a newly created buffer.<br>
@@ -1274,6 +1274,47 @@ coming back to the prompt window Insert mode will be restored.<br>
 Any command that starts Insert mode, such as &quot;a&quot;, &quot;i&quot;, &quot;A&quot; and &quot;I&quot;, will move<br>
 the cursor to the last line.&nbsp;&nbsp;&quot;A&quot; will move to the end of the line, &quot;I&quot; to the<br>
 start of the line.<br>
+<br>
+Here is an example for Unix.&nbsp;&nbsp;It starts a shell in the background and prompts<br>
+for the next shell command.&nbsp;&nbsp;Output from the shell is displayed above the<br>
+prompt.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Create a channel log so we can see what happens.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call ch_logfile('logfile', 'w')</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Function handling a line of text has been typed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func TextEntered(text)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Send the text to a shell with Enter appended.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendraw(g:shell_job, a:text .. &quot;\n&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Function handling output from the shell: Added above the prompt.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func GotOutput(channel, msg)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call append(line(&quot;$&quot;) - 1, &quot;- &quot; . a:msg)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Function handling the shell exist: close the window.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func JobExit(job, status)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quit!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Start a shell in the background.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let shell_job = job_start([&quot;/bin/sh&quot;], #{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ out_cb: function('GotOutput'),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ err_cb: function('GotOutput'),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ exit_cb: function('JobExit'),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ })<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let shell_ch = job_getchannel(shell_job)</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set buftype=prompt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let buf = bufnr('')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call prompt_setcallback(buf, function(&quot;TextEntered&quot;))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eval prompt_setprompt(buf, &quot;shell command: &quot;)</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; start accepting shell commands<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;startinsert</div>
+<br>
 <br>
 <br>
 &nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
