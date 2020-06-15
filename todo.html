@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jun 07<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jun 14<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -45,15 +45,17 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <br>
 Include src/po/vim.pot ?<br>
 <br>
-If there are no complaints, remove more typecasts from vim_strnsave() length<br>
-argument.<br>
-<br>
 Vim9 script:<br>
 Making everything work:<br>
+- assignment to script var should check type<br>
+- Compile: let [var, var] = expr<br>
+&nbsp;&nbsp;share code for :let between compiled and uncompiled?<br>
+- do not allow &quot;let g:var = value&quot;, must drop &quot;let&quot;<br>
 - possible memory leak in test_vim9_func through compile_nested_function.<br>
 - memory leaks in test_vim9_expr<br>
 - memory leaks in test_vim9_script<br>
 - Test that a script-local function in Vim9 script cannot be deleted.<br>
+- Check that when sourcing a Vim9 script, only the global items can be used.<br>
 - Make &quot;true&quot; and &quot;false&quot; work in vim9script<br>
 - Test that a function defined inside a :def function is local to that<br>
 &nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
@@ -61,7 +63,6 @@ Making everything work:<br>
 - make 0 ==&nbsp;<span class="MissingTag">'string'</span>&nbsp;fail on the script level, like inside :def.<br>
 - Check that when using a user function name without prefix, it does not find<br>
 &nbsp;&nbsp;a global function.&nbsp;&nbsp;Prefixing g: is required.<br>
-- Compile: let [var, var] = expr<br>
 - Compile: for [key, value] in items(map)<br>
 - Assignment to dict doesn't work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ret: dict<span class="Special">&lt;string&gt;</span>&nbsp;= #{}<br>
@@ -81,6 +82,7 @@ Making everything work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(Ben Jackson, #5671)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Can we share the code from ex_let_const() between direct execution and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;compiling?<br>
+- Implement &quot;as Name&quot; in &quot;import Item as Name from ...&quot;<br>
 - Disallow unlet for local/script/imported vars<br>
 - Make &quot;++nr&quot; work.<br>
 - Make closures work:<br>
@@ -93,13 +95,14 @@ Making everything work:<br>
 New syntax and functionality:<br>
 Improve error checking:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
+Test:<br>
+- Using a Vim9 autoload script (functions must be global).<br>
 Also:<br>
 - For range: make table of first ASCII character with flag to quickly check if<br>
 &nbsp;&nbsp;it can be a Vim9 command. E.g. &quot;+&quot; can, but &quot;.&quot; can't.<br>
 - better implementation for partial and tests for that.<br>
 - Make &quot;g:imported = Export.exported&quot; work in Vim9 script.<br>
 - Make Foo.Bar() work to call the dict function. (#5676)<br>
-- Check that import in legacy script works and puts item in s:<br>
 - Error in any command in &quot;vim9script&quot; aborts sourcing.<br>
 - Find a way to test expressions in legacy and Vim9 script without duplication<br>
 - Fix memory leaks for test_vim9_disassemble, test_vim9_expr, test_vim9_script<br>
@@ -242,7 +245,25 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
 Error numbers available:<br>
-E489, E610, E611, E653, E856, E857, E861, E900<br>
+E489, E610, E611, E653, E856, E857, E861<br>
+<br>
+Remove SPACE_IN_FILENAME ? It is only used for completion.<br>
+<br>
+Can we detect true color support?&nbsp;&nbsp;<span class="Constant"><a href="https://gist.github.com/XVilka/8346728">https://gist.github.com/XVilka/8346728</a></span><br>
+Try setting a color then request the current color, like using t_u7.<br>
+<br>
+Check out PR #543 (Roland Puntaier).<br>
+Patch for multi-byte characters in langmap and applying a mapping on them.<br>
+(Christian Brabandt, 2015 Jun 12, update July 25)<br>
+Is this the right solution?&nbsp;&nbsp;Need to cleanup langmap behavior:<br>
+- in vgetorpeek() apply langmap to the typeahead buffer and put the result in<br>
+&nbsp;&nbsp;a copy-buffer, only when langmap is appropriate for the current mode. Then<br>
+&nbsp;&nbsp;check for mapping and let gotchars() work on the copy-buffer.<br>
+- Remove LANGMAP_ADJUST() in other parts of the code.&nbsp;&nbsp;Make sure the mode is<br>
+&nbsp;&nbsp;covered by the above change.<br>
+So that replaying the register doesn't use keymap/langmap and still does the<br>
+same thing.<br>
+Also see #737: langmap not applied to replaying recording.<br>
 <br>
 Buffer autocommands are a bit inconsistent.&nbsp;&nbsp;Add a separate set of<br>
 autocommands for the buffer lifecycle:<br>
@@ -280,6 +301,9 @@ undo result wrong: Masato Nishihata, #4798<br>
 When&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;is set sometimes the title is not updated.<br>
 (Jason Franklin, 2020 Feb 3)&nbsp;&nbsp;Looks like a race condition.<br>
 <br>
+Regexp to search for duplicate lines does not work correctly:<br>
+/\(^.*\n\)\1&nbsp;&nbsp;(Chris Morgan, #6239)<br>
+<br>
 With bash &quot;:make&quot; does not set v:shell_error.&nbsp;&nbsp;Possible solution: set<br>
 <a class="Type" href="options.html#'shellpipe'">'shellpipe'</a>&nbsp;to &quot;2&gt;&amp;1| tee %s; exit $<span class="Special">{PIPESTATUS[0]}</span>&quot;&nbsp;&nbsp;#5994<br>
 <br>
@@ -309,6 +333,8 @@ Wrong error when using local arglist. (Harm te Hennepe, #6133)<br>
 <br>
 Request to support&nbsp;<span class="Special">&lt;Cmd&gt;</span>&nbsp;in mappings, similar to how Neovim does this.<br>
 (Daniel Hahler, #4784)<br>
+<br>
+Test loose_clipboard() by selecting text before suspending.<br>
 <br>
 Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</span>&quot; undo.<br>
 <br>
@@ -396,7 +422,7 @@ When using :packadd files under &quot;later&quot; are not used, which is inconsi
 with packages under &quot;start&quot;. (xtal8, #1994)<br>
 <br>
 Patch to add new motion ]( and ]{.&nbsp;&nbsp;(Yasuhiro Matsumoto, #5320)<br>
-Better: use the &quot;z&quot; prefix.<br>
+Better: use the &quot;z&quot; prefix.&nbsp;&nbsp;or ]t) and [t(.<br>
 <br>
 Modeless selection doesn't work in gvim. (#4783)<br>
 Caused by patch 8.1.1534.<br>
@@ -444,17 +470,11 @@ Can be used to update highlighting. #3127&nbsp;&nbsp;#5181<br>
 Incorrect formatting with autoindent. (Sebastian Gniazdowski, #4909)<br>
 <br>
 Patch to add the :bvimgrep command.&nbsp;&nbsp;(Christian Brabandt, 2014 Nov 12)<br>
-Updated 2016 Jun 10, #858&nbsp;&nbsp;Update 2017 Mar 28: use&nbsp;<span class="Special">&lt;buffer&gt;</span><br>
+Updated 2016 Jun 10, #858&nbsp;&nbsp;Update 2017 Mar 28: use&nbsp;<span class="Special">&lt;buffer&gt;</span>.<br>
+Better use &quot;:bufgrep&quot; ?<br>
 <br>
 Errors found with random data:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;heap-buffer-overflow in alist_add (#2472)<br>
-<br>
-Patch to support CamelCase for spell checking: See a lower-to-upper case<br>
-change as a word boundary. (btucker-MPCData, 2016 Nov 6, #1235)<br>
-patch for&nbsp;<span class="MissingTag">'spellcamelcase'</span>&nbsp;option: spellcheck each CamelCased word.<br>
-(Ben Tucker, 2016 Dec 2)<br>
-<br>
-Patch to add &quot;cmdline&quot; completion to getcompletion(). (Shougo, Oct 1, #1140)<br>
 <br>
 Improve fallback for menu translations, to avoid having to create lots of<br>
 files that source the actual file.&nbsp;&nbsp;E.g. menu_da_de -&gt; menu_da<br>
@@ -470,18 +490,6 @@ Added tests (James McCoy, 2016 Aug 3, #958).&nbsp;&nbsp;Still needs more work.<b
 &quot;:2resize +10&quot; uses size of the current window, adds 10 and applies it to<br>
 window 2.&nbsp;&nbsp;User expects 10 to be added to size of window 2. (Daniel Steinberg,<br>
 #5443)<br>
-<br>
-Patch for multi-byte characters in langmap and applying a mapping on them.<br>
-(Christian Brabandt, 2015 Jun 12, update July 25)<br>
-Is this the right solution?&nbsp;&nbsp;Need to cleanup langmap behavior:<br>
-- in vgetorpeek() apply langmap to the typeahead buffer and put the result in<br>
-&nbsp;&nbsp;a copy-buffer, only when langmap is appropriate for the current mode. Then<br>
-&nbsp;&nbsp;check for mapping and let gotchars() work on the copy-buffer.<br>
-- Remove LANGMAP_ADJUST() in other parts of the code.&nbsp;&nbsp;Make sure the mode is<br>
-&nbsp;&nbsp;covered by the above change.<br>
-So that replaying the register doesn't use keymap/langmap and still does the<br>
-same thing.&nbsp;&nbsp;Remarks on PR #543 (Roland Puntaier).<br>
-Also see #737: langmap not applied to replaying recording.<br>
 <br>
 Would be nice to set tab-local values for&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>.&nbsp;&nbsp;Use<br>
 t:diffexpr_option t:diffopt_option? (#4782)<br>
@@ -512,10 +520,10 @@ Give a few examples. (#4288)<br>
 Opening a file with --remote-tab-silent that matches&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbsp;does not<br>
 work, results in (E479: No match&quot;. (#4610)<br>
 <br>
-Patch for this (Tristan Konolige, #1011, only adds the option, no implem.):<br>
 7&nbsp;&nbsp; Add an option to add one pixel column to the character width?&nbsp;&nbsp;Lucida<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Console italic is wider than the normal font (&quot;d&quot; overlaps with next char).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Opposite of&nbsp;<a class="Type" href="options.html#'linespace'">'linespace'</a>:&nbsp;<span class="MissingTag">'columnspace'</span>.<br>
+Patch for this (Tristan Konolige, #1011, only added the option, no implem.)<br>
 <br>
 Bug: script written with &quot;-W scriptout&quot; contains Key codes, while the script<br>
 read with &quot;-s scriptin&quot; expects escape codes.&nbsp;&nbsp;Probably &quot;scriptout&quot; needs to<br>
@@ -588,9 +596,6 @@ C syntax: {} inside () causes following {} to be highlighted as error.<br>
 Check: __attribute__((format(printf, on semsg() and siemsg().&nbsp;&nbsp;Where was this<br>
 added?<br>
 <br>
-Patch to add a flatten() function.&nbsp;&nbsp;#3676.&nbsp;&nbsp;Check that the doc explains the<br>
-maxdepth argument (applies to the input &quot;recursiveness&quot;).<br>
-<br>
 Add test for urxvt mouse codes.&nbsp;&nbsp;Also test that mouse coordinates can be<br>
 negative. (see #4326)<br>
 <br>
@@ -661,11 +666,6 @@ punctuation is repeated. (Smylers, 2018 Nov 17, #3621)<br>
 <br>
 ml_get error: (Israel Chauca Fuentes, 2018 Oct 17, #3550).<br>
 <br>
-Patch to add more info to OptionSet.&nbsp;&nbsp;Should mention what triggered the change<br>
-&quot;:set&quot;, &quot;:setlocal&quot;, &quot;:setglobal&quot;, &quot;modeline&quot;; and the old global value.<br>
-#4118.&nbsp;&nbsp;Proposed implementation: 2019 Mar 27.<br>
-Updated 2019 May 25.<br>
-<br>
 Using single wide base character with double wide composing character gives<br>
 drawing errors.&nbsp;&nbsp;Fill up the base character?&nbsp;&nbsp;(Dominique, #4328)<br>
 <br>
@@ -716,22 +716,12 @@ Neovim uses &quot;eob:X&quot; in&nbsp;<a class="Type" href="options.html#'fillch
 Sourceforge Vim pages still have content, redirect from empty page.<br>
 Check for PHP errors. (Wayne Davison, 2018 Oct 26)<br>
 <br>
-Patch to support &quot;:tag&nbsp;<span class="Special">&lt;tagkind&gt;</span>&nbsp;<span class="Special">&lt;tagname&gt;</span>&quot;. (emmrk, 2018 May 7, #2871)<br>
-Use something like &quot;:tag&nbsp;<span class="Special">{kind}</span>/<span class="Special">{tagname}</span>&quot;.<br>
-Not ready to include.<br>
-<br>
 Problem with Visual yank when&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;are set.<br>
 Patch with tests, but it's not clear how it is supposed to work. (tommm, 2018<br>
 Nov 17)&nbsp;&nbsp;Asked about this, Dec 22. Christian will have a look.<br>
 <br>
-Patch for larger icons in installer. (#978)&nbsp;&nbsp;Still not good.<br>
-<br>
 Patch to fix that using &quot;5gj&quot; starting inside a closed fold does not work on<br>
 screen lines but on text lines. (Julius Hulsmann, #4095)&nbsp;&nbsp;Lacks a test.<br>
-<br>
-Patch to implement&nbsp;<span class="MissingTag">'diffref'</span>&nbsp;option. (#3535)<br>
-&nbsp;&nbsp;Easier to use a&nbsp;<span class="MissingTag">'diffmaster'</span>&nbsp;option, is the extra complexity needed?<br>
-&nbsp;&nbsp;Not ready to include.<br>
 <br>
 home_replace() uses $HOME instead of &quot;homedir&quot;. (Cesar Martins, 2018 Aug 9)<br>
 <br>
@@ -760,7 +750,7 @@ Further xdiff changes:<br>
 Difference between two regexp engines: #3373<br>
 <br>
 Patch to add ch_listen() (Yasuhiro Matsumoto, 2018 Nov 26, #3639)<br>
-What is the practical use for this?<br>
+What is the practical use for this?&nbsp;&nbsp;Need an example.<br>
 <br>
 When the last line wraps, selecting with the mouse below that line only<br>
 includes the first screen line. (2018 Aug 23, #3368)<br>
@@ -783,8 +773,6 @@ when adding a sign for every quickfix entry. (#4557)<br>
 <br>
 Win32 key codes are messy.&nbsp;&nbsp;Mike Williams tried to fix that, but now old<br>
 mappings no longer work.&nbsp;&nbsp;Create a new terminal for the better solution?<br>
-<br>
-Patch to &quot;fix&quot;&nbsp;<a class="Type" href="options.html#'visualbell'">'visualbell'</a>. Add option to set delay?&nbsp;&nbsp;(#1789)<br>
 <br>
 Script generated by :mksession does not work well if there are windows with<br>
 modified buffers<br>
@@ -874,9 +862,6 @@ missing: --nofork, -A , -b, -h, etc.<br>
 deleting autocmds, not when adding them.<br>
 <br>
 Alternative manpager.vim. (Enno, 2018 Jan 5, #2529)<br>
-<br>
-Delete all the specific stuff for the Borland compiler? (#3374)<br>
-Patch in #3377 (Thomas Dziedzic)<br>
 <br>
 With&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;&quot;indent&quot; and appending an empty line, what follows isn't<br>
 included in the existing fold.&nbsp;&nbsp;Deleting the empty line and undo fixes it.<br>
@@ -1042,6 +1027,7 @@ The &quot;:move&quot; command does not honor closed folds. (Ryan Lue, #2351)<br>
 <br>
 Patch to fix increment/decrement not working properly when&nbsp;<a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;is<br>
 set. (Hirohito Higashi, 2016 Aug 1, #923)<br>
+Was this fixed?<br>
 <br>
 Cannot copy modeless selection when cursor is inside it. (lkintact, #2300)<br>
 <br>
@@ -1110,8 +1096,6 @@ wrong thing. (Nikolai Pavlov, 2017 Jul 8, #1827)<br>
 Or is this not an actual problem?<br>
 <br>
 Better TeX indent file. (Christian Brabandt, 2017 May 3)<br>
-<br>
-Patch to use a separate code for BS on Windows. (Linwei, #1823)<br>
 <br>
 Use gvimext.dll from the nightly build? (Issue #249)<br>
 <br>
@@ -1220,13 +1204,6 @@ Implement named arguments for functions:<br>
 <br>
 Add a command to take a range of lines, filter them and put the output<br>
 somewhere else.&nbsp;&nbsp;:<span class="Special">{range}</span>copy&nbsp;<span class="Special">{dest}</span>&nbsp;!cmd<br>
-<br>
-Patch to fix that empty first tab is not in session.<br>
-(Hirohito Higashi, 2016 Nov 25, #1282)<br>
-<br>
-Patch to fix escaping of job arguments. (Yasuhiro Matsumoto, 2016 Oct 5)<br>
-Update Oct 14:&nbsp;<span class="Constant"><a href="https://gist.github.com/mattn/d47e7d3bfe5ade4be86062b565a4bfca">https://gist.github.com/mattn/d47e7d3bfe5ade4be86062b565a4bfca</a></span><br>
-Update Aug 2017: #1954<br>
 <br>
 The TermResponse event is not triggered when a plugin has set&nbsp;<a class="Type" href="options.html#'eventignore'">'eventignore'</a>&nbsp;to<br>
 &quot;all&quot;.&nbsp;&nbsp;Netrw does this. (Gary Johnson, 2017 Jan 24)<br>
@@ -1391,11 +1368,6 @@ Undo message is not always properly displayed.&nbsp;&nbsp;Patch by Ken Takata, 2
 3.&nbsp;&nbsp;Doesn't work properly according to Yukihiro Nakadaira.<br>
 Also see #1635.<br>
 <br>
-Patch for systemlist(), add empty item. (thinca, Sep 30, #1135)<br>
-Add an argument to choose binary or non-binary (like readfile()), when omitted<br>
-use the current behavior.<br>
-Include the test.<br>
-<br>
 When&nbsp;<a class="Type" href="options.html#'keywordprg'">'keywordprg'</a>&nbsp;starts with &quot;:&quot; the argument is still escaped as a shell<br>
 command argument. (Romain Lafourcade, 2016 Oct 16, #1175)<br>
 <br>
@@ -1416,9 +1388,6 @@ synced.&nbsp;&nbsp;(Ryan Carney, 2016 Sep 14)<br>
 <br>
 Syntax highlighting for messages with RFC3339 timestamp (#946)<br>
 Did maintainer reply?<br>
-<br>
-Patch to avoid problem with special characters in file name.<br>
-(Shougo, 2016 Sept 19, #1099)&nbsp;&nbsp;Not finished?<br>
 <br>
 ml_get errors when reloading file. (Chris Desjardins, 2016 Apr 19)<br>
 Also with latest version.<br>
@@ -1454,8 +1423,6 @@ Possibly wrong value for seq_cur. (Florent Fayolle, 2016 May 15, #806)<br>
 Filetype plugin for awk. (Doug Kearns, 2016 Sep 5)<br>
 <br>
 Patch to improve map documentation. Issue #799.<br>
-<br>
-Patch for syntax folding optimization. (Shougo, 2016 Sep 6, #1045)<br>
 <br>
 We can use '. to go to the last change in the current buffer, but how about<br>
 the last change in any buffer?&nbsp;&nbsp;Can we use ', (, is next to .)?<br>
@@ -1512,11 +1479,6 @@ Mechelynck)&nbsp;&nbsp;Perhaps use exists(&quot;::tearoff&quot;) to check?<br>
 <br>
 Use vim.vim syntax highlighting for help file examples, but without &quot;:&quot; in<br>
 <a class="Type" href="options.html#'iskeyword'">'iskeyword'</a>&nbsp;for syntax.<br>
-<br>
-Patch to make &quot;%:h:h&quot; return &quot;.&quot; instead of the full path.<br>
-(Coot, 2016 Jan 24, #592)<br>
-<br>
-Remove SPACE_IN_FILENAME ? What could possibly go wrong?<br>
 <br>
 When command names are very long :command output is difficult to read.&nbsp;&nbsp;Use a<br>
 maximum for the column width?&nbsp;&nbsp;(#871)<br>
@@ -2111,11 +2073,6 @@ Vim using lots of memory when joining lines. (John Little, 2010 Dec 3)<br>
 <br>
 BT regexp engine: After trying a \@&gt; match and failing, submatches are not<br>
 cleared.&nbsp;&nbsp;See test64.<br>
-<br>
-Patch to make &quot;z=&quot; work when&nbsp;<a class="Type" href="options.html#'spell'">'spell'</a>&nbsp;is off.&nbsp;&nbsp;Does this have nasty side<br>
-effects?&nbsp;&nbsp;(Christian Brabandt, 2012 Aug 5, Update 2013 Aug 12)<br>
-Would also need to do this for spellbadword() and spellsuggest().<br>
-<span class="Constant"><a href="https://github.com/chrisbra/vim-mq-patches/blob/master/enable_spellchecking">https://github.com/chrisbra/vim-mq-patches/blob/master/enable_spellchecking</a></span><br>
 <br>
 On 64 bit MS-Windows &quot;long&quot; is only 32 bits, but we sometimes need to store a<br>
 64 bits value.&nbsp;&nbsp;Change all number options to use nropt_T and define it to the<br>
