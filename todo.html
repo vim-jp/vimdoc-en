@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jun 21<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jun 28<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -45,12 +45,31 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <br>
 Include src/po/vim.pot ?<br>
 <br>
-See if resizing a terminal can be fixed.<br>
-<br>
 Vim9 script:<br>
+- line continuation at script level:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;eval_to_string_skip(), test with :throw<br>
+&nbsp;&nbsp;&nbsp;&nbsp;eval1_emsg(), pass &quot;eap&quot;, test with :execute, :echomsg, :echoerr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;handle_subscript() - call_func_rettv() - get_func_tv()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args arg)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;callers of get_func_tv():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eval_func()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex_call()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;function arguments, test assert_equal() with lambda, test :function<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:import:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;others<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eval_index()<br>
+- test:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3]-&gt;Func()<br>
+<br>
 Making everything work:<br>
+- &quot;nr += 4&quot;&nbsp;&nbsp;gives &quot;already defined&quot; error.<br>
 - Error for &quot;g:var: string =&nbsp;<span class="MissingTag">'value'</span>&quot;&nbsp;<br>
 - Make func()-&gt;append('$') work - value is last argument, not first. #6305<br>
+- in Vim9 script expressions are evaluated differently, not using a type.<br>
+&nbsp;&nbsp;e.g. &quot;'' == 0&quot; does not give an error and evaluates to true.<br>
 - possible memory leak in test_vim9_func through compile_nested_function.<br>
 - memory leaks in test_vim9_expr<br>
 - memory leaks in test_vim9_script<br>
@@ -139,12 +158,6 @@ Further improvements:<br>
 - compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
 <br>
 Popup windows:<br>
-- With some sequence get get hidden finished terminal buffer. (#5768)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Cannot close popup terminal (#5744)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Buffer can't be wiped, gets status &quot;aF&quot;. (#5764)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Is buf-&gt;nwindows incorrect?<br>
-- popup_clear() and popup_close() should close the terminal popup, and<br>
-&nbsp;&nbsp; make the buffer hidden. #5745<br>
 - Cursor not updated before a redraw, making it jump. (#5943)<br>
 - With terminal in popup, allow for popup_hide() to temporarily hide it.?<br>
 - Fire some autocommand event after a new popup window was created and<br>
@@ -279,6 +292,13 @@ The buffer list and windows are locked, no changes possible<br>
 How about removing Atari MiNT support?<br>
 &nbsp;&nbsp;&nbsp;&nbsp;src/Make_mint.mak, src/os_mint.h, matches with __MINT__<br>
 <br>
+Add the &lt;=&gt; (spaceship) operator and &quot;cond ?&lt; expr ?= expr ?&gt; expr&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;replace this:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let left = GetLeftFunc()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let right = GetRightFunc()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let res = left &lt; right ? lower : left == right ? equal : upper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;by:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let res = GetLeftFunc() &lt;=&gt; GetRightFunc() ?&lt; lower ?= equal ?&gt; upper<br>
 Patch to make :q work with local arglist. (Christian Brabandt, #6286)<br>
 <br>
 Patch to fix drawing error with DirectX. (James Grant, #5688)<br>
@@ -500,9 +520,6 @@ window 2.&nbsp;&nbsp;User expects 10 to be added to size of window 2. (Daniel St
 Would be nice to set tab-local values for&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>.&nbsp;&nbsp;Use<br>
 t:diffexpr_option t:diffopt_option? (#4782)<br>
 <br>
-v:register isn't reset early enough, may be used by next command.<br>
-(Andy Massimino, #5294, possible fix in #5305)<br>
-<br>
 Internal diff doesn't handle binary file like external diff does. (Mike<br>
 Williams, 2018 Oct 30)<br>
 <br>
@@ -584,9 +601,6 @@ buffer didn't change at all.<br>
 <br>
 Line numbers in profile are off when function was defined with &quot;:execute&quot;.<br>
 (Daniel Hahler, #4511)<br>
-<br>
-Add a way to create an empty, hidden buffer.&nbsp;&nbsp;Like doing &quot;:new|hide&quot;.<br>
-&quot;:let buf = bufcreate(<span class="MissingTag">'name'</span>)<br>
 <br>
 Session file contains absolute paths when &quot;curdir&quot; is removed form<br>
 <a class="Type" href="options.html#'sessionoptions'">'sessionoptions'</a>, making it impossible to have a session with a relative path.<br>
@@ -1204,8 +1218,8 @@ Make a function to check for function-like type?<br>
 Screen updated delayed when using&nbsp;<span class="Special">CTRL-O</span>&nbsp;u in Insert mode.<br>
 (Barlik, #1191)&nbsp;&nbsp;Perhaps because status message?<br>
 <br>
-Implement named arguments for functions:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;func Foo(start, count = 1 all = 1)<br>
+Implement named arguments for functions with optional arguments:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;func Foo(start, count = 1, all = 1)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;call Foo(12, all = 0)<br>
 <br>
 Add a command to take a range of lines, filter them and put the output<br>
@@ -1398,8 +1412,6 @@ Did maintainer reply?<br>
 ml_get errors when reloading file. (Chris Desjardins, 2016 Apr 19)<br>
 Also with latest version.<br>
 <br>
-Cannot delete a file with square brackets with delete(). (#696)<br>
-<br>
 Completion for input() does not expand environment variables. (chdiza, 2016<br>
 Jul 25, #948)<br>
 <br>
@@ -1407,8 +1419,6 @@ Patch to add&nbsp;<span class="MissingTag">'systemencoding'</span>, convert betw
 names, shell commands and the like.&nbsp;&nbsp;(Kikuchan, 2010 Oct 14)<br>
 Assume the system converts between the actual encoding of the filesystem to<br>
 the system encoding (usually utf-8).<br>
-<br>
-<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>&nbsp;interferes with a Conceal match. (Rom Grk, 2016 Aug 9)<br>
 <br>
 MS-Windows: use WS_HIDE instead of SW_SHOWMINNOACTIVE in os_win32.c?<br>
 Otherwise task flickers in taskbar.<br>
@@ -1420,8 +1430,6 @@ Have a way to get the call stack, in a function and from an exception.<br>
 <br>
 Second problem in #966: ins_compl_add_tv() uses get_dict_string() multiple<br>
 times, overwrites the one buffer. (Nikolay Pavlov, 2016 Aug 5)<br>
-<br>
-Possibly wrong value for seq_cur. (Florent Fayolle, 2016 May 15, #806)<br>
 <br>
 Filetype plugin for awk. (Doug Kearns, 2016 Sep 5)<br>
 <br>
@@ -1440,8 +1448,6 @@ Reject the value? #710.<br>
 <br>
 When doing &quot;vi buf.md&quot; a BufNew autocommand for *.md is not triggered.<br>
 Because of using the initial buffer? (Dun Peal, 2016 May 12)<br>
-<br>
-Add redrawtabline command. (Naruhiko Nishino, 2016 Jun 11)<br>
 <br>
 Neovim patch for utfc_ptr2char_len()&nbsp;<span class="Constant"><a href="https://github.com/neovim/neovim/pull/4574">https://github.com/neovim/neovim/pull/4574</a></span><br>
 No test, needs some work to include.<br>
@@ -1512,19 +1518,9 @@ If &quot;:bd&quot; also closes a Tab page then the &quot; mark is not set.&nbsp;
 Patch to avoid redrawing tabline when the popup menu is visible.<br>
 (Christian Brabandt, 2016 Jan 28)<br>
 <br>
-Patch to show search statistics. (Christian Brabandt, 2016 Jul 22)<br>
-<br>
 When the CursorMovedI event triggers, and&nbsp;<span class="Special">CTRL-X</span>&nbsp;was typed, a script cannot<br>
 restore the mode properly. (Andrew Stewart, 2016 Apr 20)<br>
 Do not trigger the event?<br>
-<br>
-Using &quot;:windo&quot; to set options in all windows has the side effect that it<br>
-changes the window layout and the current window.&nbsp;&nbsp;Make a variant that saves<br>
-and restores.&nbsp;&nbsp;Use in the matchparen plugin.<br>
-Perhaps we can use &quot;:windo&nbsp;<span class="Special">&lt;restore&gt;</span>&nbsp;<span class="Special">{cmd}</span>&quot;?<br>
-Patch to add&nbsp;<span class="Special">&lt;restore&gt;</span>&nbsp;to :windo, :bufdo, etc. (Christian Brabandt, 2015 Jan<br>
-6, 2nd message)<br>
-Alternative: &quot;:keeppos&quot; command modifier: &quot;:keeppos windo&nbsp;<span class="Special">{cmd}</span>&quot;.<br>
 <br>
 Patch to fix display of listchars on the cursorline. (Nayuri Aohime, 2013)<br>
 Update suggested by Yasuhiro Matsumoto, 2014 Nov 25:<br>
@@ -1554,10 +1550,6 @@ Python: &quot;:py raw_input(<a class="Type" href="options.html#'prompt'">'prompt
 <br>
 Comparing nested structures with &quot;==&quot; uses a different comparator than when<br>
 comparing individual items.<br>
-Also, &quot;'' == 0&quot; evaluates to true, which isn't nice.<br>
-Add &quot;===&quot; to have a strict comparison (type and value match).<br>
-Add &quot;==*&quot; (?) to have a value match, but no automatic conversion, and v:true<br>
-equals 1 and 1.0, v:false equals 0 and 0.0.?<br>
 <br>
 Using uninitialized memory. (Dominique Pelle, 2015 Nov 4)<br>
 <br>
@@ -1728,8 +1720,6 @@ arguments.<br>
 <br>
 Problem with transparent and matchgroup.&nbsp;&nbsp;Issue #475<br>
 <br>
-Patch to add :arglocal and :arglists. (Marcin Szamotulski, 2014 Aug 6)<br>
-<br>
 Spell files use a latin single quote. Unicode also has another single quote:<br>
 0x2019.&nbsp;&nbsp;(Ron Aaron, 2014 Apr 4)<br>
 New OpenOffice spell files support this with ICONV.&nbsp;&nbsp;But they are not<br>
@@ -1756,8 +1746,11 @@ from?<br>
 Problem with upwards search on Windows (works OK on Linux). (Brett Stahlman,<br>
 2014 Jun 8)<br>
 <br>
-Include a plugin manager with Vim? Neobundle seems to be the best currently.<br>
+Include a plugin manager with Vim? vim-plug seems to be the best currently:<br>
+<span class="Constant"><a href="https://github.com/junegunn/vim-plug">https://github.com/junegunn/vim-plug</a></span>.<br>
 Also Vundle:&nbsp;<span class="Constant"><a href="https://github.com/gmarik/vundle">https://github.com/gmarik/vundle</a></span><br>
+Or minpac:&nbsp;<span class="Constant"><a href="https://github.com/k-takata/minpac">https://github.com/k-takata/minpac</a></span>, since it leverages the builtin<br>
+package feature.<br>
 Long message about this from ZyX, 2014 Mar 23.&nbsp;&nbsp;And following replies.<br>
 Also see&nbsp;<span class="Constant"><a href="http://vim-wiki.mawercer.de/wiki/topic/vim%20plugin%20managment.html">http://vim-wiki.mawercer.de/wiki/topic/vim%20plugin%20managment.html</a></span><br>
 User view:<br>
@@ -1812,6 +1805,7 @@ instead. (Samuel Ferencik, 2013 Sep 28)<br>
 <br>
 Patch for XDG base directory support. (Jean François Bignolles, 2014 Mar 4)<br>
 Remark on the docs.&nbsp;&nbsp;Should not be a compile time feature.&nbsp;&nbsp;But then what?<br>
+Also see #2034.<br>
 <br>
 Completion of &quot;:e&quot; is &quot;:earlier&quot;, should be &quot;:edit&quot;.&nbsp;&nbsp;Complete to the matching<br>
 command instead of doing this alphabetically. (Mikel Jorgensen)<br>
@@ -1873,6 +1867,10 @@ Patch to add&nbsp;<span class="Special">{lhs}</span>&nbsp;to :mapclear: clear al
 <br>
 Exception caused by argument of return is not caught by try/catch.<br>
 (David Barnett, 2013 Nov 19)<br>
+Bug in try/catch: return with invalid compare throws error that isn't caught.<br>
+(ZyX, 2011 Jan 26)<br>
+try/catch not working for argument of return. (Matt Wozniski, 2008 Sep 15)<br>
+try/catch not working when inside a for loop. (ZyX, 2011 Jan 25)<br>
 <br>
 Patch to fix that&nbsp;<a class="Type" href="options.html#'cedit'">'cedit'</a>&nbsp;is recognized after :normal. (Christian Brabandt,<br>
 2013 Mar 19, later message)<br>
@@ -1908,6 +1906,8 @@ process that is running.&nbsp;&nbsp;It might actually be some other program, e.g
 a reboot.<br>
 <br>
 patch to add &quot;combine&quot; flag to&nbsp;&nbsp;syntax commands. (so8res, 2012 Dec 6)<br>
+Patch to add &quot;combine&quot; to :syntax, combines highlight attributes. (Nate<br>
+Soares, 2012 Dec 3)<br>
 <br>
 Syntax update problem in one buffer opened in two windows, bottom window is<br>
 not correctly updated. (Paul Harris, 2012 Feb 27)<br>
@@ -2094,9 +2094,6 @@ When setqflist() uses a filename that triggers a BufReadCmd autocommand Vim<br>
 doesn't jump to the correct line with :cfirst. (ZyX,&nbsp;&nbsp;2011 Sep 18)<br>
 <br>
 Behavior of i&quot; and a&quot; text objects isn't logical. (Ben Fritz, 2013 Nov 19)<br>
-<br>
-Bug in try/catch: return with invalid compare throws error that isn't caught.<br>
-(ZyX, 2011 Jan 26)<br>
 <br>
 When setting a local option value from the global value, add a script ID that<br>
 indicates this, so that &quot;:verbose set&quot; can give a hint.&nbsp;&nbsp;Check with options in<br>
@@ -2285,9 +2282,6 @@ or replace with a character and continue?<br>
 Add local time at start of --startuptime output.<br>
 Requires configure check for localtime().<br>
 Use format year-month-day hr:min:sec.<br>
-<br>
-Patch to add &quot;combine&quot; to :syntax, combines highlight attributes. (Nate<br>
-Soares, 2012 Dec 3)<br>
 <br>
 Patch to make &quot;:hi link&quot; also take arguments. (Nate Soares, 2012 Dec 4)<br>
 <br>
@@ -2483,6 +2477,9 @@ Sergey Khorev)<br>
 <br>
 Consider making YankRing or something else that keeps a list of yanked text<br>
 part of standard Vim.&nbsp;&nbsp;The &quot;1 to &quot;9 registers are not sufficient.<br>
+6&nbsp;&nbsp; When yanking into the unnamed registers several times, somehow make the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;previous contents also available (like it's done for deleting).&nbsp;&nbsp;What<br>
+&nbsp;&nbsp;&nbsp;&nbsp;register names to use?&nbsp;&nbsp;g&quot;1, g&quot;2, etc.?<br>
 <br>
 After doing &quot;su&quot; $HOME can be the old user's home, thus ~root/file is not<br>
 correct.&nbsp;&nbsp;Don't use it in the swap file.<br>
@@ -2688,10 +2685,6 @@ Problem with&nbsp;<a class="Type" href="options.html#'ts'">'ts'</a>&nbsp;set to 
 <br>
 In the swapfile dialog, add a H(elp) option that gives more info about what<br>
 each choice does.&nbsp;&nbsp;Similar to&nbsp;&nbsp;&quot;:help swap-exists-choices&quot;<br>
-<br>
-try/catch not working for argument of return. (Matt Wozniski, 2008 Sep 15)<br>
-<br>
-try/catch not working when inside a for loop. (ZyX, 2011 Jan 25)<br>
 <br>
 &quot;:tab help&quot; always opens a new tab, while &quot;:help&quot; re-uses an existing window.<br>
 Would be more consistent when an existing tab is re-used. (Tony Mechelynck)<br>
@@ -3262,7 +3255,7 @@ Quickfix/Location List:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&quot;:grep&quot; and &quot;:helpgrep&quot;.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;More generic solution: support a filter (e.g., by calling a function).<br>
 7&nbsp;&nbsp; Add a command that goes back to the position from before jumping to the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;first quickfix location.&nbsp;&nbsp;&quot;:cbefore&quot;?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;first quickfix location.<br>
 <br>
 Vi incompatibility:<br>
 -&nbsp;&nbsp; Try new POSIX tests, made after my comments. (Geoff Clare, 2005 April 7)<br>
@@ -3299,7 +3292,6 @@ Vi incompatibility:<br>
 7&nbsp;&nbsp; The &quot;:map&quot; command output overwrites the command.&nbsp;&nbsp;Perhaps it should keep<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the &quot;:map&quot; when it's used without arguments?<br>
 7&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-L</span>&nbsp;is not the end of a section?&nbsp;&nbsp;It is for Posix!&nbsp;&nbsp;Make it an option.<br>
-7&nbsp;&nbsp; Implement&nbsp;<a class="Type" href="options.html#'prompt'">'prompt'</a>&nbsp;option.&nbsp;&nbsp;Init to off when stdin is not a tty.<br>
 7&nbsp;&nbsp; Add a way to send an email for a crashed edit session.&nbsp;&nbsp;Create a file when<br>
 &nbsp;&nbsp;&nbsp;&nbsp;making changes (containing name of the swap file), delete it when writing<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the file.&nbsp;&nbsp;Supply a program that can check for crashed sessions (either<br>
@@ -3477,8 +3469,6 @@ GUI:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Solaris 2.6. (Marley)<br>
 9&nbsp;&nbsp; On Solaris: Using a &quot;-geometry&quot; argument, bigger than the window where Vim<br>
 &nbsp;&nbsp;&nbsp;&nbsp;is started from, causes empty lines below the cmdline. (raf)<br>
-8&nbsp;&nbsp; X11 GUI: When menu is disabled by excluding 'm' from&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a>, ALT key<br>
-&nbsp;&nbsp;&nbsp;&nbsp;should not be used to trigger a menu (like the Win32 version).<br>
 8&nbsp;&nbsp; When setting&nbsp;<a class="Type" href="options.html#'langmenu'">'langmenu'</a>, it should be effective immediately.&nbsp;&nbsp;Store both<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the English and the translated text in the menu structure.&nbsp;&nbsp;Re-generate<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the translation when&nbsp;<a class="Type" href="options.html#'langmenu'">'langmenu'</a>&nbsp;has changed.<br>
@@ -3517,10 +3507,6 @@ GUI:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;When the &quot;+0+0&quot; is omitted it works.<br>
 8&nbsp;&nbsp; When starting an external command, and&nbsp;<a class="Type" href="options.html#'guipty'">'guipty'</a>&nbsp;set, BS and DEL are mixed<br>
 &nbsp;&nbsp;&nbsp;&nbsp;up.&nbsp;&nbsp;Set erase character somehow?<br>
-8&nbsp;&nbsp; A dead circumflex followed by a space should give the '^' character<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(Rommel).&nbsp;&nbsp;Look how xterm does this.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Also: Bednar has some code for dead key handling.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Also: Nedit 5.0.2 with USE_XMIM does it right. (Gaya)<br>
 8&nbsp;&nbsp; The compose key doesn't work properly (Cepas).&nbsp;&nbsp;Both for Win32 and X11.<br>
 7&nbsp;&nbsp; The cursor in an inactive window should be hollow.&nbsp;&nbsp;Currently it's not<br>
 &nbsp;&nbsp;&nbsp;&nbsp;visible.<br>
@@ -3617,17 +3603,8 @@ Macintosh:<br>
 <br>
 <br>
 &quot;Small&quot; problems:<br>
--&nbsp;&nbsp; Can't disable terminal flow control, to enable the use of&nbsp;<span class="Special">CTRL-S</span>&nbsp;and<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-Q</span>.&nbsp;&nbsp;Add an option for it?<br>
 -&nbsp;&nbsp; When using e_secure in do_one_cmd() mention the command being executed,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;otherwise it's not clear where it comes from.<br>
--&nbsp;&nbsp; When the quickfix window is open and executing &quot;:echo&nbsp;<span class="MissingTag">'hello'</span>&quot; using the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Command-line window, the text is immediately removed by the redrawing.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(Michael Henry, 2008 Nov 1)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Generic solution: When redrawing while there is a message on the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;cmdline, don't erase the display but draw over the existing text.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Other solution, redraw after closing the cmdline window, before executing<br>
-&nbsp;&nbsp;&nbsp;&nbsp;the command.<br>
 9&nbsp;&nbsp; For Turkish vim_tolower() and vim_toupper() also need to use utf_<br>
 &nbsp;&nbsp;&nbsp;&nbsp;functions for characters below 0x80. (Sertacyildiz)<br>
 9&nbsp;&nbsp; When the last edited file is a help file, using '0 in a new Vim doesn't<br>
@@ -4087,8 +4064,6 @@ Spell checking:<br>
 -&nbsp;&nbsp; Considering Hunspell 1.1.4:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;What does MAXNGRAMSUGS do?<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Is COMPLEXPREFIXES necessary when we have flags for affixes?<br>
--&nbsp;&nbsp; Support spelling words in CamelCase as if they were two separate words.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Requires some option to enable it. (Timothy Knox)<br>
 -&nbsp;&nbsp; There is no Finnish spell checking file.&nbsp;&nbsp;For openoffice Voikko is now<br>
 &nbsp;&nbsp;&nbsp;&nbsp;used, which is based on Malaga:&nbsp;<span class="Constant"><a href="http://home.arcor.de/bjoern-beutel/malaga/">http://home.arcor.de/bjoern-beutel/malaga/</a></span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;(Teemu Likonen)<br>
@@ -4463,8 +4438,6 @@ Vim script language:<br>
 7&nbsp;&nbsp; Execute a function with standard option values.&nbsp;&nbsp;No need to save and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;restore option values.&nbsp;&nbsp;Especially useful for new options.&nbsp;&nbsp;Problem: how<br>
 &nbsp;&nbsp;&nbsp;&nbsp;to avoid a performance penalty (esp. for string options)?<br>
-8&nbsp;&nbsp; Add referring to key options with &quot;&amp;t_xx&quot;.&nbsp;&nbsp;Both for &quot;echo &amp;t_xx&quot; and<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&quot;:let &amp;t_xx =&quot;.&nbsp;&nbsp;Useful for making portable mappings.<br>
 -&nbsp;&nbsp; range for &quot;:exec&quot;, pass it on to the executed command.&nbsp;&nbsp;(Webb)<br>
 8&nbsp;&nbsp; &quot;:<span class="Special">{range}</span>source&quot;: source the lines from the current file.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can already yank lines and use :@&quot; to execute them.<br>
@@ -4695,8 +4668,6 @@ Messages:<br>
 -&nbsp;&nbsp; Delete message after new command has been entered and have waited for key.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Perhaps after ten seconds?<br>
 -&nbsp;&nbsp; Make message history available in &quot;msg&quot; variables: msg1, msg2, .. msg9.<br>
-8&nbsp;&nbsp; When reading from stdin allow suppressing the &quot;reading from stdin&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;message.<br>
 9&nbsp;&nbsp; Check handling of overwriting of messages and delays:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Very wrong: errors while redrawing cause endless loop.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;When switching to another file and screen scrolls because of the long<br>
@@ -5984,9 +5955,6 @@ Registers:<br>
 8&nbsp;&nbsp; Add put command that overwrites existing text.&nbsp;&nbsp;Should also work for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;blocks.&nbsp;&nbsp;Useful to move text around in a table.&nbsp;&nbsp;Works like using &quot;R ^R r&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;for every line.<br>
-6&nbsp;&nbsp; When yanking into the unnamed registers several times, somehow make the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;previous contents also available (like it's done for deleting).&nbsp;&nbsp;What<br>
-&nbsp;&nbsp;&nbsp;&nbsp;register names to use?&nbsp;&nbsp;g&quot;1, g&quot;2, etc.?<br>
 -&nbsp;&nbsp; When appending to a register, also report the total resulting number of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;lines.&nbsp;&nbsp;Or just say &quot;99 more lines yanked&quot;, add the &quot;more&quot;.<br>
 -&nbsp;&nbsp; When inserting a register in Insert mode with&nbsp;<span class="Special">CTRL-R</span>, don't insert comment<br>
