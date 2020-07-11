@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jun 24<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jul 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -69,15 +69,19 @@ THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
 <span class="PreProc">Comments starting with #</span><br>
 <br>
-In Vim script comments normally start with double quote.&nbsp;&nbsp;That can also be the<br>
-start of a string, thus in many places it cannot be used.&nbsp;&nbsp;In Vim9 script a<br>
-comment can also start with #.&nbsp;&nbsp;In Vi this is a command to list text with<br>
-numbers, but you can also use&nbsp;<a class="Comment" href="various.html#:number">:number</a>&nbsp;for that.<br>
+In Vim script comments start with double quote.&nbsp;&nbsp;That can also be the start of<br>
+a string, thus in many places it cannot be used.&nbsp;&nbsp;In Vim9 script a comment<br>
+normally starts with #.&nbsp;&nbsp;In Vi this is a command to list text with numbers,<br>
+but you can also use&nbsp;<a class="Comment" href="various.html#:number">:number</a>&nbsp;for that.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let count = 0&nbsp;&nbsp;# number of occurrences</div>
 <br>
 To improve readability there must be a space between the command and the #<br>
 that starts a comment.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that #{ is the start of a dictionary, therefore<br>
 it cannot start a comment.<br>
+<br>
+Since Vim9 script allows for line breaks in many places, the double quoted<br>
+comment also cannot be used at the start of a line after an expression.&nbsp;&nbsp;To<br>
+avoid confusion it is best to only use # comments.<br>
 <br>
 <br>
 <span class="PreProc">Vim9 functions</span><br>
@@ -281,10 +285,13 @@ possible just before or after the operator.&nbsp;&nbsp;For example:<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1050" name="E1050">E1050</a><br>
 To make it possible for the operator at the start of the line to be<br>
-recognized, it is required to put a colon before a range.&nbsp;&nbsp;This will adde<br>
+recognized, it is required to put a colon before a range.&nbsp;&nbsp;This will add<br>
 &quot;start&quot; and print:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = start<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ print</div>
+Like this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = start + print</div>
+<br>
 This will assign &quot;start&quot; and print a line:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = start<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:+ print</div>
@@ -296,8 +303,32 @@ arguments:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;separator = '-'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;): string</div>
 <br>
-<span class="Todo">Note</span>&nbsp;that &quot;enddef&quot; cannot be used at the start of a continuation line, it ends<br>
-the current function.<br>
+<span class="Todo">Notes</span>:<br>
+- &quot;enddef&quot; cannot be used at the start of a continuation line, it ends the<br>
+&nbsp;&nbsp;current function.<br>
+- No line break is allowed in the LHS of an assignment.&nbsp;&nbsp;Specifically when<br>
+&nbsp;&nbsp;unpacking a list&nbsp;<a class="Identifier" href="eval.html#:let-unpack">:let-unpack</a>. This is OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[var1, var2] =<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Func()</div>
+&nbsp;&nbsp;&nbsp;This does not work:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[var1,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var2] =<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Func()</div>
+- No line break is allowed in between arguments of an&nbsp;<a class="Comment" href="eval.html#:echo">:echo</a>,&nbsp;<a class="Comment" href="eval.html#:execute">:execute</a>&nbsp;and<br>
+&nbsp;&nbsp;similar commands.&nbsp;&nbsp;This is OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo [1,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2] [3,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4]</div>
+&nbsp;&nbsp;&nbsp;This does not work:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo [1, 2]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3, 4]</div>
+- No line break is allowed in the arguments of a lambda, between the &quot;{&quot; and<br>
+&nbsp;&nbsp;&quot;-&gt;&quot;.&nbsp;&nbsp;This is OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, {k, v -&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v &gt; 0})</div>
+&nbsp;&nbsp;&nbsp;This does not work:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, {k,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v -&gt; v &gt; 0})</div>
 <br>
 <br>
 <span class="PreProc">No curly braces expansion</span><br>
@@ -323,7 +354,8 @@ Vim9 script enforces proper use of white space.&nbsp;&nbsp;This is no longer all
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var =234&nbsp;&nbsp;&nbsp;&nbsp;&quot; Error!</div>
 There must be white space before and after the &quot;=&quot;:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var = 234&nbsp;&nbsp; &quot; OK</div>
-White space must also be put before the # that starts a comment:<br>
+White space must also be put before the # that starts a comment after a<br>
+command:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var = 234# Error!<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var = 234 # OK</div>
 <br>
@@ -483,6 +515,22 @@ prefix.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is for debugging and testing.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that for command line completion of&nbsp;<span class="Special">{func}</span>&nbsp;you<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can prepend &quot;s:&quot; to find script-local functions.<br>
+<br>
+<span class="PreProc">Limitations</span><br>
+<br>
+Local variables will not be visible to string evaluation.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def EvalString(): list&lt;string&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let list = ['aa', 'bb', 'cc', 'dd']<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return range(1, 2)-&gt;map('list[v:val]')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+The map argument is a string expression, which is evaluated without the<br>
+function scope.&nbsp;&nbsp;Instead, use a lambda:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def EvalString(): list&lt;string&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let list = ['aa', 'bb', 'cc', 'dd']<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return range(1, 2)-&gt;map({ _, v -&gt; list[v] })<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>

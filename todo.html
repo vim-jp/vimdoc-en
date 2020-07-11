@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jun 28<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jul 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,38 +43,22 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Include src/po/vim.pot ?<br>
-<br>
-Vim9 script:<br>
-- line continuation at script level:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;eval_to_string_skip(), test with :throw<br>
-&nbsp;&nbsp;&nbsp;&nbsp;eval1_emsg(), pass &quot;eap&quot;, test with :execute, :echomsg, :echoerr<br>
-&nbsp;&nbsp;&nbsp;&nbsp;handle_subscript() - call_func_rettv() - get_func_tv()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func(<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args arg)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;callers of get_func_tv():<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eval_func()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex_call()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;function arguments, test assert_equal() with lambda, test :function<br>
-&nbsp;&nbsp;&nbsp;&nbsp;:import:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;others<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eval_index()<br>
-- test:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3]-&gt;Func()<br>
-<br>
 Making everything work:<br>
-- &quot;nr += 4&quot;&nbsp;&nbsp;gives &quot;already defined&quot; error.<br>
-- Error for &quot;g:var: string =&nbsp;<span class="MissingTag">'value'</span>&quot;&nbsp;<br>
-- Make func()-&gt;append('$') work - value is last argument, not first. #6305<br>
 - in Vim9 script expressions are evaluated differently, not using a type.<br>
 &nbsp;&nbsp;e.g. &quot;'' == 0&quot; does not give an error and evaluates to true.<br>
-- possible memory leak in test_vim9_func through compile_nested_function.<br>
-- memory leaks in test_vim9_expr<br>
-- memory leaks in test_vim9_script<br>
+- cannot put # comment&nbsp;&nbsp;after assert() in :def function<br>
 - more return types depending on the first argument, like sort().<br>
 - Check that when sourcing a Vim9 script, only the global items can be used.<br>
+- :put with a &quot;=&quot; register argument doesn't work, need to find the expression<br>
+&nbsp;&nbsp;and compile it. (#6397)<br>
+- should&nbsp;&nbsp;&quot;<span class="MissingTag">'text'</span>-&gt;method()&quot;&nbsp;&nbsp;work?&nbsp;&nbsp;'t is a range, but 'text isn't.<br>
+- Slice of list: [1, 2, 3][1:2].<br>
+- Give runtime error if function argument is wrong.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Increment(nr: number)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;range(3)-&gt;Increment()<br>
+- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :next, :argedit, :argadd, :argdelete, :drop<br>
+- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :vimgrep, :vimgrepadd, :lvimgrep, :lvimgrepadd<br>
+- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :mkspell<br>
 - Make &quot;true&quot; and &quot;false&quot; work in vim9script<br>
 - Test that a function defined inside a :def function is local to that<br>
 &nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
@@ -92,9 +76,10 @@ Making everything work:<br>
 - Compile redir to local variable: var_redir_start().<br>
 - Compile builtin functions that access local variables:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;islocked()<br>
-- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :next, :argedit, :argadd, :argdelete, :drop<br>
-- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :vimgrep, :vimgrepadd, :lvimgrep, :lvimgrepadd<br>
-- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :mkspell<br>
+- possible memory leak in test_vim9_func through compile_nested_function.<br>
+- memory leaks in test_vim9_expr<br>
+- memory leaks in test_vim9_script<br>
+- memory leaks in test_vim9_cmd<br>
 - When evaluating constants for script variables, some functions could work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;has(<span class="MissingTag">'asdf'</span>), len(<span class="MissingTag">'string'</span>)<br>
 - Support type for &quot;:let&quot;/&quot;:const&quot; at script level for Vim9 script.<br>
@@ -344,6 +329,9 @@ Might be related to #6088.<br>
 When changing the crypt key the buffer should be considered modified.<br>
 Like when changing&nbsp;<a class="Type" href="options.html#'fileformat'">'fileformat'</a>.&nbsp;&nbsp;Save the old key in save_file_ff().<br>
 (Ninu-Ciprian Marginean)<br>
+<br>
+Patch to implement the vimtutor with a plugin: #6414<br>
+Was originally writtten by Felipe Morales.<br>
 <br>
 Strange sequence of BufWipeout and BufNew events while doing omni-complete.<br>
 (Paul Jolly, #5656)<br>
@@ -1079,7 +1067,7 @@ Problem with three-piece comment. (Michael Lee, 2017 May 11, #1696)<br>
 <br>
 Creating a partial with an autoload function is confused about the &quot;self&quot;<br>
 attribute of the function.&nbsp;&nbsp;For an unknown function assume &quot;self&quot; and make<br>
-that optiona? (Bjorn Linse, 2017 Aug 5)<br>
+that optional? (Bjorn Linse, 2017 Aug 5)<br>
 <br>
 Cindent: returning a structure has more indent for the second item.<br>
 (Sam Pagenkopf, 2017 Sep 14, #2090)<br>
