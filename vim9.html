@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jul 10<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jul 17<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -69,19 +69,23 @@ THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
 <span class="PreProc">Comments starting with #</span><br>
 <br>
-In Vim script comments start with double quote.&nbsp;&nbsp;That can also be the start of<br>
-a string, thus in many places it cannot be used.&nbsp;&nbsp;In Vim9 script a comment<br>
-normally starts with #.&nbsp;&nbsp;In Vi this is a command to list text with numbers,<br>
-but you can also use&nbsp;<a class="Comment" href="various.html#:number">:number</a>&nbsp;for that.<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let count = 0&nbsp;&nbsp;# number of occurrences</div>
+In legacy Vim script comments start with double quote.&nbsp;&nbsp;In Vim9 script<br>
+comments start with #.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# declarations<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let count = 0&nbsp;&nbsp;# number of occurrences</div>
 <br>
-To improve readability there must be a space between the command and the #<br>
+The reason is that a double quote can also be the start of a string. In many<br>
+places, especially halfway an expression with a line break, it's hard to tell<br>
+what the meaning is.&nbsp;&nbsp;To avoid confusion only # comments are recognized.<br>
+This is the same as in shell scripts and Python programs.<br>
+<br>
+In Vi # is a command to list text with numbers.&nbsp;&nbsp;In Vim9 script you can use<br>
+<a class="Comment" href="various.html#:number">:number</a>&nbsp;for that.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;101number</div>
+<br>
+To improve readability there must be a space between a command and the #<br>
 that starts a comment.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that #{ is the start of a dictionary, therefore<br>
 it cannot start a comment.<br>
-<br>
-Since Vim9 script allows for line breaks in many places, the double quoted<br>
-comment also cannot be used at the start of a line after an expression.&nbsp;&nbsp;To<br>
-avoid confusion it is best to only use # comments.<br>
 <br>
 <br>
 <span class="PreProc">Vim9 functions</span><br>
@@ -405,6 +409,7 @@ The boolean operators &quot;||&quot; and &quot;&amp;&amp;&quot; do not change th
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 || ''&nbsp;&nbsp;== ''<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &amp;&amp; 2&nbsp;&nbsp; == 2<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &amp;&amp; 2&nbsp;&nbsp; == 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 &amp;&amp; 0&nbsp;&nbsp; == 0<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[] &amp;&amp; 2&nbsp;&nbsp;== []</div>
 <br>
 When using&nbsp;<span class="Comment">..</span>&nbsp;for string concatenation the arguments are always converted to<br>
@@ -423,13 +428,15 @@ be made.&nbsp;&nbsp;Here is a summary of what might be unexpected.<br>
 <br>
 Ex command ranges need to be prefixed with a colon.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; legacy Vim&#0058; shifts the previous line to the right<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;func()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Vim9&#0058; method call<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;func()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Vim9&#0058; method call in continuation line<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; Vim9&#0058; shifts the previous line to the right</div>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s/a/b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; legacy Vim&#0058; substitute on all lines<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x = alongname<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; % another&nbsp;&nbsp;&quot; Vim9&#0058; line continuation without a backslash<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/a/b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; Vim9&#0058; substitute on all lines</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/a/b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; Vim9&#0058; substitute on all lines<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'text'-&gt;func()&nbsp;&nbsp;&quot; Vim9&#0058; method call<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:'t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; legacy Vim&#0058; jump to mark m</div>
 <br>
 Functions defined with&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;compile the whole function.&nbsp;&nbsp;Legacy functions<br>
 can bail out, and the following lines are not parsed:<br>
