@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jul 10<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jul 26<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,25 +44,36 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Making everything work:<br>
-- in Vim9 script expressions are evaluated differently, not using a type.<br>
-&nbsp;&nbsp;e.g. &quot;'' == 0&quot; does not give an error and evaluates to true.<br>
-- cannot put # comment&nbsp;&nbsp;after assert() in :def function<br>
-- more return types depending on the first argument, like sort().<br>
+- more items in&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/issues/6507">https://github.com/vim/vim/issues/6507</a></span><br>
+- More &quot;goto failed&quot; with check for trylevel.<br>
+- memory leak in test_vim9_script<br>
 - Check that when sourcing a Vim9 script, only the global items can be used.<br>
 - :put with a &quot;=&quot; register argument doesn't work, need to find the expression<br>
 &nbsp;&nbsp;and compile it. (#6397)<br>
-- should&nbsp;&nbsp;&quot;<span class="MissingTag">'text'</span>-&gt;method()&quot;&nbsp;&nbsp;work?&nbsp;&nbsp;'t is a range, but 'text isn't.<br>
+- At the script level, keep script variables local to the block they are<br>
+&nbsp;&nbsp;declared in?&nbsp;&nbsp;Need to remember what variables were declared and delete them<br>
+&nbsp;&nbsp;when leaving the block.<br>
+- Implement { } block at the script level.<br>
+- need to check type when a declaration specifies a type: #6507<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let nr: number =&nbsp;<span class="MissingTag">'asdf'</span><br>
+- Make map() give an error if the resulting type is wrong.<br>
+&nbsp;&nbsp;Add mapnew() to create a new List/Dict for the result, which can have a<br>
+&nbsp;&nbsp;different value type.<br>
+- Implement &quot;export {one, two three}&quot;.<br>
+- ISN_CHECKTYPE could use check_argtype()<br>
 - Slice of list: [1, 2, 3][1:2].<br>
+- give error for variable name:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let p = function('NoSuchFunc')<br>
 - Give runtime error if function argument is wrong.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Increment(nr: number)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;range(3)-&gt;Increment()<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :next, :argedit, :argadd, :argdelete, :drop<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :vimgrep, :vimgrepadd, :lvimgrep, :lvimgrepadd<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :mkspell<br>
-- Make &quot;true&quot; and &quot;false&quot; work in vim9script<br>
 - Test that a function defined inside a :def function is local to that<br>
 &nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
 &nbsp;&nbsp;defined.<br>
+- Support passing v:none to use the default argument value. (#6504)<br>
 - make 0 ==&nbsp;<span class="MissingTag">'string'</span>&nbsp;fail on the script level, like inside :def.<br>
 - Check that when using a user function name without prefix, it does not find<br>
 &nbsp;&nbsp;a global function.&nbsp;&nbsp;Prefixing g: is required.<br>
@@ -82,10 +93,6 @@ Making everything work:<br>
 - memory leaks in test_vim9_cmd<br>
 - When evaluating constants for script variables, some functions could work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;has(<span class="MissingTag">'asdf'</span>), len(<span class="MissingTag">'string'</span>)<br>
-- Support type for &quot;:let&quot;/&quot;:const&quot; at script level for Vim9 script.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(Ben Jackson, #5671)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Can we share the code from ex_let_const() between direct execution and<br>
-&nbsp;&nbsp;&nbsp;&nbsp;compiling?<br>
 - Implement &quot;as Name&quot; in &quot;import Item as Name from ...&quot;<br>
 - Disallow unlet for local/script/imported vars<br>
 - Make &quot;++nr&quot; work.<br>
@@ -96,6 +103,7 @@ Making everything work:<br>
 - eval_expr() call in dbg_parsearg() and debuggy_find()<br>
 - has() is compiled as a constant, but some checks are dynamic.<br>
 &nbsp;&nbsp;Check for dynamic values, such as &quot;gui_running&quot;.<br>
+- Implement command modifiers, such as &quot;silent&quot;. (#6530)<br>
 New syntax and functionality:<br>
 Improve error checking:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
@@ -144,11 +152,15 @@ Further improvements:<br>
 <br>
 Popup windows:<br>
 - Cursor not updated before a redraw, making it jump. (#5943)<br>
+- Add a termcap entry for changing the cursor when it goes under the popup and<br>
+&nbsp;&nbsp;back.&nbsp;&nbsp;like t_SI and t_EI&nbsp;&nbsp;(t_SU and t_EU, where &quot;U&quot; means under?)<br>
 - With terminal in popup, allow for popup_hide() to temporarily hide it.?<br>
 - Fire some autocommand event after a new popup window was created and<br>
 &nbsp;&nbsp;positioned?&nbsp;&nbsp;PopupNew?&nbsp;&nbsp;Could be used to set some options or move it out of<br>
 &nbsp;&nbsp;the way. (#5737)<br>
 &nbsp;&nbsp;However, it may also cause trouble, changing the popup of another plugin.<br>
+- Add a way to use popup_menu() synchronously: instead of invoking the<br>
+&nbsp;&nbsp;callback, return the choice. (Ben Jackson, #6534)<br>
 - Use popup (or popup menu) for command line completion<br>
 - When using a popup for the info of a completion menu, and there is not<br>
 &nbsp;&nbsp;enough space, let the popup overlap with the menu. (#4544)<br>
@@ -204,6 +216,9 @@ Terminal debugger:<br>
 <br>
 Terminal emulator window:<br>
 - No support for underline color, t_8u.<br>
+- When in terminal-Normal mode when the job finishes, the cursor jumps to the<br>
+&nbsp;&nbsp;end but the window is not updated.&nbsp;&nbsp;This only happens when typing &quot;a&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:term bash -c &quot;for V in&nbsp;<span class="Special">{0..5}</span>; do echo $V; sleep 1; done&quot;<br>
 - When started with &quot;:terminal ++close&quot; and the shell exits but there is a<br>
 &nbsp;&nbsp;background process, the window remains open, because the channel still<br>
 &nbsp;&nbsp;exists (and output still shows).&nbsp;&nbsp;Perhaps close the window when an explicit<br>
@@ -243,7 +258,7 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
 Error numbers available:<br>
-E489, E610, E611, E653, E856<br>
+E610, E611, E653<br>
 <br>
 Remove SPACE_IN_FILENAME ? It is only used for completion.<br>
 <br>
@@ -274,8 +289,15 @@ autocommands for the buffer lifecycle:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;BufIsRenamed&nbsp;&nbsp;(after buffer ID gets another name)<br>
 The buffer list and windows are locked, no changes possible<br>
 <br>
-How about removing Atari MiNT support?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;src/Make_mint.mak, src/os_mint.h, matches with __MINT__<br>
+Make it possible to map (console and GUI):&nbsp;&nbsp;#6457<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-[&gt;</span>&nbsp;&nbsp; 0x27&nbsp;&nbsp; or is this&nbsp;<span class="Special">&lt;Esc&gt;</span>&nbsp;?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-\&gt;</span>&nbsp;&nbsp; 0x28<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-]&gt;</span>&nbsp;&nbsp; 0x29<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-^&gt;</span>&nbsp;&nbsp; 0x30<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-_&gt;</span>&nbsp;&nbsp; 0x31<br>
+<br>
+Patch for Template string: #4634<br>
+Have another look at the implementation.<br>
 <br>
 Add the &lt;=&gt; (spaceship) operator and &quot;cond ?&lt; expr ?= expr ?&gt; expr&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;replace this:<br>
@@ -285,6 +307,13 @@ Add the &lt;=&gt; (spaceship) operator and &quot;cond ?&lt; expr ?= expr ?&gt; e
 &nbsp;&nbsp;&nbsp;&nbsp;by:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let res = GetLeftFunc() &lt;=&gt; GetRightFunc() ?&lt; lower ?= equal ?&gt; upper<br>
 Patch to make :q work with local arglist. (Christian Brabandt, #6286)<br>
+<br>
+Lua: updating wrong buffer when using newly created, unloaded buffer.<br>
+(#6539)<br>
+<br>
+When &quot;+ register is set then &quot;&quot; points to it.&nbsp;&nbsp;If another Vim grabs the &quot;+<br>
+register, then &quot;&quot; doesn't contain anything.&nbsp;&nbsp;Make it still follow &quot;+.<br>
+(#6435)<br>
 <br>
 Patch to fix drawing error with DirectX. (James Grant, #5688)<br>
 Causes flicker on resizing. Workaround from Ken Takata.<br>
@@ -352,6 +381,10 @@ Test loose_clipboard() by selecting text before suspending.<br>
 <br>
 Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</span>&quot; undo.<br>
 <br>
+Implement completion for &quot;breakadd&quot;.&nbsp;&nbsp;Should expand the second argument, e.g.<br>
+&quot;func&quot;, and then function names after &quot;:breakadd func&quot;.&nbsp;&nbsp;Including<br>
+script-local functions.<br>
+<br>
 :unmap&nbsp;<span class="Special">&lt;c-n&gt;</span>&nbsp;gives error but does remove the mapping. (Antony Scriven, 2019<br>
 Dec 19)<br>
 <br>
@@ -390,10 +423,6 @@ behavior of i_CTRl-R_<span class="Special">CTRL-R</span>&nbsp;differs from docum
 &quot;:bnext&quot; in a help buffer is supposed to go to the next help buffer, but it<br>
 goes to any buffer, and then :bnext skips help buffers, since they are<br>
 unlisted. (#4478)<br>
-<br>
-Patch for Template string: #4634<br>
-Copies the text twice, not very efficient.&nbsp;&nbsp;Requires a separate implementation<br>
-for Vim9 script, compiling the string parts and expressions.<br>
 <br>
 Statusline highlighting error, off by one. (#5599)<br>
 <br>
@@ -1932,13 +1961,6 @@ Szamotulski, 2012 Nov 8)<br>
 <br>
 Session file creation:&nbsp;<a class="Type" href="options.html#'autochdir'">'autochdir'</a>&nbsp;causes trouble.&nbsp;&nbsp;Keep it off until after<br>
 loading all files.<br>
-<br>
-MS-Windows resizing problems:<br>
-- Windows window on screen positioning: Patch by Yukihiro Nakadaira, 2012 Jun<br>
-&nbsp;&nbsp;20.&nbsp;&nbsp;Uses getWindowRect() instead of GetWindowPlacement()<br>
-- Win32: When the taskbar is at the top of the screen creating the tabbar<br>
-&nbsp;&nbsp;causes the window to move unnecessarily. (William E. Skeith III, 2012 Jan<br>
-&nbsp;&nbsp;12) Patch: 2012 Jan 13&nbsp;&nbsp;Needs more work (2012 Feb 2)<br>
 <br>
 <a class="Type" href="options.html#'iminsert'">'iminsert'</a>&nbsp;global value set when using &quot;:setlocal iminsert&quot;? (Wu, 2012 Jun 23)<br>
 <br>
