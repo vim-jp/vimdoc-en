@@ -76,16 +76,17 @@ comments start with #.<br>
 <br>
 The reason is that a double quote can also be the start of a string. In many<br>
 places, especially halfway an expression with a line break, it's hard to tell<br>
-what the meaning is.&nbsp;&nbsp;To avoid confusion only # comments are recognized.<br>
-This is the same as in shell scripts and Python programs.<br>
+what the meaning is, since both a string and a comment can be followed by<br>
+arbitrary text.&nbsp;&nbsp;To avoid confusion only # comments are recognized.&nbsp;&nbsp;This is<br>
+the same as in shell scripts and Python programs.<br>
 <br>
 In Vi # is a command to list text with numbers.&nbsp;&nbsp;In Vim9 script you can use<br>
 <a class="Comment" href="various.html#:number">:number</a>&nbsp;for that.<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;101number</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;101 number</div>
 <br>
 To improve readability there must be a space between a command and the #<br>
 that starts a comment.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that #{ is the start of a dictionary, therefore<br>
-it cannot start a comment.<br>
+it does not start a comment.<br>
 <br>
 <br>
 <span class="PreProc">Vim9 functions</span><br>
@@ -98,7 +99,7 @@ The syntax is strict, to enforce code that is easy to read and understand.<br>
 <br>
 Compilation is done when the function is first called, or when the<br>
 <a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;command is encountered in the script where the function was<br>
-defined.<br>
+defined.&nbsp;<a class="Comment" href="vim9.html#:disassemble">:disassemble</a>&nbsp;also compiles the function.<br>
 <br>
 <a class="Comment" href="vim9.html#:def">:def</a>&nbsp;has no options like&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;does: &quot;range&quot;, &quot;abort&quot;, &quot;dict&quot; or<br>
 &quot;closure&quot;.&nbsp;&nbsp;A&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function always aborts on an error, does not get a range<br>
@@ -109,7 +110,7 @@ be used, type checking will then be done at runtime, like with legacy<br>
 functions.<br>
 <br>
 Arguments are accessed by name, without &quot;a:&quot;.&nbsp;&nbsp;There is no &quot;a:&quot; dictionary or<br>
-&quot;a:000&quot; list.<br>
+&quot;a:000&quot; list.&nbsp;&nbsp;Just like any other language.<br>
 <br>
 Variable arguments are defined as the last argument, with a name and have a<br>
 list type, similar to Typescript.&nbsp;&nbsp;For example, a list of numbers:<br>
@@ -221,29 +222,29 @@ Functions can be called without&nbsp;<a class="Comment" href="eval.html#:call">:
 Using&nbsp;<a class="Comment" href="eval.html#:call">:call</a>&nbsp;is still possible, but this is discouraged.<br>
 <br>
 A method call without&nbsp;<a class="Comment" href="eval.html#eval">eval</a>&nbsp;is possible, so long as the start is an<br>
-identifier or can't be an Ex command.&nbsp;&nbsp;It does NOT work for string constants:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList-&gt;add(123)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# works<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:myList-&gt;add(123)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# works<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1, 2, 3]-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# works<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#{a: 1, b: 2}-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# works<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{'a': 1, 'b': 2}-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp; # works<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foobar&quot;-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # does NOT work<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&quot;foobar&quot;)-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # works<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'foobar'-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # does NOT work<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('foobar')-&gt;Process()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # works</div>
+identifier or can't be an Ex command.&nbsp;&nbsp;Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList-&gt;add(123)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:myList-&gt;add(123)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1, 2, 3]-&gt;Process()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#{a: 1, b: 2}-&gt;Process()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{'a': 1, 'b': 2}-&gt;Process()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foobar&quot;-&gt;Process()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&quot;foobar&quot;)-&gt;Process()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'foobar'-&gt;Process()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('foobar')-&gt;Process()</div>
 <br>
-In case there is ambiguity between a function name and an Ex command, use &quot;:&quot;<br>
-to make clear you want to use the Ex command.&nbsp;&nbsp;For example, there is both the<br>
-<a class="Comment" href="change.html#:substitute">:substitute</a>&nbsp;command and the&nbsp;<a class="Comment" href="eval.html#substitute()">substitute()</a>&nbsp;function.&nbsp;&nbsp;When the line starts<br>
-with&nbsp;<span class="Comment">substitute(</span>&nbsp;this will use the function, prepend a colon to use the<br>
-command instead:<br>
+In rare case there is ambiguity between a function name and an Ex command, use<br>
+&quot;:&quot; to make clear you want to use the Ex command.&nbsp;&nbsp;For example, there is both<br>
+the&nbsp;<a class="Comment" href="change.html#:substitute">:substitute</a>&nbsp;command and the&nbsp;<a class="Comment" href="eval.html#substitute()">substitute()</a>&nbsp;function.&nbsp;&nbsp;When the line<br>
+starts with&nbsp;<span class="Comment">substitute(</span>&nbsp;this will use the function. Prepend a colon to use<br>
+the command instead:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:substitute(pattern (replacement (</div>
 <br>
 <span class="Todo">Note</span>&nbsp;that while variables need to be defined before they can be used,<br>
 functions can be called before being defined.&nbsp;&nbsp;This is required to be able<br>
 have cyclic dependencies between functions.&nbsp;&nbsp;It is slightly less efficient,<br>
 since the function has to be looked up by name.&nbsp;&nbsp;And a typo in the function<br>
-name will only be found when the call is executed.<br>
+name will only be found when the function is called.<br>
 <br>
 <br>
 <span class="PreProc">Omitting function()</span><br>
@@ -352,9 +353,10 @@ arguments:<br>
 <a class="Identifier" href="eval.html#curly-braces-names">curly-braces-names</a>&nbsp;cannot be used.<br>
 <br>
 <br>
-<span class="PreProc">No :append, :change or :insert</span><br>
+<span class="PreProc">No :xit, :append, :change or :insert</span><br>
 <br>
-These commands are too quickly confused with local variable names.<br>
+These commands are too easily confused with local variable names.&nbsp;&nbsp;Instead of<br>
+<a class="Comment" href="editing.html#:x">:x</a>&nbsp;or&nbsp;<a class="Comment" href="editing.html#:xit">:xit</a>&nbsp;you can use&nbsp;<a class="Comment" href="editing.html#:exit">:exit</a>.<br>
 <br>
 <br>
 <span class="PreProc">Comparators</span><br>
