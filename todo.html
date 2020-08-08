@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jul 26<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 05<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,10 +44,9 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Making everything work:<br>
-- more items in&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/issues/6507">https://github.com/vim/vim/issues/6507</a></span><br>
-- More &quot;goto failed&quot; with check for trylevel.<br>
-- memory leak in test_vim9_script<br>
 - Check that when sourcing a Vim9 script, only the global items can be used.<br>
+- Make string indexes character indexes instead of byte indexes. (#6574)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;explain how to use byte index when needed. Use blob?<br>
 - :put with a &quot;=&quot; register argument doesn't work, need to find the expression<br>
 &nbsp;&nbsp;and compile it. (#6397)<br>
 - At the script level, keep script variables local to the block they are<br>
@@ -56,6 +55,8 @@ Making everything work:<br>
 - Implement { } block at the script level.<br>
 - need to check type when a declaration specifies a type: #6507<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let nr: number =&nbsp;<span class="MissingTag">'asdf'</span><br>
+- Make sure that in vim9script a function call without namespace only finds<br>
+&nbsp;&nbsp;the script-local function, not a global one.<br>
 - Make map() give an error if the resulting type is wrong.<br>
 &nbsp;&nbsp;Add mapnew() to create a new List/Dict for the result, which can have a<br>
 &nbsp;&nbsp;different value type.<br>
@@ -174,7 +175,7 @@ Popup windows:<br>
 - Figure out the size and position better if wrapping inserts indent<br>
 <br>
 Text properties:<br>
-- :goto does not go to the right place when test properties are present.<br>
+- :goto does not go to the right place when text properties are present.<br>
 &nbsp;&nbsp;(#5930)<br>
 - &quot;cc&quot; does not call inserted_bytes(). (Axel Forsman, #5763)<br>
 - Get E685 with a sequence of commands. (#5674)<br>
@@ -205,7 +206,7 @@ Terminal debugger:<br>
 &nbsp;&nbsp;an already running program. (M. Kelly)<br>
 - When only gdb window exists, on &quot;quit&quot; edit another buffer.<br>
 - Use a sign group<br>
-- Termdebug does not work when Vim was build with mzscheme: gdb hangs just<br>
+- Termdebug does not work when Vim was built with mzscheme: gdb hangs just<br>
 &nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
 &nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
 - Add support for lldb?&nbsp;&nbsp;issue #3565<br>
@@ -260,9 +261,14 @@ Terminal emulator window:<br>
 Error numbers available:<br>
 E610, E611, E653<br>
 <br>
+Clean up empty entries in testdir/Make_all.mak<br>
+<br>
 Remove SPACE_IN_FILENAME ? It is only used for completion.<br>
 <br>
 Patch to use collaction based sorting. (Christian Brabandt, #6229)<br>
+<br>
+Add&nbsp;<span class="MissingTag">'termguiattr'</span>&nbsp;option, use &quot;gui=&quot; attributes in the terminal?&nbsp;&nbsp;Would work<br>
+with&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>. #1740<br>
 <br>
 Can we detect true color support?&nbsp;&nbsp;<span class="Constant"><a href="https://gist.github.com/XVilka/8346728">https://gist.github.com/XVilka/8346728</a></span><br>
 Try setting a color then request the current color, like using t_u7.<br>
@@ -337,6 +343,9 @@ Problem with auto-formatting - inserting space and putting cursor before added<b
 character. (#6154)<br>
 <br>
 undo result wrong: Masato Nishihata, #4798<br>
+<br>
+After recovering from a swap file the undofile should not be used, it causes<br>
+corruption.&nbsp;&nbsp;(#6631)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;is set sometimes the title is not updated.<br>
 (Jason Franklin, 2020 Feb 3)&nbsp;&nbsp;Looks like a race condition.<br>
@@ -1476,7 +1485,7 @@ Zero-out krypt key information when no longer in use. (Ben Fritz, 2017 May 15)<b
 <br>
 Add stronger encryption.&nbsp;&nbsp;Could use libsodium (NaCl).<br>
 <span class="Constant"><a href="https://github.com/jedisct1/libsodium/">https://github.com/jedisct1/libsodium/</a></span><br>
-Possibly include the needed code so that it can be build everywhere.<br>
+Possibly include the needed code so that it can be built everywhere.<br>
 <br>
 Add a way to restart a timer.&nbsp;&nbsp;It's similar to timer_stop() and timer_start(),<br>
 but the reference remains valid.<br>
@@ -3838,8 +3847,6 @@ Macintosh:<br>
 8&nbsp;&nbsp; When write_viminfo() is used while there are many orphaned viminfo<br>
 &nbsp;&nbsp;&nbsp;&nbsp;tempfiles writing the viminfo file fails.&nbsp;&nbsp;Give a clear error message so<br>
 &nbsp;&nbsp;&nbsp;&nbsp;that the user knows he has to delete the files.<br>
-7&nbsp;&nbsp; It's possible to redefine a script-local function with &quot;:func<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;SNR&gt;</span>123_Test()&quot;. (Krishna)&nbsp;&nbsp;Disallow this.<br>
 <br>
 <br>
 I can't reproduce these (if you can, let me know how!):<br>
@@ -5678,7 +5685,7 @@ Buffer list:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Also for other windows: &quot;:inwin&nbsp;<span class="Special">{winnr}</span>&nbsp;<span class="Special">{cmd}</span>&quot;.&nbsp;&nbsp;How to make sure that<br>
 &nbsp;&nbsp;&nbsp;&nbsp;this works properly for all commands, and still be able to return to the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;current buffer/window?&nbsp;&nbsp;E.g.: &quot;:inbuf xxx only&quot;.<br>
-8&nbsp;&nbsp; Add File.{recent_files} menu entries: Recently edited files.<br>
+8&nbsp;&nbsp; Add File.<span class="Special">{recent-files}</span>&nbsp;menu entries: Recently edited files.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Ron Aaron has a plugin for this: mru.vim.<br>
 8&nbsp;&nbsp; Unix: Check all uses of fnamecmp() and fnamencmp() if they should check<br>
 &nbsp;&nbsp;&nbsp;&nbsp;inode too.<br>

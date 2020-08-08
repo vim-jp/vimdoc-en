@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jul 25<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 01<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -19,7 +19,7 @@ features in Vim9 script.<br>
 THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
 <br>
-1&nbsp;&nbsp; What is Vim9 script?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-script">vim9-script</a><br>
+1.&nbsp;&nbsp;What is Vim9 script?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-script">vim9-script</a><br>
 2.&nbsp;&nbsp;Differences&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-differences">vim9-differences</a><br>
 3.&nbsp;&nbsp;New style functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#fast-functions">fast-functions</a><br>
 4.&nbsp;&nbsp;Types&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-types">vim9-types</a><br>
@@ -124,11 +124,12 @@ list type, similar to Typescript.&nbsp;&nbsp;For example, a list of numbers:<br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a new function at the script level<br>
 in a Vim9 script, the function is local to the script, as if &quot;s:&quot; was<br>
 prefixed.&nbsp;&nbsp;Using the &quot;s:&quot; prefix is optional.&nbsp;&nbsp;To define or use a global<br>
-function or variable the &quot;g:&quot; prefix must be used.&nbsp;&nbsp;For functions in an<br>
+function or variable the &quot;g:&quot; prefix should be used.&nbsp;&nbsp;For functions in an<br>
 autoload script the &quot;name#&quot; prefix is sufficient.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ThisFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# script-local<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def s:ThisFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# script-local<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def g:ThatFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# global<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ThatFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# global if no local ThatFunction()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def scriptname#function()&nbsp;&nbsp; # autoload</div>
 <br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a new function inside a function,<br>
@@ -137,16 +138,14 @@ script-local function inside a function. It is possible to define a global<br>
 function, using the &quot;g:&quot; prefix.<br>
 <br>
 When referring to a function and no &quot;s:&quot; or &quot;g:&quot; prefix is used, Vim will<br>
-search for the function in this order:<br>
-- Local to the current scope and outer scopes up to the function scope.<br>
-- Local to the current script file.<br>
-- Imported functions, see&nbsp;<a class="Comment" href="vim9.html#:import">:import</a>.<br>
+prefer using a local function (in the function scope, script scope or<br>
+imported) before looking for a global function.<br>
 In all cases the function must be defined before used.&nbsp;&nbsp;That is when it is<br>
 first called or when&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;causes the call to be compiled.<br>
 <br>
-The result is that functions and variables without a namespace can always be<br>
+The result is that functions and variables without a namespace can usually be<br>
 found in the script, either defined there or imported.&nbsp;&nbsp;Global functions and<br>
-variables could be defined anywhere (good luck finding where!).<br>
+variables could be defined anywhere (good luck finding out where!).<br>
 <br>
 Global functions can be still be defined and deleted at nearly any time.&nbsp;&nbsp;In<br>
 Vim9 script script-local functions are defined once when the script is sourced<br>
@@ -198,7 +197,8 @@ declaration.&nbsp;&nbsp;Global, window, tab, buffer and Vim variables can only b
 without&nbsp;<a class="Comment" href="eval.html#:let">:let</a>, because they are not really declared, they can also be deleted<br>
 with&nbsp;<a class="Comment" href="eval.html#:unlet">:unlet</a>.<br>
 <br>
-Variables cannot shadow previously defined variables.<br>
+Variables and functions cannot shadow previously defined or imported variables<br>
+and functions.<br>
 Variables may shadow Ex commands, rename the variable if needed.<br>
 <br>
 Global variables and user defined functions must be prefixed with &quot;g:&quot;, also<br>
@@ -237,11 +237,11 @@ identifier or can't be an Ex command.&nbsp;&nbsp;Examples:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'foobar'-&gt;Process()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('foobar')-&gt;Process()</div>
 <br>
-In rare case there is ambiguity between a function name and an Ex command, use<br>
-&quot;:&quot; to make clear you want to use the Ex command.&nbsp;&nbsp;For example, there is both<br>
-the&nbsp;<a class="Comment" href="change.html#:substitute">:substitute</a>&nbsp;command and the&nbsp;<a class="Comment" href="eval.html#substitute()">substitute()</a>&nbsp;function.&nbsp;&nbsp;When the line<br>
-starts with&nbsp;<span class="Comment">substitute(</span>&nbsp;this will use the function. Prepend a colon to use<br>
-the command instead:<br>
+In rare case there is ambiguity between a function name and an Ex command,<br>
+prepend &quot;:&quot; to make clear you want to use the Ex command.&nbsp;&nbsp;For example, there<br>
+is both the&nbsp;<a class="Comment" href="change.html#:substitute">:substitute</a>&nbsp;command and the&nbsp;<a class="Comment" href="eval.html#substitute()">substitute()</a>&nbsp;function.&nbsp;&nbsp;When the<br>
+line starts with&nbsp;<span class="Comment">substitute(</span>&nbsp;this will use the function. Prepend a colon to<br>
+use the command instead:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:substitute(pattern (replacement (</div>
 <br>
 <span class="Todo">Note</span>&nbsp;that while variables need to be defined before they can be used,<br>
@@ -266,8 +266,8 @@ number of arguments and any return type.&nbsp;&nbsp;The function can be defined 
 <span class="PreProc">Automatic line continuation</span><br>
 <br>
 In many cases it is obvious that an expression continues on the next line.&nbsp;&nbsp;In<br>
-those cases there is no need to prefix the line with a backslash.&nbsp;&nbsp;For<br>
-example, when a list spans multiple lines:<br>
+those cases there is no need to prefix the line with a backslash<br>
+<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>.&nbsp;&nbsp;For example, when a list spans multiple lines:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let mylist = [<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'one',<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'two',<br>
@@ -456,6 +456,11 @@ Ex command ranges need to be prefixed with a colon.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/a/b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; Vim9&#0058; substitute on all lines<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'text'-&gt;func()&nbsp;&nbsp;&quot; Vim9&#0058; method call<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:'t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; legacy Vim&#0058; jump to mark m</div>
+<br>
+Some Ex commands can be confused with assignments in Vim9 script:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:name = value&nbsp;&nbsp;# assignment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:pattern:cmd&nbsp;&nbsp; # invalid command - ERROR<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:g:pattern:cmd&nbsp;&nbsp;# :global command</div>
 <br>
 Functions defined with&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;compile the whole function.&nbsp;&nbsp;Legacy functions<br>
 can bail out, and the following lines are not parsed:<br>
