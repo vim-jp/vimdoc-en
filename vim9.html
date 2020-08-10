@@ -624,6 +624,8 @@ called in the same way the declaration is the same.<br>
 <br>
 Custom types can be defined with&nbsp;<span class="Comment">:type</span>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type MyList list&lt;string&gt;</div>
+Custom types must start with a capital letter, to avoid name clashes with<br>
+builtin types added later, similarly to user functions.<br>
 <span class="Special">{not implemented yet}</span><br>
 <br>
 And classes and interfaces can be used as types:<br>
@@ -643,6 +645,35 @@ And classes and interfaces can be used as types:<br>
 <span class="Special">{not implemented yet}</span><br>
 <br>
 <br>
+Variable types and type casting&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#variable-types" name="variable-types">variable-types</a><br>
+<br>
+Variables declared in Vim9 script or in a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function have a type, either<br>
+specified explicitly or inferred from the initialization.<br>
+<br>
+Global, buffer, window and tab page variables do not have a specific type, the<br>
+value can be changed at any time, possibly changing the type.&nbsp;&nbsp;Therefore, in<br>
+compiled code the &quot;any&quot; type is assumed.<br>
+<br>
+This can be a problem when the &quot;any&quot; type is undesired and the actual type is<br>
+expected to always be the same.&nbsp;&nbsp;For example, when declaring a list:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let l: list&lt;number&gt; = [1, g:two]</div>
+This will give an error, because &quot;g:two&quot; has type &quot;any&quot;.&nbsp;&nbsp;To avoid this, use a<br>
+type cast:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let l: list&lt;number&gt; = [1, &lt;number&gt;g:two]</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#type-casting" name="type-casting">type-casting</a><br>
+The compiled code will then check that &quot;g:two&quot; is a number at runtime and give<br>
+an error if it isn't.&nbsp;&nbsp;This is called type casting.<br>
+<br>
+The syntax of a type cast is:&nbsp;&nbsp;&quot;&lt;&quot;&nbsp;<span class="Special">{type}</span>&nbsp;&quot;&gt;&quot;.&nbsp;&nbsp;There cannot be white space<br>
+after the &quot;&lt;&quot; or before the &quot;&gt;&quot; (to avoid them being confused with<br>
+smaller-than and bigger-than operators).<br>
+<br>
+The semantics is that, if needed, a runtime type check is performed.&nbsp;&nbsp;The<br>
+value is not actually changed.&nbsp;&nbsp;If you need to change the type, e.g. to change<br>
+it to a string, use the&nbsp;<a class="Identifier" href="eval.html#string()">string()</a>&nbsp;function.&nbsp;&nbsp;Or use&nbsp;<a class="Identifier" href="eval.html#str2nr()">str2nr()</a>&nbsp;to convert a<br>
+string to a number.<br>
+<br>
+<br>
 Type inference&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#type-inference" name="type-inference">type-inference</a><br>
 <br>
 In general: Whenever the type is clear it can be omitted.&nbsp;&nbsp;For example, when<br>
@@ -650,6 +681,12 @@ declaring a variable and giving it a value:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var = 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; infers number type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let var = 'hello'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; infers string type</div>
 <br>
+The type of a list and dictionary comes from the common type of the values.<br>
+If the values all have the same type, that type is used for the list or<br>
+dictionary.&nbsp;&nbsp;If there is a mix of types, the &quot;any&quot; type is used.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1, 2, 3]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; list&lt;number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['a', 'b', 'c'] list&lt;string&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1, 'x', 3]&nbsp;&nbsp;&nbsp;&nbsp; list&lt;any&gt;</div>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
