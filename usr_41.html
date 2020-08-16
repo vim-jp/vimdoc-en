@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'usr_41'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="usr_41.html" name="usr_41.txt">usr_41.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Jun 13<br>
+<a class="Constant" href="usr_41.html" name="usr_41.txt">usr_41.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 13<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
 <br>
@@ -2049,9 +2049,9 @@ for this mapping, but the user might already use it for something else.&nbsp;&nb
 allow the user to define which keys a mapping in a plugin uses, the&nbsp;<span class="Special">&lt;Leader&gt;</span><br>
 item can be used:<br>
 <br>
-<div class="helpExample">&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd</div>
+<div class="helpExample">&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;</div>
 <br>
-The &quot;<span class="Special">&lt;Plug&gt;</span>TypecorrAdd&quot; thing will do the work, more about that further on.<br>
+The &quot;<span class="Special">&lt;Plug&gt;</span>TypecorrAdd;&quot; thing will do the work, more about that further on.<br>
 <br>
 The user can set the &quot;mapleader&quot; variable to the key sequence that he wants<br>
 this mapping to start with.&nbsp;&nbsp;Thus if the user has done:<br>
@@ -2067,15 +2067,15 @@ already happened to exist.&nbsp;<a class="Identifier" href="map.html#:map-<uniqu
 But what if the user wants to define his own key sequence?&nbsp;&nbsp;We can allow that<br>
 with this mechanism:<br>
 <br>
-<div class="helpExample">&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp; if !hasmapto('&lt;Plug&gt;TypecorrAdd')<br>
-&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd<br>
+<div class="helpExample">&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp; if !hasmapto('&lt;Plug&gt;TypecorrAdd;')<br>
+&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;<br>
 &nbsp;23&nbsp;&nbsp;&nbsp;&nbsp; endif</div>
 <br>
-This checks if a mapping to &quot;<span class="Special">&lt;Plug&gt;</span>TypecorrAdd&quot; already exists, and only<br>
+This checks if a mapping to &quot;<span class="Special">&lt;Plug&gt;</span>TypecorrAdd/&quot; already exists, and only<br>
 defines the mapping from &quot;<span class="Special">&lt;Leader&gt;</span>a&quot; if it doesn't.&nbsp;&nbsp;The user then has a<br>
 chance of putting this in his vimrc file:<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map ,c&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map ,c&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;</div>
 <br>
 Then the mapped key sequence will be &quot;,c&quot; instead of &quot;_a&quot; or &quot;\a&quot;.<br>
 <br>
@@ -2105,15 +2105,15 @@ function (without the &quot;s:&quot;), which is again another function.<br>
 <span class="Special">&lt;SID&gt;</span>&nbsp;can be used with mappings.&nbsp;&nbsp;It generates a script ID, which identifies<br>
 the current script.&nbsp;&nbsp;In our typing correction plugin we use it like this:<br>
 <br>
-<div class="helpExample">&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;unique&gt; &lt;script&gt; &lt;Plug&gt;TypecorrAdd&nbsp;&nbsp;&lt;SID&gt;Add<br>
+<div class="helpExample">&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;unique&gt; &lt;script&gt; &lt;Plug&gt;TypecorrAdd;&nbsp;&nbsp;&lt;SID&gt;Add<br>
 &nbsp;..<br>
 &nbsp;28&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;SID&gt;Add&nbsp;&nbsp;:call &lt;SID&gt;Add(expand(&quot;&lt;cword&gt;&quot;), 1)&lt;CR&gt;</div>
 <br>
 Thus when a user types &quot;\a&quot;, this sequence is invoked:<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\a&nbsp;&nbsp;-&gt;&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd&nbsp;&nbsp;-&gt;&nbsp;&nbsp;&lt;SID&gt;Add&nbsp;&nbsp;-&gt;&nbsp;&nbsp;:call &lt;SID&gt;Add()</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\a&nbsp;&nbsp;-&gt;&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;&nbsp;&nbsp;-&gt;&nbsp;&nbsp;&lt;SID&gt;Add&nbsp;&nbsp;-&gt;&nbsp;&nbsp;:call &lt;SID&gt;Add()</div>
 <br>
-If another script was also map&nbsp;<span class="Special">&lt;SID&gt;</span>Add, it would get another script ID and<br>
+If another script also maps&nbsp;<span class="Special">&lt;SID&gt;</span>Add, it will get another script ID and<br>
 thus define another mapping.<br>
 <br>
 <span class="Todo">Note</span>&nbsp;that instead of s:Add() we use&nbsp;<span class="Special">&lt;SID&gt;</span>Add() here.&nbsp;&nbsp;That is because the<br>
@@ -2154,9 +2154,9 @@ difference between using&nbsp;<span class="Special">&lt;SID&gt;</span>&nbsp;and&
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To make it very unlikely that other plugins use the same sequence of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;characters, use this structure:&nbsp;<span class="Special">&lt;Plug&gt;</span>&nbsp;scriptname mapname<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In our example the scriptname is &quot;Typecorr&quot; and the mapname is &quot;Add&quot;.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This results in &quot;<span class="Special">&lt;Plug&gt;</span>TypecorrAdd&quot;.&nbsp;&nbsp;Only the first character of<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scriptname and mapname is uppercase, so that we can see where mapname<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;starts.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We add a semicolon as the terminator.&nbsp;&nbsp;This results in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;<span class="Special">&lt;Plug&gt;</span>TypecorrAdd;&quot;.&nbsp;&nbsp;Only the first character of scriptname and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mapname is uppercase, so that we can see where mapname starts.<br>
 <br>
 <span class="Special">&lt;SID&gt;</span>&nbsp;&nbsp; is the script ID, a unique identifier for a script.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Internally Vim translates&nbsp;<span class="Special">&lt;SID&gt;</span>&nbsp;to &quot;<span class="Special">&lt;SNR&gt;</span>123_&quot;, where &quot;123&quot; can be any<br>
@@ -2231,10 +2231,10 @@ Here is the resulting complete example:<br>
 &nbsp;18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ synchronization<br>
 &nbsp;19&nbsp;&nbsp;&nbsp;&nbsp; let s:count = 4<br>
 &nbsp;20<br>
-&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp; if !hasmapto('&lt;Plug&gt;TypecorrAdd')<br>
-&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd<br>
+&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp; if !hasmapto('&lt;Plug&gt;TypecorrAdd;')<br>
+&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;<br>
 &nbsp;23&nbsp;&nbsp;&nbsp;&nbsp; endif<br>
-&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;unique&gt; &lt;script&gt; &lt;Plug&gt;TypecorrAdd&nbsp;&nbsp;&lt;SID&gt;Add<br>
+&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;unique&gt; &lt;script&gt; &lt;Plug&gt;TypecorrAdd;&nbsp;&nbsp;&lt;SID&gt;Add<br>
 &nbsp;25<br>
 &nbsp;26&nbsp;&nbsp;&nbsp;&nbsp; noremenu &lt;script&gt; Plugin.Add\ Correction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;SID&gt;Add<br>
 &nbsp;27<br>
@@ -2284,7 +2284,7 @@ Here is a simple example for a plugin help file, called &quot;typecorr.txt&quot;
 &nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp; There are currently only a few corrections.&nbsp;&nbsp;Add your own if you like.<br>
 &nbsp;&nbsp;7<br>
 &nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp; Mappings:<br>
-&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp; &lt;Leader&gt;a&nbsp;&nbsp; or&nbsp;&nbsp; &lt;Plug&gt;TypecorrAdd<br>
+&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp; &lt;Leader&gt;a&nbsp;&nbsp; or&nbsp;&nbsp; &lt;Plug&gt;TypecorrAdd;<br>
 &nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Add a correction for the word under the cursor.<br>
 &nbsp;11<br>
 &nbsp;12&nbsp;&nbsp;&nbsp;&nbsp; Commands:<br>
@@ -2422,13 +2422,13 @@ To make sure mappings will only work in the current buffer use the<br>
 command.&nbsp;&nbsp;This needs to be combined with the two-step mapping explained above.<br>
 An example of how to define functionality in a filetype plugin:<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if !hasmapto('&lt;Plug&gt;JavaImport')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map &lt;buffer&gt; &lt;unique&gt; &lt;LocalLeader&gt;i &lt;Plug&gt;JavaImport<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if !hasmapto('&lt;Plug&gt;JavaImport;')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map &lt;buffer&gt; &lt;unique&gt; &lt;LocalLeader&gt;i &lt;Plug&gt;JavaImport;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;noremap &lt;buffer&gt; &lt;unique&gt; &lt;Plug&gt;JavaImport oimport &quot;&quot;&lt;Left&gt;&lt;Esc&gt;</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;noremap &lt;buffer&gt; &lt;unique&gt; &lt;Plug&gt;JavaImport; oimport &quot;&quot;&lt;Left&gt;&lt;Esc&gt;</div>
 <br>
 <a class="Identifier" href="eval.html#hasmapto()">hasmapto()</a>&nbsp;is used to check if the user has already defined a map to<br>
-<span class="Special">&lt;Plug&gt;</span>JavaImport.&nbsp;&nbsp;If not, then the filetype plugin defines the default<br>
+<span class="Special">&lt;Plug&gt;</span>JavaImport;.&nbsp;&nbsp;If not, then the filetype plugin defines the default<br>
 mapping.&nbsp;&nbsp;This starts with&nbsp;<a class="Identifier" href="map.html#<LocalLeader>">&lt;LocalLeader&gt;</a>, which allows the user to select<br>
 the key(s) he wants filetype plugin mappings to start with.&nbsp;&nbsp;The default is a<br>
 backslash.<br>
@@ -2445,12 +2445,12 @@ plugin for the mail filetype:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Add mappings, unless the user didn't want this.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if !exists(&quot;no_plugin_maps&quot;) &amp;&amp; !exists(&quot;no_mail_maps&quot;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Quote text by inserting &quot;&gt; &quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if !hasmapto('&lt;Plug&gt;MailQuote')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vmap &lt;buffer&gt; &lt;LocalLeader&gt;q &lt;Plug&gt;MailQuote<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;buffer&gt; &lt;LocalLeader&gt;q &lt;Plug&gt;MailQuote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if !hasmapto('&lt;Plug&gt;MailQuote;')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vmap &lt;buffer&gt; &lt;LocalLeader&gt;q &lt;Plug&gt;MailQuote;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;buffer&gt; &lt;LocalLeader&gt;q &lt;Plug&gt;MailQuote;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vnoremap &lt;buffer&gt; &lt;Plug&gt;MailQuote :s/^/&gt; /&lt;CR&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;buffer&gt; &lt;Plug&gt;MailQuote :.,$s/^/&gt; /&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vnoremap &lt;buffer&gt; &lt;Plug&gt;MailQuote; :s/^/&gt; /&lt;CR&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;buffer&gt; &lt;Plug&gt;MailQuote; :.,$s/^/&gt; /&lt;CR&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
 <br>
 Two global variables are used:<br>

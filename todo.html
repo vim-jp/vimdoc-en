@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 05<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 15<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,16 +43,21 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+What is the way to get the character under the cursor?&nbsp;&nbsp;With or without<br>
+composing characters.&nbsp;&nbsp;getline(&quot;.&quot;) and then use col(&quot;.&quot;) somehow?<br>
+Add charidx() perhaps?<br>
+<br>
 Making everything work:<br>
-- Check that when sourcing a Vim9 script, only the global items can be used.<br>
-- Make string indexes character indexes instead of byte indexes. (#6574)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;explain how to use byte index when needed. Use blob?<br>
+- Slice of list: [1, 2, 3][1:2].<br>
+- Slice of string: &quot;abc&quot;[1:2].&nbsp;&nbsp;(#6709)<br>
+- Run the same tests in :def and Vim9 script, like in Test_expr7_not()<br>
 - :put with a &quot;=&quot; register argument doesn't work, need to find the expression<br>
 &nbsp;&nbsp;and compile it. (#6397)<br>
 - At the script level, keep script variables local to the block they are<br>
 &nbsp;&nbsp;declared in?&nbsp;&nbsp;Need to remember what variables were declared and delete them<br>
 &nbsp;&nbsp;when leaving the block.<br>
 - Implement { } block at the script level.<br>
+- In autocmd: use legacy syntax, not whatever the current script uses?<br>
 - need to check type when a declaration specifies a type: #6507<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let nr: number =&nbsp;<span class="MissingTag">'asdf'</span><br>
 - Make sure that in vim9script a function call without namespace only finds<br>
@@ -60,9 +65,13 @@ Making everything work:<br>
 - Make map() give an error if the resulting type is wrong.<br>
 &nbsp;&nbsp;Add mapnew() to create a new List/Dict for the result, which can have a<br>
 &nbsp;&nbsp;different value type.<br>
+- When defining an :autocmd or :command, how to specify using Vim9 syntax?<br>
+&nbsp;&nbsp;- always do this when defined in a Vim9 script<br>
+&nbsp;&nbsp;- add some command modifier.<br>
+- For an :autocmd and :command argument, if a following line starts with &quot;|&quot;<br>
+&nbsp;&nbsp;append it.&nbsp;&nbsp;It's like line continuation. (#6702)<br>
 - Implement &quot;export {one, two three}&quot;.<br>
 - ISN_CHECKTYPE could use check_argtype()<br>
-- Slice of list: [1, 2, 3][1:2].<br>
 - give error for variable name:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let p = function('NoSuchFunc')<br>
 - Give runtime error if function argument is wrong.<br>
@@ -84,6 +93,7 @@ Making everything work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[i] = string(i)<br>
 - Appending to dict item doesn't work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let d[i] ..= value<br>
+- Using &quot;..&quot; at script level doesn't convert arguments to a string.<br>
 - Compile replacement of :s command: s/pat/\=expr/<br>
 - Compile redir to local variable: var_redir_start().<br>
 - Compile builtin functions that access local variables:<br>
@@ -108,8 +118,6 @@ Making everything work:<br>
 New syntax and functionality:<br>
 Improve error checking:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
-Test:<br>
-- Using a Vim9 autoload script (functions must be global).<br>
 Also:<br>
 - For range: make table of first ASCII character with flag to quickly check if<br>
 &nbsp;&nbsp;it can be a Vim9 command. E.g. &quot;+&quot; can, but &quot;.&quot; can't.<br>
@@ -122,8 +130,6 @@ Also:<br>
 - Test each level of expressions properly, with type checking<br>
 - Test try/catch and throw better, also nested.<br>
 &nbsp;&nbsp;Test return inside try/finally jumps to finally and then returns.<br>
-- call autoload function.<br>
-- Implement more expressions, e.g. [a:b]<br>
 - can use func as reference:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeFunc() ...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(list, SomeFunc)<br>
@@ -160,6 +166,8 @@ Popup windows:<br>
 &nbsp;&nbsp;positioned?&nbsp;&nbsp;PopupNew?&nbsp;&nbsp;Could be used to set some options or move it out of<br>
 &nbsp;&nbsp;the way. (#5737)<br>
 &nbsp;&nbsp;However, it may also cause trouble, changing the popup of another plugin.<br>
+- Width is not computed correctly when minwidth and maxwidth are &amp;columns<br>
+&nbsp;&nbsp;and padding and a scrollbar are used.&nbsp;&nbsp;(#6676)<br>
 - Add a way to use popup_menu() synchronously: instead of invoking the<br>
 &nbsp;&nbsp;callback, return the choice. (Ben Jackson, #6534)<br>
 - Use popup (or popup menu) for command line completion<br>
@@ -406,6 +414,9 @@ Also put :argadd commands at the start for all buffers, so that their order<br>
 remains equal?&nbsp;&nbsp;Then %argdel to clean it up.&nbsp;&nbsp;Do try this with&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;set.<br>
 Also #4994: window-local options not always restored, related to using :badd.<br>
 Also #5326: netrw buffers are not restored.<br>
+<br>
+Alternate file is not set in the session file.&nbsp;&nbsp;Use setwintabvar(&quot;@#&quot;) ?<br>
+(#6714)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'backupdir'">'backupdir'</a>&nbsp;has a path ending in double slash (meaning: use full path of<br>
 the file) combined with&nbsp;<a class="Type" href="options.html#'patchmode'">'patchmode'</a>&nbsp;the file name is wrong. (#5791)<br>
@@ -2868,9 +2879,6 @@ Jun 18)<br>
 <br>
 If the variable &quot;g:x#y#z&quot; exists completion after &quot;:echo g:x#&quot; doesn't work.<br>
 <br>
-Feature request: Command to go to previous tab, like what&nbsp;<span class="Special">CTRL-W</span>&nbsp;p does for<br>
-windows. (Adam George)<br>
-<br>
 In debug mode, using&nbsp;<span class="Special">CTRL-R</span>&nbsp;= to evaluate a function causes stepping through<br>
 the function. (Hari Krishna Dara, 2006 Jun 28)<br>
 <br>
@@ -3846,7 +3854,7 @@ Macintosh:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;two lines at a time.&nbsp;&nbsp;&quot;k&quot; doesn't do this. (Cory T. Echols)<br>
 8&nbsp;&nbsp; When write_viminfo() is used while there are many orphaned viminfo<br>
 &nbsp;&nbsp;&nbsp;&nbsp;tempfiles writing the viminfo file fails.&nbsp;&nbsp;Give a clear error message so<br>
-&nbsp;&nbsp;&nbsp;&nbsp;that the user knows he has to delete the files.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;that the user knows the files have to be deleted.<br>
 <br>
 <br>
 I can't reproduce these (if you can, let me know how!):<br>
@@ -4017,7 +4025,7 @@ Help:<br>
 -&nbsp;&nbsp; Support a way to view (and edit) .info files.<br>
 -&nbsp;&nbsp; Implement a &quot;sticky&quot; help window, some help text lines that are always<br>
 &nbsp;&nbsp;&nbsp;&nbsp;displayed in a window with fixed height. (Guckes)&nbsp;&nbsp;Use &quot;~/.vimhelp&quot; file,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;user can edit it to insert his favorite commands, new account can contain a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;user can edit it to insert favorite commands, new account can contain a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;default contents.<br>
 -&nbsp;&nbsp; Make&nbsp;<a class="Type" href="options.html#'winminheight'">'winminheight'</a>&nbsp;a local option, so that the user can set a minimal<br>
 &nbsp;&nbsp;&nbsp;&nbsp;height for the help window (and other windows).<br>
@@ -5784,7 +5792,7 @@ Modelines:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;.cpp files.<br>
 -&nbsp;&nbsp; Support the &quot;abbreviate&quot; command in modelines (Kearns).&nbsp;&nbsp;Careful for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;characters after&nbsp;<span class="Special">&lt;Esc&gt;</span>, that is a security leak.<br>
--&nbsp;&nbsp; Add option setting to ask user if he wants to have the modelines executed<br>
+-&nbsp;&nbsp; Add an option setting to ask the user if the modelines are to be executed<br>
 &nbsp;&nbsp;&nbsp;&nbsp;or not.&nbsp;&nbsp;Same for .exrc in local dir.<br>
 <br>
 <br>

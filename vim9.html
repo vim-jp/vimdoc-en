@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 01<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 15<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -75,10 +75,10 @@ comments start with #.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let count = 0&nbsp;&nbsp;# number of occurrences</div>
 <br>
 The reason is that a double quote can also be the start of a string. In many<br>
-places, especially halfway an expression with a line break, it's hard to tell<br>
-what the meaning is, since both a string and a comment can be followed by<br>
-arbitrary text.&nbsp;&nbsp;To avoid confusion only # comments are recognized.&nbsp;&nbsp;This is<br>
-the same as in shell scripts and Python programs.<br>
+places, especially halfway through an expression with a line break, it's hard<br>
+to tell what the meaning is, since both a string and a comment can be followed<br>
+by arbitrary text.&nbsp;&nbsp;To avoid confusion only # comments are recognized.&nbsp;&nbsp;This<br>
+is the same as in shell scripts and Python programs.<br>
 <br>
 In Vi # is a command to list text with numbers.&nbsp;&nbsp;In Vim9 script you can use<br>
 <a class="Comment" href="various.html#:number">:number</a>&nbsp;for that.<br>
@@ -109,11 +109,11 @@ The argument types and return type need to be specified.&nbsp;&nbsp;The &quot;an
 be used, type checking will then be done at runtime, like with legacy<br>
 functions.<br>
 <br>
-Arguments are accessed by name, without &quot;a:&quot;.&nbsp;&nbsp;There is no &quot;a:&quot; dictionary or<br>
-&quot;a:000&quot; list.&nbsp;&nbsp;Just like any other language.<br>
+Arguments are accessed by name, without &quot;a:&quot;, just like any other language.<br>
+There is no &quot;a:&quot; dictionary or &quot;a:000&quot; list.<br>
 <br>
 Variable arguments are defined as the last argument, with a name and have a<br>
-list type, similar to Typescript.&nbsp;&nbsp;For example, a list of numbers:<br>
+list type, similar to TypeScript.&nbsp;&nbsp;For example, a list of numbers:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def MyFunc(...itemlist: list&lt;number&gt;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for item in itemlist<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</div>
@@ -147,7 +147,7 @@ The result is that functions and variables without a namespace can usually be<br
 found in the script, either defined there or imported.&nbsp;&nbsp;Global functions and<br>
 variables could be defined anywhere (good luck finding out where!).<br>
 <br>
-Global functions can be still be defined and deleted at nearly any time.&nbsp;&nbsp;In<br>
+Global functions can still be defined and deleted at nearly any time.&nbsp;&nbsp;In<br>
 Vim9 script script-local functions are defined once when the script is sourced<br>
 and cannot be deleted or replaced.<br>
 <br>
@@ -237,7 +237,7 @@ identifier or can't be an Ex command.&nbsp;&nbsp;Examples:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'foobar'-&gt;Process()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('foobar')-&gt;Process()</div>
 <br>
-In rare case there is ambiguity between a function name and an Ex command,<br>
+In the rare case there is ambiguity between a function name and an Ex command,<br>
 prepend &quot;:&quot; to make clear you want to use the Ex command.&nbsp;&nbsp;For example, there<br>
 is both the&nbsp;<a class="Comment" href="change.html#:substitute">:substitute</a>&nbsp;command and the&nbsp;<a class="Comment" href="eval.html#substitute()">substitute()</a>&nbsp;function.&nbsp;&nbsp;When the<br>
 line starts with&nbsp;<span class="Comment">substitute(</span>&nbsp;this will use the function. Prepend a colon to<br>
@@ -245,8 +245,8 @@ use the command instead:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:substitute(pattern (replacement (</div>
 <br>
 <span class="Todo">Note</span>&nbsp;that while variables need to be defined before they can be used,<br>
-functions can be called before being defined.&nbsp;&nbsp;This is required to be able<br>
-have cyclic dependencies between functions.&nbsp;&nbsp;It is slightly less efficient,<br>
+functions can be called before being defined.&nbsp;&nbsp;This is required to allow<br>
+for cyclic dependencies between functions.&nbsp;&nbsp;It is slightly less efficient,<br>
 since the function has to be looked up by name.&nbsp;&nbsp;And a typo in the function<br>
 name will only be found when the function is called.<br>
 <br>
@@ -399,7 +399,7 @@ White space is not allowed:<br>
 <br>
 <span class="PreProc">Conditions and expressions</span><br>
 <br>
-Conditions and expression are mostly working like they do in JavaScript.&nbsp;&nbsp;A<br>
+Conditions and expressions are mostly working like they do in JavaScript.&nbsp;&nbsp;A<br>
 difference is made where JavaScript does not work like most people expect.<br>
 Specifically, an empty list is falsey.<br>
 <br>
@@ -434,12 +434,18 @@ The boolean operators &quot;||&quot; and &quot;&amp;&amp;&quot; do not change th
 When using&nbsp;<span class="Comment">..</span>&nbsp;for string concatenation arguments of simple types are always<br>
 converted to string.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. 123&nbsp;&nbsp;== 'hello 123'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. v:true&nbsp;&nbsp;== 'hello true'</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. v:true&nbsp;&nbsp;== 'hello v:true'</div>
 <br>
 Simple types are string, float, special and bool.&nbsp;&nbsp;For other types&nbsp;<a class="Identifier" href="eval.html#string()">string()</a><br>
 can be used.<br>
 <br>
 In Vim9 script one can use &quot;true&quot; for v:true and &quot;false&quot; for v:false.<br>
+<br>
+Indexing a string with&nbsp;<span class="Special">[idx]</span>&nbsp;or [idx, idx] uses character indexes instead of<br>
+byte indexes. Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'bár'[1]</div>
+In legacy script this results in the character 0xc3 (an illegal byte), in Vim9<br>
+script this results in the string 'á'.<br>
 <br>
 <br>
 <span class="PreProc">What to watch out for</span><br>
@@ -499,7 +505,7 @@ For a workaround, split it in two functions:<br>
 THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:def" name=":def">:def</a><br>
-:def[!]&nbsp;<span class="Special">{name}</span>(<span class="Special">[arguments]</span>)[:&nbsp;<span class="Special">{return-type}</span><br>
+:def[!]&nbsp;<span class="Special">{name}</span>(<span class="Special">[arguments]</span>)[:&nbsp;<span class="Special">{return-type}</span>]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Define a new function by the name&nbsp;<span class="Special">{name}</span>.&nbsp;&nbsp;The body of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the function follows in the next lines, until the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matching&nbsp;<a class="Comment" href="vim9.html#:enddef">:enddef</a>.<br>
@@ -794,7 +800,7 @@ actually needed.&nbsp;&nbsp;A recommended mechanism:<br>
 <br>
 &nbsp;&nbsp;&nbsp; This goes in .../plugin/anyname.vim.&nbsp;&nbsp;&quot;anyname.vim&quot; can be freely chosen.<br>
 <br>
-2. In the autocommand script do the actual work.&nbsp;&nbsp;You can import items from<br>
+2. In the autoload script do the actual work.&nbsp;&nbsp;You can import items from<br>
 &nbsp;&nbsp; other files to split up functionality in appropriate pieces.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import FilterFunc from &quot;../import/someother.vim&quot;<br>
@@ -829,7 +835,7 @@ namespace will be used for the imported item, even when &quot;s:&quot; is not sp
 <br>
 <span class="PreProc">The :def command</span><br>
 <br>
-Plugin writers have asked for a much faster Vim script.&nbsp;&nbsp;Investigation have<br>
+Plugin writers have asked for a much faster Vim script.&nbsp;&nbsp;Investigations have<br>
 shown that keeping the existing semantics of function calls make this close to<br>
 impossible, because of the overhead involved with calling a function, setting<br>
 up the local function scope and executing lines.&nbsp;&nbsp;There are many details that<br>
@@ -859,7 +865,7 @@ an &quot;add number&quot; instruction can be used, which is faster.&nbsp;&nbsp;T
 given at compile time, no error handling is needed at runtime.<br>
 <br>
 The syntax for types is similar to Java, since it is easy to understand and<br>
-widely used.&nbsp;&nbsp;The type names are what was used in Vim before, with some<br>
+widely used.&nbsp;&nbsp;The type names are what were used in Vim before, with some<br>
 additions such as &quot;void&quot; and &quot;bool&quot;.<br>
 <br>
 <br>
@@ -910,7 +916,7 @@ are doing.&nbsp;&nbsp;Some details are unexpected and can be fixed.&nbsp;&nbsp;F
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return result || 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; returns 1</div>
 <br>
-Vim9 script works like JavaScript/Typescript, keep the value:<br>
+Vim9 script works like JavaScript/TypeScript, keep the value:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = 44<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return result || 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; returns 44</div>
@@ -927,7 +933,7 @@ A problem of legacy Vim script is that by default all functions and variables<br
 are global.&nbsp;&nbsp;It is possible to make them script-local, but then they are not<br>
 available in other scripts.<br>
 <br>
-In Vim9 script a mechanism very similar to the Javascript import and export<br>
+In Vim9 script a mechanism very similar to the JavaScript import and export<br>
 mechanism is supported.&nbsp;&nbsp;It is a variant to the existing&nbsp;<a class="Comment" href="repeat.html#:source">:source</a>&nbsp;command<br>
 that works like one would expect:<br>
 - Instead of making everything global by default, everything is script-local,<br>
