@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 15<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 29<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,25 +43,25 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-What is the way to get the character under the cursor?&nbsp;&nbsp;With or without<br>
-composing characters.&nbsp;&nbsp;getline(&quot;.&quot;) and then use col(&quot;.&quot;) somehow?<br>
-Add charidx() perhaps?<br>
+Why does Test_invalid_sid() not work in the GUI?<br>
 <br>
 Making everything work:<br>
-- Slice of list: [1, 2, 3][1:2].<br>
-- Slice of string: &quot;abc&quot;[1:2].&nbsp;&nbsp;(#6709)<br>
+- Check :const works the same as in legacy script.<br>
 - Run the same tests in :def and Vim9 script, like in Test_expr7_not()<br>
 - :put with a &quot;=&quot; register argument doesn't work, need to find the expression<br>
 &nbsp;&nbsp;and compile it. (#6397)<br>
-- At the script level, keep script variables local to the block they are<br>
+- At the Vim9 script level, keep script variables local to the block they are<br>
 &nbsp;&nbsp;declared in?&nbsp;&nbsp;Need to remember what variables were declared and delete them<br>
 &nbsp;&nbsp;when leaving the block.<br>
 - Implement { } block at the script level.<br>
+- Use the line number argument with assert_fails() in many more tests.<br>
 - In autocmd: use legacy syntax, not whatever the current script uses?<br>
 - need to check type when a declaration specifies a type: #6507<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let nr: number =&nbsp;<span class="MissingTag">'asdf'</span><br>
 - Make sure that in vim9script a function call without namespace only finds<br>
 &nbsp;&nbsp;the script-local function, not a global one.<br>
+- Make sure that where a callback is expected a function can be used (without<br>
+&nbsp;&nbsp;quotes). E.g. sort() and map().&nbsp;&nbsp;Also at the script level.<br>
 - Make map() give an error if the resulting type is wrong.<br>
 &nbsp;&nbsp;Add mapnew() to create a new List/Dict for the result, which can have a<br>
 &nbsp;&nbsp;different value type.<br>
@@ -266,23 +266,24 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
-Error numbers available:<br>
-E610, E611, E653<br>
+Error numbers available: E653<br>
 <br>
-Clean up empty entries in testdir/Make_all.mak<br>
+Remove &quot;MacOS X installation&quot;?&nbsp;&nbsp;$APPDIR is no longer set.<br>
 <br>
 Remove SPACE_IN_FILENAME ? It is only used for completion.<br>
 <br>
-Patch to use collaction based sorting. (Christian Brabandt, #6229)<br>
+Patch to use collation based sorting. (Christian Brabandt, #6229)<br>
 <br>
 Add&nbsp;<span class="MissingTag">'termguiattr'</span>&nbsp;option, use &quot;gui=&quot; attributes in the terminal?&nbsp;&nbsp;Would work<br>
 with&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>. #1740<br>
+<br>
+Patch for blockwise paste reporting changes: #6660.<br>
 <br>
 Can we detect true color support?&nbsp;&nbsp;<span class="Constant"><a href="https://gist.github.com/XVilka/8346728">https://gist.github.com/XVilka/8346728</a></span><br>
 Try setting a color then request the current color, like using t_u7.<br>
 <br>
 Check out PR #543 (Roland Puntaier).<br>
-Patch for multi-byte characters in langmap and applying a mapping on them.<br>
+Patch for multibyte characters in langmap and applying a mapping on them.<br>
 (Christian Brabandt, 2015 Jun 12, update July 25)<br>
 Is this the right solution?&nbsp;&nbsp;Need to cleanup langmap behavior:<br>
 - in vgetorpeek() apply langmap to the typeahead buffer and put the result in<br>
@@ -429,6 +430,7 @@ Should do current file first and not split it up when more results are found.<br
 <br>
 Undo history wrong when &quot;:next file&quot; re-uses a buffer. (#5426)<br>
 ex_next() should pass flag to do_argfile(), then to do_ecmd().<br>
+Is there a test for this?<br>
 <br>
 Help for &quot;:argadd fname&quot; says that if &quot;fname&quot; is already in the argument list<br>
 that entry is used.&nbsp;&nbsp;But instead it's always added. (#6210)<br>
@@ -1236,7 +1238,7 @@ Screen update bug related to matchparen.&nbsp;&nbsp;(Chris Heath, 2017 Mar 4, #1
 Rule to use &quot;^&quot; for statusline does not work if a space is defined with<br>
 highlighting for both stl and stlnc.&nbsp;&nbsp;Patch by Ken Hamada (itchyny, 2016 Dec 11)<br>
 <br>
-8&nbsp;&nbsp; &quot;stl&quot; and &quot;stlnc&quot; in&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>&nbsp;don't work for multi-byte characters.<br>
+8&nbsp;&nbsp; &quot;stl&quot; and &quot;stlnc&quot; in&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>&nbsp;don't work for multibyte characters.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Patch by Christian Wellenbrock, 2013 Jul 5.<br>
 <br>
 Using&nbsp;<span class="Special">CTRL-G</span>_U in InsertCharPre causes trouble for redo. (Israel Chauca<br>
@@ -1387,7 +1389,7 @@ Regexp problems:<br>
 - Bug with pattern: '\vblock (\d+)\.\n.*\d+%(\1)@&lt;!\.$'<br>
 &nbsp;&nbsp;(Lech Lorens, 2014 Feb 3)<br>
 - Issue 164: freeze on regexp search.<br>
-- Ignorecase not handled properly for multi-byte characters. (Axel Bender,<br>
+- Ignorecase not handled properly for multibyte characters. (Axel Bender,<br>
 &nbsp;&nbsp;2013 Dec 11)<br>
 - Using \@&gt; and \?. (Brett Stahlman, 2013 Dec 21) Remark from Marcin<br>
 &nbsp;&nbsp;Szamotulski; Remark from Brett 2014 Jan 6 and 7.<br>
@@ -1602,7 +1604,7 @@ Patch to add :mapgroup, put mappings in a group like augroup.<br>
 Value returned by virtcol() changes depending on how lines wrap.&nbsp;&nbsp;This is<br>
 inconsistent with the documentation.<br>
 <br>
-Value of virtcol() for '[ and '] depend on multi-byte character.<br>
+Value of virtcol() for '[ and '] depend on multibyte character.<br>
 (Luchr, #277)<br>
 <br>
 Can we cache the syntax attributes, so that updates for&nbsp;<a class="Type" href="options.html#'relativenumber'">'relativenumber'</a>&nbsp;and<br>
@@ -2134,7 +2136,7 @@ Also for another example (ZyX, 2011 Jan 24)<br>
 <br>
 Build problem with small features on Mac OS X 10.6. (Rainer, 2011 Jan 24)<br>
 <br>
-&quot;0g@$&quot; puts '] on last byte of multi-byte. (ZyX, 2011 Jan 22)<br>
+&quot;0g@$&quot; puts '] on last byte of multibyte. (ZyX, 2011 Jan 22)<br>
 <br>
 Patch for :tabrecently. (Hirokazu Yoshida, 2012 Jan 30)<br>
 <br>
@@ -2641,7 +2643,7 @@ work, the backslash is removed, assuming that it escapes the (. (Valery<br>
 Kondakoff, 2009 May 13)<br>
 <br>
 Win32: Using &quot;gvim --remote-tab-silent elŝuti.txt&quot; doesn't work, the<br>
-multi-byte character isn't passed and edits elsuti.txt.<br>
+multibyte character isn't passed and edits elsuti.txt.<br>
 (Raúl Núñez de Arenas Coronado, 2015 Dec 18)<br>
 <br>
 Problem with&nbsp;<a class="Type" href="options.html#'langmap'">'langmap'</a>&nbsp;being used on the rhs of a mapping. (Nikolai Weibull,<br>
@@ -3202,7 +3204,7 @@ Awaiting updated patches:<br>
 7&nbsp;&nbsp; ATTENTION dialog choices are more logical when &quot;Delete it&quot; appears<br>
 &nbsp;&nbsp;&nbsp;&nbsp;before &quot;Quit&quot;.&nbsp;&nbsp;Patch by Robert Webb, 2004 May 3.<br>
 -&nbsp;&nbsp; Include flipcase patch: ~/vim/patches/wall.flipcase2 ?&nbsp;&nbsp;Make it work<br>
-&nbsp;&nbsp;&nbsp;&nbsp;for multi-byte characters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for multibyte characters.<br>
 -&nbsp;&nbsp; Win32: add options to print dialog.&nbsp;&nbsp;Patch from Vipin Aravind.<br>
 -&nbsp;&nbsp; Patch to add highlighting for whitespace. (Tom Schumm, 2003 Jul 5)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;use the patch that keeps using HLF_8 if HLF_WS has not<br>
@@ -3698,8 +3700,8 @@ Macintosh:<br>
 8&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'hkmap'">'hkmap'</a>&nbsp;should probably be global-local.<br>
 8&nbsp;&nbsp; Using &quot;:s&quot; in a function changes the previous replacement string.&nbsp;&nbsp;Save<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&quot;old_sub&quot; in save_search_patterns()?<br>
-8&nbsp;&nbsp; Should allow multi-byte characters for the delimiter: &quot;:s+a+b+&quot; where &quot;+&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;is a multi-byte character.<br>
+8&nbsp;&nbsp; Should allow multibyte characters for the delimiter: &quot;:s+a+b+&quot; where &quot;+&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;is a multibyte character.<br>
 8&nbsp;&nbsp; When appending to a file and&nbsp;<a class="Type" href="options.html#'patchmode'">'patchmode'</a>&nbsp;isn't empty, a backup file is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;always written, even when the original file already exists.<br>
 9&nbsp;&nbsp; When getting focus while writing a large file, could warn for this file<br>
@@ -4002,7 +4004,7 @@ Documentation:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- change to cursor position and curswant<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- if it can be undone (u/<span class="Special">CTRL-R</span>) and redone (.)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- how it works for folded lines<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- how it works with multi-byte characters<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- how it works with multibyte characters<br>
 9&nbsp;&nbsp; In change.txt, remark about Javadoc isn't right.&nbsp;&nbsp;Right alignment would<br>
 &nbsp;&nbsp;&nbsp;&nbsp;work too.<br>
 8&nbsp;&nbsp; Spread the windows commands over the other files.&nbsp;&nbsp;For example, &quot;:stag&quot;<br>
@@ -4238,8 +4240,8 @@ Multi-byte characters:<br>
 8&nbsp;&nbsp; Add configure option to be able to disable using the iconv library. (Udo<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Schweigert)<br>
 9&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'aleph'">'aleph'</a>&nbsp;should be set to 1488 for Unicode. (Zvi Har'El)<br>
-8&nbsp;&nbsp; Should add test for using various commands with multi-byte characters.<br>
-8&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'infercase'">'infercase'</a>&nbsp;doesn't work with multi-byte characters.<br>
+8&nbsp;&nbsp; Should add test for using various commands with multibyte characters.<br>
+8&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'infercase'">'infercase'</a>&nbsp;doesn't work with multibyte characters.<br>
 8&nbsp;&nbsp; toupper() function doesn't handle byte count changes.<br>
 7&nbsp;&nbsp; Searching and composing characters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;When searching, should order of composing characters be ignored?<br>
@@ -4247,7 +4249,7 @@ Multi-byte characters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;characters can be manipulated.<br>
 8&nbsp;&nbsp; Should implement&nbsp;<a class="Type" href="options.html#'delcombine'">'delcombine'</a>&nbsp;for command line editing.<br>
 8&nbsp;&nbsp; Detect overlong UTF-8 sequences and handle them like illegal bytes.<br>
-8&nbsp;&nbsp; &quot;:s/x/\u\1/&quot; doesn't work, making uppercase isn't done for multi-byte<br>
+8&nbsp;&nbsp; &quot;:s/x/\u\1/&quot; doesn't work, making uppercase isn't done for multibyte<br>
 &nbsp;&nbsp;&nbsp;&nbsp;characters.<br>
 8&nbsp;&nbsp; UTF-8: &quot;r&quot; in Visual mode doesn't take composing characters.<br>
 8&nbsp;&nbsp; UTF-8: When there is a precomposed character in the font, use it instead<br>
@@ -4271,14 +4273,14 @@ Multi-byte characters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;convert_input() for Mac GUI.<br>
 -&nbsp;&nbsp; Add mnemonics from RFC1345 longer than two characters.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Support&nbsp;<span class="Special">CTRL-K</span>&nbsp;_<span class="Special">{mnemonic}</span>_<br>
--&nbsp;&nbsp; Make&nbsp;<a class="Type" href="options.html#'breakat'">'breakat'</a>&nbsp;accept multi-byte characters.&nbsp;&nbsp;Problem: can't use a lookup<br>
+-&nbsp;&nbsp; Make&nbsp;<a class="Type" href="options.html#'breakat'">'breakat'</a>&nbsp;accept multibyte characters.&nbsp;&nbsp;Problem: can't use a lookup<br>
 &nbsp;&nbsp;&nbsp;&nbsp;table anymore (breakat_flags[]).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Simplistic solution: when&nbsp;<a class="Type" href="options.html#'formatoptions'">'formatoptions'</a>&nbsp;contains &quot;m&quot; also break a line<br>
-&nbsp;&nbsp;&nbsp;&nbsp;at a multi-byte character &gt;= 0x100.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;at a multibyte character &gt;= 0x100.<br>
 -&nbsp;&nbsp; Add the possibility to enter mappings which are used whenever normal text<br>
 &nbsp;&nbsp;&nbsp;&nbsp;could be entered.&nbsp;&nbsp;E.g., for &quot;f&quot; command.&nbsp;&nbsp;But not in Normal mode.&nbsp;&nbsp;Sort<br>
 &nbsp;&nbsp;&nbsp;&nbsp;of opposite of&nbsp;<a class="Type" href="options.html#'langmap'">'langmap'</a>.&nbsp;&nbsp;Use &quot;:amap&quot; command?<br>
--&nbsp;&nbsp; When breaking a line, take properties of multi-byte characters into<br>
+-&nbsp;&nbsp; When breaking a line, take properties of multibyte characters into<br>
 &nbsp;&nbsp;&nbsp;&nbsp;account.&nbsp;&nbsp;The &quot;linebreak&quot; program from Bruno Haible can do it:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant">ftp://ftp.ilog.fr/pub/Users/haible/gnu/linebreak-0.1.tar.gz</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;But it's very complicated...<br>
@@ -5343,11 +5345,11 @@ Text objects:<br>
 8&nbsp;&nbsp; Add test script for text object commands &quot;aw&quot;, &quot;iW&quot;, etc.<br>
 8&nbsp;&nbsp; Add text object for part of a CamelHumpedWord and under_scored_word.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(Scott Graham)&nbsp;&nbsp;&quot;ac&quot; and &quot;au&quot;?<br>
-8&nbsp;&nbsp; Add a text object for any kind of quoting, also with multi-byte<br>
+8&nbsp;&nbsp; Add a text object for any kind of quoting, also with multibyte<br>
 &nbsp;&nbsp;&nbsp;&nbsp;characters.&nbsp;&nbsp;Option to specify what quotes are recognized (default: all)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;use &quot;aq&quot; and &quot;iq&quot;.&nbsp;&nbsp;Use&nbsp;<span class="MissingTag">'quotepairs'</span>&nbsp;to define pairs of quotes, like<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'matchpairs'">'matchpairs'</a>?<br>
-8&nbsp;&nbsp; Add text object for any kind of parens, also multi-byte ones.<br>
+8&nbsp;&nbsp; Add text object for any kind of parens, also multibyte ones.<br>
 8&nbsp;&nbsp; Add a way to make an &quot;:omap&quot; for a user-defined text object.&nbsp;&nbsp;Requires<br>
 &nbsp;&nbsp;&nbsp;&nbsp;changing the starting position in oap-&gt;start.<br>
 8&nbsp;&nbsp; Add &quot;gp&quot; and &quot;gP&quot; commands: insert text and make sure there is a single<br>
@@ -6123,7 +6125,7 @@ Various improvements:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;regexp which triggers auto-formatting (for one line).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&quot;:set autoformat=\\s$&quot;.<br>
 -&nbsp;&nbsp; Be able to redefine where a sentence stops.&nbsp;&nbsp;Use a regexp pattern?<br>
--&nbsp;&nbsp; Support multi-byte characters for sentences.&nbsp;&nbsp;Example from Ben Peterson.<br>
+-&nbsp;&nbsp; Support multibyte characters for sentences.&nbsp;&nbsp;Example from Ben Peterson.<br>
 7&nbsp;&nbsp; Add command &quot;g)&quot; to go to the end of a sentence, &quot;g(&quot; to go back to the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;end of a sentence. (Servatius Brandt)<br>
 -&nbsp;&nbsp; Be able to redefine where a paragraph starts.&nbsp;&nbsp;For &quot;[[&quot; where the '{' is<br>

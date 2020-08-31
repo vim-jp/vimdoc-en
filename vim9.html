@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 15<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 27<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -54,6 +54,7 @@ errors are handled.<br>
 The Vim9 script syntax and semantics are used in:<br>
 - a function defined with the&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;command<br>
 - a script file where the first command is&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a><br>
+- an autocommand defined in the context of these<br>
 <br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;in a Vim9 script file the legacy syntax is used.<br>
 However, this can be confusing and is therefore discouraged.<br>
@@ -97,9 +98,13 @@ often 10x to 100x times.<br>
 Many errors are already found when compiling, before the function is executed.<br>
 The syntax is strict, to enforce code that is easy to read and understand.<br>
 <br>
-Compilation is done when the function is first called, or when the<br>
-<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;command is encountered in the script where the function was<br>
-defined.&nbsp;<a class="Comment" href="vim9.html#:disassemble">:disassemble</a>&nbsp;also compiles the function.<br>
+Compilation is done when:<br>
+- the function is first called<br>
+- when the&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;command is encountered in the script where the<br>
+&nbsp;&nbsp;function was defined<br>
+-&nbsp;<a class="Comment" href="vim9.html#:disassemble">:disassemble</a>&nbsp;is used for the function.<br>
+- a function that is compiled calls the function or uses it as a function<br>
+&nbsp;&nbsp;reference<br>
 <br>
 <a class="Comment" href="vim9.html#:def">:def</a>&nbsp;has no options like&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;does: &quot;range&quot;, &quot;abort&quot;, &quot;dict&quot; or<br>
 &quot;closure&quot;.&nbsp;&nbsp;A&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function always aborts on an error, does not get a range<br>
@@ -497,6 +502,18 @@ For a workaround, split it in two functions:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;use-feature<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+Of put the unsupported code inside an&nbsp;<a class="Comment" href="eval.html#:if">if</a>&nbsp;with a constant expression that<br>
+evaluates to false:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Maybe()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('feature')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;use-feature<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<span class="Todo">Note</span>&nbsp;that for unrecognized commands there is no check for &quot;|&quot; and a following<br>
+command.&nbsp;&nbsp;This will give an error for missing&nbsp;<a class="Comment" href="eval.html#:endif">endif</a>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Maybe()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('feature') | use-feature | endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
@@ -544,7 +561,7 @@ If the script the function is defined in is Vim9 script, then script-local<br>
 variables can be accessed without the &quot;s:&quot; prefix.&nbsp;&nbsp;They must be defined<br>
 before the function is compiled.&nbsp;&nbsp;If the script the function is defined in is<br>
 legacy script, then script-local variables must be accessed with the &quot;s:&quot;<br>
-prefix.<br>
+prefix and they do not need to exist (they can be deleted any time).<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:defc" name=":defc">:defc</a>&nbsp;<a class="Constant" href="vim9.html#:defcompile" name=":defcompile">:defcompile</a><br>
 :defc[ompile]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Compile functions defined in the current script that<br>
@@ -697,6 +714,22 @@ dictionary.&nbsp;&nbsp;If there is a mix of types, the &quot;any&quot; type is u
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['a', 'b', 'c'] list&lt;string&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1, 'x', 3]&nbsp;&nbsp;&nbsp;&nbsp; list&lt;any&gt;</div>
 <br>
+<br>
+Stricter type checking&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#type-checking" name="type-checking">type-checking</a><br>
+<br>
+In legacy Vim script, where a number was expected, a string would be<br>
+automatically converted to a number.&nbsp;&nbsp;This was convenient for an actual number<br>
+such as &quot;123&quot;, but leads to unexpected problems (but no error message) if the<br>
+string doesn't start with a number.&nbsp;&nbsp;Quite often this leads to hard-to-find<br>
+bugs.<br>
+<br>
+In Vim9 script this has been made stricter.&nbsp;&nbsp;In most places it works just as<br>
+before, if the expected type was already.&nbsp;&nbsp;There will sometimes be an error,<br>
+thus breaking backwards compatibility.&nbsp;&nbsp;For example:<br>
+- Using a number other than 0 or 1 where a boolean is expected.&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1023" name="E1023">E1023</a><br>
+- Using a string value when setting a number options.<br>
+- Using a number where a string is expected.&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1024" name="E1024">E1024</a><br>
+<br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
 5.&nbsp;&nbsp;Namespace, Import and Export<br>
@@ -707,6 +740,9 @@ THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 A Vim9 script can be written to be imported.&nbsp;&nbsp;This means that everything in<br>
 the script is local, unless exported.&nbsp;&nbsp;Those exported items, and only those<br>
 items, can then be imported in another script.<br>
+<br>
+You can cheat by using the global namespace explicitly.&nbsp;&nbsp;We will assume here<br>
+that you don't do that.<br>
 <br>
 <br>
 <span class="PreProc">Namespace</span><br>
