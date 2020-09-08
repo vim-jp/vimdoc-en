@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'map'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="map.html" name="map.txt">map.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Aug 30<br>
+<a class="Constant" href="map.html" name="map.txt">map.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 06<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -200,7 +200,7 @@ already typed they are used.<br>
 before any partial matches.&nbsp;&nbsp;This works when:<br>
 - There is only one matching buffer-local mapping, since these are always<br>
 &nbsp;&nbsp;found before global mappings.<br>
-- There is another buffer-local mapping that partly matches, but it is was<br>
+- There is another buffer-local mapping that partly matches, but it is<br>
 &nbsp;&nbsp;defined earlier (last defined mapping is found first).<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="map.html#:map-<silent>" name=":map-&lt;silent&gt;">:map-&lt;silent&gt;</a>&nbsp;<a class="Constant" href="map.html#:map-silent" name=":map-silent">:map-silent</a><br>
@@ -294,15 +294,8 @@ Here is an example that inserts a list number that increases:<br>
 <span class="Special">CTRL-L</span>&nbsp;inserts the next number,&nbsp;<span class="Special">CTRL-R</span>&nbsp;resets the count.&nbsp;&nbsp;<span class="Special">CTRL-R</span>&nbsp;returns an<br>
 empty string, so that nothing is inserted.<br>
 <br>
-<span class="Todo">Note</span>&nbsp;that there are some tricks to make special keys work and escape CSI bytes<br>
-in the text.&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="map.html#:map">:map</a>&nbsp;command also does this, thus you must avoid that it<br>
-is done twice.&nbsp;&nbsp;This does not work:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:imap &lt;expr&gt; &lt;F3&gt; &quot;&lt;Char-0x611B&gt;&quot;</div>
-Because the &lt;Char- sequence is escaped for being a&nbsp;<a class="Identifier" href="map.html#:imap">:imap</a>&nbsp;argument and then<br>
-again for using&nbsp;<span class="Special">&lt;expr&gt;</span>.&nbsp;&nbsp;This does work:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:imap &lt;expr&gt; &lt;F3&gt; &quot;\u611B&quot;</div>
-Using 0x80 as a single byte before other text does not work, it will be seen<br>
-as a special key.<br>
+<span class="Todo">Note</span>&nbsp;that using 0x80 as a single byte before other text does not work, it will<br>
+be seen as a special key.<br>
 <br>
 <br>
 1.3 MAPPING AND MODES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="map.html#:map-modes" name=":map-modes">:map-modes</a><br>
@@ -886,35 +879,47 @@ g@<span class="Special">{motion}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
 <br>
 Here is an example that counts the number of spaces with&nbsp;<span class="Special">&lt;F4&gt;</span>:<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmap &lt;silent&gt; &lt;F4&gt; :set opfunc=CountSpaces&lt;CR&gt;g@<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vmap &lt;silent&gt; &lt;F4&gt; :&lt;C-U&gt;call CountSpaces(visualmode(), 1)&lt;CR&gt;</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;expr&gt; &lt;F4&gt; CountSpaces()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xnoremap &lt;expr&gt; &lt;F4&gt; CountSpaces()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; doubling &lt;F4&gt; works on a line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;expr&gt; &lt;F4&gt;&lt;F4&gt; CountSpaces() .. '_'</div>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function! CountSpaces(type, ...)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let sel_save = &amp;selection<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;selection = &quot;inclusive&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let reg_save = @@</div>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if a:0&nbsp;&nbsp;&quot; Invoked from Visual mode, use gv command.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;silent exe &quot;normal! gvy&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif a:type == 'line'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;silent exe &quot;normal! '[V']y&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;silent exe &quot;normal! `[v`]y&quot;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function CountSpaces(type = '') abort<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if a:type == ''<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set opfunc=CountSpaces<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 'g@'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echomsg strlen(substitute(@@, '[^ ]', '', 'g'))</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let sel_save = &amp;selection<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let reg_save = getreginfo('&quot;')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let cb_save = &amp;clipboard<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let visual_marks_save = [getpos(&quot;'&lt;&quot;), getpos(&quot;'&gt;&quot;)]</div>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;selection = sel_save<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let @@ = reg_save<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set clipboard= selection=inclusive<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let commands = #{line: &quot;'[V']y&quot;, char: &quot;`[v`]y&quot;, block: &quot;`[\&lt;c-v&gt;`]y&quot;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;silent exe 'noautocmd keepjumps normal! ' .. get(commands, a:type, '')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echom getreg('&quot;')-&gt;count(' ')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finally<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call setreg('&quot;', reg_save)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call setpos(&quot;'&lt;&quot;, visual_marks_save[0])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call setpos(&quot;'&gt;&quot;, visual_marks_save[1])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;clipboard = cb_save<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;selection = sel_save<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endtry<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunction</div>
+<br>
+An&nbsp;<span class="Special">&lt;expr&gt;</span>&nbsp;mapping is used to be able to fetch any prefixed count and register.<br>
+This also avoids using a command line, which would trigger CmdlineEnter and<br>
+CmdlineLeave autocommands.<br>
 <br>
 <span class="Todo">Note</span>&nbsp;that the&nbsp;<a class="Type" href="options.html#'selection'">'selection'</a>&nbsp;option is temporarily set to &quot;inclusive&quot; to be able<br>
 to yank exactly the right text by using Visual mode from the '[ to the ']<br>
 mark.<br>
 <br>
-Also&nbsp;<span class="Todo">note</span>&nbsp;that there is a separate mapping for Visual mode.&nbsp;&nbsp;It removes the<br>
-&quot;'&lt;,'&gt;&quot; range that &quot;:&quot; inserts in Visual mode and invokes the function with<br>
-visualmode() and an extra argument.<br>
+Also&nbsp;<span class="Todo">note</span>&nbsp;that the&nbsp;<a class="Type" href="options.html#'clipboard'">'clipboard'</a>&nbsp;option is temporarily emptied to avoid<br>
+clobbering the&nbsp;<span class="Comment">&quot;*</span>&nbsp;or&nbsp;<span class="Comment">&quot;+</span>&nbsp;registers, if its value contains the item&nbsp;<span class="Comment">unnamed</span><br>
+or&nbsp;<span class="Comment">unnamedplus</span>.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 2. Abbreviations&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="map.html#abbreviations" name="abbreviations">abbreviations</a>&nbsp;<a class="Constant" href="map.html#Abbreviations" name="Abbreviations">Abbreviations</a><br>
