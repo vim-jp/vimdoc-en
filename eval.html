@@ -2646,6 +2646,7 @@ matcharg(<span class="Special">{nr}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 matchdelete(<span class="Special">{id}</span>&nbsp;[,&nbsp;<span class="Special">{win}</span>])&nbsp;&nbsp;&nbsp;&nbsp; Number&nbsp;&nbsp;delete match identified by&nbsp;<span class="Special">{id}</span><br>
 matchend(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{pat}</span>&nbsp;[,&nbsp;<span class="Special">{start}</span>&nbsp;[,&nbsp;<span class="Special">{count}</span>]])<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;&nbsp;position where&nbsp;<span class="Special">{pat}</span>&nbsp;ends in&nbsp;<span class="Special">{expr}</span><br>
+matchfuzzy(<span class="Special">{list}</span>,&nbsp;<span class="Special">{str}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; List&nbsp;&nbsp;&nbsp;&nbsp;fuzzy match&nbsp;<span class="Special">{str}</span>&nbsp;in&nbsp;<span class="Special">{list}</span><br>
 matchlist(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{pat}</span>&nbsp;[,&nbsp;<span class="Special">{start}</span>&nbsp;[,&nbsp;<span class="Special">{count}</span>]])<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&nbsp;&nbsp;&nbsp;&nbsp;match and submatches of&nbsp;<span class="Special">{pat}</span>&nbsp;in&nbsp;<span class="Special">{expr}</span><br>
 matchstr(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{pat}</span>&nbsp;[,&nbsp;<span class="Special">{start}</span>&nbsp;[,&nbsp;<span class="Special">{count}</span>]])<br>
@@ -7311,6 +7312,29 @@ matchend(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{pat}</
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetText()-&gt;matchend('word')</div>
+<br>
+<br>
+matchfuzzy(<span class="Special">{list}</span>,&nbsp;<span class="Special">{str}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#matchfuzzy()" name="matchfuzzy()">matchfuzzy()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a list with all the strings in&nbsp;<span class="Special">{list}</span>&nbsp;that fuzzy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;match&nbsp;<span class="Special">{str}</span>. The strings in the returned list are sorted<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;based on the matching score.&nbsp;<span class="Special">{str}</span>&nbsp;is treated as a literal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string and regular expression matching is NOT supported.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The maximum supported&nbsp;<span class="Special">{str}</span>&nbsp;length is 256.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there are no matching strings or there is an error, then an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;empty list is returned. If length of&nbsp;<span class="Special">{str}</span>&nbsp;is greater than<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;256, then returns an empty list.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :echo matchfuzzy([&quot;clay&quot;, &quot;crow&quot;], &quot;cay&quot;)</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; results in [&quot;clay&quot;].<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :echo getbufinfo()-&gt;map({_, v -&gt; v.name})-&gt;matchfuzzy(&quot;ndl&quot;)</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; results in a list of buffer names fuzzy matching &quot;ndl&quot;.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :echo v:oldfiles-&gt;matchfuzzy(&quot;test&quot;)</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; results in a list of file names fuzzy matching &quot;test&quot;.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :let l = readfile(&quot;buffer.c&quot;)-&gt;matchfuzzy(&quot;str&quot;)</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; results in a list of lines in &quot;buffer.c&quot; fuzzy matching &quot;str&quot;.<br>
+<br>
 <br>
 matchlist(<span class="Special">{expr}</span>,&nbsp;<span class="Special">{pat}</span>&nbsp;[,&nbsp;<span class="Special">{start}</span>&nbsp;[,&nbsp;<span class="Special">{count}</span>]])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#matchlist()" name="matchlist()">matchlist()</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as&nbsp;<a class="Identifier" href="eval.html#match()">match()</a>, but return a&nbsp;<a class="Identifier" href="eval.html#List">List</a>.&nbsp;&nbsp;The first item in the<br>
