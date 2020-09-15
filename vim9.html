@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 07<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 13<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -197,6 +197,9 @@ To intentionally avoid a variable being available later, a block can be used:<br
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo temp&nbsp;&nbsp;# Error!</div>
 <br>
+Declaring a variable with a type but without an initializer will initialize to<br>
+zero, false or empty.<br>
+<br>
 An existing variable cannot be assigned to with&nbsp;<a class="Comment" href="eval.html#:let">:let</a>, since that implies a<br>
 declaration.&nbsp;&nbsp;Global, window, tab, buffer and Vim variables can only be used<br>
 without&nbsp;<a class="Comment" href="eval.html#:let">:let</a>, because they are not really declared, they can also be deleted<br>
@@ -215,6 +218,40 @@ at the script level.<br>
 <br>
 Since &quot;&amp;opt = value&quot; is now assigning a value to option &quot;opt&quot;, &quot;:&amp;&quot; cannot be<br>
 used to repeat a&nbsp;<a class="Comment" href="change.html#:substitute">:substitute</a>&nbsp;command.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-const" name="vim9-const">vim9-const</a><br>
+In legacy Vim script &quot;const list = []&quot; would make the variable &quot;list&quot;<br>
+immutable and also the value.&nbsp;&nbsp;Thus you cannot add items to the list.&nbsp;&nbsp;This<br>
+differs from what many languages do. Vim9 script does it like TypeScript: only<br>
+&quot;list&quot; is immutable, the value can be changed.<br>
+<br>
+One can use&nbsp;<span class="Comment">:const!</span>&nbsp;to make both the variable and the value immutable.&nbsp;&nbsp;Use<br>
+this for composite structures that you want to make sure will not be modified.<br>
+<br>
+How this works:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const list = [1, 2]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list = [3, 4]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list[0] = 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# OK</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const! LIST = [1, 2]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIST = [3, 4]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIST[0] = 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Error!</div>
+It is common to write constants as ALL_CAPS, but you don't have to.<br>
+<br>
+The constant only applies to the value itself, not what it refers to.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cont females = [&quot;Mary&quot;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const! NAMES = [[&quot;John&quot;, &quot;Peter&quot;], females]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMES[0] = [&quot;Jack&quot;]&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMES[0][0] = [&quot;Jack&quot;]&nbsp;&nbsp;# Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMES[1] = [&quot;Emma&quot;]&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Names[1][0] = &quot;Emma&quot;&nbsp;&nbsp;&nbsp;&nbsp;# OK, now females[0] == &quot;Emma&quot;</div>
+<br>
+Rationale: TypeScript has no way to make the value immutable.&nbsp;&nbsp;One can use<br>
+immutable types, but that quickly gets complicated for nested values.&nbsp;&nbsp;And<br>
+with a type cast the value can be made mutable again, which means there is no<br>
+guarantee the value won't change.&nbsp;&nbsp;Vim supports immutable values, in legacy<br>
+script this was done with&nbsp;<a class="Comment" href="eval.html#:lockvar">:lockvar</a>.&nbsp;&nbsp;But that is an extra statement and also<br>
+applies to nested values.&nbsp;&nbsp;Therefore the solution to use&nbsp;<span class="Comment">:const!</span>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1092" name="E1092">E1092</a><br>
 Declaring more than one variable at a time, using the unpack notation, is<br>
@@ -413,7 +450,7 @@ for using a list or job.&nbsp;&nbsp;This is very much like JavaScript, but there
 few exceptions.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TRUE when</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:true or 1<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-zero<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; non-zero<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-empty<br>
@@ -951,26 +988,41 @@ declarations:<br>
 Expression evaluation was already close to what JavaScript and other languages<br>
 are doing.&nbsp;&nbsp;Some details are unexpected and can be fixed.&nbsp;&nbsp;For example how the<br>
 || and &amp;&amp; operators work.&nbsp;&nbsp;Legacy Vim script:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = 44<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let value = 44<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return result || 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# returns 1</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = value || 0&nbsp;&nbsp;# result == 1</div>
 <br>
 Vim9 script works like JavaScript/TypeScript, keep the value:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = 44<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let value = 44<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return result || 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# returns 44</div>
-<br>
-On the other hand, overloading &quot;+&quot; to use both for addition and string<br>
-concatenation goes against legacy Vim script and often leads to mistakes.<br>
-For that reason we will keep using &quot;..&quot; for string concatenation.&nbsp;&nbsp;Lua also<br>
-uses &quot;..&quot; this way.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = value || 0&nbsp;&nbsp;# result == 44</div>
 <br>
 There is no intention to completely match TypeScript syntax and semantics.&nbsp;&nbsp;We<br>
 just want to take those parts that we can use for Vim and we expect Vim users<br>
-are happy with.&nbsp;&nbsp;TypeScript is a complex language with its own advantages and<br>
-disadvantages.&nbsp;&nbsp;People used to other languages (Java, Python, etc.) will also<br>
-find things in TypeScript that they do not like or do not understand.&nbsp;&nbsp;We'll<br>
-try to avoid those things.<br>
+will be happy with.&nbsp;&nbsp;TypeScript is a complex language with its own advantages<br>
+and disadvantages.&nbsp;&nbsp;To get an idea of the disadvantages read the book:<br>
+&quot;JavaScript: The Good Parts&quot;.&nbsp;&nbsp;Or find the article &quot;TypeScript: the good<br>
+parts&quot; and read the &quot;Things to avoid&quot; section.<br>
+<br>
+People used to other languages (Java, Python, etc.) will also find things in<br>
+TypeScript that they do not like or do not understand.&nbsp;&nbsp;We'll try to avoid<br>
+those things.<br>
+<br>
+Specific items from TypeScript we avoid:<br>
+- Overloading &quot;+&quot;, using it both for addition and string concatenation.&nbsp;&nbsp;This<br>
+&nbsp;&nbsp;goes against legacy Vim script and often leads to mistakes.&nbsp;&nbsp;For that reason<br>
+&nbsp;&nbsp;we will keep using &quot;..&quot; for string concatenation.&nbsp;&nbsp;Lua also uses &quot;..&quot; this<br>
+&nbsp;&nbsp;way.&nbsp;&nbsp;And it allows for conversion to string for more values.<br>
+- TypeScript can use an expression like &quot;99 ||&nbsp;<span class="MissingTag">'yes'</span>&quot; in a condition, but<br>
+&nbsp;&nbsp;cannot assign the value to a boolean.&nbsp;&nbsp;That is inconsistent and can be<br>
+&nbsp;&nbsp;annoying.&nbsp;&nbsp;Vim recognizes an expression with &amp;&amp; or || and allows using the<br>
+&nbsp;&nbsp;result as a bool.<br>
+- TypeScript considers an empty string as Falsy, but an empty list or dict as<br>
+&nbsp;&nbsp;Truthy.&nbsp;&nbsp;That is inconsistent.&nbsp;&nbsp;In Vim an empty list and dict are also<br>
+&nbsp;&nbsp;Falsy.<br>
+- TypeScript has various &quot;Readonly&quot; types, which have limited usefulness,<br>
+&nbsp;&nbsp;since a type cast can remove the immutable nature.&nbsp;&nbsp;Vim locks the value,<br>
+&nbsp;&nbsp;which is more flexible, but is only checked at runtime.<br>
 <br>
 <br>
 <span class="PreProc">Import and Export</span><br>
