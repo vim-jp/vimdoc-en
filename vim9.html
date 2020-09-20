@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 13<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 17<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -24,6 +24,7 @@ THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 3.&nbsp;&nbsp;New style functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#fast-functions">fast-functions</a><br>
 4.&nbsp;&nbsp;Types&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-types">vim9-types</a><br>
 5.&nbsp;&nbsp;Namespace, Import and Export&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9script">vim9script</a><br>
+6.&nbsp;&nbsp;Future work: classes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a><br>
 <br>
 9.&nbsp;&nbsp;Rationale&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-rationale">vim9-rationale</a><br>
 <br>
@@ -54,13 +55,14 @@ errors are handled.<br>
 The Vim9 script syntax and semantics are used in:<br>
 - a function defined with the&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;command<br>
 - a script file where the first command is&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a><br>
-- an autocommand defined in the context of these<br>
+- an autocommand defined in the context of the above<br>
 <br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;in a Vim9 script file the legacy syntax is used.<br>
 However, this can be confusing and is therefore discouraged.<br>
 <br>
 Vim9 script and legacy Vim script can be mixed.&nbsp;&nbsp;There is no requirement to<br>
-rewrite old scripts, they keep working as before.<br>
+rewrite old scripts, they keep working as before.&nbsp;&nbsp;You may want to use a few<br>
+<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions for code that needs to be fast.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
@@ -839,6 +841,8 @@ In case the name is ambiguous, another name can be specified:<br>
 To import all exported items under a specific identifier:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import * as That from 'thatscript.vim'</div>
 <br>
+<span class="Special">{not implemented yet: using &quot;This as That&quot;}</span><br>
+<br>
 Then you can use &quot;That.EXPORTED_CONST&quot;, &quot;That.someValue&quot;, etc.&nbsp;&nbsp;You are free<br>
 to choose the name &quot;That&quot;, but it is highly recommended to use the name of the<br>
 script file to avoid confusion.<br>
@@ -907,6 +911,37 @@ namespace will be used for the imported item, even when &quot;s:&quot; is not sp
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
+6. Future work: classes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-classes" name="vim9-classes">vim9-classes</a><br>
+<br>
+Above &quot;class&quot; was mentioned a few times, but it has not been implemented yet.<br>
+Most of Vim9 script can be created without this funcionality, and since<br>
+implementing classes is going to be a lot of work, it is left for the future.<br>
+For now we'll just make sure classes can be added later.<br>
+<br>
+Thoughts:<br>
+-&nbsp;<span class="Comment">class</span>&nbsp;/&nbsp;<span class="Comment">endclass</span>, everything in one file<br>
+- Class names are always CamelCase<br>
+- Single constructor<br>
+- Single inheritance with&nbsp;<span class="Comment">class ThisClass extends BaseClass</span><br>
+-&nbsp;<span class="Comment">abstract class</span><br>
+-&nbsp;<span class="Comment">interface</span>&nbsp;(Abstract class without any implementation)<br>
+-&nbsp;<span class="Comment">class SomeClass implements SomeInterface</span><br>
+- Generics for class:&nbsp;<span class="Comment">class &lt;Tkey, Tentry&gt;</span><br>
+- Generics for function:&nbsp;<span class="Comment">def &lt;Tkey&gt; GetLast(key: Tkey)</span><br>
+<br>
+Again, much of this is from TypeScript.<br>
+<br>
+Some things that look like good additions:<br>
+- Use a class as an interface (like Dart)<br>
+- Extend a class with methods, using an import (like Dart)<br>
+<br>
+An important class that will be provided is &quot;Promise&quot;.&nbsp;&nbsp;Since Vim is single<br>
+threaded, connecting asynchronous operations is a natural way of allowing<br>
+plugins to do their work without blocking the user.&nbsp;&nbsp;It's a uniform way to<br>
+invoke callbacks and handle timeouts and errors.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
 9. Rationale&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-rationale" name="vim9-rationale">vim9-rationale</a><br>
 <br>
 <span class="PreProc">The :def command</span><br>
@@ -938,36 +973,37 @@ instruction, at execution time the instruction would have to inspect the type<br
 of the arguments and decide what kind of addition to do.&nbsp;&nbsp;And when the<br>
 type is dictionary throw an error.&nbsp;&nbsp;If the types are known to be numbers then<br>
 an &quot;add number&quot; instruction can be used, which is faster.&nbsp;&nbsp;The error can be<br>
-given at compile time, no error handling is needed at runtime.<br>
+given at compile time, no error handling is needed at runtime, adding two<br>
+numbers cannot fail.<br>
 <br>
 The syntax for types is similar to Java, since it is easy to understand and<br>
 widely used.&nbsp;&nbsp;The type names are what were used in Vim before, with some<br>
 additions such as &quot;void&quot; and &quot;bool&quot;.<br>
 <br>
 <br>
-<span class="PreProc">Compiling functions early</span><br>
+<span class="PreProc">Removing clutter and weirdness</span><br>
 <br>
-Functions are compiled when called or when&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;is used.&nbsp;&nbsp;Why not<br>
-compile them early, so that syntax and type errors are reported early?<br>
+Once decided that&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions have different syntax than legacy functions,<br>
+we are free to add improvements to make the code more familiar for users who<br>
+know popular programming languages.&nbsp;&nbsp;In other words: remove weird things that<br>
+only Vim uses.<br>
 <br>
-The functions can't be compiled right away when encountered, because there may<br>
-be forward references to functions defined later.&nbsp;&nbsp;Consider defining functions<br>
-A, B and C, where A calls B, B calls C, and C calls A again.&nbsp;&nbsp;It's impossible<br>
-to reorder the functions to avoid forward references.<br>
+We can also remove clutter, mainly things that were done to make Vim script<br>
+backwards compatible with good old Vi commands.<br>
 <br>
-An alternative would be to first scan through the file to locate items and<br>
-figure out their type, so that forward references are found, and only then<br>
-execute the script and compile the functions.&nbsp;&nbsp;This means the script has to be<br>
-parsed twice, which is slower, and some conditions at the script level, such<br>
-as checking if a feature is supported, are hard to use.&nbsp;&nbsp;An attempt was made<br>
-to see if it works, but it turned out to be impossible to make work nicely.<br>
+Examples:<br>
+- Drop&nbsp;<a class="Comment" href="eval.html#:call">:call</a>&nbsp;for calling a function and&nbsp;<a class="Comment" href="eval.html#:eval">:eval</a>&nbsp;for manipulating data.<br>
+- Drop using a leading backslash for line continuation, automatically figure<br>
+&nbsp;&nbsp;out where an expression ends.<br>
 <br>
-It would be possible to compile all the functions at the end of the script.<br>
-The drawback is that if a function never gets called, the overhead of<br>
-compiling it counts anyway.&nbsp;&nbsp;Since startup speed is very important, in most<br>
-cases it's better to do it later and accept that syntax and type errors are<br>
-only reported then.&nbsp;&nbsp;In case these errors should be found early, e.g. when<br>
-testing, the&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;command will help out.<br>
+However, this does require that some things need to change:<br>
+- Comments start with # instead of &quot;, to avoid confusing them with strings.<br>
+- Ex command ranges need to be prefixed with a colon, to avoid confusion with<br>
+&nbsp;&nbsp;expressions (single quote can be a string or a mark, &quot;/&quot; can be divide or a<br>
+&nbsp;&nbsp;search command, etc.).<br>
+<br>
+Goal is to limit the differences.&nbsp;&nbsp;A good criteria is that when the old syntax<br>
+is used you are very likely to get an error message.<br>
 <br>
 <br>
 <span class="PreProc">TypeScript syntax and semantics</span><br>
@@ -997,16 +1033,23 @@ Vim9 script works like JavaScript/TypeScript, keep the value:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let result = value || 0&nbsp;&nbsp;# result == 44</div>
 <br>
+Another reason why TypeScript can be used as an example for Vim9 script is the<br>
+mix of static typing (a variable always has a known value type) and dynamic<br>
+typing (a variable can have different types, this hanges at runtime).&nbsp;&nbsp;Since<br>
+legacy Vim script is dynamically typed and a lot of existing functionality<br>
+(esp. builtin functions) depends on that, while static typing allows for much<br>
+faster execution, we need to have this mix in Vim9 script.<br>
+<br>
 There is no intention to completely match TypeScript syntax and semantics.&nbsp;&nbsp;We<br>
 just want to take those parts that we can use for Vim and we expect Vim users<br>
-will be happy with.&nbsp;&nbsp;TypeScript is a complex language with its own advantages<br>
-and disadvantages.&nbsp;&nbsp;To get an idea of the disadvantages read the book:<br>
-&quot;JavaScript: The Good Parts&quot;.&nbsp;&nbsp;Or find the article &quot;TypeScript: the good<br>
+will be happy with.&nbsp;&nbsp;TypeScript is a complex language with its own history,<br>
+advantages and disadvantages.&nbsp;&nbsp;To get an idea of the disadvantages read the<br>
+book: &quot;JavaScript: The Good Parts&quot;.&nbsp;&nbsp;Or find the article &quot;TypeScript: the good<br>
 parts&quot; and read the &quot;Things to avoid&quot; section.<br>
 <br>
-People used to other languages (Java, Python, etc.) will also find things in<br>
-TypeScript that they do not like or do not understand.&nbsp;&nbsp;We'll try to avoid<br>
-those things.<br>
+People familiar with other languages (Java, Python, etc.) will also find<br>
+things in TypeScript that they do not like or do not understand.&nbsp;&nbsp;We'll try to<br>
+avoid those things.<br>
 <br>
 Specific items from TypeScript we avoid:<br>
 - Overloading &quot;+&quot;, using it both for addition and string concatenation.&nbsp;&nbsp;This<br>
@@ -1059,24 +1102,56 @@ globally can be used, not the exported items.&nbsp;&nbsp;Alternatives considered
 <span class="Todo">Note</span>&nbsp;that you can also use&nbsp;<a class="Comment" href="vim9.html#:import">:import</a>&nbsp;in legacy Vim script, see above.<br>
 <br>
 <br>
-<span class="PreProc">Classes</span><br>
+<span class="PreProc">Compiling functions early</span><br>
+<br>
+Functions are compiled when called or when&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;is used.&nbsp;&nbsp;Why not<br>
+compile them early, so that syntax and type errors are reported early?<br>
+<br>
+The functions can't be compiled right away when encountered, because there may<br>
+be forward references to functions defined later.&nbsp;&nbsp;Consider defining functions<br>
+A, B and C, where A calls B, B calls C, and C calls A again.&nbsp;&nbsp;It's impossible<br>
+to reorder the functions to avoid forward references.<br>
+<br>
+An alternative would be to first scan through the file to locate items and<br>
+figure out their type, so that forward references are found, and only then<br>
+execute the script and compile the functions.&nbsp;&nbsp;This means the script has to be<br>
+parsed twice, which is slower, and some conditions at the script level, such<br>
+as checking if a feature is supported, are hard to use.&nbsp;&nbsp;An attempt was made<br>
+to see if it works, but it turned out to be impossible to make work nicely.<br>
+<br>
+It would be possible to compile all the functions at the end of the script.<br>
+The drawback is that if a function never gets called, the overhead of<br>
+compiling it counts anyway.&nbsp;&nbsp;Since startup speed is very important, in most<br>
+cases it's better to do it later and accept that syntax and type errors are<br>
+only reported then.&nbsp;&nbsp;In case these errors should be found early, e.g. when<br>
+testing, the&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;command will help out.<br>
+<br>
+<br>
+<span class="PreProc">Why not use an embeded language?</span><br>
 <br>
 Vim supports interfaces to Perl, Python, Lua, Tcl and a few others.&nbsp;&nbsp;But<br>
-these interfaces have never become widespread.&nbsp;&nbsp;When Vim 9 was designed a<br>
-decision was made to phase out these interfaces and concentrate on Vim script,<br>
-while encouraging plugin authors to write code in any language and run it as<br>
-an external tool, using jobs and channels.<br>
+these interfaces have never become widely used, for various reasons.&nbsp;&nbsp;When<br>
+Vim9 was designed a decision was made to make these interfaces lower priority<br>
+and concentrate on Vim script.<br>
 <br>
-Still, using an external tool has disadvantages.&nbsp;&nbsp;An alternative is to convert<br>
+Still, plugin writers may find other languages more familiar, want to use<br>
+existing libraries or see a performance benefit.&nbsp;&nbsp;We encourage plugin authors<br>
+to write code in any language and run it as an external tool, using jobs and<br>
+channels.&nbsp;&nbsp;We can try to make this easier somehow.<br>
+<br>
+Using an external tool also has disadvantages.&nbsp;&nbsp;An alternative is to convert<br>
 the tool into Vim script.&nbsp;&nbsp;For that to be possible without too much<br>
 translation, and keeping the code fast at the same time, the constructs of the<br>
 tool need to be supported.&nbsp;&nbsp;Since most languages support classes the lack of<br>
 support for classes in Vim is then a problem.<br>
 <br>
-Previously Vim supported a kind-of object oriented programming by adding<br>
-methods to a dictionary.&nbsp;&nbsp;With some care this could be made to work, but it<br>
-does not look like real classes.&nbsp;&nbsp;On top of that, it's very slow, because of<br>
-the use of dictionaries.<br>
+<br>
+<span class="PreProc">Classes</span><br>
+<br>
+Vim supports a kind-of object oriented programming by adding methods to a<br>
+dictionary.&nbsp;&nbsp;With some care this can be made to work, but it does not look<br>
+like real classes.&nbsp;&nbsp;On top of that, it's quite slow, because of the use of<br>
+dictionaries.<br>
 <br>
 The support of classes in Vim9 script is a &quot;minimal common functionality&quot; of<br>
 class support in most languages.&nbsp;&nbsp;It works much like Java, which is the most<br>

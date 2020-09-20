@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 07<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 19<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -45,24 +45,13 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <br>
 Why does Test_invalid_sid() not work in the GUI?<br>
 <br>
-Making everything work:<br>
-- Should :const work the same as in legacy script?<br>
-&nbsp;&nbsp;Or should it work like in Typescript: only the variable is fixed, not the<br>
-&nbsp;&nbsp;value itself.<br>
-&nbsp;&nbsp;Then use &quot;:const!&quot; to also fix/lock the value?<br>
-&nbsp;&nbsp;Typescript uses &quot;as const&quot;, which is weird.<br>
-&nbsp;&nbsp;Alternative:&nbsp;&nbsp;const var =&nbsp;<span class="Special">&lt;const&gt;</span>value<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;looks quite strange quite verbose<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;But can be used in several places:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SomeFunc(<span class="Special">&lt;const&gt;</span>[1, 2, 3])<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In Vim this basically means &quot;lock this value&quot;.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How about:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SomeFunc(<span class="Special">&lt;const&gt;</span>[[1], [2], [3]])&nbsp;&nbsp;# are sub-lists immutable?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SomeFunc(<span class="Special">&lt;const&gt;</span>myList)&nbsp;&nbsp;# is myList mutable afterwards?<br>
+Add matchfuzzy() and matchfuzzypos() Yegappan, #6947<br>
+&nbsp;&nbsp;&nbsp;&nbsp;should be ready now<br>
 <br>
-- Run the same tests in :def and Vim9 script, like in Test_expr7_not()<br>
-- :put with a &quot;=&quot; register argument doesn't work, need to find the expression<br>
-&nbsp;&nbsp;and compile it. (#6397)<br>
+Making everything work:<br>
+- Fix memory leak in test_vim9_func (through compile_nested_function and<br>
+&nbsp;&nbsp;get_lambda_tv())<br>
+- Fix memory leaks in test_vim9_script<br>
 - At the Vim9 script level, keep script variables local to the block they are<br>
 &nbsp;&nbsp;declared in, like in Javascript (using :let).<br>
 &nbsp;&nbsp;-&gt; Need to remember what variables were declared and delete them when<br>
@@ -85,6 +74,7 @@ Making everything work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;assertfail<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unknown<br>
 &nbsp;&nbsp;&nbsp;&nbsp;endassertfail E99:.*unknown<br>
+- Run the same tests in :def and Vim9 script, like in Test_expr7_not()<br>
 - In autocmd: use legacy syntax, not whatever the current script uses?<br>
 - need to check type when a declaration specifies a type: #6507<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let nr: number =&nbsp;<span class="MissingTag">'asdf'</span><br>
@@ -92,6 +82,9 @@ Making everything work:<br>
 &nbsp;&nbsp;the script-local function, not a global one.<br>
 - Make sure that where a callback is expected a function can be used (without<br>
 &nbsp;&nbsp;quotes). E.g. sort() and map().&nbsp;&nbsp;Also at the script level.<br>
+- assignment to more complex lval: list[1][2][3] = 8<br>
+- &quot;:put&quot; with ISN_PUT does not handle range correctly, e.g. &quot;:$-2put&quot;.<br>
+&nbsp;&nbsp;Add command to parse range at runtime?<br>
 - Make map() give an error if the resulting type is wrong.<br>
 &nbsp;&nbsp;Add mapnew() to create a new List/Dict for the result, which can have a<br>
 &nbsp;&nbsp;different value type.<br>
@@ -113,6 +106,9 @@ Making everything work:<br>
 - Test that a function defined inside a :def function is local to that<br>
 &nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
 &nbsp;&nbsp;defined.<br>
+- Does this work already: can use func as reference:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeFunc() ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(list, SomeFunc)<br>
 - Support passing v:none to use the default argument value. (#6504)<br>
 - make 0 ==&nbsp;<span class="MissingTag">'string'</span>&nbsp;fail on the script level, like inside :def.<br>
 - Check that when using a user function name without prefix, it does not find<br>
@@ -128,10 +124,6 @@ Making everything work:<br>
 - Compile redir to local variable: var_redir_start().<br>
 - Compile builtin functions that access local variables:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;islocked()<br>
-- possible memory leak in test_vim9_func through compile_nested_function.<br>
-- memory leaks in test_vim9_expr<br>
-- memory leaks in test_vim9_script<br>
-- memory leaks in test_vim9_cmd<br>
 - When evaluating constants for script variables, some functions could work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;has(<span class="MissingTag">'asdf'</span>), len(<span class="MissingTag">'string'</span>)<br>
 - Implement &quot;as Name&quot; in &quot;import Item as Name from ...&quot;<br>
@@ -156,24 +148,23 @@ Also:<br>
 - Make Foo.Bar() work to call the dict function. (#5676)<br>
 - Error in any command in &quot;vim9script&quot; aborts sourcing.<br>
 - Find a way to test expressions in legacy and Vim9 script without duplication<br>
-- Fix memory leaks for test_vim9_disassemble, test_vim9_expr, test_vim9_script<br>
 - Test each level of expressions properly, with type checking<br>
 - Test try/catch and throw better, also nested.<br>
 &nbsp;&nbsp;Test return inside try/finally jumps to finally and then returns.<br>
-- can use func as reference:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeFunc() ...<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(list, SomeFunc)<br>
 - Test: Function declared inside a :def function is local, disappears at the<br>
 &nbsp;&nbsp;end of the function.&nbsp;&nbsp;Unless g: is used, just like with variables.<br>
 - implement :type<br>
 - import type declaration?<br>
-- implement class<br>
-- implement interface<br>
-- predefined class: Promise<span class="Special">&lt;T&gt;</span><br>
+- Future work: See&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a><br>
 - implement enum<br>
 - Make accessing varargs faster: arg[expr]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVAL expr<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varags idx)<br>
+- Make debugging work - at least per function.&nbsp;&nbsp;Need to recompile a function<br>
+&nbsp;&nbsp;to step through it line-by-line?&nbsp;&nbsp;Evaluate the stack and variables on the<br>
+&nbsp;&nbsp;stack?<br>
+- Make profiling work - Add ISN_PROFILE instructions after every line?<br>
+- List commands when&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;is set or :verbose is used.<br>
 Further improvements:<br>
 - compile options that are an expression, e.g. &quot;expr:&quot; in&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>,<br>
 &nbsp;&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>,&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>,&nbsp;<a class="Type" href="options.html#'printexpr'">'printexpr'</a>,&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>,&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>,&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>,<br>
@@ -297,7 +288,7 @@ Terminal emulator window:<br>
 Error numbers available: E653<br>
 <br>
 Patch to implement the vimtutor with a plugin: #6414<br>
-Was originally writtten by Felipe Morales.<br>
+Was originally written by Felipe Morales.<br>
 <br>
 Remove SPACE_IN_FILENAME ? It is only used for completion.<br>
 <br>
@@ -307,6 +298,9 @@ Add&nbsp;<span class="MissingTag">'termguiattr'</span>&nbsp;option, use &quot;gu
 with&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>. #1740<br>
 <br>
 Patch for blockwise paste reporting changes: #6660.<br>
+<br>
+Expanding&nbsp;<span class="Special">&lt;mods&gt;</span>&nbsp;should put the tab number from cmdmod.tab before &quot;tab&quot;.<br>
+Any way to convert &quot;$&quot; back by using a special value? (#6901)<br>
 <br>
 Can we detect true color support?&nbsp;&nbsp;<span class="Constant"><a href="https://gist.github.com/XVilka/8346728">https://gist.github.com/XVilka/8346728</a></span><br>
 Try setting a color then request the current color, like using t_u7.<br>
@@ -401,6 +395,9 @@ which is not useful.&nbsp;&nbsp;Return &quot;c/v&quot; instead.&nbsp;&nbsp;And &
 When&nbsp;<a class="Type" href="options.html#'fileignorecase'">'fileignorecase'</a>&nbsp;is set &quot;:e testfile.c&quot; works to edit TestFile.c, but<br>
 &quot;:find testfile.c&quot; does not ignore case.<br>
 Might be related to #6088.<br>
+<br>
+Error for reverse range when using :vimgrep in file &quot;[id-01] file.txt&quot;.<br>
+(#6919)<br>
 <br>
 When changing the crypt key the buffer should be considered modified.<br>
 Like when changing&nbsp;<a class="Type" href="options.html#'fileformat'">'fileformat'</a>.&nbsp;&nbsp;Save the old key in save_file_ff().<br>
@@ -519,7 +516,7 @@ Better: use the &quot;z&quot; prefix.&nbsp;&nbsp;or ]t) and [t(.<br>
 Modeless selection doesn't work in gvim. (#4783)<br>
 Caused by patch 8.1.1534.<br>
 <br>
-Visual highlight not removed when&nbsp;<span class="MissingTag">'dipslay'</span>&nbsp;is &quot;lastline&quot; and line doesn't<br>
+Visual highlight not removed when&nbsp;<a class="Type" href="options.html#'display'">'display'</a>&nbsp;is &quot;lastline&quot; and line doesn't<br>
 fit. (Kevin Lawler, #4457)<br>
 <br>
 Current position in the changelist should be local to the buffer. (#2173)<br>
