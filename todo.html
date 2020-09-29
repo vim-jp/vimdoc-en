@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 19<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 28<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,14 +43,19 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Why does Test_invalid_sid() not work in the GUI?<br>
+Popup windows: don't send any keys from &quot;:normal&quot; to popup filter?<br>
+&nbsp;&nbsp;Can drop ex_normal_busy_done then.<br>
 <br>
-Add matchfuzzy() and matchfuzzypos() Yegappan, #6947<br>
-&nbsp;&nbsp;&nbsp;&nbsp;should be ready now<br>
+Move Test_let_* from test_vim9_script to test_vim9_assign<br>
 <br>
+Modifiers in GTK: issue #6457.&nbsp;&nbsp;<span class="Special">CTRL-6</span>&nbsp;should work, like&nbsp;<span class="Special">CTRL-@</span>&nbsp;and&nbsp;<span class="Special">CTRL-_</span>.<br>
+<br>
+3 October: remove using :let in Vim9 script.<br>
+<br>
+Go back to not using string/list/dict as falsy/thruthy boolean?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;or only make &quot;||&quot; and &quot;&amp;&amp;&quot; result in a boolean?<br>
 Making everything work:<br>
-- Fix memory leak in test_vim9_func (through compile_nested_function and<br>
-&nbsp;&nbsp;get_lambda_tv())<br>
+- Fix memory leaks in test_vim9_assign, remove &quot;if 0&quot;<br>
 - Fix memory leaks in test_vim9_script<br>
 - At the Vim9 script level, keep script variables local to the block they are<br>
 &nbsp;&nbsp;declared in, like in Javascript (using :let).<br>
@@ -83,6 +88,7 @@ Making everything work:<br>
 - Make sure that where a callback is expected a function can be used (without<br>
 &nbsp;&nbsp;quotes). E.g. sort() and map().&nbsp;&nbsp;Also at the script level.<br>
 - assignment to more complex lval: list[1][2][3] = 8<br>
+&nbsp;&nbsp;Also &quot;list[0] += value&quot;.&nbsp;&nbsp;test in Test_assign_dict_unknown_type().<br>
 - &quot;:put&quot; with ISN_PUT does not handle range correctly, e.g. &quot;:$-2put&quot;.<br>
 &nbsp;&nbsp;Add command to parse range at runtime?<br>
 - Make map() give an error if the resulting type is wrong.<br>
@@ -97,9 +103,10 @@ Making everything work:<br>
 - ISN_CHECKTYPE could use check_argtype()<br>
 - give error for variable name:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let p = function('NoSuchFunc')<br>
-- Give runtime error if function argument is wrong.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Increment(nr: number)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;range(3)-&gt;Increment()<br>
+- If a :def function is called with a function reference, compile it to get<br>
+&nbsp;&nbsp;the function type.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Filter(x: string, Cond: func(string): bool)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter(x, { v -&gt; v =~ '^b' })<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :next, :argedit, :argadd, :argdelete, :drop<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :vimgrep, :vimgrepadd, :lvimgrep, :lvimgrepadd<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :mkspell<br>
@@ -127,6 +134,8 @@ Making everything work:<br>
 - When evaluating constants for script variables, some functions could work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;has(<span class="MissingTag">'asdf'</span>), len(<span class="MissingTag">'string'</span>)<br>
 - Implement &quot;as Name&quot; in &quot;import Item as Name from ...&quot;<br>
+- Implement using imported items at script level from &quot;import * as X&quot; in<br>
+&nbsp;&nbsp;eval_variable().&nbsp;&nbsp;Should pass the &quot;.xxx&quot; that follows and return that.<br>
 - Disallow unlet for local/script/imported vars<br>
 - Make &quot;++nr&quot; work.<br>
 - Make closures work:<br>
@@ -337,6 +346,8 @@ Make it possible to map (console and GUI):&nbsp;&nbsp;#6457<br>
 Patch for Template string: #4634<br>
 Have another look at the implementation.<br>
 <br>
+Valgrind warns for uninitialized values in f_term_dumpwrite().<br>
+<br>
 Add the &lt;=&gt; (spaceship) operator and &quot;cond ?&lt; expr ?= expr ?&gt; expr&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;replace this:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let left = GetLeftFunc()<br>
@@ -345,6 +356,8 @@ Add the &lt;=&gt; (spaceship) operator and &quot;cond ?&lt; expr ?= expr ?&gt; e
 &nbsp;&nbsp;&nbsp;&nbsp;by:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let res = GetLeftFunc() &lt;=&gt; GetRightFunc() ?&lt; lower ?= equal ?&gt; upper<br>
 Patch to make :q work with local arglist. (Christian Brabandt, #6286)<br>
+<br>
+Why does Test_invalid_sid() not work in the GUI?<br>
 <br>
 Lua: updating wrong buffer when using newly created, unloaded buffer.<br>
 (#6539)<br>
