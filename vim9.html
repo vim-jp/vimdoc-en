@@ -81,13 +81,13 @@ script and&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .. yourName<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .. &quot;, how are you?&quot;</div>
 - White space is required in many places.<br>
-- Assign values without&nbsp;<a class="Comment" href="eval.html#:let">:let</a>, declare variables with&nbsp;<span class="Comment">:var</span>:<br>
+- Assign values without&nbsp;<a class="Comment" href="eval.html#:let">:let</a>, declare variables with&nbsp;<a class="Comment" href="vim9.html#:var">:var</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var count = 0<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;count += 3</div>
-- Constants can be declared with&nbsp;<span class="Comment">:final</span>&nbsp;and&nbsp;<a class="Comment" href="eval.html#:const">:const</a>:<br>
+- Constants can be declared with&nbsp;<a class="Comment" href="vim9.html#:final">:final</a>&nbsp;and&nbsp;<a class="Comment" href="eval.html#:const">:const</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;final matches = []&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# add matches<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const names = ['Betty', 'Peter']&nbsp;&nbsp;# cannot be changed</div>
--&nbsp;<span class="Comment">:final</span>&nbsp;cannot be used as an abbreviation of&nbsp;<a class="Comment" href="eval.html#:finally">:finally</a>.<br>
+-&nbsp;<a class="Comment" href="vim9.html#:final">:final</a>&nbsp;cannot be used as an abbreviation of&nbsp;<a class="Comment" href="eval.html#:finally">:finally</a>.<br>
 - Variables and functions are script-local by default.<br>
 - Functions are declared with argument types and return type:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def CallMe(count: number, message: string): bool</div>
@@ -159,25 +159,25 @@ list type, similar to TypeScript.&nbsp;&nbsp;For example, a list of numbers:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-scopes" name="vim9-scopes">vim9-scopes</a><br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a new function at the script level<br>
 in a Vim9 script, the function is local to the script, as if &quot;s:&quot; was<br>
-prefixed.&nbsp;&nbsp;Using the &quot;s:&quot; prefix is optional.&nbsp;&nbsp;To define or use a global<br>
-function or variable the &quot;g:&quot; prefix should be used.&nbsp;&nbsp;For functions in an<br>
-autoload script the &quot;name#&quot; prefix is sufficient.<br>
+prefixed.&nbsp;&nbsp;Using the &quot;s:&quot; prefix is optional.&nbsp;&nbsp;To define a global function or<br>
+variable the &quot;g:&quot; prefix must be used.&nbsp;&nbsp;For functions in an autoload script<br>
+the &quot;name#&quot; prefix is sufficient.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ThisFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# script-local<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def s:ThisFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# script-local<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def g:ThatFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# global<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ThatFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# global if no local ThatFunction()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def scriptname#function()&nbsp;&nbsp; # autoload</div>
 <br>
-When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a new function inside a function,<br>
-the function is local to the function.&nbsp;&nbsp;It is not possible to define a<br>
-script-local function inside a function. It is possible to define a global<br>
-function, using the &quot;g:&quot; prefix.<br>
+When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a nested function inside a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a><br>
+function, this nested function is local to the code block it is defined in.<br>
+In a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function IT is not possible to define a script-local function.&nbsp;&nbsp;it<br>
+is possible to define a global function by using the &quot;g:&quot; prefix.<br>
 <br>
 When referring to a function and no &quot;s:&quot; or &quot;g:&quot; prefix is used, Vim will<br>
 prefer using a local function (in the function scope, script scope or<br>
-imported) before looking for a global function.<br>
-In all cases the function must be defined before used.&nbsp;&nbsp;That is when it is<br>
-first called or when&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;causes the call to be compiled.<br>
+imported) before looking for a global function.&nbsp;&nbsp;However, it is recommended to<br>
+always use &quot;g:&quot; to refer to a local function for clarity.&nbsp;&nbsp;In all cases the<br>
+function must be defined before used.&nbsp;&nbsp;That is when it is first called or when<br>
+<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;causes the call to be compiled.<br>
 <br>
 The result is that functions and variables without a namespace can usually be<br>
 found in the script, either defined there or imported.&nbsp;&nbsp;Global functions and<br>
@@ -189,9 +189,9 @@ and cannot be deleted or replaced.<br>
 <br>
 <br>
 <span class="PreProc">Variable declarations with :var, :final and :const</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-declaration" name="vim9-declaration">vim9-declaration</a><br>
-Local variables need to be declared with&nbsp;<span class="Comment">:var</span>.&nbsp;&nbsp;Local constants need to be<br>
-declared with&nbsp;<span class="Comment">:final</span>&nbsp;or&nbsp;<a class="Comment" href="eval.html#:const">:const</a>.&nbsp;&nbsp;We refer to both as &quot;variables&quot; in this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-declaration" name="vim9-declaration">vim9-declaration</a>&nbsp;<a class="Constant" href="vim9.html#:var" name=":var">:var</a><br>
+Local variables need to be declared with&nbsp;<a class="Comment" href="vim9.html#:var">:var</a>.&nbsp;&nbsp;Local constants need to be<br>
+declared with&nbsp;<a class="Comment" href="vim9.html#:final">:final</a>&nbsp;or&nbsp;<a class="Comment" href="eval.html#:const">:const</a>.&nbsp;&nbsp;We refer to both as &quot;variables&quot; in this<br>
 section.<br>
 <br>
 Variables can be local to a script, function or code block:<br>
@@ -266,8 +266,8 @@ Example:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList = [3, 4]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList[0] = 9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;muList-&gt;add(3)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Error!</div>
-<br>
-<span class="Comment">:final</span>&nbsp;is used for making only the variable a constant, the value can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:final" name=":final">:final</a><br>
+<a class="Comment" href="vim9.html#:final">:final</a>&nbsp;is used for making only the variable a constant, the value can be<br>
 changed.&nbsp;&nbsp;This is well known from Java.&nbsp;&nbsp;Example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;final myList = [1, 2]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList = [3, 4]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
@@ -476,10 +476,6 @@ Conditions and expressions are mostly working like they do in JavaScript.&nbsp;&
 difference is made where JavaScript does not work like most people expect.<br>
 Specifically, an empty list is falsy.<br>
 <br>
-Any type of variable can be used as a condition, there is no error, not even<br>
-for using a list or job.&nbsp;&nbsp;This is very much like JavaScript, but there are a<br>
-few exceptions.<br>
-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TRUE when</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:true or 1<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-zero<br>
@@ -495,17 +491,25 @@ few exceptions.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when not NULL<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;object&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when not NULL (TODO: when isTrue() returns v:true)<br>
 <br>
-The boolean operators &quot;||&quot; and &quot;&amp;&amp;&quot; do not change the value:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 || 2&nbsp;&nbsp; == 8<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 || 2&nbsp;&nbsp; == 2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 || ''&nbsp;&nbsp;== ''<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 &amp;&amp; 2&nbsp;&nbsp; == 2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &amp;&amp; 2&nbsp;&nbsp; == 0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 &amp;&amp; 0&nbsp;&nbsp; == 0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[] &amp;&amp; 2&nbsp;&nbsp;== []</div>
+The boolean operators &quot;||&quot; and &quot;&amp;&amp;&quot; expect the values to be boolean, zero or<br>
+one:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 || false&nbsp;&nbsp; == true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 || 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; == true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 || false&nbsp;&nbsp; == false<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 &amp;&amp; true&nbsp;&nbsp;&nbsp;&nbsp;== true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &amp;&amp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; == false<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8 || 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'yes' &amp;&amp; 0&nbsp;&nbsp; Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[] || 99&nbsp;&nbsp;&nbsp;&nbsp; Error!</div>
 <br>
-When using&nbsp;<span class="Comment">..</span>&nbsp;for string concatenation arguments of simple types are always<br>
-converted to string.<br>
+When using &quot;!&quot; for inverting, there is no error for using any type and the<br>
+result is a boolean:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!'yes'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;== false<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var myList = [1, 2, 3]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!!myList&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;== true</div>
+<br>
+When using &quot;<span class="Comment">..&quot;</span>&nbsp;for string concatenation arguments of simple types are<br>
+always converted to string.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. 123&nbsp;&nbsp;== 'hello 123'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. v:true&nbsp;&nbsp;== 'hello v:true'</div>
 <br>
@@ -1086,7 +1090,7 @@ Specific items from TypeScript we avoid:<br>
 <br>
 Legacy Vim script uses&nbsp;<a class="Comment" href="eval.html#:let">:let</a>&nbsp;for every assignment, while in Vim9 declarations<br>
 are used.&nbsp;&nbsp;That is different, thus it's good to use a different command:<br>
-<span class="Comment">:var</span>.&nbsp;&nbsp;This is used in many languages.&nbsp;&nbsp;The semantics might be slightly<br>
+<a class="Comment" href="vim9.html#:var">:var</a>.&nbsp;&nbsp;This is used in many languages.&nbsp;&nbsp;The semantics might be slightly<br>
 different, but it's easily recognized as a declaration.<br>
 <br>
 Using&nbsp;<a class="Comment" href="eval.html#:const">:const</a>&nbsp;&nbsp;for constants is common, but the semantics vary.&nbsp;&nbsp;Some<br>
@@ -1129,7 +1133,7 @@ The first is more familiar for anyone used to C or Java.&nbsp;&nbsp;The second o
 doesn't really has an advantage over the first, so let's discard the second.<br>
 <br>
 Since we use type inference the type can be left out when it can be inferred<br>
-from the value.&nbsp;&nbsp;This means that after&nbsp;<span class="Comment">var</span>&nbsp;we don't know if a type or a name<br>
+from the value.&nbsp;&nbsp;This means that after&nbsp;<a class="Comment" href="vim9.html#:var">var</a>&nbsp;we don't know if a type or a name<br>
 follows.&nbsp;&nbsp;That makes parsing harder, not only for Vim but also for humans.<br>
 Also, it will not be allowed to use a variable name that could be a type name,<br>
 using&nbsp;<span class="Comment">var string string</span>&nbsp;is too confusing.<br>

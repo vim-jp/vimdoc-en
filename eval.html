@@ -139,6 +139,26 @@ non-zero number it means TRUE:<br>
 To test for a non-empty string, use empty():<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:if !empty(&quot;foo&quot;)</div>
 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#falsy" name="falsy">falsy</a>&nbsp;<a class="Constant" href="eval.html#truthy" name="truthy">truthy</a><br>
+An expression can be used as a condition, ignoring the type and only using<br>
+whether the value is &quot;sort of true&quot; or &quot;sort of false&quot;.&nbsp;&nbsp;Falsy is:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the number zero<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;empty string, blob, list or dictionary<br>
+Other values are truthy.&nbsp;&nbsp;Examples:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; falsy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; truthy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;truthy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.0&nbsp;&nbsp;&nbsp;&nbsp; falsy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.1&nbsp;&nbsp;&nbsp;&nbsp; truthy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;''&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;falsy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'x'&nbsp;&nbsp;&nbsp;&nbsp; truthy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;falsy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[0]&nbsp;&nbsp;&nbsp;&nbsp; truthy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;falsy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#{x: 1} truthy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;falsy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0z00&nbsp;&nbsp;&nbsp;&nbsp;truthy<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#non-zero-arg" name="non-zero-arg">non-zero-arg</a><br>
 Function arguments often behave slightly different from&nbsp;<a class="Identifier" href="eval.html#TRUE">TRUE</a>: If the<br>
 argument is present and it evaluates to a non-zero Number,&nbsp;<a class="Identifier" href="eval.html#v:true">v:true</a>&nbsp;or a<br>
@@ -882,10 +902,13 @@ Example:<br>
 All expressions within one level are parsed from left to right.<br>
 <br>
 <br>
-expr1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#expr1" name="expr1">expr1</a>&nbsp;<a class="Constant" href="eval.html#trinary" name="trinary">trinary</a>&nbsp;<a class="Constant" href="eval.html#E109" name="E109">E109</a><br>
+expr1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#expr1" name="expr1">expr1</a>&nbsp;<a class="Constant" href="eval.html#trinary" name="trinary">trinary</a>&nbsp;<a class="Constant" href="eval.html#falsy-operator" name="falsy-operator">falsy-operator</a>&nbsp;<a class="Constant" href="eval.html#E109" name="E109">E109</a><br>
 <span class="PreProc">-----</span><br>
 <br>
-expr2 ? expr1 : expr1<br>
+The trinary operator: expr2 ? expr1 : expr1<br>
+The falsy operator:&nbsp;&nbsp; expr2 ?? expr1<br>
+<br>
+<span class="PreProc">Trinary operator</span><br>
 <br>
 The expression before the '?' is evaluated to a number.&nbsp;&nbsp;If it evaluates to<br>
 <a class="Identifier" href="eval.html#TRUE">TRUE</a>, the result is the value of the expression between the '?' and ':',<br>
@@ -907,6 +930,23 @@ To keep this readable, using&nbsp;<a class="Identifier" href="repeat.html#line-c
 <br>
 You should always put a space before the ':', otherwise it can be mistaken for<br>
 use in a variable such as &quot;a:1&quot;.<br>
+<br>
+<span class="PreProc">Falsy operator</span><br>
+<br>
+This is also known as the &quot;null coalescing operator&quot;, but that's too<br>
+complicated, thus we just call it the falsy operator.<br>
+<br>
+The expression before the '??' is evaluated.&nbsp;&nbsp;If it evaluates to<br>
+<a class="Identifier" href="eval.html#truthy">truthy</a>, this is used as the result.&nbsp;&nbsp;Otherwise the expression after the '??'<br>
+is evaluated and used as the result.&nbsp;&nbsp;This is most useful to have a default<br>
+value for an expression that may result in zero or empty:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo theList ?? 'list is empty'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo GetName() ?? 'unknown'</div>
+<br>
+These are similar, but not equal:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expr2 ?? expr1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expr2 ? expr2 : expr1</div>
+In the second line &quot;expr2&quot; is evaluated twice.<br>
 <br>
 <br>
 expr2 and expr3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#expr2" name="expr2">expr2</a>&nbsp;<a class="Constant" href="eval.html#expr3" name="expr3">expr3</a><br>
