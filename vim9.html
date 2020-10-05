@@ -169,15 +169,20 @@ the &quot;name#&quot; prefix is sufficient.<br>
 <br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a nested function inside a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a><br>
 function, this nested function is local to the code block it is defined in.<br>
-In a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function IT is not possible to define a script-local function.&nbsp;&nbsp;it<br>
+In a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function it is not possible to define a script-local function.&nbsp;&nbsp;it<br>
 is possible to define a global function by using the &quot;g:&quot; prefix.<br>
 <br>
 When referring to a function and no &quot;s:&quot; or &quot;g:&quot; prefix is used, Vim will<br>
-prefer using a local function (in the function scope, script scope or<br>
-imported) before looking for a global function.&nbsp;&nbsp;However, it is recommended to<br>
-always use &quot;g:&quot; to refer to a local function for clarity.&nbsp;&nbsp;In all cases the<br>
-function must be defined before used.&nbsp;&nbsp;That is when it is first called or when<br>
-<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;causes the call to be compiled.<br>
+search for the function:<br>
+- in the function scope<br>
+- in the script scope, possibly imported<br>
+- in the list of global functions<br>
+However, it is recommended to always use &quot;g:&quot; to refer to a global function<br>
+for clarity.<br>
+<br>
+In all cases the function must be defined before used.&nbsp;&nbsp;That is when it is<br>
+called, when&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;causes the it to be compiled, or when code that<br>
+calls it is being compiled (to figure out the return type).<br>
 <br>
 The result is that functions and variables without a namespace can usually be<br>
 found in the script, either defined there or imported.&nbsp;&nbsp;Global functions and<br>
@@ -472,11 +477,21 @@ White space is not allowed:<br>
 <br>
 <span class="PreProc">Conditions and expressions</span><br>
 <br>
-Conditions and expressions are mostly working like they do in JavaScript.&nbsp;&nbsp;A<br>
-difference is made where JavaScript does not work like most people expect.<br>
-Specifically, an empty list is falsy.<br>
+Conditions and expressions are mostly working like they do in other languages.<br>
+Some values are different from legacy Vim script:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; legacy Vim script&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim9 script</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; falsy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; falsy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; truthy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;truthy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;99&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;truthy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;0&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; falsy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;99&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;truthy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;text&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;falsy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Error!<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TRUE when</span><br>
+For the &quot;??&quot; operator and when using &quot;!&quot; then there is no error, every value<br>
+is either falsy or truthy.&nbsp;&nbsp;This is mostly like JavaScript, except that an<br>
+empty list and dict is falsy:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;truthy when</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:true or 1<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-zero<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; non-zero<br>
@@ -503,13 +518,13 @@ one:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[] || 99&nbsp;&nbsp;&nbsp;&nbsp; Error!</div>
 <br>
 When using &quot;!&quot; for inverting, there is no error for using any type and the<br>
-result is a boolean:<br>
+result is a boolean.&nbsp;&nbsp;&quot;!!&quot; can be used to turn any value into boolean:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!'yes'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;== false<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var myList = [1, 2, 3]<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!!myList&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;== true</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!![]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;== false<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!![1, 2, 3]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; == true</div>
 <br>
 When using &quot;<span class="Comment">..&quot;</span>&nbsp;for string concatenation arguments of simple types are<br>
-always converted to string.<br>
+always converted to string:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. 123&nbsp;&nbsp;== 'hello 123'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. v:true&nbsp;&nbsp;== 'hello v:true'</div>
 <br>
