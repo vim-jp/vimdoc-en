@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 28<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Oct 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,26 +43,13 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Popup windows: don't send any keys from &quot;:normal&quot; to popup filter?<br>
-&nbsp;&nbsp;Can drop ex_normal_busy_done then.<br>
-<br>
-Move Test_let_* from test_vim9_script to test_vim9_assign<br>
-<br>
-Modifiers in GTK: issue #6457.&nbsp;&nbsp;<span class="Special">CTRL-6</span>&nbsp;should work, like&nbsp;<span class="Special">CTRL-@</span>&nbsp;and&nbsp;<span class="Special">CTRL-_</span>.<br>
-<br>
-3 October: remove using :let in Vim9 script.<br>
-<br>
-Go back to not using string/list/dict as falsy/thruthy boolean?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;or only make &quot;||&quot; and &quot;&amp;&amp;&quot; result in a boolean?<br>
 Making everything work:<br>
+- If a function is defined in a block it may need to keep the block-locals,<br>
+&nbsp;&nbsp;like a compiled closure.<br>
 - Fix memory leaks in test_vim9_assign, remove &quot;if 0&quot;<br>
 - Fix memory leaks in test_vim9_script<br>
-- At the Vim9 script level, keep script variables local to the block they are<br>
-&nbsp;&nbsp;declared in, like in Javascript (using :let).<br>
-&nbsp;&nbsp;-&gt; Need to remember what variables were declared and delete them when<br>
-&nbsp;&nbsp;&nbsp;&nbsp; leaving the block.<br>
-&nbsp;&nbsp;-&gt; if a function is defined it may need to keep the block-locals<br>
-&nbsp;&nbsp;Then Implement { } block at the script level.<br>
+- Closure arguments should be more strict, like any function call?<br>
+- Remove v:disallow_let<br>
 - Recognize call to assert_fails() and execute it in the function context?<br>
 &nbsp;&nbsp;Won't work if the command itself fails, not an expression failure:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert_fails(&quot;unknown&quot;, &quot;E99:&quot;)<br>
@@ -75,10 +62,15 @@ Making everything work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;did_catch = true<br>
 &nbsp;&nbsp;&nbsp;&nbsp;endtry<br>
 &nbsp;&nbsp;&nbsp;&nbsp;assert_true('did_catch')<br>
-&nbsp;&nbsp;Add a new command,&nbsp;<br>
+&nbsp;&nbsp;Add a new command perhaps:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;assertfail<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unknown<br>
 &nbsp;&nbsp;&nbsp;&nbsp;endassertfail E99:.*unknown<br>
+- Make map() give an error if the resulting type is wrong.<br>
+&nbsp;&nbsp;Add mapnew() or mapcopy() to create a new List/Dict for the result, which<br>
+&nbsp;&nbsp;can have a different value type.<br>
+- Error message for &quot;'yes &amp;&amp; 0&quot; is &quot;using String as a Number&quot;, should be &quot;using<br>
+&nbsp;&nbsp;String as a Bool&quot;.<br>
 - Run the same tests in :def and Vim9 script, like in Test_expr7_not()<br>
 - In autocmd: use legacy syntax, not whatever the current script uses?<br>
 - need to check type when a declaration specifies a type: #6507<br>
@@ -91,9 +83,6 @@ Making everything work:<br>
 &nbsp;&nbsp;Also &quot;list[0] += value&quot;.&nbsp;&nbsp;test in Test_assign_dict_unknown_type().<br>
 - &quot;:put&quot; with ISN_PUT does not handle range correctly, e.g. &quot;:$-2put&quot;.<br>
 &nbsp;&nbsp;Add command to parse range at runtime?<br>
-- Make map() give an error if the resulting type is wrong.<br>
-&nbsp;&nbsp;Add mapnew() to create a new List/Dict for the result, which can have a<br>
-&nbsp;&nbsp;different value type.<br>
 - When defining an :autocmd or :command, how to specify using Vim9 syntax?<br>
 &nbsp;&nbsp;- always do this when defined in a Vim9 script<br>
 &nbsp;&nbsp;- add some command modifier.<br>
@@ -188,6 +177,11 @@ Further improvements:<br>
 - compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
 <br>
 Popup windows:<br>
+- Add a flag to make a popup window focusable?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-W</span>&nbsp;P cycle over any preview window or focusable popup, end up back in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current window.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;? - switch between current window and all popup windows<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Esc in popup window goes back to previous current window<br>
 - Cursor not updated before a redraw, making it jump. (#5943)<br>
 - Add a termcap entry for changing the cursor when it goes under the popup and<br>
 &nbsp;&nbsp;back.&nbsp;&nbsp;like t_SI and t_EI&nbsp;&nbsp;(t_SU and t_EU, where &quot;U&quot; means under?)<br>
@@ -296,6 +290,11 @@ Terminal emulator window:<br>
 <br>
 Error numbers available: E653<br>
 <br>
+Mapping with partial match not executed properly in GTK. (Ingo Karkat, #7082)<br>
+<br>
+Patch for Template string: #4634<br>
+Have another look at the implementation.<br>
+<br>
 Patch to implement the vimtutor with a plugin: #6414<br>
 Was originally written by Felipe Morales.<br>
 <br>
@@ -307,6 +306,16 @@ Add&nbsp;<span class="MissingTag">'termguiattr'</span>&nbsp;option, use &quot;gu
 with&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>. #1740<br>
 <br>
 Patch for blockwise paste reporting changes: #6660.<br>
+<br>
+Add an option to not fetch terminal codes in xterm, to avoid flicker when t_Co<br>
+changes.<br>
+<br>
+Add an option to start_timer() to return from the input loop with K_IGNORE.<br>
+This is useful e.g. when a popup was created that disables mappings, we need<br>
+to return from vgetc() to make this happen.&nbsp;&nbsp;#7011<br>
+<br>
+Making breakat support multibyte characters (Yasuhiro Matsumoto, #6598)<br>
+Scroll doesn't work correctly, why?<br>
 <br>
 Expanding&nbsp;<span class="Special">&lt;mods&gt;</span>&nbsp;should put the tab number from cmdmod.tab before &quot;tab&quot;.<br>
 Any way to convert &quot;$&quot; back by using a special value? (#6901)<br>
@@ -336,15 +345,16 @@ autocommands for the buffer lifecycle:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;BufIsRenamed&nbsp;&nbsp;(after buffer ID gets another name)<br>
 The buffer list and windows are locked, no changes possible<br>
 <br>
-Make it possible to map (console and GUI):&nbsp;&nbsp;#6457<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-[&gt;</span>&nbsp;&nbsp; 0x27&nbsp;&nbsp; or is this&nbsp;<span class="Special">&lt;Esc&gt;</span>&nbsp;?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-\&gt;</span>&nbsp;&nbsp; 0x28<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-]&gt;</span>&nbsp;&nbsp; 0x29<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-^&gt;</span>&nbsp;&nbsp; 0x30<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-_&gt;</span>&nbsp;&nbsp; 0x31<br>
+Matchparen doesn't remove highlight after undo. (#7054)<br>
+Is OK when syntax HL is active.<br>
 <br>
-Patch for Template string: #4634<br>
-Have another look at the implementation.<br>
+Currently Del can be used to delete the last character of a typed count.<br>
+Can it also be used to delete an incomplete Normal mode command? (#7096)<br>
+After an operator: should work.&nbsp;&nbsp;After &quot;a&quot; or &quot;i&quot; for text objects: should<br>
+work.<br>
+<br>
+Using &quot;au!&quot; after &quot;filetype on&quot; is a bit slow.&nbsp;&nbsp;Can the matching of<br>
+autocommands be made faster?&nbsp;&nbsp;(#7056)<br>
 <br>
 Valgrind warns for uninitialized values in f_term_dumpwrite().<br>
 <br>
@@ -543,6 +553,7 @@ Crash when mixing matchadd and substitute()? (Max Christian Pohle, 2018 May<br>
 13, #2910)&nbsp;&nbsp;Can't reproduce?<br>
 <br>
 Display messed up with matchparen, wrapping and scrolling. (#5638)<br>
+Screen update bug related to matchparen.&nbsp;&nbsp;(Chris Heath, 2017 Mar 4, #1532)<br>
 <br>
 When getting a focus event halfway a mapping this aborts the mapping.&nbsp;&nbsp;E.g.<br>
 when &quot;qq&quot; is mapped and after the first &quot;q&quot; the mouse is moved outside of the<br>
@@ -1268,8 +1279,6 @@ GTK: When adding a timer from&nbsp;<a class="Type" href="options.html#'balloonex
 g_main_context_iteration() doesn't return.&nbsp;&nbsp;Need to trigger an event when the<br>
 timer expires.<br>
 <br>
-Screen update bug related to matchparen.&nbsp;&nbsp;(Chris Heath, 2017 Mar 4, #1532)<br>
-<br>
 Rule to use &quot;^&quot; for statusline does not work if a space is defined with<br>
 highlighting for both stl and stlnc.&nbsp;&nbsp;Patch by Ken Hamada (itchyny, 2016 Dec 11)<br>
 <br>
@@ -1502,8 +1511,6 @@ Have a way to get the call stack, in a function and from an exception.<br>
 Second problem in #966: ins_compl_add_tv() uses get_dict_string() multiple<br>
 times, overwrites the one buffer. (Nikolay Pavlov, 2016 Aug 5)<br>
 <br>
-Filetype plugin for awk. (Doug Kearns, 2016 Sep 5)<br>
-<br>
 Patch to improve map documentation. Issue #799.<br>
 <br>
 We can use '. to go to the last change in the current buffer, but how about<br>
@@ -1723,8 +1730,6 @@ Extended file attributes lost on write (backupcopy=no).&nbsp;&nbsp;Issue 306.<br
 Patch to add :lockjumps. (Carlo Baldassi, 2015 May 25)<br>
 OK to not block marks?<br>
 <br>
-Mixup of highlighting when there is a match and SpellBad. (ZyX, 2015 Jan 1)<br>
-<br>
 Patch on Issue 72:&nbsp;<a class="Type" href="options.html#'autochdir'">'autochdir'</a>&nbsp;causes problems for :vimgrep.<br>
 <br>
 When two SIGWINCH arrive very quickly, the second one may be lost.<br>
@@ -1790,14 +1795,6 @@ Perhaps only the checks that can be done without looping over the dict or<br>
 arguments.<br>
 <br>
 Problem with transparent and matchgroup.&nbsp;&nbsp;Issue #475<br>
-<br>
-Spell files use a latin single quote. Unicode also has another single quote:<br>
-0x2019.&nbsp;&nbsp;(Ron Aaron, 2014 Apr 4)<br>
-New OpenOffice spell files support this with ICONV.&nbsp;&nbsp;But they are not<br>
-compatible with Vim spell files.&nbsp;&nbsp;The old files can no longer be downloaded.<br>
-<br>
-Spell checking: Add a feature to only consider two spaces after a dot to start<br>
-a new sentence.&nbsp;&nbsp;Don't give the capitalization error when there is one space.<br>
 <br>
 Idea: For a window in the middle (has window above and below it), use<br>
 right-mouse-drag on the status line to move a window up/down without changing<br>
@@ -2473,9 +2470,6 @@ Don't load macmap.vim on startup, turn it into a plugin. (Ron Aaron,<br>
 <br>
 Add &quot;no_hlsearch&quot; to winsaveview().<br>
 <br>
-Cursorline highlighting combines with Search (<a class="Type" href="options.html#'hlsearch'">'hlsearch'</a>) but not with<br>
-SpellBad. (Jim Karsten, 2009 Mar 18)<br>
-<br>
 When&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;is &quot;indent&quot;, adding an empty line below a fold and then<br>
 indented text, creates a new fold instead of joining it with the previous one.<br>
 (Evan Laforge, 2009 Oct 17)<br>
@@ -2982,12 +2976,6 @@ the Visual area.&nbsp;&nbsp;Can this be fixed? (James Vega, 2006 Sept 15)<br>
 <br>
 GUI: When combining fg en bg make sure they are not equal.<br>
 <br>
-Spell checking: Add a way to specify punctuation characters.&nbsp;&nbsp;Add the<br>
-superscript numbers by default: 0x2070, 0xb9, 0xb2, 0xb3, 0x2074 - 0x2079.<br>
-<br>
-Spell checking in popup menu: If the only problem is the case of the first<br>
-character, don't offer &quot;ignore&quot; and &quot;add to word list&quot;.<br>
-<br>
 Use different pt_br dictionary for spell checking. (Jackson A. Aquino, 2006<br>
 Jun 5)<br>
 <br>
@@ -3000,10 +2988,6 @@ but &quot;]s&quot; doesn't find it.&nbsp;&nbsp;&quot;nteger&quot; by itself is f
 Jul 22)<br>
 <br>
 There should be something about spell checking in the user manual.<br>
-<br>
-Spell menu: When using the Popup menu to select a replacement word,<br>
-&quot;:spellrepeat&quot; doesn't work.&nbsp;&nbsp;SpellReplace() uses setline().&nbsp;&nbsp;Can it use &quot;z=&quot;<br>
-somehow?&nbsp;&nbsp;Or use a new function.<br>
 <br>
 Mac: Using gvim: netrw window disappears. (Nick Lo, 2006 Jun 21)<br>
 <br>
@@ -3287,6 +3271,29 @@ Awaiting updated patches:<br>
 Better&nbsp;<a class="Type" href="options.html#'rightleft'">'rightleft'</a>&nbsp;or BIDI support:<br>
 - Minimal Vi with bidi support:&nbsp;<span class="Constant"><a href="https://github.com/aligrudi/neatvi">https://github.com/aligrudi/neatvi</a></span><br>
 &nbsp;&nbsp;By Ali Gholami Rudi, also worked on arabic.c<br>
+<br>
+<br>
+Spell checking:<br>
+-&nbsp;&nbsp; When&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;is set and the first word should have SpellCap<br>
+&nbsp;&nbsp;&nbsp;&nbsp;highlighting, redrawing the line removes it when moving the cursor away<br>
+&nbsp;&nbsp;&nbsp;&nbsp;from the line. (#7085)&nbsp;&nbsp;Would need to inspect the end of the previous line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;and update &quot;capcol_lnum&quot; and &quot;cap_col&quot;.<br>
+-&nbsp;&nbsp; Mixup of highlighting when there is a match and SpellBad. (ZyX, 2015 Jan 1)<br>
+-&nbsp;&nbsp; Spell files use a latin single quote. Unicode also has another single<br>
+&nbsp;&nbsp;&nbsp;&nbsp;quote: 0x2019.&nbsp;&nbsp;(Ron Aaron, 2014 Apr 4)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;New OpenOffice spell files support this with ICONV.&nbsp;&nbsp;But they are not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;compatible with Vim spell files.&nbsp;&nbsp;The old files can no longer be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;downloaded.<br>
+-&nbsp;&nbsp; Add a feature to only consider two spaces after a dot to start a new<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sentence.&nbsp;&nbsp;Don't give the capitalization error when there is one space.<br>
+-&nbsp;&nbsp; Add a way to specify punctuation characters.&nbsp;&nbsp;Add the superscript numbers<br>
+&nbsp;&nbsp;&nbsp;&nbsp;by default: 0x2070, 0xb9, 0xb2, 0xb3, 0x2074 - 0x2079.<br>
+-&nbsp;&nbsp; In popup menu: If the only problem is the case of the first character,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;don't offer &quot;ignore&quot; and &quot;add to word list&quot;.<br>
+-&nbsp;&nbsp; Spell menu: When using the Popup menu to select a replacement word,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;:spellrepeat&quot; doesn't work.&nbsp;&nbsp;SpellReplace() uses setline().&nbsp;&nbsp;Can it use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;z=&quot; somehow?&nbsp;&nbsp;Or use a new function.<br>
+<br>
 <br>
 Quickfix/Location List:<br>
 -&nbsp;&nbsp; Window size is wrong when using quickfix window. (Lifepillar, 2018 Aug 24,<br>

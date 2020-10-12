@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Sep 26<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Oct 05<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -169,12 +169,12 @@ the &quot;name#&quot; prefix is sufficient.<br>
 <br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a nested function inside a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a><br>
 function, this nested function is local to the code block it is defined in.<br>
-In a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function it is not possible to define a script-local function.&nbsp;&nbsp;it<br>
+In a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function it is not possible to define a script-local function.&nbsp;&nbsp;It<br>
 is possible to define a global function by using the &quot;g:&quot; prefix.<br>
 <br>
 When referring to a function and no &quot;s:&quot; or &quot;g:&quot; prefix is used, Vim will<br>
 search for the function:<br>
-- in the function scope<br>
+- in the function scope, in block scopes<br>
 - in the script scope, possibly imported<br>
 - in the list of global functions<br>
 However, it is recommended to always use &quot;g:&quot; to refer to a global function<br>
@@ -1145,7 +1145,7 @@ Two alternatives were considered:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Func(arg1 number, arg2 string) bool</div>
 <br>
 The first is more familiar for anyone used to C or Java.&nbsp;&nbsp;The second one<br>
-doesn't really has an advantage over the first, so let's discard the second.<br>
+doesn't really have an advantage over the first, so let's discard the second.<br>
 <br>
 Since we use type inference the type can be left out when it can be inferred<br>
 from the value.&nbsp;&nbsp;This means that after&nbsp;<a class="Comment" href="vim9.html#:var">var</a>&nbsp;we don't know if a type or a name<br>
@@ -1160,19 +1160,35 @@ declaration.<br>
 <br>
 <span class="PreProc">Expressions</span><br>
 <br>
-Expression evaluation was already close to what JavaScript and other languages<br>
-are doing.&nbsp;&nbsp;Some details are unexpected and can be fixed.&nbsp;&nbsp;For example how the<br>
-|| and &amp;&amp; operators work.&nbsp;&nbsp;Legacy Vim script:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var value = 44<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var result = value || 0&nbsp;&nbsp;# result == 1</div>
+Expression evaluation was already close to what other languages are doing.<br>
+Some details are unexpected and can be improved.&nbsp;&nbsp;For example a boolean<br>
+condition would accept a string, convert it to a number and check if the<br>
+number is non-zero.&nbsp;&nbsp;This is unexpected and often leads to mistakes, since<br>
+text not starting with a number would be converted to zero, which is<br>
+considered false.&nbsp;&nbsp;Thus a string would not give an error and be considered<br>
+false if it doesn't start with a number.&nbsp;&nbsp;That is confusing.<br>
 <br>
-Vim9 script works like JavaScript/TypeScript, keep the value:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var value = 44<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var result = value || 0&nbsp;&nbsp;# result == 44</div>
+In Vim9 type checking is more strict to avoid mistakes.&nbsp;&nbsp;Where a condition is<br>
+used, e.g. with the&nbsp;<a class="Comment" href="eval.html#:if">:if</a>&nbsp;command and the&nbsp;<span class="Comment">||</span>&nbsp;operator, only boolean-like<br>
+values are accepted:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true:&nbsp;&nbsp;<a class="Comment" href="vim9.html#true">true</a>,&nbsp;<a class="Comment" href="eval.html#v:true">v:true</a>,&nbsp;<span class="Comment">1</span>,&nbsp;<span class="Comment">0 &lt; 9</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;false:&nbsp;<a class="Comment" href="vim9.html#false">false</a>,&nbsp;<a class="Comment" href="eval.html#v:false">v:false</a>,&nbsp;<a class="Comment" href="motion.html#0">0</a>,&nbsp;<span class="Comment">0 &gt; 9</span><br>
+<span class="Todo">Note</span>&nbsp;that the number zero is false and the number one is true.&nbsp;&nbsp;This is more<br>
+persmissive than most other languages.&nbsp;&nbsp;It was done because many builtin<br>
+functions return these values.<br>
 <br>
-TODO: the semantics of || and &amp;&amp; need to be reconsidered.<br>
+If you have any type of value and want to use it as a boolean, use the&nbsp;<a class="Comment" href="change.html#!!">!!</a><br>
+operator:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true: !<span class="Comment">!'text'</span>,&nbsp;<span class="Comment">!![99]</span>,&nbsp;<span class="Comment">!!{'x': 1}</span>,&nbsp;<span class="Comment">!!99</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;false:&nbsp;<span class="Comment">!!''</span>,&nbsp;<span class="Comment">!![]</span>,&nbsp;<span class="Comment">!!{}</span><br>
+<br>
+From a language like JavaScript we have this handy construct:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetName() || 'unknown'</div>
+However, this conflicts with only allowing a boolean for a condition.<br>
+Therefore the &quot;??&quot; operator was added:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetName() ?? 'unknown'</div>
+Here you can explicitly express your intention to use the value as-is and not<br>
+result in a boolean. This is called the&nbsp;<a class="Identifier" href="eval.html#falsy-operator">falsy-operator</a>.<br>
 <br>
 <br>
 <span class="PreProc">Import and Export</span><br>
