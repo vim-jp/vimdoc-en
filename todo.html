@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Oct 10<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Oct 26<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,29 +43,13 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Sign highlight in signcolumn disappears if there is line highlighting.<br>
+<br>
 Making everything work:<br>
-- If a function is defined in a block it may need to keep the block-locals,<br>
-&nbsp;&nbsp;like a compiled closure.<br>
-- Fix memory leaks in test_vim9_assign, remove &quot;if 0&quot;<br>
-- Fix memory leaks in test_vim9_script<br>
+- Test all&nbsp;&nbsp;command modifiers.<br>
+- Check many more builtin function arguments at compile time.<br>
 - Closure arguments should be more strict, like any function call?<br>
-- Remove v:disallow_let<br>
-- Recognize call to assert_fails() and execute it in the function context?<br>
-&nbsp;&nbsp;Won't work if the command itself fails, not an expression failure:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert_fails(&quot;unknown&quot;, &quot;E99:&quot;)<br>
-&nbsp;&nbsp;Use try/catch is complicated:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let did_catch = false<br>
-&nbsp;&nbsp;&nbsp;&nbsp;try<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unknown<br>
-&nbsp;&nbsp;&nbsp;&nbsp;catch<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert_caught('E99:')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;did_catch = true<br>
-&nbsp;&nbsp;&nbsp;&nbsp;endtry<br>
-&nbsp;&nbsp;&nbsp;&nbsp;assert_true('did_catch')<br>
-&nbsp;&nbsp;Add a new command perhaps:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;assertfail<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unknown<br>
-&nbsp;&nbsp;&nbsp;&nbsp;endassertfail E99:.*unknown<br>
+- Invoke user command in a :def function<br>
 - Make map() give an error if the resulting type is wrong.<br>
 &nbsp;&nbsp;Add mapnew() or mapcopy() to create a new List/Dict for the result, which<br>
 &nbsp;&nbsp;can have a different value type.<br>
@@ -129,12 +113,12 @@ Making everything work:<br>
 - Make &quot;++nr&quot; work.<br>
 - Make closures work:<br>
 &nbsp;&nbsp;- Create closure in a loop.&nbsp;&nbsp;Need to make a list of them.<br>
+&nbsp;&nbsp;- nested closure only uses one context, not all (#7150)<br>
 - expandcmd() with&nbsp;<span class="Comment">=expr</span>&nbsp;in filename uses legacy expression.<br>
 - eval_expr() in ex_cexpr()<br>
 - eval_expr() call in dbg_parsearg() and debuggy_find()<br>
 - has() is compiled as a constant, but some checks are dynamic.<br>
 &nbsp;&nbsp;Check for dynamic values, such as &quot;gui_running&quot;.<br>
-- Implement command modifiers, such as &quot;silent&quot;. (#6530)<br>
 New syntax and functionality:<br>
 Improve error checking:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
@@ -307,6 +291,8 @@ with&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a
 <br>
 Patch for blockwise paste reporting changes: #6660.<br>
 <br>
+Missing filetype test for bashrc, PKGBUILD, etc.<br>
+<br>
 Add an option to not fetch terminal codes in xterm, to avoid flicker when t_Co<br>
 changes.<br>
 <br>
@@ -355,8 +341,6 @@ work.<br>
 <br>
 Using &quot;au!&quot; after &quot;filetype on&quot; is a bit slow.&nbsp;&nbsp;Can the matching of<br>
 autocommands be made faster?&nbsp;&nbsp;(#7056)<br>
-<br>
-Valgrind warns for uninitialized values in f_term_dumpwrite().<br>
 <br>
 Add the &lt;=&gt; (spaceship) operator and &quot;cond ?&lt; expr ?= expr ?&gt; expr&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;replace this:<br>
@@ -460,7 +444,6 @@ Patch to fix session file when using multiple tab pages. (Jason Franklin, 2019<b
 May 20)<br>
 Also put :argadd commands at the start for all buffers, so that their order<br>
 remains equal?&nbsp;&nbsp;Then %argdel to clean it up.&nbsp;&nbsp;Do try this with&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;set.<br>
-Also #4994: window-local options not always restored, related to using :badd.<br>
 Also #5326: netrw buffers are not restored.<br>
 <br>
 Alternate file is not set in the session file.&nbsp;&nbsp;Use setwintabvar(&quot;@#&quot;) ?<br>
@@ -599,10 +582,6 @@ it's in a mapping. (2018 Oct 6, #2302, #3522)<br>
 Patch to have text objects defined by arbitrary single characters. (Daniel<br>
 Thau, 2013 Nov 20, 2014 Jan 29, 2014 Jan 31)<br>
 Added tests (James McCoy, 2016 Aug 3, #958).&nbsp;&nbsp;Still needs more work.<br>
-<br>
-&quot;:2resize +10&quot; uses size of the current window, adds 10 and applies it to<br>
-window 2.&nbsp;&nbsp;User expects 10 to be added to size of window 2. (Daniel Steinberg,<br>
-#5443)<br>
 <br>
 Would be nice to set tab-local values for&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'diffopt'">'diffopt'</a>.&nbsp;&nbsp;Use<br>
 t:diffexpr_option t:diffopt_option? (#4782)<br>
@@ -3863,10 +3842,6 @@ Macintosh:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;on the status line (caused by&nbsp;<a class="Type" href="options.html#'winheight'">'winheight'</a>).&nbsp;&nbsp;Select window on button up,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;instead of on button down.<br>
 8&nbsp;&nbsp; Dragging the status line doesn't scroll but redraw.<br>
-9&nbsp;&nbsp; Evaluating&nbsp;<a class="Type" href="options.html#'statusline'">'statusline'</a>&nbsp;in build_stl_str_hl() does not properly check for<br>
-&nbsp;&nbsp;&nbsp;&nbsp;reaching the end of the available buffer.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Patch to dynamically allocate the buffer for % items. (Eric Arnold, 2006<br>
-&nbsp;&nbsp;&nbsp;&nbsp;May 14)<br>
 8&nbsp;&nbsp; When performing incremental search, should abort searching as soon as a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;character is typed.<br>
 8&nbsp;&nbsp; When the value of $MAKE contains a path, configure can't handle this.<br>
