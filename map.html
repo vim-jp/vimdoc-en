@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'map'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="map.html" name="map.txt">map.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Oct 07<br>
+<a class="Constant" href="map.html" name="map.txt">map.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Nov 12<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -276,7 +276,7 @@ For this reason the following is blocked:<br>
 - The&nbsp;<a class="Identifier" href="various.html#:normal">:normal</a>&nbsp;command.<br>
 - Moving the cursor is allowed, but it is restored afterwards.<br>
 If you want the mapping to do any of these let the returned characters do<br>
-that.<br>
+that, or use a&nbsp;<a class="Identifier" href="map.html#<Cmd>">&lt;Cmd&gt;</a>&nbsp;mapping instead.<br>
 <br>
 You can use getchar(), it consumes typeahead if there is any. E.g., if you<br>
 have these mappings:<br>
@@ -307,6 +307,40 @@ empty string, so that nothing is inserted.<br>
 <br>
 <span class="Todo">Note</span>&nbsp;that using 0x80 as a single byte before other text does not work, it will<br>
 be seen as a special key.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="map.html#<Cmd>" name="&lt;Cmd&gt;">&lt;Cmd&gt;</a>&nbsp;<a class="Constant" href="map.html#:map-cmd" name=":map-cmd">:map-cmd</a><br>
+The special text&nbsp;<span class="Special">&lt;Cmd&gt;</span>&nbsp;begins a &quot;command mapping&quot;, it executes the command<br>
+directly without changing modes.&nbsp;&nbsp;Where you might use &quot;:...<span class="Special">&lt;CR&gt;</span>&quot; in the<br>
+<span class="Special">{rhs}</span>&nbsp;of a mapping, you can instead use &quot;<span class="Special">&lt;Cmd&gt;</span>...<span class="Special">&lt;CR&gt;</span>&quot;.<br>
+Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;noremap x &lt;Cmd&gt;echo mode(1)&lt;CR&gt;</div>
+<br>
+This is more flexible than&nbsp;<span class="Comment">:&lt;C-U&gt;</span>&nbsp;in Visual and Operator-pending mode, or<br>
+<span class="Comment">&lt;C-O&gt;:</span>&nbsp;in Insert mode, because the commands are executed directly in the<br>
+current mode, instead of always going to Normal mode.&nbsp;&nbsp;Visual mode is<br>
+preserved, so tricks with&nbsp;<a class="Identifier" href="visual.html#gv">gv</a>&nbsp;are not needed.&nbsp;&nbsp;Commands can be invoked<br>
+directly in Command-line mode (which would otherwise require timer hacks).<br>
+Example of using&nbsp;<span class="Special">&lt;Cmd&gt;</span>&nbsp;halfway Insert mode:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;F3&gt; aText &lt;Cmd&gt;echo mode(1)&lt;CR&gt; Added&lt;Esc&gt;</div>
+<br>
+Unlike&nbsp;<span class="Special">&lt;expr&gt;</span>&nbsp;mappings, there are no special restrictions on the&nbsp;<span class="Special">&lt;Cmd&gt;</span><br>
+command: it is executed as if an (unrestricted)&nbsp;<a class="Identifier" href="autocmd.html#:autocmd">autocmd</a>&nbsp;was invoked.<br>
+<br>
+<span class="Todo">Note</span>:<br>
+- Because&nbsp;<span class="Special">&lt;Cmd&gt;</span>&nbsp;avoids mode-changes it does not trigger&nbsp;<a class="Identifier" href="autocmd.html#CmdlineEnter">CmdlineEnter</a>&nbsp;and<br>
+&nbsp;&nbsp;<a class="Identifier" href="autocmd.html#CmdlineLeave">CmdlineLeave</a>&nbsp;events, because no user interaction is expected.<br>
+- For the same reason,&nbsp;<a class="Identifier" href="intro.html#keycodes">keycodes</a>&nbsp;like&nbsp;<span class="Special">&lt;C-R&gt;&lt;C-W&gt;</span>&nbsp;are interpreted as plain,<br>
+&nbsp;&nbsp;unmapped keys.<br>
+- In Select mode,&nbsp;<a class="Identifier" href="map.html#:map">:map</a>&nbsp;and&nbsp;<a class="Identifier" href="map.html#:vmap">:vmap</a>&nbsp;command mappings are executed in<br>
+&nbsp;&nbsp;Visual mode.&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="map.html#:smap">:smap</a>&nbsp;to handle Select mode differently.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="map.html#E1135" name="E1135">E1135</a>&nbsp;<a class="Constant" href="map.html#E1136" name="E1136">E1136</a><br>
+<span class="Special">&lt;Cmd&gt;</span>&nbsp;commands must terminate, that is, they must be followed by&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;in the<br>
+<span class="Special">{rhs}</span>&nbsp;of the mapping definition.&nbsp;&nbsp;<a class="Identifier" href="cmdline.html#Command-line">Command-line</a>&nbsp;mode is never entered.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="map.html#E1137" name="E1137">E1137</a><br>
+<span class="Special">&lt;Cmd&gt;</span>&nbsp;commands can have only normal characters and cannot contain special<br>
+characters like function keys.<br>
 <br>
 <br>
 1.3 MAPPING AND MODES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="map.html#:map-modes" name=":map-modes">:map-modes</a><br>
