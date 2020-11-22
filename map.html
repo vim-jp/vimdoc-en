@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'map'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="map.html" name="map.txt">map.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Nov 12<br>
+<a class="Constant" href="map.html" name="map.txt">map.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Nov 21<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -324,13 +324,16 @@ Example of using&nbsp;<span class="Special">&lt;Cmd&gt;</span>&nbsp;halfway Inse
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;F3&gt; aText &lt;Cmd&gt;echo mode(1)&lt;CR&gt; Added&lt;Esc&gt;</div>
 <br>
 Unlike&nbsp;<span class="Special">&lt;expr&gt;</span>&nbsp;mappings, there are no special restrictions on the&nbsp;<span class="Special">&lt;Cmd&gt;</span><br>
-command: it is executed as if an (unrestricted)&nbsp;<a class="Identifier" href="autocmd.html#:autocmd">autocmd</a>&nbsp;was invoked.<br>
+command: it is executed as if an (unrestricted)&nbsp;<a class="Identifier" href="autocmd.html#autocommand">autocommand</a>&nbsp;was invoked.<br>
 <br>
 <span class="Todo">Note</span>:<br>
 - Because&nbsp;<span class="Special">&lt;Cmd&gt;</span>&nbsp;avoids mode-changes it does not trigger&nbsp;<a class="Identifier" href="autocmd.html#CmdlineEnter">CmdlineEnter</a>&nbsp;and<br>
 &nbsp;&nbsp;<a class="Identifier" href="autocmd.html#CmdlineLeave">CmdlineLeave</a>&nbsp;events, because no user interaction is expected.<br>
 - For the same reason,&nbsp;<a class="Identifier" href="intro.html#keycodes">keycodes</a>&nbsp;like&nbsp;<span class="Special">&lt;C-R&gt;&lt;C-W&gt;</span>&nbsp;are interpreted as plain,<br>
 &nbsp;&nbsp;unmapped keys.<br>
+- The command is not echo'ed, no need for&nbsp;<span class="Special">&lt;silent&gt;</span>.<br>
+- In Visual mode&nbsp;&nbsp;you can use&nbsp;<span class="Comment">line('v')</span>&nbsp;and&nbsp;<span class="Comment">col('v')</span>&nbsp;to get one end of the<br>
+&nbsp;&nbsp;Visual area, the cursor is at the other end.<br>
 - In Select mode,&nbsp;<a class="Identifier" href="map.html#:map">:map</a>&nbsp;and&nbsp;<a class="Identifier" href="map.html#:vmap">:vmap</a>&nbsp;command mappings are executed in<br>
 &nbsp;&nbsp;Visual mode.&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="map.html#:smap">:smap</a>&nbsp;to handle Select mode differently.<br>
 <br>
@@ -1243,9 +1246,9 @@ Otherwise, using &quot;<span class="Special">&lt;SID&gt;</span>&quot; outside of
 <br>
 If you need to get the script number to use in a complicated script, you can<br>
 use this function:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function s:SID()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return matchstr(expand('&lt;sfile&gt;'), '&lt;SNR&gt;\zs\d\+\ze_SID$')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfun</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func s:ScriptNumber()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return matchstr(expand('&lt;SID&gt;'), '&lt;SNR&gt;\zs\d\+\ze_')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
 <br>
 The &quot;<span class="Special">&lt;SNR&gt;</span>&quot; will be shown when listing functions and mappings.&nbsp;&nbsp;This is useful<br>
 to find out what they are defined to.<br>

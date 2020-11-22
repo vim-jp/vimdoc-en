@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Nov 04<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Nov 19<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,21 +43,18 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-test_vim9_func fails: type from default value not used.<br>
+Coverity errors in October and November.<br>
 <br>
-Without extra sleeps netbeans test has valgrind errors.<br>
-PR #7248 from Yegappan - test doesn't fail without code changes<br>
-<br>
-Making everything work:<br>
-- Closure argument call should not always set varargs, like any function call?<br>
-- Invoke user command in a :def function<br>
-- Make map() give an error if the resulting type is wrong.<br>
-&nbsp;&nbsp;Add mapnew() or mapcopy() to create a new List/Dict for the result, which<br>
-&nbsp;&nbsp;can have a different value type.<br>
-- Error message for &quot;'yes &amp;&amp; 0&quot; is &quot;using String as a Number&quot;, should be &quot;using<br>
-&nbsp;&nbsp;String as a Bool&quot;.<br>
+Vim9 - Change<br>
+- Drop support for #{} early December.&nbsp;&nbsp;Close #7310<br>
+&nbsp;&nbsp;-&gt; Does it work to recognize lambda?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{x: int -&gt; x + 5}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var int = 5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{x: int, y: int}<br>
+Vim9 - Making everything work:<br>
+- Make map() give an error if the resulting type of the first argument is<br>
+&nbsp;&nbsp;wrong.&nbsp;&nbsp;Only works if the type is known?<br>
 - Run the same tests in :def and Vim9 script, like in Test_expr7_not()<br>
-- In autocmd: use legacy syntax, not whatever the current script uses?<br>
 - need to check type when a declaration specifies a type: #6507<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let nr: number =&nbsp;<span class="MissingTag">'asdf'</span><br>
 - Check many more builtin function arguments at compile time.<br>
@@ -65,7 +62,7 @@ Making everything work:<br>
 &nbsp;&nbsp;the script-local function, not a global one.<br>
 - Make sure that where a callback is expected a function can be used (without<br>
 &nbsp;&nbsp;quotes). E.g. sort() and map().&nbsp;&nbsp;Also at the script level.<br>
-- assignment to more complex lval: list[1][2][3] = 8<br>
+- assignment to more complex lval: list[1][2][3] = 8&nbsp;&nbsp; #7309<br>
 &nbsp;&nbsp;Also &quot;list[0] += value&quot;.&nbsp;&nbsp;test in Test_assign_dict_unknown_type().<br>
 - &quot;:put&quot; with ISN_PUT does not handle range correctly, e.g. &quot;:$-2put&quot;.<br>
 &nbsp;&nbsp;Add command to parse range at runtime?<br>
@@ -96,11 +93,13 @@ Making everything work:<br>
 - Check that when using a user function name without prefix, it does not find<br>
 &nbsp;&nbsp;a global function.&nbsp;&nbsp;Prefixing g: is required.<br>
 - Compile: for [key, value] in items(map)<br>
-- Assignment to dict doesn't work:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ret: dict<span class="Special">&lt;string&gt;</span>&nbsp;= #{}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[i] = string(i)<br>
-- Appending to dict item doesn't work:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let d[i] ..= value<br>
+- Need the equivalent of get_lval() and set_var_lval() to implement assignment<br>
+&nbsp;&nbsp;to nested list and dict members.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- Assignment to dict doesn't work:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let ret: dict<span class="Special">&lt;string&gt;</span>&nbsp;= #{}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[i] = string(i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- Appending to dict item doesn't work:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let d[i] ..= value<br>
 - Using &quot;..&quot; at script level doesn't convert arguments to a string.<br>
 - Compile replacement of :s command: s/pat/\=expr/<br>
 - Compile redir to local variable: var_redir_start().<br>
@@ -119,8 +118,6 @@ Making everything work:<br>
 - expandcmd() with&nbsp;<span class="Comment">=expr</span>&nbsp;in filename uses legacy expression.<br>
 - eval_expr() in ex_cexpr()<br>
 - eval_expr() call in dbg_parsearg() and debuggy_find()<br>
-- has() is compiled as a constant, but some checks are dynamic.<br>
-&nbsp;&nbsp;Check for dynamic values, such as &quot;gui_running&quot;.<br>
 New syntax and functionality:<br>
 Improve error checking:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
@@ -143,7 +140,7 @@ Also:<br>
 - implement enum<br>
 - Make accessing varargs faster: arg[expr]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVAL expr<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varags idx)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varargs idx)<br>
 - Make debugging work - at least per function.&nbsp;&nbsp;Need to recompile a function<br>
 &nbsp;&nbsp;to step through it line-by-line?&nbsp;&nbsp;Evaluate the stack and variables on the<br>
 &nbsp;&nbsp;stack?<br>
@@ -353,6 +350,8 @@ Patch to make :q work with local arglist. (Christian Brabandt, #6286)<br>
 <br>
 Why does Test_invalid_sid() not work in the GUI?<br>
 <br>
+&quot;:pedit&quot; ignores the local working directory when&nbsp;<a class="Type" href="options.html#'pvp'">'pvp'</a>&nbsp;is set (#7267)<br>
+<br>
 Lua: updating wrong buffer when using newly created, unloaded buffer.<br>
 (#6539)<br>
 <br>
@@ -422,9 +421,6 @@ Another spurious BufDelete. (Dani Dickstein, #5701)<br>
 <br>
 Wrong error when using local arglist. (Harm te Hennepe, #6133)<br>
 <br>
-Request to support&nbsp;<span class="Special">&lt;Cmd&gt;</span>&nbsp;in mappings, similar to how Neovim does this.<br>
-(Daniel Hahler, #4784)<br>
-<br>
 Test loose_clipboard() by selecting text before suspending.<br>
 <br>
 Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</span>&quot; undo.<br>
@@ -445,9 +441,6 @@ May 20)<br>
 Also put :argadd commands at the start for all buffers, so that their order<br>
 remains equal?&nbsp;&nbsp;Then %argdel to clean it up.&nbsp;&nbsp;Do try this with&nbsp;<a class="Type" href="options.html#'hidden'">'hidden'</a>&nbsp;set.<br>
 Also #5326: netrw buffers are not restored.<br>
-<br>
-Alternate file is not set in the session file.&nbsp;&nbsp;Use setwintabvar(&quot;@#&quot;) ?<br>
-(#6714)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'backupdir'">'backupdir'</a>&nbsp;has a path ending in double slash (meaning: use full path of<br>
 the file) combined with&nbsp;<a class="Type" href="options.html#'patchmode'">'patchmode'</a>&nbsp;the file name is wrong. (#5791)<br>
@@ -1072,7 +1065,7 @@ neovim #7431)<br>
 Patch for improving detecting Ruby on Mac in configure. (Ilya Mikhaltsou, 2017<br>
 Nov 21)<br>
 <br>
-When t_Co is changed from termresponse, the OptionSet autocmmand event isn't<br>
+When t_Co is changed from termresponse, the OptionSet autocommand event isn't<br>
 triggered.&nbsp;&nbsp;Use the code from the end of set_num_option() in<br>
 set_color_count().<br>
 <br>
@@ -1356,6 +1349,9 @@ no longer support.<br>
 <br>
 sort() is not stable when using numeric/float sort (Nikolay Pavlov, 2016 Sep<br>
 4#1038)<br>
+<br>
+sort() does not use&nbsp;<a class="Type" href="options.html#'smartcase'">'smartcase'</a>&nbsp;for the skip pattern, even though&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a><br>
+is used. (Filipe Brandenburger, #7322)<br>
 <br>
 +channel:<br>
 - Add a in_cb, invoked when the write buffer has become empty. (Matteo Landi)<br>
@@ -2302,7 +2298,7 @@ Additional info by Dominique Pelle. (also on 2010 Apr 10)<br>
 <br>
 CreateFile and CreateFileW are used without sharing, filewritable() fails when<br>
 the file was already open (e.g. script is being sourced).&nbsp;&nbsp;Add FILE_SHARE_READ|<br>
-FILE_SHARE_WRITE in mch_access()? (Phillippe Vaucher, 2010 Nov 2)<br>
+FILE_SHARE_WRITE in mch_access()? (Philippe Vaucher, 2010 Nov 2)<br>
 <br>
 Is ~/bin (literally) in $PATH supposed to work?&nbsp;&nbsp;(Paul, 2010 March 29)<br>
 Looks like only bash can do it. (Yakov Lerner)<br>
@@ -5938,7 +5934,7 @@ Writing files:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;losing the original when writing twice. (Slootman)<br>
 7&nbsp;&nbsp; On non-Unix machines, also overwrite the original file in some situations<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(file system full, it's a link on an NFS partition).<br>
-7&nbsp;&nbsp; When editing a file, check that it has been change outside of Vim more<br>
+7&nbsp;&nbsp; When editing a file, check that it has been changed outside of Vim more<br>
 &nbsp;&nbsp;&nbsp;&nbsp;often, not only when writing over it.&nbsp;&nbsp;E.g., at the time the swap file is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;flushed.&nbsp;&nbsp;Or every ten seconds or so (use the time of day, check it before<br>
 &nbsp;&nbsp;&nbsp;&nbsp;waiting for a character to be typed).<br>
