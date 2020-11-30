@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'terminal'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="terminal.html" name="terminal.txt">terminal.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Nov 15<br>
+<a class="Constant" href="terminal.html" name="terminal.txt">terminal.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Nov 25<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -128,12 +128,14 @@ use&nbsp;<a class="Identifier" href="gui.html#:tlmenu">:tlmenu</a>&nbsp;instead 
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="terminal.html#options-in-terminal" name="options-in-terminal">options-in-terminal</a><br>
 After opening the terminal window and setting&nbsp;<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;to &quot;terminal&quot; the<br>
-TerminalOpen autocommand event is triggered.&nbsp;&nbsp;This makes it possible to set<br>
-options specifically for the window and buffer.&nbsp;&nbsp;Example:<br>
-<div class="helpExample">&nbsp;&nbsp; au TerminalOpen * if &amp;buftype == 'terminal' | setlocal bufhidden=hide | endif</div>
-The&nbsp;<span class="Special">&lt;abuf&gt;</span>&nbsp;is set to the terminal buffer, but if there is no window (hidden<br>
-terminal) then setting options will happen in the wrong buffer, therefore the<br>
-check for &amp;buftype in the example.<br>
+<a class="Identifier" href="autocmd.html#TerminalWinOpen">TerminalWinOpen</a>&nbsp;autocommand event is triggered.&nbsp;&nbsp;This makes it possible to set<br>
+options specifically for the terminal window and buffer.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp; au TerminalWinOpen * setlocal bufhidden=hide</div>
+<br>
+There is also the&nbsp;<a class="Identifier" href="autocmd.html#TerminalOpen">TerminalOpen</a>&nbsp;event, but this may be triggered for a hidden<br>
+terminal, and the current window and buffer may not be for the new terminal.<br>
+You need to use&nbsp;<span class="Special">&lt;abuf&gt;</span>, which is set to the terminal buffer.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;au TerminalOpen * call setbufvar(+expand('&lt;abuf&gt;'), '&amp;colorcolumn', 123)</div>
 <br>
 Mouse events (click and drag) are passed to the terminal.&nbsp;&nbsp;Mouse move events<br>
 are only passed when Vim itself is receiving them.&nbsp;&nbsp;For a terminal that is<br>
@@ -509,7 +511,7 @@ term_dumpdiff(<span class="Special">{filename}</span>,&nbsp;<span class="Special
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; missing position in first file<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; missing position in second file<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor position in first file, not in second<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor position in secone file, not in first<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor position in second file, not in first<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Using the &quot;s&quot; key the top and bottom parts are swapped.&nbsp;&nbsp;This<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;makes it easy to spot a difference.<br>
