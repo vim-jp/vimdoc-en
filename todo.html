@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Nov 28<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Dec 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,34 +43,16 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Vim9 - Change<br>
-- Drop support for #{} early December.&nbsp;&nbsp;Close #7310<br>
-&nbsp;&nbsp;-&gt; Does it work to recognize lambda?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{x: int -&gt; x + 5}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var int = 5<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{x: int, y: int}<br>
-Vim9 - Making everything work:<br>
-- Compile: for [key, value] in items(map): Also support @r, $VAR, etc.<br>
-- Make map() give an error if the resulting type of the first argument is<br>
-&nbsp;&nbsp;wrong.&nbsp;&nbsp;Only works if the type is known?&nbsp;&nbsp;Is this slow (need to go over all<br>
-&nbsp;&nbsp;items)?<br>
-- Run the same tests in :def and Vim9 script, like in Test_expr7_not()<br>
-- need to check type when a declaration specifies a type: #6507<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let nr: number =&nbsp;<span class="MissingTag">'asdf'</span><br>
-- Check many more builtin function arguments at compile time.<br>
-- Make sure that in vim9script a function call without namespace only finds<br>
-&nbsp;&nbsp;the script-local function, not a global one.<br>
-- Make sure that where a callback is expected a function can be used (without<br>
-&nbsp;&nbsp;quotes). E.g. sort() and map().&nbsp;&nbsp;Also at the script level.<br>
-- &quot;:put&quot; with ISN_PUT does not handle range correctly, e.g. &quot;:$-2put&quot;.<br>
-&nbsp;&nbsp;Add command to parse range at runtime?<br>
-- When defining an :autocmd or :command, how to specify using Vim9 syntax?<br>
-&nbsp;&nbsp;- always do this when defined in a Vim9 script<br>
-&nbsp;&nbsp;- add some command modifier.<br>
-- For an :autocmd and :command argument, if a following line starts with &quot;|&quot;<br>
-&nbsp;&nbsp;append it.&nbsp;&nbsp;It's like line continuation. (#6702)<br>
+Vim9 - Make everything work:<br>
+- For an :autocmd and :command argument defined in Vim9 script, if a following<br>
+&nbsp;&nbsp;line starts with &quot;|&quot; append it.&nbsp;&nbsp;It's like line continuation. (#6702)<br>
+- The syntax of a range list[a:b] is ambiguous, is this one &quot;a:b&quot; variable or<br>
+&nbsp;&nbsp;a range from &quot;a&quot; to &quot;b&quot;?&nbsp;&nbsp;To avoid confusion, require white space before<br>
+&nbsp;&nbsp;(and after) the colon?&nbsp;&nbsp;#7409<br>
 - Implement &quot;export {one, two three}&quot;.<br>
 - ISN_CHECKTYPE could use check_argtype()<br>
+- Using a script variable inside a :def function doesn't work if the variable<br>
+&nbsp;&nbsp;is inside a block, see Test_nested_function().&nbsp;&nbsp;Should it work?<br>
 - give error for variable name:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let p = function('NoSuchFunc')<br>
 - If a :def function is called with a function reference, compile it to get<br>
@@ -83,7 +65,14 @@ Vim9 - Making everything work:<br>
 - Does this work already: can use func as reference:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeFunc() ...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(list, SomeFunc)<br>
+- For builtin functions using tv_get_string*() use check_for_string() to be<br>
+&nbsp;&nbsp;more strict about the argument type.<br>
 - Support passing v:none to use the default argument value. (#6504)<br>
+- Make map() give an error if the resulting type of the first argument is<br>
+&nbsp;&nbsp;wrong.&nbsp;&nbsp;Only works if the type is known?&nbsp;&nbsp;Is this slow (need to go over all<br>
+&nbsp;&nbsp;items)?<br>
+- Run the same tests in :def and Vim9 script, like in Test_expr7_not()<br>
+- Check many more builtin function arguments at compile time.<br>
 - make 0 ==&nbsp;<span class="MissingTag">'string'</span>&nbsp;fail on the script level, like inside :def.<br>
 - Check that when using a user function name without prefix, it does not find<br>
 &nbsp;&nbsp;a global function.&nbsp;&nbsp;Prefixing g: is required.<br>
@@ -112,9 +101,11 @@ Vim9 - Making everything work:<br>
 - expandcmd() with&nbsp;<span class="Comment">=expr</span>&nbsp;in filename uses legacy expression.<br>
 - eval_expr() in ex_cexpr()<br>
 - eval_expr() call in dbg_parsearg() and debuggy_find()<br>
-New syntax and functionality:<br>
 Improve error checking:<br>
 - &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
+Before launch:<br>
+- Add all the error numbers in a good place in documentation.<br>
+- In the generic eval docs, point out the Vim9 syntax where it differs.<br>
 Also:<br>
 - For range: make table of first ASCII character with flag to quickly check if<br>
 &nbsp;&nbsp;it can be a Vim9 command. E.g. &quot;+&quot; can, but &quot;.&quot; can't.<br>
@@ -189,6 +180,8 @@ Text properties:<br>
 - &quot;cc&quot; does not call inserted_bytes(). (Axel Forsman, #5763)<br>
 - Combining text property with&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;does not always work (Billie<br>
 &nbsp;&nbsp;Cleek, #5533)<br>
+- Should we let the textprop highlight overrule other (e.g. diff) highlight if<br>
+&nbsp;&nbsp;the priority is above a certain value?&nbsp;&nbsp;(#7392)<br>
 - See remarks at top of src/textprop.c<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s:<br>
