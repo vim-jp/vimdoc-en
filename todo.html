@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Dec 10<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Dec 22<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,6 +43,11 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Rewrite the section on &quot;magic&quot;.&nbsp;&nbsp;Say that&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;is normally on, then this<br>
+happens...&nbsp;&nbsp;If&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;is off, then this is different..<br>
+<br>
+test_vim9_cmd: uses uninitialized var<br>
+<br>
 Vim9 - Make everything work:<br>
 - For an :autocmd and :command argument defined in Vim9 script, if a following<br>
 &nbsp;&nbsp;line starts with &quot;|&quot; append it.&nbsp;&nbsp;It's like line continuation. (#6702)<br>
@@ -50,6 +55,7 @@ Vim9 - Make everything work:<br>
 &nbsp;&nbsp;a range from &quot;a&quot; to &quot;b&quot;?&nbsp;&nbsp;To avoid confusion, require white space before<br>
 &nbsp;&nbsp;(and after) the colon?&nbsp;&nbsp;#7409<br>
 - Implement &quot;export {one, two three}&quot;.<br>
+- Use &quot;null&quot; for v:null, like true and false?&nbsp;&nbsp;#7495<br>
 - ISN_CHECKTYPE could use check_argtype()<br>
 - Using a script variable inside a :def function doesn't work if the variable<br>
 &nbsp;&nbsp;is inside a block, see Test_nested_function().&nbsp;&nbsp;Should it work?<br>
@@ -67,6 +73,8 @@ Vim9 - Make everything work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(list, SomeFunc)<br>
 - For builtin functions using tv_get_string*() use check_for_string() to be<br>
 &nbsp;&nbsp;more strict about the argument type.<br>
+- Allow function names that will be script-local to start with lower case<br>
+&nbsp;&nbsp;letter?<br>
 - Support passing v:none to use the default argument value. (#6504)<br>
 - Make map() give an error if the resulting type of the first argument is<br>
 &nbsp;&nbsp;wrong.&nbsp;&nbsp;Only works if the type is known?&nbsp;&nbsp;Is this slow (need to go over all<br>
@@ -86,6 +94,7 @@ Vim9 - Make everything work:<br>
 - Using &quot;..&quot; at script level doesn't convert arguments to a string.<br>
 - Compile replacement of :s command: s/pat/\=expr/<br>
 - Compile redir to local variable: var_redir_start().<br>
+- Implement type cast at the script level.<br>
 - Compile builtin functions that access local variables:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;islocked()<br>
 - When evaluating constants for script variables, some functions could work:<br>
@@ -132,6 +141,10 @@ Also:<br>
 &nbsp;&nbsp;stack?<br>
 - Make profiling work - Add ISN_PROFILE instructions after every line?<br>
 - List commands when&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;is set or :verbose is used.<br>
+Once Vim9 is stable:<br>
+- Change the help to prefer Vim9 syntax where appropriate<br>
+- Use Vim9 for runtime files.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PR #7497 for autoload/ccomplete.vim<br>
 Further improvements:<br>
 - compile options that are an expression, e.g. &quot;expr:&quot; in&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>,<br>
 &nbsp;&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>,&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>,&nbsp;<a class="Type" href="options.html#'printexpr'">'printexpr'</a>,&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>,&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>,&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>,<br>
@@ -1277,9 +1290,6 @@ Expanding /**/ is slow.&nbsp;&nbsp;Idea by Luc Hermitte, 2017 Apr 14.<br>
 Once .exe with updated installer is available: Add remark to download page<br>
 about /S and /D options (Ken Takata, 2016 Apr 13)<br>
 Or point to nightly builds:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim-win32-installer/releases">https://github.com/vim/vim-win32-installer/releases</a></span><br>
-<br>
-Problem passing non-UTF-8 strings to Python 3. (Björn Linse, 2016 Sep 11,<br>
-#1053)&nbsp;&nbsp;With patch, does it work?<br>
 <br>
 &quot;:sbr&quot; docs state it respects&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>, but &quot;vsplit&quot; does not cause a<br>
 vertical split. (Haldean Brown, 2017 Mar 1)<br>
@@ -4003,8 +4013,6 @@ Documentation:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- if it can be undone (u/<span class="Special">CTRL-R</span>) and redone (.)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- how it works for folded lines<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- how it works with multibyte characters<br>
-9&nbsp;&nbsp; In change.txt, remark about Javadoc isn't right.&nbsp;&nbsp;Right alignment would<br>
-&nbsp;&nbsp;&nbsp;&nbsp;work too.<br>
 8&nbsp;&nbsp; Spread the windows commands over the other files.&nbsp;&nbsp;For example, &quot;:stag&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;should be with &quot;:tag&quot;.&nbsp;&nbsp;Cross-link with tags to avoid too much double<br>
 &nbsp;&nbsp;&nbsp;&nbsp;text.<br>

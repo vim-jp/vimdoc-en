@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Dec 05<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Dec 23<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -11,7 +11,7 @@ helpname: 'vim9'
 <br>
 THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
-Vim9 script commands and expressions.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9" name="vim9">vim9</a><br>
+Vim9 script commands and expressions.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#Vim9" name="Vim9">Vim9</a><br>
 <br>
 Most expression help is in&nbsp;<a class="Identifier" href="eval.html">eval.txt</a>.&nbsp;&nbsp;This file is about the new syntax and<br>
 features in Vim9 script.<br>
@@ -139,7 +139,7 @@ Compilation is done when either of these is encountered:<br>
 <a class="Comment" href="vim9.html#:def">:def</a>&nbsp;has no options like&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;does: &quot;range&quot;, &quot;abort&quot;, &quot;dict&quot; or<br>
 &quot;closure&quot;.&nbsp;&nbsp;A&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function always aborts on an error (unless&nbsp;<a class="Comment" href="various.html#:silent!">:silent!</a>&nbsp;was<br>
 used for the command or inside a&nbsp;<a class="Comment" href="eval.html#:try">:try</a>&nbsp;block), does not get a range passed<br>
-and cannot be a &quot;dict&quot; function.<br>
+cannot be a &quot;dict&quot; function, and can always be a closure.<br>
 <br>
 The argument types and return type need to be specified.&nbsp;&nbsp;The &quot;any&quot; type can<br>
 be used, type checking will then be done at runtime, like with legacy<br>
@@ -191,6 +191,11 @@ variables could be defined anywhere (good luck finding out where!).<br>
 Global functions can still be defined and deleted at nearly any time.&nbsp;&nbsp;In<br>
 Vim9 script script-local functions are defined once when the script is sourced<br>
 and cannot be deleted or replaced.<br>
+<br>
+When compiling a function and a function call is encountered for a function<br>
+that is not (yet) defined, the&nbsp;<a class="Identifier" href="autocmd.html#FuncUndefined">FuncUndefined</a>&nbsp;autocommand is not triggered.<br>
+You can use an autoload function if needed, or call a legacy function and have<br>
+<a class="Identifier" href="autocmd.html#FuncUndefined">FuncUndefined</a>&nbsp;triggered there.<br>
 <br>
 <br>
 <span class="PreProc">Variable declarations with :var, :final and :const</span><br>
@@ -403,6 +408,16 @@ arguments:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text: string,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;separator = '-'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;): string</div>
+<br>
+Since a continuation line cannot be easily recognized the parsing of commands<br>
+has been made sticter.&nbsp;&nbsp;E.g., because of the error in the first line, the<br>
+second line is seen as a separate command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;popup_create(some invalid expression, {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exit_cb: Func})</div>
+Now &quot;exit_cb: Func})&quot; is actually a valid command: save any changes to the<br>
+file &quot;_cb: Func})&quot; and exit.&nbsp;&nbsp;To avoid this kind of mistake in Vim9 script<br>
+there must be white space between most command names and the argument.<br>
+<br>
 <br>
 <span class="Todo">Notes</span>:<br>
 - &quot;enddef&quot; cannot be used at the start of a continuation line, it ends the<br>
@@ -631,6 +646,13 @@ command.&nbsp;&nbsp;This will give an error for missing&nbsp;<a class="Comment" 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('feature') | use-feature | endif<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
+<span class="PreProc">Other differences</span><br>
+<br>
+Patterns are used like&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;is set, unless explicitly overruled.<br>
+The&nbsp;<a class="Type" href="options.html#'edcompatible'">'edcompatible'</a>&nbsp;option value is not used.<br>
+The&nbsp;<a class="Type" href="options.html#'gdefault'">'gdefault'</a>&nbsp;option value is not used.<br>
+<br>
+<br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
 3. New style functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#fast-functions" name="fast-functions">fast-functions</a><br>
@@ -800,12 +822,14 @@ compiled code the &quot;any&quot; type is assumed.<br>
 This can be a problem when the &quot;any&quot; type is undesired and the actual type is<br>
 expected to always be the same.&nbsp;&nbsp;For example, when declaring a list:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var l: list&lt;number&gt; = [1, g:two]</div>
-This will give an error, because &quot;g:two&quot; has type &quot;any&quot;.&nbsp;&nbsp;To avoid this, use a<br>
-type cast:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var l: list&lt;number&gt; = [1, &lt;number&gt;g:two]</div>
+At compile time Vim doesn't know the type of &quot;g:two&quot; and the expression type<br>
+becomes list<span class="Special">&lt;any&gt;</span>.&nbsp;&nbsp;An instruction is generated to check the list type before<br>
+doing the assignment, which is a bit inefficient.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#type-casting" name="type-casting">type-casting</a><br>
-The compiled code will then check that &quot;g:two&quot; is a number at runtime and give<br>
-an error if it isn't.&nbsp;&nbsp;This is called type casting.<br>
+To avoid this, use a type cast:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var l: list&lt;number&gt; = [1, &lt;number&gt;g:two]</div>
+The compiled code will then only check that &quot;g:two&quot; is a number and give an<br>
+error if it isn't.&nbsp;&nbsp;This is called type casting.<br>
 <br>
 The syntax of a type cast is:&nbsp;&nbsp;&quot;&lt;&quot;&nbsp;<span class="Special">{type}</span>&nbsp;&quot;&gt;&quot;.&nbsp;&nbsp;There cannot be white space<br>
 after the &quot;&lt;&quot; or before the &quot;&gt;&quot; (to avoid them being confused with<br>
