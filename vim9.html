@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Dec 23<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Dec 24<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -345,6 +345,40 @@ When using&nbsp;<a class="Comment" href="eval.html#function()">function()</a>&nb
 number of arguments and any return type.&nbsp;&nbsp;The function can be defined later.<br>
 <br>
 <br>
+<span class="PreProc">Lamba using =&gt; instead of -&gt;</span><br>
+<br>
+In legacy script there can be confusion between using &quot;-&gt;&quot; for a method call<br>
+and for a lambda.&nbsp;&nbsp;Also, when a &quot;{&quot; is found the parser needs to figure out if<br>
+it is the start of a lambda or a dictionary, which is now more complicated<br>
+because of the use of argument types.<br>
+<br>
+To avoid these problems Vim9 script uses a different syntax for a lambda,<br>
+which is similar to Javascript:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Lambda = (arg) =&gt; expression</div>
+<br>
+No line break is allowed in the arguments of a lambda up to and includeing the<br>
+&quot;=&gt;&quot;.&nbsp;&nbsp;This is OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, (k, v) =&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v &gt; 0)</div>
+This does not work:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, (k, v)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt; v &gt; 0)</div>
+This also does not work:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, (k,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v) =&gt; v &gt; 0)<br>
+<br>
+Additionally, a lambda can contain statements in {}:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Lambda = (arg) =&gt; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:was_called = 'yes'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return expression<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+NOT IMPLEMENTED YET<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that the &quot;{&quot; must be followed by white space, otherwise it is assumed to<br>
+be the start of a dictionary:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Lambda = (arg) =&gt; {key: 42}</div>
+<br>
+<br>
 <span class="PreProc">Automatic line continuation</span><br>
 <br>
 In many cases it is obvious that an expression continues on the next line.&nbsp;&nbsp;In<br>
@@ -410,7 +444,7 @@ arguments:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;): string</div>
 <br>
 Since a continuation line cannot be easily recognized the parsing of commands<br>
-has been made sticter.&nbsp;&nbsp;E.g., because of the error in the first line, the<br>
+has been made stricter.&nbsp;&nbsp;E.g., because of the error in the first line, the<br>
 second line is seen as a separate command:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;popup_create(some invalid expression, {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exit_cb: Func})</div>
@@ -438,14 +472,6 @@ there must be white space between most command names and the argument.<br>
 &nbsp;&nbsp;&nbsp;This does not work:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo [1, 2]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3, 4]</div>
-- No line break is allowed in the arguments of a lambda, between the &quot;{&quot; and<br>
-&nbsp;&nbsp;&quot;-&gt;&quot;.&nbsp;&nbsp;This is OK:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, {k, v -&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v &gt; 0})</div>
-&nbsp;&nbsp;&nbsp;This does not work:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, {k,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v -&gt; v &gt; 0})</div>
-<br>
 <br>
 <span class="PreProc">No curly braces expansion</span><br>
 <br>
