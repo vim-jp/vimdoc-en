@@ -19,7 +19,7 @@ features in Vim9 script.<br>
 THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
 <br>
-1.&nbsp;&nbsp;What is Vim9 script?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-script">vim9-script</a><br>
+1.&nbsp;&nbsp;What is Vim9 script?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="MissingTag">vim9-script</span><br>
 2.&nbsp;&nbsp;Differences&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-differences">vim9-differences</a><br>
 3.&nbsp;&nbsp;New style functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#fast-functions">fast-functions</a><br>
 4.&nbsp;&nbsp;Types&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-types">vim9-types</a><br>
@@ -30,7 +30,7 @@ THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
-1. What is Vim9 script?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-script" name="vim9-script">vim9-script</a><br>
+1. What is Vim9 script?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#Vim9-script" name="Vim9-script">Vim9-script</a><br>
 <br>
 THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
@@ -117,7 +117,12 @@ In Vi # is a command to list text with numbers.&nbsp;&nbsp;In Vim9 script you ca
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;101 number</div>
 <br>
 To improve readability there must be a space between a command and the #<br>
-that starts a comment.<br>
+that starts a comment:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var = value # comment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var = value# error!</div>
+<br>
+In legacy script # is also used for the alternate file name.&nbsp;&nbsp;In Vim9 script<br>
+you need to use %% instead.&nbsp;&nbsp;Instead of ## use %%% (stands for all arguments).<br>
 <br>
 <br>
 <span class="PreProc">Vim9 functions</span><br>
@@ -196,6 +201,28 @@ When compiling a function and a function call is encountered for a function<br>
 that is not (yet) defined, the&nbsp;<a class="Identifier" href="autocmd.html#FuncUndefined">FuncUndefined</a>&nbsp;autocommand is not triggered.<br>
 You can use an autoload function if needed, or call a legacy function and have<br>
 <a class="Identifier" href="autocmd.html#FuncUndefined">FuncUndefined</a>&nbsp;triggered there.<br>
+<br>
+<br>
+<span class="PreProc">Reloading a Vim9 script clears functions and variables by default</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-reload" name="vim9-reload">vim9-reload</a><br>
+When loading a legacy Vim script a second time nothing is removed, the<br>
+commands will replace existing variables and functions and create new ones.<br>
+<br>
+When loading a Vim9 script a second time all existing script-local functions<br>
+and variables are deleted, thus you start with a clean slate.&nbsp;&nbsp;This is useful<br>
+if you are developing a plugin and want to try a new version.&nbsp;&nbsp;If you renamed<br>
+something you don't have to worry about the old name still hanging around.<br>
+<br>
+If you do want to keep items, use:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vimscript noclear</div>
+<br>
+You want to use this in scripts that use a&nbsp;<a class="Comment" href="repeat.html#:finish">finish</a>&nbsp;command to bail out at<br>
+some point when loaded again.&nbsp;&nbsp;E.g. when a buffer local option is set:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vimscript noclear<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setlocal completefunc=SomeFunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if exists('*SomeFunc') | finish | endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def g:SomeFunc()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....</div>
 <br>
 <br>
 <span class="PreProc">Variable declarations with :var, :final and :const</span><br>
@@ -345,7 +372,7 @@ When using&nbsp;<a class="Comment" href="eval.html#function()">function()</a>&nb
 number of arguments and any return type.&nbsp;&nbsp;The function can be defined later.<br>
 <br>
 <br>
-<span class="PreProc">Lamba using =&gt; instead of -&gt;</span><br>
+<span class="PreProc">Lambda using =&gt; instead of -&gt;</span><br>
 <br>
 In legacy script there can be confusion between using &quot;-&gt;&quot; for a method call<br>
 and for a lambda.&nbsp;&nbsp;Also, when a &quot;{&quot; is found the parser needs to figure out if<br>
@@ -356,7 +383,7 @@ To avoid these problems Vim9 script uses a different syntax for a lambda,<br>
 which is similar to Javascript:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Lambda = (arg) =&gt; expression</div>
 <br>
-No line break is allowed in the arguments of a lambda up to and includeing the<br>
+No line break is allowed in the arguments of a lambda up to and including the<br>
 &quot;=&gt;&quot;.&nbsp;&nbsp;This is OK:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, (k, v) =&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v &gt; 0)</div>
@@ -374,9 +401,9 @@ Additionally, a lambda can contain statements in {}:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</div>
 NOT IMPLEMENTED YET<br>
 <br>
-<span class="Todo">Note</span>&nbsp;that the &quot;{&quot; must be followed by white space, otherwise it is assumed to<br>
-be the start of a dictionary:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Lambda = (arg) =&gt; {key: 42}</div>
+To avoid the &quot;{&quot; of a dictionary literal to be recognized as a statement block<br>
+wrap it in parenthesis:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Lambda = (arg) =&gt; ({key: 42})</div>
 <br>
 <br>
 <span class="PreProc">Automatic line continuation</span><br>
@@ -742,18 +769,24 @@ prefix and they do not need to exist (they can be deleted any time).<br>
 <span class="PreProc">Limitations</span><br>
 <br>
 Local variables will not be visible to string evaluation.&nbsp;&nbsp;For example:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def EvalString(): list&lt;string&gt;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def MapList(): list&lt;string&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var list = ['aa', 'bb', 'cc', 'dd']<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return range(1, 2)-&gt;map('list[v:val]')<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
 The map argument is a string expression, which is evaluated without the<br>
 function scope.&nbsp;&nbsp;Instead, use a lambda:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def EvalString(): list&lt;string&gt;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def MapList(): list&lt;string&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var list = ['aa', 'bb', 'cc', 'dd']<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return range(1, 2)-&gt;map({ _, v -&gt; list[v] })<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return range(1, 2)-&gt;map(( _, v) =&gt; list[v])<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
+The same is true for commands that are not compiled, such as&nbsp;<a class="Comment" href="repeat.html#:global">:global</a>.<br>
+For these the backtick expansion can be used.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Replace()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var newText = 'blah'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g/pattern/s/^/`=newText`/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
