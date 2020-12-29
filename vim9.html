@@ -11,7 +11,7 @@ helpname: 'vim9'
 <br>
 THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
-Vim9 script commands and expressions.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#Vim9" name="Vim9">Vim9</a><br>
+Vim9 script commands and expressions.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#Vim9" name="Vim9">Vim9</a>&nbsp;<a class="Constant" href="vim9.html#vim9" name="vim9">vim9</a><br>
 <br>
 Most expression help is in&nbsp;<a class="Identifier" href="eval.html">eval.txt</a>.&nbsp;&nbsp;This file is about the new syntax and<br>
 features in Vim9 script.<br>
@@ -118,11 +118,12 @@ In Vi # is a command to list text with numbers.&nbsp;&nbsp;In Vim9 script you ca
 <br>
 To improve readability there must be a space between a command and the #<br>
 that starts a comment:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var = value # comment<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var = value# error!</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var name = value # comment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var name = value# error!</div>
 <br>
-In legacy script # is also used for the alternate file name.&nbsp;&nbsp;In Vim9 script<br>
-you need to use %% instead.&nbsp;&nbsp;Instead of ## use %%% (stands for all arguments).<br>
+In legacy Vim script # is also used for the alternate file name.&nbsp;&nbsp;In Vim9<br>
+script you need to use %% instead.&nbsp;&nbsp;Instead of ## use %%% (stands for all<br>
+arguments).<br>
 <br>
 <br>
 <span class="PreProc">Vim9 functions</span><br>
@@ -214,13 +215,13 @@ if you are developing a plugin and want to try a new version.&nbsp;&nbsp;If you 
 something you don't have to worry about the old name still hanging around.<br>
 <br>
 If you do want to keep items, use:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vimscript noclear</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script noclear</div>
 <br>
 You want to use this in scripts that use a&nbsp;<a class="Comment" href="repeat.html#:finish">finish</a>&nbsp;command to bail out at<br>
 some point when loaded again.&nbsp;&nbsp;E.g. when a buffer local option is set:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vimscript noclear<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script noclear<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setlocal completefunc=SomeFunc<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if exists('*SomeFunc') | finish | endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if exists('*g:SomeFunc') | finish | endif<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def g:SomeFunc()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....</div>
 <br>
@@ -391,8 +392,12 @@ This does not work:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, (k, v)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt; v &gt; 0)</div>
 This also does not work:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, (k,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v) =&gt; v &gt; 0)<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, (k,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v) =&gt; v &gt; 0)</div>
+But you can use a backslash to concatenate the lines before parsing:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, (k,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; v)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&gt; v &gt; 0)</div>
 <br>
 Additionally, a lambda can contain statements in {}:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Lambda = (arg) =&gt; {<br>
@@ -409,8 +414,8 @@ wrap it in parenthesis:<br>
 <span class="PreProc">Automatic line continuation</span><br>
 <br>
 In many cases it is obvious that an expression continues on the next line.&nbsp;&nbsp;In<br>
-those cases there is no need to prefix the line with a backslash<br>
-<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>.&nbsp;&nbsp;For example, when a list spans multiple lines:<br>
+those cases there is no need to prefix the line with a backslash (see<br>
+<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>).&nbsp;&nbsp;For example, when a list spans multiple lines:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var mylist = [<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'one',<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'two',<br>
@@ -446,6 +451,12 @@ before it:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;BuilderBuild()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var result = MyDict<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.member</div>
+<br>
+For commands that have an argument that is a list of commands, the | character<br>
+at the start of the line indicates line continuation:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autocmd BufNewFile *.match if condition<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; echo 'match'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| endif</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1050" name="E1050">E1050</a><br>
 To make it possible for the operator at the start of the line to be<br>
@@ -946,7 +957,7 @@ that you don't do that.<br>
 <br>
 <br>
 <span class="PreProc">Namespace</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:vim9script" name=":vim9script">:vim9script</a>&nbsp;<a class="Constant" href="vim9.html#:vim9" name=":vim9">:vim9</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-namespace" name="vim9-namespace">vim9-namespace</a><br>
 To recognize a file that can be imported the&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;statement must<br>
 appear as the first statement in the file.&nbsp;&nbsp;It tells Vim to interpret the<br>
 script in its own namespace, instead of the global namespace.&nbsp;&nbsp;If a file<br>
@@ -964,7 +975,7 @@ In Vim9 script the global &quot;g:&quot; namespace can still be used as before.&
 &quot;w:&quot;, &quot;b:&quot; and &quot;t:&quot; namespaces.&nbsp;&nbsp;These have in common that variables are not<br>
 declared and they can be deleted.<br>
 <br>
-A side effect of&nbsp;<a class="Comment" href="vim9.html#:vim9script">:vim9script</a>&nbsp;is that the&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;option is set to the<br>
+A side effect of&nbsp;<span class="Comment">:vim9script</span>&nbsp;is that the&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;option is set to the<br>
 Vim default value, like with:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set cpo&amp;vim</div>
 One of the effects is that&nbsp;<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>&nbsp;is always enabled.<br>
