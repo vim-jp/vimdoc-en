@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Dec 24<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jan 02<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -19,7 +19,7 @@ features in Vim9 script.<br>
 THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 <br>
 <br>
-1.&nbsp;&nbsp;What is Vim9 script?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="MissingTag">vim9-script</span><br>
+1.&nbsp;&nbsp;What is Vim9 script?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#Vim9-script">Vim9-script</a><br>
 2.&nbsp;&nbsp;Differences&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-differences">vim9-differences</a><br>
 3.&nbsp;&nbsp;New style functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#fast-functions">fast-functions</a><br>
 4.&nbsp;&nbsp;Types&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-types">vim9-types</a><br>
@@ -570,6 +570,13 @@ command:<br>
 <br>
 White space is required around most operators.<br>
 <br>
+White space is required in a sublist (list slice) around the &quot;:&quot;, except at<br>
+the start and end:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;otherlist = mylist[v : count]&nbsp;&nbsp; # v:count has a different meaning<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;otherlist = mylist[:]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # make a copy of the List<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;otherlist = mylist[v :]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;otherlist = mylist[: v]</div>
+<br>
 White space is not allowed:<br>
 - Between a function name and the &quot;(&quot;:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Func (arg)&nbsp;&nbsp;&nbsp;&nbsp;# Error!<br>
@@ -600,7 +607,7 @@ is either falsy or truthy.&nbsp;&nbsp;This is mostly like JavaScript, except tha
 empty list and dict is falsy:<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;truthy when</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:true or 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true, v:true or 1<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-zero<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; non-zero<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-empty<br>
@@ -608,11 +615,11 @@ empty list and dict is falsy:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-empty (different from JavaScript)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dictionary&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-empty (different from JavaScript)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when there is a function name<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;special&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; v:true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;special&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; true or v:true<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;job&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when not NULL<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when not NULL<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when not NULL<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;object&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when not NULL (TODO: when isTrue() returns v:true)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;object&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when not NULL (TODO: when isTrue() returns true)<br>
 <br>
 The boolean operators &quot;||&quot; and &quot;&amp;&amp;&quot; expect the values to be boolean, zero or<br>
 one:<br>
@@ -634,12 +641,15 @@ result is a boolean.&nbsp;&nbsp;&quot;!!&quot; can be used to turn any value int
 When using &quot;<span class="Comment">..&quot;</span>&nbsp;for string concatenation arguments of simple types are<br>
 always converted to string:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. 123&nbsp;&nbsp;== 'hello 123'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. v:true&nbsp;&nbsp;== 'hello v:true'</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hello ' .. v:true&nbsp;&nbsp;== 'hello true'</div>
 <br>
 Simple types are string, float, special and bool.&nbsp;&nbsp;For other types&nbsp;<a class="Identifier" href="eval.html#string()">string()</a><br>
 can be used.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#false" name="false">false</a>&nbsp;<a class="Constant" href="vim9.html#true" name="true">true</a><br>
-In Vim9 script one can use &quot;true&quot; for v:true and &quot;false&quot; for v:false.<br>
+In Vim9 script one can use &quot;true&quot; for v:true and &quot;false&quot; for v:false.&nbsp;&nbsp;When<br>
+converting a boolean to a string &quot;false&quot; and &quot;true&quot; are used, not &quot;v:false&quot;<br>
+and &quot;v:true&quot; like in legacy script.&nbsp;&nbsp;&quot;v:none&quot; and &quot;v:null&quot; are not changed,<br>
+they are only used in JSON.<br>
 <br>
 Indexing a string with&nbsp;<span class="Special">[idx]</span>&nbsp;or [idx, idx] uses character indexes instead of<br>
 byte indexes. Example:<br>
@@ -975,7 +985,7 @@ In Vim9 script the global &quot;g:&quot; namespace can still be used as before.&
 &quot;w:&quot;, &quot;b:&quot; and &quot;t:&quot; namespaces.&nbsp;&nbsp;These have in common that variables are not<br>
 declared and they can be deleted.<br>
 <br>
-A side effect of&nbsp;<span class="Comment">:vim9script</span>&nbsp;is that the&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;option is set to the<br>
+A side effect of&nbsp;<a class="Comment" href="repeat.html#:vim9script">:vim9script</a>&nbsp;is that the&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;option is set to the<br>
 Vim default value, like with:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set cpo&amp;vim</div>
 One of the effects is that&nbsp;<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>&nbsp;is always enabled.<br>

@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'pattern'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="pattern.html" name="pattern.txt">pattern.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Dec 06<br>
+<a class="Constant" href="pattern.html" name="pattern.txt">pattern.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Dec 25<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -399,15 +399,19 @@ the pattern will not match.&nbsp;&nbsp;This is only useful when debugging Vim.<b
 <span class="PreProc">==============================================================================</span><br>
 3. Magic&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pattern.html#/magic" name="/magic">/magic</a><br>
 <br>
-Some characters in the pattern are taken literally.&nbsp;&nbsp;They match with the same<br>
-character in the text.&nbsp;&nbsp;When preceded with a backslash however, these<br>
-characters get a special meaning.<br>
+Some characters in the pattern, such as letters, are taken literally.&nbsp;&nbsp;They<br>
+match exactly the same character in the text.&nbsp;&nbsp;When preceded with a backslash<br>
+however, these characters may get a special meaning.&nbsp;&nbsp;For example, &quot;a&quot; matches<br>
+the letter &quot;a&quot;, while &quot;\a&quot; matches any alphabetic character.<br>
 <br>
 Other characters have a special meaning without a backslash.&nbsp;&nbsp;They need to be<br>
-preceded with a backslash to match literally.<br>
+preceded with a backslash to match literally.&nbsp;&nbsp;For example &quot;.&quot; matches any<br>
+character while &quot;\.&quot; matches a dot.<br>
 <br>
 If a character is taken literally or not depends on the&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;option and the<br>
-items mentioned next.<br>
+items in the pattern mentioned next.&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;option should always be set,<br>
+but it can be switched off for Vi compatibility.&nbsp;&nbsp;We mention the effect of<br>
+<a class="Type" href="options.html#'nomagic'">'nomagic'</a>&nbsp;here for completeness, but we recommend against using that.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pattern.html#/\m" name="/\m">/\m</a>&nbsp;<a class="Constant" href="pattern.html#/\M" name="/\M">/\M</a><br>
 Use of &quot;\m&quot; makes the pattern after it be interpreted as if&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;is set,<br>
 ignoring the actual value of the&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;option.<br>
@@ -416,30 +420,28 @@ Use of &quot;\M&quot; makes the pattern after it be interpreted as if&nbsp;<a cl
 Use of &quot;\v&quot; means that after it, all ASCII characters except '0'-'9', 'a'-'z',<br>
 'A'-'Z' and '_' have special meaning: &quot;very magic&quot;<br>
 <br>
-Use of &quot;\V&quot; means that after it, only a backslash and terminating character<br>
-(usually / or ?) have special meaning: &quot;very nomagic&quot;<br>
+Use of &quot;\V&quot; means that after it, only a backslash and the terminating<br>
+character (usually / or ?) have special meaning: &quot;very nomagic&quot;<br>
 <br>
 Examples:<br>
 <span class="PreProc">after:&nbsp;&nbsp;&nbsp;&nbsp;\v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \V&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; matches</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;<a class="Type" href="options.html#'nomagic'">'nomagic'</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; matches end-of-line<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; matches any character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;literal 'a'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; any alphabetic character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; any character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;literal dot<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; end-of-line<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; any number of the previous atom<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; latest substitute string<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\)&nbsp;&nbsp;&nbsp;&nbsp; \(\)&nbsp;&nbsp;&nbsp;&nbsp; \(\)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; grouping into an atom<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; separating alternatives<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alphabetic character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \(\)&nbsp;&nbsp;&nbsp;&nbsp; \(\)&nbsp;&nbsp;&nbsp;&nbsp; \(\)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; group as an atom<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nothing: separates alternatives<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; literal backslash<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;literal dot<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;literal '{'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;literal 'a'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;literal curly brace<br>
 <br>
 <span class="Special">{only Vim supports \m, \M, \v and \V}</span><br>
 <br>
-It is recommended to always keep the&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;option at the default setting,<br>
-which is&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>.&nbsp;&nbsp;This avoids portability problems.&nbsp;&nbsp;To make a pattern immune<br>
-to the&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;option being set or not, put &quot;\m&quot; or &quot;\M&quot; at the start of the<br>
-pattern.<br>
+If you want to you can make a pattern immune to the&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>&nbsp;option being set<br>
+or not by putting &quot;\m&quot; or &quot;\M&quot; at the start of the pattern.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 4. Overview of pattern items&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pattern.html#pattern-overview" name="pattern-overview">pattern-overview</a><br>
