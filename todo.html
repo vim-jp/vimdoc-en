@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jan 02<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jan 11<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,18 +43,29 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Reload: How to make sure type of script function hasn't changed?<br>
-<br>
-Valgrind: test_vim9_cmd: uses uninitialized var<br>
+no error for:<br>
+&nbsp;&nbsp;echo extend([0], ['a', true])<br>
+like it does for:<br>
+&nbsp;&nbsp;echo extend([0], ['a'])<br>
+At script level this does not give an error:<br>
+&nbsp;&nbsp;echo map([0], (_, v) =&gt; [])<br>
+Or:<br>
+&nbsp;&nbsp;var l: list<span class="Special">&lt;number&gt;</span>&nbsp;= [0]<br>
+&nbsp;&nbsp;echo map(l, (_, v) =&gt; [])<br>
 <br>
 Vim9 - Make everything work:<br>
+- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :next, :argedit, :argadd, :argdelete, :drop<br>
+- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :vimgrep, :vimgrepadd, :lvimgrep, :lvimgrepadd<br>
+- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :mkspell<br>
+- Unlet with range: &quot;unlet list[a : b]&quot;<br>
 - Implement &quot;export {one, two three}&quot;.<br>
-- Use &quot;null&quot; for v:null, like true and false?&nbsp;&nbsp;#7495<br>
 - ISN_CHECKTYPE could use check_argtype()<br>
 - Using a script variable inside a :def function doesn't work if the variable<br>
 &nbsp;&nbsp;is inside a block, see Test_nested_function().&nbsp;&nbsp;Should it work?<br>
 - give error for variable name:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let p = function('NoSuchFunc')<br>
+- Make closures work better:<br>
+&nbsp;&nbsp;- Create closure in a loop.&nbsp;&nbsp;Need to make a list of them.<br>
 - If a :def function is called with a function reference, compile it to get<br>
 &nbsp;&nbsp;the function type.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Filter(x: string, Cond: func(string): bool)<br>
@@ -68,25 +79,18 @@ Vim9 - Make everything work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statement<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statement<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-- implement { cmd } compiled<br>
-- implement { cmd } at script level<br>
-- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :next, :argedit, :argadd, :argdelete, :drop<br>
-- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :vimgrep, :vimgrepadd, :lvimgrep, :lvimgrepadd<br>
-- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :mkspell<br>
 - Does this work already: can use func as reference:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeFunc() ...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(list, SomeFunc)<br>
 - For builtin functions using tv_get_string*() use check_for_string() to be<br>
 &nbsp;&nbsp;more strict about the argument type.<br>
+- Possible memory leaks in test_vim9_func<br>
 - Implement :lockvar and :unlockvar.&nbsp;&nbsp;How about local variables?&nbsp;&nbsp;Perhaps only<br>
 &nbsp;&nbsp;allow this for global variables.&nbsp;&nbsp;Use :final or :const otherwise.<br>
 - Allow function names that will be script-local to start with lower case<br>
 &nbsp;&nbsp;letter?&nbsp;&nbsp;Or also require names with s: prefix to use upper case?<br>
 &nbsp;&nbsp;Also apply this function references &quot;var ref = SomeFunc&quot;<br>
 - Support passing v:none to use the default argument value. (#6504)<br>
-- Make map() give an error if the resulting type of the first argument is<br>
-&nbsp;&nbsp;wrong.&nbsp;&nbsp;Only works if the type is known?&nbsp;&nbsp;Is this slow (need to go over all<br>
-&nbsp;&nbsp;items)?<br>
 - Run the same tests in :def and Vim9 script, like in Test_expr7_not()<br>
 - Check many more builtin function arguments at compile time.<br>
 - make 0 ==&nbsp;<span class="MissingTag">'string'</span>&nbsp;fail on the script level, like inside :def.<br>
@@ -110,57 +114,59 @@ Vim9 - Make everything work:<br>
 - Implement &quot;as Name&quot; in &quot;import Item as Name from ...&quot;<br>
 - Implement using imported items at script level from &quot;import * as X&quot; in<br>
 &nbsp;&nbsp;eval_variable().&nbsp;&nbsp;Should pass the &quot;.xxx&quot; that follows and return that.<br>
-- Disallow unlet for local/script/imported vars<br>
 - Make &quot;++nr&quot; work.&nbsp;&nbsp;&quot;++g:count&quot; doesn't work, thinks it is a range.<br>
-- Make closures work:<br>
-&nbsp;&nbsp;- Create closure in a loop.&nbsp;&nbsp;Need to make a list of them.<br>
-&nbsp;&nbsp;- nested closure only uses one context, not all (#7150)<br>
+- Reload: How to make sure type of script function hasn't changed?<br>
 - expandcmd() with&nbsp;<span class="Comment">=expr</span>&nbsp;in filename uses legacy expression.<br>
 - eval_expr() in ex_cexpr()<br>
 - eval_expr() call in dbg_parsearg() and debuggy_find()<br>
-Improve error checking:<br>
-- &quot;echo Func()&quot; is an error if Func() does not return anything.<br>
-Before launch:<br>
+- compile &quot;skip&quot; argument of searchpair()<br>
+- compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
+- give an error for &quot;echo Func()&quot; if Func() does not return anything.<br>
+<br>
+Once Vim9 is stable:<br>
+- Change the help to prefer Vim9 syntax where appropriate<br>
+- Use Vim9 for runtime files.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PR #7497 for autoload/ccomplete.vim<br>
 - Add all the error numbers in a good place in documentation.<br>
 - In the generic eval docs, point out the Vim9 syntax where it differs.<br>
-Also:<br>
-- For range: make table of first ASCII character with flag to quickly check if<br>
-&nbsp;&nbsp;it can be a Vim9 command. E.g. &quot;+&quot; can, but &quot;.&quot; can't.<br>
+<br>
+Also for Vim9&#0058;<br>
 - better implementation for partial and tests for that.<br>
 - Make &quot;g:imported = Export.exported&quot; work in Vim9 script.<br>
 - Make Foo.Bar() work to call the dict function. (#5676)<br>
 - Error in any command in &quot;vim9script&quot; aborts sourcing.<br>
 - Find a way to test expressions in legacy and Vim9 script without duplication<br>
-- Test each level of expressions properly, with type checking<br>
 - Test try/catch and throw better, also nested.<br>
-&nbsp;&nbsp;Test return inside try/finally jumps to finally and then returns.<br>
+&nbsp;&nbsp;Test that return inside try/finally jumps to finally and then returns.<br>
 - Test that a function defined inside a :def function is local to that<br>
 &nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
 &nbsp;&nbsp;defined.<br>
-- implement :type<br>
-- import type declaration?<br>
+- compile options that are an expression, e.g. &quot;expr:&quot; in&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>,<br>
+&nbsp;&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>,&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>,&nbsp;<a class="Type" href="options.html#'printexpr'">'printexpr'</a>,&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>,&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>,&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>,<br>
+&nbsp;&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>,&nbsp;<a class="Type" href="options.html#'includeexpr'">'includeexpr'</a>,&nbsp;<a class="Type" href="options.html#'indentexpr'">'indentexpr'</a>,&nbsp;<a class="Type" href="options.html#'formatexpr'">'formatexpr'</a>.<br>
+&nbsp;&nbsp;Give an error if compilation fails. (#7625)<br>
+&nbsp;&nbsp;Use the location where the option was set for deciding whether it's to be<br>
+&nbsp;&nbsp;evaluated in Vim9 script context.<br>
+- implement :type; import type declaration.<br>
+- implement enum;&nbsp;&nbsp;import enum.<br>
 - Future work: See&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a><br>
-- implement enum<br>
-- Make accessing varargs faster: arg[expr]<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVAL expr<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varargs idx)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Define the keywords and commands to make sure it will be backwards<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;compatible.<br>
 - Make debugging work - at least per function.&nbsp;&nbsp;Need to recompile a function<br>
 &nbsp;&nbsp;to step through it line-by-line?&nbsp;&nbsp;Evaluate the stack and variables on the<br>
 &nbsp;&nbsp;stack?<br>
 - Make profiling work - Add ISN_PROFILE instructions after every line?<br>
 - List commands when&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;is set or :verbose is used.<br>
-Once Vim9 is stable:<br>
-- Change the help to prefer Vim9 syntax where appropriate<br>
-- Use Vim9 for runtime files.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;PR #7497 for autoload/ccomplete.vim<br>
-Further improvements:<br>
-- compile options that are an expression, e.g. &quot;expr:&quot; in&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>,<br>
-&nbsp;&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>,&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>,&nbsp;<a class="Type" href="options.html#'printexpr'">'printexpr'</a>,&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>,&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>,&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>,<br>
-&nbsp;&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>,&nbsp;<a class="Type" href="options.html#'includeexpr'">'includeexpr'</a>,&nbsp;<a class="Type" href="options.html#'indentexpr'">'indentexpr'</a>,&nbsp;<a class="Type" href="options.html#'formatexpr'">'formatexpr'</a>.<br>
+<br>
+Further Vim9 improvements, possibly after launch:<br>
+- For range: make table of first ASCII character with flag to quickly check if<br>
+&nbsp;&nbsp;it can be a Vim9 command. E.g. &quot;+&quot; can, but &quot;.&quot; can't.<br>
 - compile get_lambda_tv() in popup_add_timeout()<br>
 - inline call to map() and filter()<br>
-- compile &quot;skip&quot; argument of searchpair()<br>
-- compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
+- Make accessing varargs faster: arg[expr]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVAL expr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varargs idx)<br>
+<br>
 <br>
 Popup windows:<br>
 - Add a flag to make a popup window focusable?<br>
@@ -313,6 +319,18 @@ Any way to convert &quot;$&quot; back by using a special value? (#6901)<br>
 Can we detect true color support?&nbsp;&nbsp;<span class="Constant"><a href="https://gist.github.com/XVilka/8346728">https://gist.github.com/XVilka/8346728</a></span><br>
 Try setting a color then request the current color, like using t_u7.<br>
 <br>
+Regexp to search for duplicate lines does not work correctly:<br>
+/\(^.*\n\)\1&nbsp;&nbsp;(Chris Morgan, #6239)<br>
+<br>
+Changing a capturing group to non-capturing changes the result: #7607<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:echo matchstr('aaa bbb', '\(.\<span class="Special">{-1,}</span>\&gt;\)\|.*')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;aaa<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:echo matchstr('aaa bbb', '\%(.\<span class="Special">{-1,}</span>\&gt;\)\|.*')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;aaa bbb<br>
+Should also work without any group:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:echo matchstr('aaa bbb', '.\<span class="Special">{-1,}</span>\&gt;\|.*')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;aaa bbb&nbsp;&nbsp;(should be aaa)<br>
+<br>
 Check out PR #543 (Roland Puntaier).<br>
 Patch for multibyte characters in langmap and applying a mapping on them.<br>
 (Christian Brabandt, 2015 Jun 12, update July 25)<br>
@@ -397,9 +415,6 @@ corruption.&nbsp;&nbsp;(#6631)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;is set sometimes the title is not updated.<br>
 (Jason Franklin, 2020 Feb 3)&nbsp;&nbsp;Looks like a race condition.<br>
-<br>
-Regexp to search for duplicate lines does not work correctly:<br>
-/\(^.*\n\)\1&nbsp;&nbsp;(Chris Morgan, #6239)<br>
 <br>
 With bash &quot;:make&quot; does not set v:shell_error.&nbsp;&nbsp;Possible solution: set<br>
 <a class="Type" href="options.html#'shellpipe'">'shellpipe'</a>&nbsp;to &quot;2&gt;&amp;1| tee %s; exit $<span class="Special">{PIPESTATUS[0]}</span>&quot;&nbsp;&nbsp;#5994<br>
@@ -1157,7 +1172,7 @@ Overlong utf-8 sequence is displayed wrong. (Harm te Hennepe, 2017 Sep 14,<br>
 #2089)&nbsp;&nbsp;Patch with possible solution by Björn Linse.<br>
 <br>
 The change list index is local to a buffer, but it doesn't make sense using it<br>
-for another buffer.&nbsp;&nbsp;(lacygolil) Copy w_changelistidx to wininfo_S and back.<br>
+for another buffer.&nbsp;&nbsp;(lacygoill) Copy w_changelistidx to wininfo_S and back.<br>
 <br>
 X11: Putting more than about 262040 characters of text on the clipboard and<br>
 pasting it in another Vim doesn't work.&nbsp;&nbsp;(Dominique Pelle, 2008 Aug 21-23)<br>
@@ -5479,7 +5494,7 @@ Mappings and Abbreviations:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;not the&nbsp;<span class="Special">&lt;Space&gt;</span>.<br>
 8&nbsp;&nbsp; Give a warning when using&nbsp;<span class="Special">CTRL-C</span>&nbsp;in the lhs of a mapping.&nbsp;&nbsp;It will never<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(?) work.<br>
-7&nbsp;&nbsp; Add&nbsp;<span class="Special">&lt;0x8f&gt;</span>&nbsp;(hex),&nbsp;<span class="Special">&lt;033&gt;</span>&nbsp;(octal) and&nbsp;<span class="Special">&lt;123&gt;</span>&nbsp;(decimal) to &lt;&gt; notation?<br>
+7&nbsp;&nbsp; Add&nbsp;<span class="Special">&lt;0x8f&gt;</span>&nbsp;(hex),&nbsp;<span class="Special">&lt;0o33&gt;</span>&nbsp;(octal) and&nbsp;<span class="Special">&lt;123&gt;</span>&nbsp;(decimal) to &lt;&gt; notation?<br>
 7&nbsp;&nbsp; When someone tries to unmap with a trailing space, and it fails, try<br>
 &nbsp;&nbsp;&nbsp;&nbsp;unmapping without the trailing space.&nbsp;&nbsp;Helps for &quot;:unmap xx | unmap yy&quot;.<br>
 6&nbsp;&nbsp; Context-sensitive abbreviations: Specify syntax group(s) in which the<br>

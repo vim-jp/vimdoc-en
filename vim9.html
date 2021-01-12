@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jan 03<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jan 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -57,8 +57,9 @@ The Vim9 script syntax and semantics are used in:<br>
 - a script file where the first command is&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a><br>
 - an autocommand defined in the context of the above<br>
 <br>
-When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;in a Vim9 script file the legacy syntax is used.<br>
-However, this can be confusing and is therefore discouraged.<br>
+When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;in a Vim9 script file the legacy syntax is used, with<br>
+the highest&nbsp;<a class="Identifier" href="eval.html#scriptversion">scriptversion</a>.&nbsp;&nbsp;However, this can be confusing and is therefore<br>
+discouraged.<br>
 <br>
 Vim9 script and legacy Vim script can be mixed.&nbsp;&nbsp;There is no requirement to<br>
 rewrite old scripts, they keep working as before.&nbsp;&nbsp;You may want to use a few<br>
@@ -97,6 +98,7 @@ script and&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions
 &nbsp;&nbsp;names.<br>
 - A range before a command must be prefixed with a colon:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/this/that</div>
+- Unless mentioned specifically, the highest&nbsp;<a class="Identifier" href="eval.html#scriptversion">scriptversion</a>&nbsp;is used.<br>
 <br>
 <br>
 <span class="PreProc">Comments starting with #</span><br>
@@ -320,7 +322,7 @@ The constant only applies to the value itself, not what it refers to.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMES[0] = [&quot;Jack&quot;]&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMES[0][0] = &quot;Jack&quot;&nbsp;&nbsp;&nbsp;&nbsp;# Error!<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMES[1] = [&quot;Emma&quot;]&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Names[1][0] = &quot;Emma&quot;&nbsp;&nbsp;&nbsp;&nbsp;# OK, now females[0] == &quot;Emma&quot;</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMES[1][0] = &quot;Emma&quot;&nbsp;&nbsp;&nbsp;&nbsp;# OK, now females[0] == &quot;Emma&quot;</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1092" name="E1092">E1092</a><br>
 Declaring more than one variable at a time, using the unpack notation, is<br>
@@ -656,6 +658,14 @@ byte indexes. Example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'bár'[1]</div>
 In legacy script this results in the character 0xc3 (an illegal byte), in Vim9<br>
 script this results in the string 'á'.<br>
+A negative index is counting from the end, &quot;[-1]&quot; is the last character.<br>
+If the index is out of range then an empty string results.<br>
+<br>
+In legacy script &quot;++var&quot; and &quot;--var&quot; would be silently accepted and have no<br>
+effect.&nbsp;&nbsp;This is an error in Vim9 script.<br>
+<br>
+Numbers starting with zero are not considered to be octal, only numbers<br>
+starting with &quot;0o&quot; are octal: &quot;0o744&quot;.&nbsp;<a class="Identifier" href="eval.html#scriptversion-4">scriptversion-4</a><br>
 <br>
 <br>
 <span class="PreProc">What to watch out for</span><br>
@@ -694,7 +704,7 @@ Vim9 functions are compiled as a whole:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if !has('feature')<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;use-feature&nbsp;&nbsp;# May give compilation error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;use-feature&nbsp;&nbsp;# May give a compilation error<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 For a workaround, split it in two functions:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Maybe()<br>
@@ -714,6 +724,25 @@ evaluates to false:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;use-feature<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-user-command" name="vim9-user-command">vim9-user-command</a><br>
+Another side effect of compiling a function is that the precense of a user<br>
+command is checked at compile time.&nbsp;&nbsp;If the user command is defined later an<br>
+error will result.&nbsp;&nbsp;This works:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command -nargs=1 MyCommand echom &lt;q-args&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Works()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MyCommand 123<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+This will give an error for &quot;MyCommand&quot; not being defined:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Works()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command -nargs=1 MyCommand echom &lt;q-args&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MyCommand 123<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+A workaround is to invoke the command indirectly with&nbsp;<a class="Comment" href="eval.html#:execute">:execute</a>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Works()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command -nargs=1 MyCommand echom &lt;q-args&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute 'MyCommand 123'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
 <span class="Todo">Note</span>&nbsp;that for unrecognized commands there is no check for &quot;|&quot; and a following<br>
 command.&nbsp;&nbsp;This will give an error for missing&nbsp;<a class="Comment" href="eval.html#:endif">endif</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Maybe()<br>
@@ -950,6 +979,12 @@ an error, thus breaking backwards compatibility.&nbsp;&nbsp;For example:<br>
 - Using a number other than 0 or 1 where a boolean is expected.&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1023" name="E1023">E1023</a><br>
 - Using a string value when setting a number options.<br>
 - Using a number where a string is expected.&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1024" name="E1024">E1024</a><br>
+<br>
+One consequence is that the item type of a list or dict given to map() must<br>
+not change.&nbsp;&nbsp;This will give an error in compiled code:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map([1, 2, 3], (i, v) =&gt; 'item ' .. i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E1012: Type mismatch; expected list&lt;number&gt; but got list&lt;string&gt;</div>
+Instead use&nbsp;<a class="Identifier" href="eval.html#mapnew()">mapnew()</a>.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
