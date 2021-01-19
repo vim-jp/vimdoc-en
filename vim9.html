@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jan 10<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jan 15<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -492,6 +492,9 @@ Now &quot;exit_cb: Func})&quot; is actually a valid command: save any changes to
 file &quot;_cb: Func})&quot; and exit.&nbsp;&nbsp;To avoid this kind of mistake in Vim9 script<br>
 there must be white space between most command names and the argument.<br>
 <br>
+However, the argument of a command that is a command won't be recognized.&nbsp;&nbsp;For<br>
+example, after &quot;windo echo expr&quot; a line break inside &quot;expr&quot; will not be seen.<br>
+<br>
 <br>
 <span class="Todo">Notes</span>:<br>
 - &quot;enddef&quot; cannot be used at the start of a continuation line, it ends the<br>
@@ -532,17 +535,17 @@ that using a literal key is much more common than using an expression, and<br>
 considering that JavaScript uses this syntax, using the {} form for dictionary<br>
 literals is considered a much more useful syntax.&nbsp;&nbsp;In Vim9 script the {} form<br>
 uses literal keys:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let dict = {key: value}</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var dict = {key: value}</div>
 <br>
 This works for alphanumeric characters, underscore and dash.&nbsp;&nbsp;If you want to<br>
 use another character, use a single or double quoted string:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let dict = {'key with space': value}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let dict = {&quot;key\twith\ttabs&quot;: value}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let dict = {'': value}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# empty key</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var dict = {'key with space': value}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var dict = {&quot;key\twith\ttabs&quot;: value}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var dict = {'': value}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# empty key</div>
 <br>
 In case the key needs to be an expression, square brackets can be used, just<br>
 like in JavaScript:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let dict = {[&quot;key&quot; .. nr]: value}</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var dict = {[&quot;key&quot; .. nr]: value}</div>
 <br>
 <br>
 <span class="PreProc">No :xit, :t, :append, :change or :insert</span><br>
@@ -555,6 +558,29 @@ Instead of&nbsp;<a class="Comment" href="change.html#:t">:t</a>&nbsp;you can use
 <span class="PreProc">Comparators</span><br>
 <br>
 The&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>&nbsp;option is not used for comparators that use strings.<br>
+<br>
+<br>
+<span class="PreProc">For loop</span><br>
+<br>
+Legacy Vim script has some tricks to make a for loop over a list handle<br>
+deleting items at the current or previous item.&nbsp;&nbsp;In Vim9 script it just uses<br>
+the index, if items are deleted then items in the list will be skipped.<br>
+Example legacy script:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let l = [1, 2, 3, 4]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for i in l<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call remove(l, index(l, i))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfor</div>
+Would echo:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4<br>
+In compiled Vim9 script you get:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3<br>
+Generally, you should not change the list that is iterated over.&nbsp;&nbsp;Make a copy<br>
+first if needed.<br>
 <br>
 <br>
 <span class="PreProc">White space</span><br>
@@ -581,15 +607,17 @@ the start and end:<br>
 <br>
 White space is not allowed:<br>
 - Between a function name and the &quot;(&quot;:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Func (arg)&nbsp;&nbsp;&nbsp;&nbsp;# Error!<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Func<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Func (arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Func<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ (arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Func(arg)&nbsp;&nbsp;&nbsp;&nbsp; # OK<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Func(<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# OK<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Func(<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ arg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # OK<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ )</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Func<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Func(arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# OK<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Func(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # OK<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Func(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# OK<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</div>
 <br>
 <br>
 <span class="PreProc">Conditions and expressions</span><br>
@@ -653,12 +681,13 @@ for v:null.&nbsp;&nbsp;When converting a boolean to a string &quot;false&quot; a
 used, not &quot;v:false&quot; and &quot;v:true&quot; like in legacy script.&nbsp;&nbsp;&quot;v:none&quot; is not<br>
 changed, it is only used in JSON and has no equivalent in other languages.<br>
 <br>
-Indexing a string with&nbsp;<span class="Special">[idx]</span>&nbsp;or [idx, idx] uses character indexes instead of<br>
+Indexing a string with&nbsp;<span class="Special">[idx]</span>&nbsp;or [idx : idx] uses character indexes instead of<br>
 byte indexes. Example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'bár'[1]</div>
 In legacy script this results in the character 0xc3 (an illegal byte), in Vim9<br>
 script this results in the string 'á'.<br>
 A negative index is counting from the end, &quot;[-1]&quot; is the last character.<br>
+To exclude the last character use&nbsp;<a class="Identifier" href="eval.html#slice()">slice()</a>.<br>
 If the index is out of range then an empty string results.<br>
 <br>
 In legacy script &quot;++var&quot; and &quot;--var&quot; would be silently accepted and have no<br>
@@ -675,21 +704,22 @@ same time tries to support the legacy Vim commands.&nbsp;&nbsp;Some compromises 
 be made.&nbsp;&nbsp;Here is a summary of what might be unexpected.<br>
 <br>
 Ex command ranges need to be prefixed with a colon.<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# legacy Vim&#0058; shifts the previous line to the right<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;func()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Vim9&#0058; method call in continuation line<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Vim9&#0058; shifts the previous line to the right</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legacy Vim&#0058; shifts the previous line to the right<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;func()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim9: method call in a continuation line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim9&#0058; shifts the previous line to the right</div>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s/a/b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# legacy Vim&#0058; substitute on all lines<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s/a/b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legacy Vim&#0058; substitute on all lines<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x = alongname<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; % another&nbsp;&nbsp;# Vim9&#0058; line continuation without a backslash<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/a/b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Vim9&#0058; substitute on all lines<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'text'-&gt;func()&nbsp;&nbsp;# Vim9&#0058; method call<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:'t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # legacy Vim&#0058; jump to mark m</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; % another&nbsp;&nbsp;&nbsp;&nbsp;Vim9: modulo operator in a continuation line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/a/b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim9&#0058; substitute on all lines<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legacy Vim&#0058; jump to mark t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'text'-&gt;func()&nbsp;&nbsp;&nbsp;&nbsp;Vim9: method call<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:'t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim9&#0058; jump to mark t</div>
 <br>
 Some Ex commands can be confused with assignments in Vim9 script:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:name = value&nbsp;&nbsp;# assignment<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:pattern:cmd&nbsp;&nbsp; # invalid command - ERROR<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:g:pattern:cmd&nbsp;&nbsp;# :global command</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:name = value&nbsp;&nbsp;&nbsp;&nbsp;# assignment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:pattern:cmd&nbsp;&nbsp;&nbsp;&nbsp; # invalid command - ERROR<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:g:pattern:cmd&nbsp;&nbsp;&nbsp;&nbsp;# :global command</div>
 <br>
 Functions defined with&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;compile the whole function.&nbsp;&nbsp;Legacy functions<br>
 can bail out, and the following lines are not parsed:<br>
@@ -709,7 +739,7 @@ Vim9 functions are compiled as a whole:<br>
 For a workaround, split it in two functions:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Maybe()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('feature')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call MaybyInner()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call MaybeInner()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('feature')<br>
@@ -725,7 +755,7 @@ evaluates to false:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-user-command" name="vim9-user-command">vim9-user-command</a><br>
-Another side effect of compiling a function is that the precense of a user<br>
+Another side effect of compiling a function is that the presence of a user<br>
 command is checked at compile time.&nbsp;&nbsp;If the user command is defined later an<br>
 error will result.&nbsp;&nbsp;This works:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command -nargs=1 MyCommand echom &lt;q-args&gt;<br>
@@ -1095,7 +1125,7 @@ actually needed.&nbsp;&nbsp;A recommended mechanism:<br>
 <br>
 1. In the plugin define user commands, functions and/or mappings that refer to<br>
 &nbsp;&nbsp; an autoload script.<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command -nargs=1 SearchForStuff call searchfor#Stuff(&lt;f-args&gt;)</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command -nargs=1 SearchForStuff searchfor#Stuff(&lt;f-args&gt;)</div>
 <br>
 &nbsp;&nbsp;&nbsp; This goes in .../plugin/anyname.vim.&nbsp;&nbsp;&quot;anyname.vim&quot; can be freely chosen.<br>
 <br>
@@ -1188,12 +1218,12 @@ When compiling lines of Vim commands into instructions as much as possible<br>
 should be done at compile time.&nbsp;&nbsp;Postponing it to runtime makes the execution<br>
 slower and means mistakes are found only later.&nbsp;&nbsp;For example, when<br>
 encountering the &quot;+&quot; character and compiling this into a generic add<br>
-instruction, at execution time the instruction would have to inspect the type<br>
-of the arguments and decide what kind of addition to do.&nbsp;&nbsp;And when the<br>
-type is dictionary throw an error.&nbsp;&nbsp;If the types are known to be numbers then<br>
-an &quot;add number&quot; instruction can be used, which is faster.&nbsp;&nbsp;The error can be<br>
-given at compile time, no error handling is needed at runtime, since adding<br>
-two numbers cannot fail.<br>
+instruction, at runtime the instruction would have to inspect the type of the<br>
+arguments and decide what kind of addition to do.&nbsp;&nbsp;And when the type is<br>
+dictionary throw an error.&nbsp;&nbsp;If the types are known to be numbers then an &quot;add<br>
+number&quot; instruction can be used, which is faster.&nbsp;&nbsp;The error can be given at<br>
+compile time, no error handling is needed at runtime, since adding two numbers<br>
+cannot fail.<br>
 <br>
 The syntax for types, using&nbsp;<span class="Special">&lt;type&gt;</span>&nbsp;for compound types, is similar to Java.&nbsp;&nbsp;It<br>
 is easy to understand and widely used.&nbsp;&nbsp;The type names are what were used in<br>
