@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'repeat'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="repeat.html" name="repeat.txt">repeat.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jan 02<br>
+<a class="Constant" href="repeat.html" name="repeat.txt">repeat.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jan 23<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -359,7 +359,7 @@ For writing a Vim script, see chapter 41 of the user manual&nbsp;<a class="Ident
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim version, or update Vim to a newer version.&nbsp;&nbsp;See<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#vimscript-version">vimscript-version</a>&nbsp;for what changed between versions.<br>
 <br>
-:vim9script&nbsp;<span class="Special">[noclear]</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:vim9" name=":vim9">:vim9</a>&nbsp;<a class="Constant" href="repeat.html#:vim9script" name=":vim9script">:vim9script</a><br>
+:vim9[script]&nbsp;<span class="Special">[noclear]</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#:vim9" name=":vim9">:vim9</a>&nbsp;<a class="Constant" href="repeat.html#:vim9script" name=":vim9script">:vim9script</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marks a script file as containing&nbsp;<a class="Identifier" href="vim9.html#Vim9-script">Vim9-script</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;commands.&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="vim9.html#vim9-namespace">vim9-namespace</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Must be the first command in the file.<br>
@@ -904,8 +904,9 @@ matches &quot;.../plugin/explorer.vim&quot;, &quot;.../plugin/iexplorer.vim&quot
 matches &quot;.../plugin/explorer.vim&quot; and &quot;explorer.vim&quot; in any other directory.<br>
 <br>
 The match for functions is done against the name as it's shown in the output<br>
-of &quot;:function&quot;.&nbsp;&nbsp;For local functions this means that something like &quot;<span class="Special">&lt;SNR&gt;</span>99_&quot;<br>
-is prepended.<br>
+of &quot;:function&quot;.&nbsp;&nbsp;However, for local functions the script-specific prefix such<br>
+as &quot;<span class="Special">&lt;SNR&gt;</span>99_&quot; is ignored to make it easier to match script-local functions<br>
+without knowing the ID of the script.<br>
 <br>
 <span class="Todo">Note</span>&nbsp;that functions are first loaded and later executed.&nbsp;&nbsp;When they are loaded<br>
 the &quot;file&quot; breakpoints are checked, when they are executed the &quot;func&quot;<br>
@@ -960,10 +961,10 @@ OBSCURE<br>
 <br>
 Profiling means that Vim measures the time that is spent on executing<br>
 functions and/or scripts.&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="various.html#+profile">+profile</a>&nbsp;feature is required for this.<br>
-It is only included when Vim was compiled with &quot;huge&quot; features.<br>
+It is included when Vim was compiled with &quot;huge&quot; features.<br>
 <br>
 You can also use the&nbsp;<a class="Identifier" href="eval.html#reltime()">reltime()</a>&nbsp;function to measure time.&nbsp;&nbsp;This only requires<br>
-the&nbsp;<a class="Identifier" href="various.html#+reltime">+reltime</a>&nbsp;feature, which is present more often.<br>
+the&nbsp;<a class="Identifier" href="various.html#+reltime">+reltime</a>&nbsp;feature, which is present in more builds.<br>
 <br>
 For profiling syntax highlighting see&nbsp;<a class="Identifier" href="syntax.html#:syntime">:syntime</a>.<br>
 <br>
@@ -1010,7 +1011,12 @@ For example, to profile the one_script.vim script file:<br>
 <br>
 <br>
 You must always start with a &quot;:profile start fname&quot; command.&nbsp;&nbsp;The resulting<br>
-file is written when Vim exits.&nbsp;&nbsp;Here is an example of the output, with line<br>
+file is written when Vim exits.&nbsp;&nbsp;For example, to profile one specific<br>
+function:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;profile start /tmp/vimprofile<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;profile func MyFunc</div>
+<br>
+Here is an example of the output, with line<br>
 numbers prepended for the explanation:<br>
 <br>
 &nbsp;&nbsp;<span class="PreProc">1 FUNCTION&nbsp;&nbsp;Test2()</span><br>
