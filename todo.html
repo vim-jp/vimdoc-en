@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jan 31<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Feb 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,6 +44,7 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Vim9 - Make everything work:<br>
+- Use &quot;:vim9cmd&quot; as a command modifier?&nbsp;&nbsp;Then make &quot;:vim9&quot; short for that.<br>
 - Add a test for profiling with nested function calls and lambda.<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :next, :argedit, :argadd, :argdelete, :drop<br>
 - Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :vimgrep, :vimgrepadd, :lvimgrep, :lvimgrepadd<br>
@@ -171,6 +172,7 @@ Popup windows:<br>
 &nbsp;&nbsp;However, it may also cause trouble, changing the popup of another plugin.<br>
 - Width is not computed correctly when minwidth and maxwidth are &amp;columns<br>
 &nbsp;&nbsp;and padding and a scrollbar are used.&nbsp;&nbsp;(#6676)<br>
+- Should popup_getoptions() also return the mask?&nbsp;&nbsp;#7774<br>
 - Add a way to use popup_menu() synchronously: instead of invoking the<br>
 &nbsp;&nbsp;callback, return the choice. (Ben Jackson, #6534)<br>
 - Use popup (or popup menu) for command line completion<br>
@@ -779,8 +781,6 @@ Add something like&nbsp;<a class="Type" href="options.html#'fillchars'">'fillcha
 highlight name.&nbsp;&nbsp;Esp. for the statusline.<br>
 And &quot;extends&quot; and &quot;precedes&quot; are also useful without&nbsp;<a class="Type" href="options.html#'list'">'list'</a>&nbsp;set.&nbsp;&nbsp;Also in<br>
 <a class="Type" href="options.html#'fillchars'">'fillchars'</a>&nbsp;or another option?<br>
-Related: #3820 - Support setting the character displayed below the last line?<br>
-Neovim uses &quot;eob:X&quot; in&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>.<br>
 <br>
 Sourceforge Vim pages still have content, redirect from empty page.<br>
 Check for PHP errors. (Wayne Davison, 2018 Oct 26)<br>
@@ -1119,9 +1119,6 @@ Problem with using :cd when remotely editing a file. (Gerd Wachsmuth, 2017 May<b
 Using &quot;wviminfo /tmp/viminfo&quot; does not store file marks that Vim knows about,<br>
 it only works when merging with an existing file.&nbsp;&nbsp;(Shougo, 2017 Jun 19, #1781)<br>
 <br>
-Is it possible to keep the complete menu open when calling complete()?<br>
-(Prabir Shrestha, 2017 May 19, #1713)<br>
-<br>
 Memory leak in test97?&nbsp;&nbsp;The string is actually freed.&nbsp;&nbsp;Weird.<br>
 <br>
 assert_fails() can only check for the first error.&nbsp;&nbsp;Make it possible to have<br>
@@ -1226,10 +1223,6 @@ Patch for wrong cursor position on wrapped line, involving breakindent.<br>
 <br>
 Patch for&nbsp;<span class="MissingTag">'cursorlinenr'</span>&nbsp;option. (Ozaki Kiichi, 2016 Nov 30)<br>
 <br>
-When&nbsp;<a class="Type" href="options.html#'completeopt'">'completeopt'</a>&nbsp;has &quot;noselect&quot; does not insert a newline. (Lifepillar, 2017<br>
-Apr 23, #1653)<br>
-Can&nbsp;<a class="Type" href="options.html#'completeopt'">'completeopt'</a>&nbsp;be made buffer-local? (#5487)<br>
-<br>
 Window resizing with&nbsp;<a class="Type" href="options.html#'winfixheight'">'winfixheight'</a>: With a vertical split the height changes<br>
 anyway. (Tommy allen, 2017 Feb 21, #1502)<br>
 <br>
@@ -1243,9 +1236,6 @@ Patch to add Zstandard compressed file support. (Nick Terrell, 2016 Oct 24)<br>
 <br>
 On Windows buffer completion sees backslash as escape char instead of path<br>
 separator. (Toffanim, 2016 Nov 24, #1274)<br>
-<br>
-min() and max() spawn lots of error messages if sorted list/dictionary<br>
-contains invalid data (Nikolay Pavlov, 2016 Sep 4, #1039)<br>
 <br>
 Should :vmap in matchit.vim be :xmap?&nbsp;&nbsp;(Tony Mechelynck)<br>
 <br>
@@ -1346,9 +1336,6 @@ Regexp problems:<br>
 &nbsp;&nbsp;(Chris Paul, 2016 Nov 13)&nbsp;&nbsp;New engine not greedy enough?<br>
 &nbsp;&nbsp;Another one: echom matchstr(&quot; sdfsfsf\n sfdsdfsdf&quot;,'[^\n]*')<br>
 &nbsp;&nbsp;(2017 May 15, #1252)<br>
-<br>
-Feature request: Complete members of a dictionary. (Luc Hermitte, 2017 Jan 4,<br>
-#1350)<br>
 <br>
 Undo message is not always properly displayed.&nbsp;&nbsp;Patch by Ken Takata, 2013 oct<br>
 3.&nbsp;&nbsp;Doesn't work properly according to Yukihiro Nakadaira.<br>
@@ -1524,9 +1511,6 @@ Build with Python on Mac does not always use the right library.<br>
 <br>
 To support Thai (and other languages) word boundaries, include the ICU<br>
 library:&nbsp;&nbsp;<span class="Constant"><a href="http://userguide.icu-project.org/boundaryanalysis">http://userguide.icu-project.org/boundaryanalysis</a></span><br>
-<br>
-When complete() first argument is before where insert started and&nbsp;<a class="Type" href="options.html#'backspace'">'backspace'</a><br>
-is Vi compatible, the completion fails. (Hirohito Higashi, 2015 Feb 19)<br>
 <br>
 Patch to use two highlight groups for relative numbers. (Shaun Brady, 2016 Jan<br>
 30)<br>
@@ -1733,9 +1717,6 @@ Patch for XDG base directory support. (Jean François Bignolles, 2014 Mar 4)<br>
 Remark on the docs.&nbsp;&nbsp;Should not be a compile time feature.&nbsp;&nbsp;But then what?<br>
 Also see #2034.<br>
 <br>
-Completion of &quot;:e&quot; is &quot;:earlier&quot;, should be &quot;:edit&quot;.&nbsp;&nbsp;Complete to the matching<br>
-command instead of doing this alphabetically. (Mikel Jorgensen)<br>
-<br>
 Patch to define macros for hardcoded values. (Elias Diem, 2013 Dec 14)<br>
 <br>
 Several syntax file match &quot;^\s*&quot; which may get underlined if that's in the<br>
@@ -1779,10 +1760,6 @@ Javascript file where indent gets stuck on: GalaxyMaster, 2012 May 3.<br>
 The BufUnload event is triggered when re-using the empty buffer.<br>
 (Pokey Rule, 2013 Jul 22)<br>
 Patch by Marcin Szamotulski, 2013 Jul 22.<br>
-<br>
-The CompleteDone autocommand needs some info passed to it:<br>
-- The word that was selected (empty if abandoned complete)<br>
-- Type of completion: tag, omnifunc, user func.<br>
 <br>
 Patch to allow more types in remote_expr(). (Lech Lorens, 2014 Jan 5)<br>
 Doesn't work for string in list.&nbsp;&nbsp;Other way to pass all types of variables<br>
@@ -2244,10 +2221,6 @@ Syntax priority problem. (Charles Campbell, 2011 Sep 15)<br>
 When completion inserts the first match, it may trigger the line to be folded.<br>
 Disable updating folds while completion is active? (Peter Odding, 2010 Jun 9)<br>
 <br>
-When a:base in&nbsp;<a class="Type" href="options.html#'completefunc'">'completefunc'</a>&nbsp;starts with a number it's passed as a number,<br>
-not a string. (Sean Ma)&nbsp;&nbsp;Need to add flag to call_func_retlist() to force a<br>
-string value.<br>
-<br>
 For running gvim on a USB stick: avoid the OLE registration.&nbsp;&nbsp;Use a command<br>
 line argument -noregister.<br>
 <br>
@@ -2637,10 +2610,6 @@ More AmigaOS4 patches. (Peter Bengtsson, Nov 9)<br>
 <br>
 Amiga patches with vbcc. (Adrien Destugues, 2010 Aug 30)<br>
 <span class="Constant"><a href="http://pulkomandy.ath.cx/drop/vim73_vbcc_amiga.diff">http://pulkomandy.ath.cx/drop/vim73_vbcc_amiga.diff</a></span><br>
-<br>
-Insert mode completion: When editing the text and pressing&nbsp;<span class="Special">CTRL-N</span>&nbsp;again goes<br>
-back to originally completed text, edited text is gone. (Peng Yu, 2008 Jul 24)<br>
-Suggestion by Ben Schmidt, 2008 Aug 6.<br>
 <br>
 Problem with compound words?&nbsp;&nbsp;(Bert, 2008 May 6)<br>
 No warning for when flags are defined after they are used in an affix.<br>
@@ -4936,6 +4905,23 @@ Omni completion:<br>
 <br>
 <br>
 Insert mode completion/expansion:<br>
+-&nbsp;&nbsp; Is it possible to keep the complete menu open when calling complete()?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Prabir Shrestha, 2017 May 19, #1713)<br>
+-&nbsp;&nbsp; When&nbsp;<a class="Type" href="options.html#'completeopt'">'completeopt'</a>&nbsp;has &quot;noselect&quot; does not insert a newline.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Lifepillar, 2017 Apr 23, #1653)<br>
+-&nbsp;&nbsp; Can&nbsp;<a class="Type" href="options.html#'completeopt'">'completeopt'</a>&nbsp;be made buffer-local? (#5487)<br>
+-&nbsp;&nbsp; When complete() first argument is before where insert started and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'backspace'">'backspace'</a>&nbsp;is Vi compatible, the completion fails.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Hirohito Higashi, 2015 Feb 19)<br>
+-&nbsp;&nbsp; The CompleteDone autocommand needs some info passed to it:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- The word that was selected (empty if abandoned complete)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- Type of completion: tag, omnifunc, user func.<br>
+-&nbsp;&nbsp; When a:base in&nbsp;<a class="Type" href="options.html#'completefunc'">'completefunc'</a>&nbsp;starts with a number it's passed as a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;number, not a string. (Sean Ma)&nbsp;&nbsp;Need to add flag to call_func_retlist()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;to force a string value.<br>
+-&nbsp;&nbsp; When editing the text and pressing&nbsp;<span class="Special">CTRL-N</span>&nbsp;again goes back to originally<br>
+&nbsp;&nbsp;&nbsp;&nbsp;completed text, edited text is gone. (Peng Yu, 2008 Jul 24)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Suggestion by Ben Schmidt, 2008 Aug 6.<br>
 -&nbsp;&nbsp; GUI implementation of the popup menu.<br>
 7&nbsp;&nbsp; When searching in other files the name flash by, too fast to read.&nbsp;&nbsp;Only<br>
 &nbsp;&nbsp;&nbsp;&nbsp;display a name every second or so, like with &quot;:vimgrep&quot;.<br>
@@ -5033,6 +5019,10 @@ Command line editing:<br>
 <br>
 <br>
 Command line completion:<br>
+-&nbsp;&nbsp; Feature request: Complete members of a dictionary.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Luc Hermitte, 2017 Jan 4, #1350)<br>
+-&nbsp;&nbsp; Completion of &quot;:e&quot; is &quot;:earlier&quot;, should be &quot;:edit&quot;.&nbsp;&nbsp;Complete to the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;matching command instead of doing this alphabetically. (Mikel Jorgensen)<br>
 8&nbsp;&nbsp; Change expand_interactively into a flag that is passed as an argument.<br>
 8&nbsp;&nbsp; With command line completion after '%' and '#', expand current/alternate<br>
 &nbsp;&nbsp;&nbsp;&nbsp;file name, so it can be edited.&nbsp;&nbsp;Also with modifiers, such as &quot;%:h&quot;.<br>
