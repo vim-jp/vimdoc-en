@@ -1056,9 +1056,9 @@ that you don't do that.<br>
 <span class="PreProc">Namespace</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-namespace" name="vim9-namespace">vim9-namespace</a><br>
 To recognize a file that can be imported the&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;statement must<br>
-appear as the first statement in the file.&nbsp;&nbsp;It tells Vim to interpret the<br>
-script in its own namespace, instead of the global namespace.&nbsp;&nbsp;If a file<br>
-starts with:<br>
+appear as the first statement in the file (see&nbsp;<a class="Identifier" href="vim9.html#vim9-mix">vim9-mix</a>&nbsp;for an exception).<br>
+It tells Vim to interpret the script in its own namespace, instead of the<br>
+global namespace.&nbsp;&nbsp;If a file starts with:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var myvar = 'yes'</div>
 Then &quot;myvar&quot; will only exist in this file.&nbsp;&nbsp;While without&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;it would<br>
@@ -1077,6 +1077,27 @@ Vim default value, like with:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set cpo&amp;vim</div>
 One of the effects is that&nbsp;<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>&nbsp;is always enabled.<br>
 The original value of&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;is restored at the end of the script.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-mix" name="vim9-mix">vim9-mix</a><br>
+There is one way to use both legacy and Vim9 syntax in one script file:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; comments may go here<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if !has('vim9script')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; legacy script commands go here<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; finish<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Vim9 script commands go here</div>
+This allows for writing a script that takes advantage of the Vim9 script<br>
+syntax if possible, but will also work on an Vim version without it.<br>
+<br>
+This can only work in two ways:<br>
+1. The &quot;if&quot; statement evaluates to false, the commands up to&nbsp;<a class="Comment" href="eval.html#:endif">endif</a>&nbsp;are<br>
+&nbsp;&nbsp; skipped and&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;is then the first command actually executed.<br>
+2. The &quot;if&quot; statement evaluates to true, the commands up to&nbsp;<a class="Comment" href="eval.html#:endif">endif</a>&nbsp;are<br>
+&nbsp;&nbsp; executed and&nbsp;<a class="Comment" href="repeat.html#:finish">finish</a>&nbsp;bails out before reaching&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>.<br>
+<br>
+TODO: The &quot;vim9script&quot; feature does not exist yet, it will only be added once<br>
+the Vim9 script syntax has been fully implemented.<br>
 <br>
 <br>
 <span class="PreProc">Export</span><br>
