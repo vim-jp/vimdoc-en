@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Feb 03<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Apr 11<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -101,8 +101,8 @@ script and&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def CallMe(count: number, message: string): bool</div>
 - Call functions without&nbsp;<a class="Comment" href="eval.html#:call">:call</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;writefile(['done'], 'file.txt')</div>
-- You cannot use&nbsp;<a class="Comment" href="editing.html#:xit">:xit</a>,&nbsp;<a class="Comment" href="change.html#:t">:t</a>,&nbsp;<a class="Comment" href="motion.html#:k">:k</a>,&nbsp;<a class="Comment" href="insert.html#:append">:append</a>,&nbsp;<a class="Comment" href="change.html#:change">:change</a>,&nbsp;<a class="Comment" href="insert.html#:insert">:insert</a>&nbsp;or<br>
-&nbsp;&nbsp;curly-braces names.<br>
+- You cannot use&nbsp;<a class="Comment" href="editing.html#:xit">:xit</a>,&nbsp;<a class="Comment" href="change.html#:t">:t</a>,&nbsp;<a class="Comment" href="motion.html#:k">:k</a>,&nbsp;<a class="Comment" href="insert.html#:append">:append</a>,&nbsp;<a class="Comment" href="change.html#:change">:change</a>,&nbsp;<a class="Comment" href="insert.html#:insert">:insert</a>,&nbsp;<a class="Comment" href="vi_diff.html#:open">:open</a><br>
+&nbsp;&nbsp;or curly-braces names.<br>
 - A range before a command must be prefixed with a colon:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/this/that</div>
 - Unless mentioned specifically, the highest&nbsp;<a class="Identifier" href="eval.html#scriptversion">scriptversion</a>&nbsp;is used.<br>
@@ -130,6 +130,10 @@ that starts a comment:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var name = value # comment<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var name = value# error!</div>
 <br>
+Do not start a comment with #{, it looks like the legacy dictionary literal<br>
+and produces an error where this might be confusing.&nbsp;&nbsp;#{{ "{{" }} or #{{ "{{{" }} are OK,<br>
+these can be used to start a fold.<br>
+<br>
 In legacy Vim script # is also used for the alternate file name.&nbsp;&nbsp;In Vim9<br>
 script you need to use %% instead.&nbsp;&nbsp;Instead of ## use %%% (stands for all<br>
 arguments).<br>
@@ -138,18 +142,21 @@ arguments).<br>
 <span class="PreProc">Vim9 functions</span><br>
 <br>
 A function defined with&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;is compiled.&nbsp;&nbsp;Execution is many times faster,<br>
-often 10x to 100x times.<br>
+often 10 to 100 times.<br>
 <br>
 Many errors are already found when compiling, before the function is executed.<br>
 The syntax is strict, to enforce code that is easy to read and understand.<br>
 <br>
-Compilation is done when either of these is encountered:<br>
+Compilation is done when any of these is encountered:<br>
 - the first time the function is called<br>
-- when the&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;command is encountered in the script where the<br>
+- when the&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;command is encountered in the script after the<br>
 &nbsp;&nbsp;function was defined<br>
 -&nbsp;<a class="Comment" href="vim9.html#:disassemble">:disassemble</a>&nbsp;is used for the function.<br>
 - a function that is compiled calls the function or uses it as a function<br>
 &nbsp;&nbsp;reference<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1091" name="E1091">E1091</a><br>
+If compilation fails it is not tried again on the next call, instead this<br>
+error is given: &quot;E1091: Function is not compiled:&nbsp;<span class="Special">{name}</span>&quot;.<br>
 <br>
 <a class="Comment" href="vim9.html#:def">:def</a>&nbsp;has no options like&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;does: &quot;range&quot;, &quot;abort&quot;, &quot;dict&quot; or<br>
 &quot;closure&quot;.&nbsp;&nbsp;A&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function always aborts on an error (unless&nbsp;<a class="Comment" href="various.html#:silent!">:silent!</a>&nbsp;was<br>
@@ -162,12 +169,30 @@ functions.<br>
 <br>
 Arguments are accessed by name, without &quot;a:&quot;, just like any other language.<br>
 There is no &quot;a:&quot; dictionary or &quot;a:000&quot; list.<br>
-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-variable-arguments" name="vim9-variable-arguments">vim9-variable-arguments</a><br>
 Variable arguments are defined as the last argument, with a name and have a<br>
 list type, similar to TypeScript.&nbsp;&nbsp;For example, a list of numbers:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def MyFunc(...itemlist: list&lt;number&gt;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for item in itemlist<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</div>
+<br>
+When a function argument is optional (it has a default value) passing&nbsp;<a class="Comment" href="eval.html#v:none">v:none</a><br>
+as the argument results in using the default value.&nbsp;&nbsp;This is useful when you<br>
+want to specify a value for an argument that comes after an argument that<br>
+should use its default value.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def MyFunc(one = 'one', last = 'last)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MyFunc(v:none, 'LAST')&nbsp;&nbsp;# first argument uses default value 'one'</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-ignored-argument" name="vim9-ignored-argument">vim9-ignored-argument</a><br>
+The argument &quot;_&quot; (an underscore) can be used to ignore the argument.&nbsp;&nbsp;This is<br>
+most useful in callbacks where you don't need it, but do need to give an<br>
+argument to match the call.&nbsp;&nbsp;E.g. when using map() two arguments are passed,<br>
+the key and the value, to ignore the key:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(myList, (_, v) =&gt; v * 2)</div>
+There is no error for using the &quot;_&quot; argument multiple times.&nbsp;&nbsp;No type needs to<br>
+be given.<br>
 <br>
 <br>
 <span class="PreProc">Functions and variables are script-local by default</span><br>
@@ -194,6 +219,12 @@ search for the function:<br>
 - in the list of global functions<br>
 However, it is recommended to always use &quot;g:&quot; to refer to a global function<br>
 for clarity.<br>
+<br>
+Since a script-local function reference can be used without &quot;s:&quot; the name must<br>
+start with an upper case letter even when using the &quot;s:&quot; prefix.&nbsp;&nbsp;In legacy<br>
+script &quot;s:funcref&quot; could be used, because it could not be referred to with<br>
+&quot;funcref&quot;.&nbsp;&nbsp;In Vim9 script it can, therefore &quot;s:Funcref&quot; must be used to avoid<br>
+that the name interferes with builtin functions.<br>
 <br>
 In all cases the function must be defined before used.&nbsp;&nbsp;That is when it is<br>
 called, when&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;causes it to be compiled, or when code that calls<br>
@@ -284,19 +315,43 @@ without any command.&nbsp;&nbsp;The same for global, window, tab, buffer and Vim
 variables, because they are not really declared.&nbsp;&nbsp;They can also be deleted<br>
 with&nbsp;<a class="Comment" href="eval.html#:unlet">:unlet</a>.<br>
 <br>
-Variables and functions cannot shadow previously defined or imported variables<br>
-and functions.<br>
+<a class="Comment" href="eval.html#:lockvar">:lockvar</a>&nbsp;does not work on local variables.&nbsp;&nbsp;Use&nbsp;<a class="Comment" href="eval.html#:const">:const</a>&nbsp;and&nbsp;<a class="Comment" href="vim9.html#:final">:final</a><br>
+instead.<br>
+<br>
+Variables, functions and function arguments cannot shadow previously defined<br>
+or imported variables and functions in the same script file.<br>
 Variables may shadow Ex commands, rename the variable if needed.<br>
 <br>
-Global variables and user defined functions must be prefixed with &quot;g:&quot;, also<br>
-at the script level.<br>
+Global variables must be prefixed with &quot;g:&quot;, also at the script level.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var script_local = 'text'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:global = 'value'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Funcref = g:ThatFunction</div>
 <br>
+Global functions must be prefixed with &quot;g:&quot; when defining them, but can be<br>
+called without &quot;g:&quot;.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def g:GlobalFunc(): string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 'text'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo GlobalFunc()</div>
+The &quot;g:&quot; prefix is not needed for auto-load functions.<br>
+<br>
 Since&nbsp;<span class="Comment">&amp;opt = value</span>&nbsp;is now assigning a value to option &quot;opt&quot;, &quot;:&amp;&quot; cannot be<br>
 used to repeat a&nbsp;<a class="Comment" href="change.html#:substitute">:substitute</a>&nbsp;command.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-unpack-ignore" name="vim9-unpack-ignore">vim9-unpack-ignore</a><br>
+For an unpack assignment the underscore can be used to ignore a list item,<br>
+similar to how a function argument can be ignored:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[a, _, c] = theList</div>
+To ignore any remaining items:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[a, b; _] = longList</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1092" name="E1092">E1092</a><br>
+Declaring more than one variable at a time, using the unpack notation, is<br>
+currently not supported:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var [v1, v2] = GetValues()&nbsp;&nbsp;# Error!</div>
+That is because the type needs to be inferred from the list item type, which<br>
+isn't that easy.<br>
 <br>
 <br>
 <span class="PreProc">Constants</span><br>
@@ -312,14 +367,14 @@ Example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const myList = [1, 2]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList = [3, 4]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList[0] = 9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;muList-&gt;add(3)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Error!</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList-&gt;add(3)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Error!</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:final" name=":final">:final</a><br>
 <a class="Comment" href="vim9.html#:final">:final</a>&nbsp;is used for making only the variable a constant, the value can be<br>
 changed.&nbsp;&nbsp;This is well known from Java.&nbsp;&nbsp;Example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;final myList = [1, 2]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList = [3, 4]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList[0] = 9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # OK<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;muList-&gt;add(3)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# OK</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList-&gt;add(3)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# OK</div>
 <br>
 It is common to write constants as ALL_CAPS, but you don't have to.<br>
 <br>
@@ -331,13 +386,6 @@ The constant only applies to the value itself, not what it refers to.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMES[1] = [&quot;Emma&quot;]&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAMES[1][0] = &quot;Emma&quot;&nbsp;&nbsp;&nbsp;&nbsp;# OK, now females[0] == &quot;Emma&quot;</div>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1092" name="E1092">E1092</a><br>
-Declaring more than one variable at a time, using the unpack notation, is<br>
-currently not supported:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var [v1, v2] = GetValues()&nbsp;&nbsp;# Error!</div>
-That is because the type needs to be inferred from the list item type, which<br>
-isn't that easy.<br>
-<br>
 <br>
 <span class="PreProc">Omitting :call and :eval</span><br>
 <br>
@@ -346,7 +394,8 @@ Functions can be called without&nbsp;<a class="Comment" href="eval.html#:call">:
 Using&nbsp;<a class="Comment" href="eval.html#:call">:call</a>&nbsp;is still possible, but this is discouraged.<br>
 <br>
 A method call without&nbsp;<a class="Comment" href="eval.html#eval">eval</a>&nbsp;is possible, so long as the start is an<br>
-identifier or can't be an Ex command.&nbsp;&nbsp;Examples:<br>
+identifier or can't be an Ex command.&nbsp;&nbsp;For a function either &quot;(&quot; or &quot;-&gt;&quot; must<br>
+be following, without a line break.&nbsp;&nbsp;Examples:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList-&gt;add(123)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:myList-&gt;add(123)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1, 2, 3]-&gt;Process()<br>
@@ -383,7 +432,7 @@ number of arguments and any return type.&nbsp;&nbsp;The function can be defined 
 <br>
 <br>
 <span class="PreProc">Lambda using =&gt; instead of -&gt;</span><br>
-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-lambda" name="vim9-lambda">vim9-lambda</a><br>
 In legacy script there can be confusion between using &quot;-&gt;&quot; for a method call<br>
 and for a lambda.&nbsp;&nbsp;Also, when a &quot;{&quot; is found the parser needs to figure out if<br>
 it is the start of a lambda or a dictionary, which is now more complicated<br>
@@ -407,17 +456,44 @@ But you can use a backslash to concatenate the lines before parsing:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter(list, (k,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; v)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&gt; v &gt; 0)</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-lambda-arguments" name="vim9-lambda-arguments">vim9-lambda-arguments</a><br>
+In legacy script a lambda could be called with any number of extra arguments,<br>
+there was no way to warn for not using them.&nbsp;&nbsp;In Vim9 script the number of<br>
+arguments must match.&nbsp;&nbsp;If you do want to accept any arguments, or any further<br>
+arguments, use &quot;..._&quot;, which makes the function accept<br>
+<a class="Identifier" href="vim9.html#vim9-variable-arguments">vim9-variable-arguments</a>.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Callback = (..._) =&gt; 'anything'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo Callback(1, 2, 3)&nbsp;&nbsp;# displays &quot;anything&quot;</div>
 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#inline-function" name="inline-function">inline-function</a><br>
 Additionally, a lambda can contain statements in {}:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Lambda = (arg) =&gt; {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:was_called = 'yes'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return expression<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</div>
-NOT IMPLEMENTED YET<br>
+This can be useful for a timer, for example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var count = 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var timer = timer_start(500, (_) =&gt; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; count += 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echom 'Handler called ' .. count<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, {repeat: 3})</div>
+<br>
+<br>
+The ending &quot;}&quot; must be at the start of a line.&nbsp;&nbsp;It can be followed by other<br>
+characters, e.g.:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var d = mapnew(dict, (k, v): string =&gt; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 'value'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; })</div>
+No command can follow the &quot;{&quot;, only a comment can be used there.<br>
+<br>
+Rationale: The &quot;}&quot; cannot be after a command because it would require parsing<br>
+the commands to find it.&nbsp;&nbsp;For consistency with that no command can follow the<br>
+&quot;{&quot;.&nbsp;&nbsp;Unfortunately this means using &quot;() =&gt; {&nbsp;&nbsp;command&nbsp;&nbsp;}&quot; does not work, line<br>
+breaks are always required.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-curly" name="vim9-curly">vim9-curly</a><br>
 To avoid the &quot;{&quot; of a dictionary literal to be recognized as a statement block<br>
-wrap it in parenthesis:<br>
+wrap it in parentheses:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Lambda = (arg) =&gt; ({key: 42})</div>
 <br>
 Also when confused with the start of a command block:<br>
@@ -701,13 +777,15 @@ for v:null.&nbsp;&nbsp;When converting a boolean to a string &quot;false&quot; a
 used, not &quot;v:false&quot; and &quot;v:true&quot; like in legacy script.&nbsp;&nbsp;&quot;v:none&quot; is not<br>
 changed, it is only used in JSON and has no equivalent in other languages.<br>
 <br>
-Indexing a string with&nbsp;<span class="Special">[idx]</span>&nbsp;or [idx : idx] uses character indexes instead of<br>
-byte indexes. Example:<br>
+Indexing a string with&nbsp;<span class="Special">[idx]</span>&nbsp;or taking a slice with [idx : idx] uses character<br>
+indexes instead of byte indexes.&nbsp;&nbsp;Composing characters are included.<br>
+Example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'bár'[1]</div>
 In legacy script this results in the character 0xc3 (an illegal byte), in Vim9<br>
 script this results in the string 'á'.<br>
 A negative index is counting from the end, &quot;[-1]&quot; is the last character.<br>
 To exclude the last character use&nbsp;<a class="Identifier" href="eval.html#slice()">slice()</a>.<br>
+To count composing characters separately use&nbsp;<a class="Identifier" href="eval.html#strcharpart()">strcharpart()</a>.<br>
 If the index is out of range then an empty string results.<br>
 <br>
 In legacy script &quot;++var&quot; and &quot;--var&quot; would be silently accepted and have no<br>
@@ -805,6 +883,8 @@ Patterns are used like&nbsp;<a class="Type" href="options.html#'magic'">'magic'<
 The&nbsp;<a class="Type" href="options.html#'edcompatible'">'edcompatible'</a>&nbsp;option value is not used.<br>
 The&nbsp;<a class="Type" href="options.html#'gdefault'">'gdefault'</a>&nbsp;option value is not used.<br>
 <br>
+You may also find this wiki useful.&nbsp;&nbsp;It was written by an early adopter of<br>
+Vim9 script:&nbsp;<span class="Constant"><a href="https://github.com/lacygoill/wiki/blob/master/vim/vim9.md">https://github.com/lacygoill/wiki/blob/master/vim/vim9.md</a></span><br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
@@ -848,12 +928,14 @@ THIS IS STILL UNDER DEVELOPMENT - ANYTHING CAN BREAK - ANYTHING CAN CHANGE<br>
 :enddef&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; End of a function defined with&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>. It should be on<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a line by its own.<br>
 <br>
+You may also find this wiki useful.&nbsp;&nbsp;It was written by an early adopter of<br>
+Vim9 script:&nbsp;<span class="Constant"><a href="https://github.com/lacygoill/wiki/blob/master/vim/vim9.md">https://github.com/lacygoill/wiki/blob/master/vim/vim9.md</a></span><br>
 <br>
 If the script the function is defined in is Vim9 script, then script-local<br>
 variables can be accessed without the &quot;s:&quot; prefix.&nbsp;&nbsp;They must be defined<br>
 before the function is compiled.&nbsp;&nbsp;If the script the function is defined in is<br>
 legacy script, then script-local variables must be accessed with the &quot;s:&quot;<br>
-prefix and they do not need to exist (they can be deleted any time).<br>
+prefix if they do not exist at the time of compiling.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:defc" name=":defc">:defc</a>&nbsp;<a class="Constant" href="vim9.html#:defcompile" name=":defcompile">:defcompile</a><br>
 :defc[ompile]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Compile functions defined in the current script that<br>
@@ -890,6 +972,27 @@ For these the backtick expansion can be used.&nbsp;&nbsp;Example:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var newText = 'blah'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g/pattern/s/^/`=newText`/<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+Closures defined in a loop will share the same context.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var flist: list&lt;func&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for i in range(10)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var inloop = i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flist[i] = () =&gt; inloop<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfor</div>
+<br>
+The &quot;inloop&quot; variable will exist only once, all closures put in the list refer<br>
+to the same instance, which in the end will have the value 9.&nbsp;&nbsp;This is<br>
+efficient.&nbsp;&nbsp;If you do want a separate context for each closure call a function<br>
+to define it:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def GetFunc(i: number): func<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var inloop = i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return () =&gt; inloop<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var flist: list&lt;func&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for i in range(10)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flist[i] = GetFunc(i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfor</div>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
@@ -1017,12 +1120,15 @@ dictionary.&nbsp;&nbsp;If there is a mix of types, the &quot;any&quot; type is u
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['a', 'b', 'c'] list&lt;string&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1, 'x', 3]&nbsp;&nbsp;&nbsp;&nbsp; list&lt;any&gt;</div>
 <br>
+For script-local variables in Vim9 script the type is checked, also when the<br>
+variable was declared in a legacy function.<br>
+<br>
 <br>
 <span class="PreProc">Stricter type checking</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#type-checking" name="type-checking">type-checking</a><br>
 In legacy Vim script, where a number was expected, a string would be<br>
 automatically converted to a number.&nbsp;&nbsp;This was convenient for an actual number<br>
-such as &quot;123&quot;, but leads to unexpected problems (but no error message) if the<br>
+such as &quot;123&quot;, but leads to unexpected problems (and no error message) if the<br>
 string doesn't start with a number.&nbsp;&nbsp;Quite often this leads to hard-to-find<br>
 bugs.<br>
 <br>
@@ -1034,10 +1140,14 @@ an error, thus breaking backwards compatibility.&nbsp;&nbsp;For example:<br>
 - Using a number where a string is expected.&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1024" name="E1024">E1024</a><br>
 <br>
 One consequence is that the item type of a list or dict given to map() must<br>
-not change.&nbsp;&nbsp;This will give an error in compiled code:<br>
+not change.&nbsp;&nbsp;This will give an error in Vim9 script:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map([1, 2, 3], (i, v) =&gt; 'item ' .. i)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E1012: Type mismatch; expected list&lt;number&gt; but got list&lt;string&gt;</div>
-Instead use&nbsp;<a class="Identifier" href="eval.html#mapnew()">mapnew()</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E1012: Type mismatch; expected number but got string</div>
+Instead use&nbsp;<a class="Identifier" href="eval.html#mapnew()">mapnew()</a>.&nbsp;&nbsp;If the item type was determined to be &quot;any&quot; it can<br>
+change to a more specific type.&nbsp;&nbsp;E.g. when a list of mixed types gets changed<br>
+to a list of numbers.<br>
+Same for&nbsp;<a class="Identifier" href="eval.html#extend()">extend()</a>, use&nbsp;<a class="Identifier" href="eval.html#extendnew()">extendnew()</a>&nbsp;instead, and for&nbsp;<a class="Identifier" href="eval.html#flatten()">flatten()</a>, use<br>
+<a class="Identifier" href="eval.html#flattennew()">flattennew()</a>&nbsp;instead.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
@@ -1077,7 +1187,9 @@ A side effect of&nbsp;<a class="Comment" href="repeat.html#:vim9script">:vim9scr
 Vim default value, like with:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set cpo&amp;vim</div>
 One of the effects is that&nbsp;<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>&nbsp;is always enabled.<br>
-The original value of&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;is restored at the end of the script.<br>
+The original value of&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;is restored at the end of the script, while<br>
+flags added or removed in the script are also added to or removed from the<br>
+original value to get the same effect.&nbsp;&nbsp;The order of flags may change.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-mix" name="vim9-mix">vim9-mix</a><br>
 There is one way to use both legacy and Vim9 syntax in one script file:<br>
@@ -1089,7 +1201,7 @@ There is one way to use both legacy and Vim9 syntax in one script file:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Vim9 script commands go here</div>
 This allows for writing a script that takes advantage of the Vim9 script<br>
-syntax if possible, but will also work on an Vim version without it.<br>
+syntax if possible, but will also work on a Vim version without it.<br>
 <br>
 This can only work in two ways:<br>
 1. The &quot;if&quot; statement evaluates to false, the commands up to&nbsp;<a class="Comment" href="eval.html#:endif">endif</a>&nbsp;are<br>
@@ -1112,7 +1224,7 @@ Exporting an item can be written as:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export class MyClass ...</div>
 <br>
 As this suggests, only constants, variables,&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions and classes can<br>
-be exported. {classes are not implemented yet}<br>
+be exported.&nbsp;<span class="Special">{not implemented yet: export class}</span><br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1042" name="E1042">E1042</a><br>
 <a class="Comment" href="vim9.html#:export">:export</a>&nbsp;can only be used in Vim9 script, at the script level.<br>

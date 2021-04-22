@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Feb 10<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Apr 21<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,81 +44,39 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Vim9 - Make everything work:<br>
-- Use &quot;:vim9cmd&quot; as a command modifier?&nbsp;&nbsp;Then make &quot;:vim9&quot; short for that.<br>
-- Add a test for profiling with nested function calls and lambda.<br>
-- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :next, :argedit, :argadd, :argdelete, :drop<br>
-- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :vimgrep, :vimgrepadd, :lvimgrep, :lvimgrepadd<br>
-- Expand&nbsp;<span class="Comment">=expr</span>&nbsp;in :mkspell<br>
-- Unlet with range: &quot;unlet list[a : b]&quot;<br>
-- Implement &quot;export {one, two three}&quot;.<br>
-- ISN_CHECKTYPE could use check_argtype()<br>
-- Using a script variable inside a :def function doesn't work if the variable<br>
-&nbsp;&nbsp;is inside a block, see Test_nested_function().&nbsp;&nbsp;Should it work?<br>
-- give error for variable name:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var p = function('NoSuchFunc')<br>
-- Make closures work better:<br>
-&nbsp;&nbsp;- Create closure in a loop.&nbsp;&nbsp;Need to make a list of them.<br>
-- If a :def function is called with a function reference, compile it to get<br>
-&nbsp;&nbsp;the function type.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Filter(x: string, Cond: func(string): bool)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter(x, (v) =&gt; v =~ '^b')<br>
-- Make inline function work, to be used as a funcref:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var Ref = (arg: type): type =&gt; {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statement<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return expr<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var Ref = (arg: type) =&gt; {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statement<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statement<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-- For builtin functions using tv_get_string*() use check_for_string() to be<br>
-&nbsp;&nbsp;more strict about the argument type.<br>
-- Implement :lockvar and :unlockvar.&nbsp;&nbsp;How about local variables?&nbsp;&nbsp;Perhaps only<br>
-&nbsp;&nbsp;allow this for global variables.&nbsp;&nbsp;Use :final or :const otherwise.<br>
-- Allow function names that will be script-local to start with lower case<br>
-&nbsp;&nbsp;letter?&nbsp;&nbsp;Or also require names with s: prefix to use upper case?<br>
-&nbsp;&nbsp;Also apply this function references &quot;var ref = SomeFunc&quot;<br>
-- Support passing v:none to use the default argument value. (#6504)<br>
-- Run the same tests in :def and Vim9 script, like in Test_expr7_not()<br>
-- Check many more builtin function arguments at compile time.<br>
-- make 0 ==&nbsp;<span class="MissingTag">'string'</span>&nbsp;fail on the script level, like inside :def.<br>
-- Check that when using a user function name without prefix, it does not find<br>
-&nbsp;&nbsp;a global function.&nbsp;&nbsp;Prefixing g: is required.<br>
-- Need the equivalent of get_lval() and set_var_lval() to implement assignment<br>
-&nbsp;&nbsp;to nested list and dict members.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- Assignment to dict doesn't work:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var ret: dict<span class="Special">&lt;string&gt;</span>&nbsp;= #{}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[i] = string(i)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- Appending to dict item doesn't work:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var d[i] ..= value<br>
-- Using &quot;..&quot; at script level doesn't convert arguments to a string.<br>
-- Compile replacement of :s command: s/pat/\=expr/<br>
-- Compile redir to local variable: var_redir_start().<br>
-- Implement type cast at the script level.<br>
 - Compile builtin functions that access local variables:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;islocked()<br>
 - When evaluating constants for script variables, some functions could work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;has(<span class="MissingTag">'asdf'</span>), len(<span class="MissingTag">'string'</span>)<br>
-- Implement &quot;as Name&quot; in &quot;import Item as Name from ...&quot;<br>
-- Implement using imported items at script level from &quot;import * as X&quot; in<br>
 &nbsp;&nbsp;eval_variable().&nbsp;&nbsp;Should pass the &quot;.xxx&quot; that follows and return that.<br>
 - Make &quot;++nr&quot; work.&nbsp;&nbsp;&quot;++g:count&quot; doesn't work, thinks it is a range.<br>
 - Reload: How to make sure type of script function hasn't changed?<br>
 - expandcmd() with&nbsp;<span class="Comment">=expr</span>&nbsp;in filename uses legacy expression.<br>
 - eval_expr() in ex_cexpr()<br>
 - eval_expr() call in dbg_parsearg() and debuggy_find()<br>
+- compile_member() guesses the type, should figure out at runtime.<br>
 - compile &quot;skip&quot; argument of searchpair()<br>
 - compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
 - give an error for &quot;echo Func()&quot; if Func() does not return anything.<br>
 - Using &quot;windo echo expr&quot; does not accept a line break inside &quot;expr&quot; (in a<br>
 &nbsp;&nbsp;:def function and at script level in a not executed block). #7681<br>
+- use CheckLegacyAndVim9Success(lines) in many more places<br>
+- For builtin functions using tv_get_string*() use check_for_string() to be<br>
+&nbsp;&nbsp;more strict about the argument type (not a bool).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;done: balloon_()<br>
+- Check many more builtin function arguments at compile time.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;map() could check that the return type of the function argument matches<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the type of the list or dict member. (#8092)<br>
+- Allow for using an autoload function name without quotes.&nbsp;&nbsp;It is then loaded<br>
+&nbsp;&nbsp;(and compiled) right away.&nbsp;&nbsp;#8124<br>
 <br>
 Once Vim9 is stable:<br>
 - Change the help to prefer Vim9 syntax where appropriate<br>
-- Use Vim9 for runtime files.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;PR #7497 for autoload/ccomplete.vim<br>
 - Add all the error numbers in a good place in documentation.<br>
 - In the generic eval docs, point out the Vim9 syntax where it differs.<br>
+- Add the &quot;vim9script&quot; feature, can use has('vim9script')<br>
+- Use Vim9 for runtime files.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PR #7497 for autoload/ccomplete.vim<br>
 <br>
 Also for Vim9&#0058;<br>
 - better implementation for partial and tests for that.<br>
@@ -166,6 +124,8 @@ Popup windows:<br>
 - Add a termcap entry for changing the cursor when it goes under the popup and<br>
 &nbsp;&nbsp;back.&nbsp;&nbsp;like t_SI and t_EI&nbsp;&nbsp;(t_SU and t_EU, where &quot;U&quot; means under?)<br>
 - With terminal in popup, allow for popup_hide() to temporarily hide it.?<br>
+- Make it possible to scroll horizontally when&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;is off.&nbsp;&nbsp;Does this<br>
+&nbsp;&nbsp;require an ascii scrollbar, like with the vertical one?<br>
 - Fire some autocommand event after a new popup window was created and<br>
 &nbsp;&nbsp;positioned?&nbsp;&nbsp;PopupNew?&nbsp;&nbsp;Could be used to set some options or move it out of<br>
 &nbsp;&nbsp;the way. (#5737)<br>
@@ -193,6 +153,7 @@ Text properties:<br>
 - Popup attached to text property stays visible when text is deleted with<br>
 &nbsp;&nbsp;&quot;cc&quot;. (#7737)&nbsp;&nbsp;&quot;C&quot; works OK.&nbsp;&nbsp;&quot;dd&quot; also files in a buffer with a single<br>
 &nbsp;&nbsp;line.<br>
+- Auto-indenting may cause highlighting to shift. (#7719)<br>
 - &quot;cc&quot; does not call inserted_bytes(). (Axel Forsman, #5763)<br>
 - Combining text property with&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;does not always work (Billie<br>
 &nbsp;&nbsp;Cleek, #5533)<br>
@@ -203,8 +164,6 @@ Text properties:<br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s:<br>
 - :s/foo&nbsp;&nbsp;using&nbsp;<span class="Special">CTRL-G</span>&nbsp;moves to another line, should not happen, or use the<br>
 &nbsp;&nbsp;correct line (it uses the last but one line) (Lifepillar, Aug 18, #3345)<br>
-- :s@pat/tern@ doesn't include &quot;/&quot; in the pattern. (Takahiro Yoshihara, #3637)<br>
-&nbsp;&nbsp; pass delim to do_search() ?<br>
 - Also support range: :/foo/,/bar/delete<br>
 - Also support for user command, e.g. Cfilter<br>
 - :%s/foo should take the first match below the cursor line, unless there<br>
@@ -274,7 +233,26 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
-Valgind reports memory leaks in test_options<br>
+Include patch #6290: recognize shell directory change.<br>
+<br>
+Valgrind reports memory leaks in test_options.<br>
+Valgrind reports overlapping memcpy in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;test_conceal.3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;test_edit.1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;test_functions.4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;test_ins_complete.3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;test_method<br>
+&nbsp;&nbsp;&nbsp;&nbsp;test_normal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;test_popupwin.35 et al.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;test_search_stat<br>
+Using uninitialized value in test_crypt (can't explain why).<br>
+Memory leak in test_debugger<br>
+Memory leak in test_paste, using XtOpenDisplay several times<br>
+OLD:<br>
+TODO: be able to run all parts of test_alot with valgrind separately<br>
+Memory leak in test_alot with pyeval() (allocating partial)<br>
+Memory leak in test_alot with expand()<br>
+Memory leaks in test_channel? (or is it because of fork())<br>
 <br>
 test_arglist func Test_all_not_allowed_from_cmdwin() hangs on MS-Windows.<br>
 <br>
@@ -288,8 +266,15 @@ Was originally written by Felipe Morales.<br>
 <br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)&nbsp;&nbsp;Did patch 8.2.2379 help?<br>
+Also, z= in German on a long word can take a very long time, but&nbsp;<span class="Special">CTRL-C</span>&nbsp;to<br>
+interrupt does not work. Where to add ui_breakcheck()?<br>
 <br>
 Remove SPACE_IN_FILENAME ? It is only used for completion.<br>
+<br>
+Add optional argument to virtcol() that specifies &quot;start&quot;, &quot;cursor&quot; or &quot;end&quot;<br>
+to tell which value from getvvcol() should be used. (#7964)<br>
+Value returned by virtcol() changes depending on how lines wrap.&nbsp;&nbsp;This is<br>
+inconsistent with the documentation.<br>
 <br>
 Making breakat support multibyte characters (Yasuhiro Matsumoto, #6598)<br>
 Scroll doesn't work correctly, why?<br>
@@ -298,6 +283,8 @@ Add&nbsp;<span class="MissingTag">'termguiattr'</span>&nbsp;option, use &quot;gu
 with&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>. #1740<br>
 <br>
 Patch for blockwise paste reporting changes: #6660.<br>
+<br>
+Patch to make fillchars global-local. (#5206)<br>
 <br>
 Missing filetype test for bashrc, PKGBUILD, etc.<br>
 <br>
@@ -316,6 +303,10 @@ Try setting a color then request the current color, like using t_u7.<br>
 <br>
 Regexp to search for duplicate lines does not work correctly:<br>
 /\(^.*\n\)\1&nbsp;&nbsp;(Chris Morgan, #6239)<br>
+<br>
+MS-Windows: when writing undo file the infostreams are copied in&nbsp;<br>
+mch_copy_file_attribute(), that seems unnecessary. (#7925)<br>
+Add a flag to only copy attributes?<br>
 <br>
 Changing a capturing group to non-capturing changes the result: #7607<br>
 &nbsp;&nbsp;&nbsp;&nbsp;:echo matchstr('aaa bbb', '\(.\<span class="Special">{-1,}</span>\&gt;\)\|.*')<br>
@@ -392,6 +383,10 @@ Running test_gui and test_gui_init with Motif sometimes kills the window<br>
 manager.&nbsp;&nbsp;Problem with Motif?<br>
 <br>
 Patch to add :argdedupe. (Nir Lichtman, #6235)<br>
+<br>
+When editing a file with &quot;:edit&quot; the output of :swapname is relative, while<br>
+editing it with &quot;vim file&quot; it is absolute. (#355)<br>
+Which one should it be?<br>
 <br>
 :map output does not clear the reset of the command line.<br>
 (#5623, also see #5962)<br>
@@ -500,6 +495,9 @@ Assuming the files are text, print the line with the difference.<br>
 <br>
 Result of synID() sometimes wrong in help files. (#5252)<br>
 <br>
+When a help file is opened that doesn't have &quot;ft=help&quot; in the modeline then<br>
+the FileType is first set to &quot;text&quot; before it is set to &quot;help&quot;. (#8099)<br>
+<br>
 Problem showing a line if the number column width changes when using &quot;o&quot;.<br>
 (Mateusz Morusiewicz, #4245)<br>
 <br>
@@ -575,7 +573,7 @@ The quoting of the&nbsp;<span class="Special">[command]</span>&nbsp;argument of 
 Give a few examples. (#4288)<br>
 <br>
 Opening a file with --remote-tab-silent that matches&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbsp;does not<br>
-work, results in (E479: No match&quot;. (#4610)<br>
+work, results in &quot;E479: No match&quot;. (#4610)<br>
 <br>
 7&nbsp;&nbsp; Add an option to add one pixel column to the character width?&nbsp;&nbsp;Lucida<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Console italic is wider than the normal font (&quot;d&quot; overlaps with next char).<br>
@@ -764,19 +762,9 @@ Make &quot;:interactive !cmd&quot; stop termcap mode, also when used in an autoc
 <br>
 Add buffer argument to undotree(). (#4001)<br>
 <br>
-Memory leak in test_debugger<br>
-Using uninitialized value in test_crypt (can't explain why).<br>
-Memory leak in test_terminal_fail<br>
-TODO: be able to run all parts of test_alot with valgrind separately<br>
-Memory leak in test_alot with pyeval() (allocating partial)<br>
-Memory leak in test_alot with expand()<br>
-Memory leaks in test_channel? (or is it because of fork())<br>
-<br>
 matchaddpos() gets slow with many matches.&nbsp;&nbsp;Proposal by Rick Howe, 2018 Jul<br>
 19.<br>
 <br>
-Should make&nbsp;<a class="Type" href="options.html#'listchars'">'listchars'</a>&nbsp;global-local.&nbsp;&nbsp;Local to window or to buffer?<br>
-Probably window.&nbsp;&nbsp;#5206<br>
 Add something like&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>&nbsp;local to window, but allow for specifying a<br>
 highlight name.&nbsp;&nbsp;Esp. for the statusline.<br>
 And &quot;extends&quot; and &quot;precedes&quot; are also useful without&nbsp;<a class="Type" href="options.html#'list'">'list'</a>&nbsp;set.&nbsp;&nbsp;Also in<br>
@@ -1028,8 +1016,7 @@ for a path separator. (xtal8, #2201)<br>
 Would be nice for Insert mode completion to highlight the text that was added<br>
 (and may change when picking another completion).<br>
 <br>
-Test runtime files.<br>
-Start with filetype detection: testdir/test_filetype.vim<br>
+Test more runtime files.<br>
 <br>
 Window not closed when deleting buffer. (Harm te Hennepe, 2017 Aug 27, #2029)<br>
 <br>
@@ -1169,9 +1156,6 @@ timer expires.<br>
 Rule to use &quot;^&quot; for statusline does not work if a space is defined with<br>
 highlighting for both stl and stlnc.&nbsp;&nbsp;Patch by Ken Hamada (itchyny, 2016 Dec 11)<br>
 <br>
-8&nbsp;&nbsp; &quot;stl&quot; and &quot;stlnc&quot; in&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>&nbsp;don't work for multibyte characters.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Patch by Christian Wellenbrock, 2013 Jul 5.<br>
-<br>
 Using&nbsp;<span class="Special">CTRL-G</span>_U in InsertCharPre causes trouble for redo. (Israel Chauca<br>
 Fuentes, 2017 Feb 12, #1470)<br>
 <br>
@@ -1245,6 +1229,8 @@ Undo problem: &quot;g-&quot; doesn't go back, gets stuck. (Björn Linse, 2016 Ju
 <br>
 Add &quot;unicode true&quot; to NSIS installer.&nbsp;&nbsp;Doesn't work with Windows 95, which we<br>
 no longer support.<br>
+<br>
+Suppoert sort(l, 'F'), convert strings to float. (#7857)<br>
 <br>
 sort() is not stable when using numeric/float sort (Nikolay Pavlov, 2016 Sep<br>
 4#1038)<br>
@@ -1494,9 +1480,6 @@ specifically?&nbsp;&nbsp;First try with the parens, then without.<br>
 <br>
 Patch to add :mapgroup, put mappings in a group like augroup.<br>
 (Yasuhiro Matsumoto, 2016 Feb 19)<br>
-<br>
-Value returned by virtcol() changes depending on how lines wrap.&nbsp;&nbsp;This is<br>
-inconsistent with the documentation.<br>
 <br>
 Can we cache the syntax attributes, so that updates for&nbsp;<a class="Type" href="options.html#'relativenumber'">'relativenumber'</a>&nbsp;and<br>
 <a class="Type" href="options.html#'cursorline'">'cursorline'</a>/<a class="Type" href="options.html#'cursorcolumn'">'cursorcolumn'</a>&nbsp;are a lot faster?&nbsp;&nbsp;Thus store the attributes<br>
@@ -2006,6 +1989,10 @@ Patch for :tabrecently. (Hirokazu Yoshida, 2012 Jan 30)<br>
 <br>
 Problem with &quot;syn sync grouphere&quot;. (Gustavo Niemeyer, 2011 Jan 27)<br>
 <br>
+Using &quot;syn sync breaklines=2&quot; works for when text is changed, but not when<br>
+scrolling or redrawing.&nbsp;&nbsp;Should start search for syntax patterns above the<br>
+first drawn line. (#8103)<br>
+<br>
 Loading autoload script even when usage is inside &quot;if 0&quot;. (Christian Brabandt,<br>
 2010 Dec 18)<br>
 <br>
@@ -2451,9 +2438,6 @@ backslash? (Robert Vibrant, 2008 Jun 5)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'rightleft'">'rightleft'</a>&nbsp;is set, cursorcolumn isn't highlighted after the end of a<br>
 line.&nbsp;&nbsp;It's also wrong in folds. (Dominique Pelle, 2010 Aug 21)<br>
-<br>
-Using an insert mode expression mapping, cursor is not in the expected<br>
-position. (ZyX, 2010 Aug 29)<br>
 <br>
 After using&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;for command line completion after &quot;:ta blah&quot; and getting E33<br>
 (no tags file), further editing the command to e.g., &quot;:echo&nbsp;<span class="MissingTag">'blah'</span>&quot;, the<br>
