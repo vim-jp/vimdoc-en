@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Apr 21<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Apr 29<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,13 +44,6 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Vim9 - Make everything work:<br>
-- Compile builtin functions that access local variables:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;islocked()<br>
-- When evaluating constants for script variables, some functions could work:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;has(<span class="MissingTag">'asdf'</span>), len(<span class="MissingTag">'string'</span>)<br>
-&nbsp;&nbsp;eval_variable().&nbsp;&nbsp;Should pass the &quot;.xxx&quot; that follows and return that.<br>
-- Make &quot;++nr&quot; work.&nbsp;&nbsp;&quot;++g:count&quot; doesn't work, thinks it is a range.<br>
-- Reload: How to make sure type of script function hasn't changed?<br>
 - expandcmd() with&nbsp;<span class="Comment">=expr</span>&nbsp;in filename uses legacy expression.<br>
 - eval_expr() in ex_cexpr()<br>
 - eval_expr() call in dbg_parsearg() and debuggy_find()<br>
@@ -69,6 +62,17 @@ Vim9 - Make everything work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the type of the list or dict member. (#8092)<br>
 - Allow for using an autoload function name without quotes.&nbsp;&nbsp;It is then loaded<br>
 &nbsp;&nbsp;(and compiled) right away.&nbsp;&nbsp;#8124<br>
+- Test more expressions in legacy and Vim9 script, using<br>
+&nbsp;&nbsp;CheckLegacyAndVim9Success()<br>
+- Test try/catch and throw better, also nested.<br>
+&nbsp;&nbsp;Test that return inside try/finally jumps to finally and then returns.<br>
+- Test that a function defined inside a :def function is local to that<br>
+&nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
+&nbsp;&nbsp;defined.<br>
+- Make debugging work - at least per function.&nbsp;&nbsp;Need to recompile a function<br>
+&nbsp;&nbsp;to step through it line-by-line?&nbsp;&nbsp;Evaluate the stack and variables on the<br>
+&nbsp;&nbsp;stack?<br>
+- Reserve command for future use: :type, :class, :enum<br>
 <br>
 Once Vim9 is stable:<br>
 - Change the help to prefer Vim9 syntax where appropriate<br>
@@ -78,34 +82,17 @@ Once Vim9 is stable:<br>
 - Use Vim9 for runtime files.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;PR #7497 for autoload/ccomplete.vim<br>
 <br>
-Also for Vim9&#0058;<br>
+Further Vim9 improvements, possibly after launch:<br>
 - better implementation for partial and tests for that.<br>
-- Make &quot;g:imported = Export.exported&quot; work in Vim9 script.<br>
-- Make Foo.Bar() work to call the dict function. (#5676)<br>
-- Error in any command in &quot;vim9script&quot; aborts sourcing.<br>
-- Find a way to test expressions in legacy and Vim9 script without duplication<br>
-- Test try/catch and throw better, also nested.<br>
-&nbsp;&nbsp;Test that return inside try/finally jumps to finally and then returns.<br>
-- Test that a function defined inside a :def function is local to that<br>
-&nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
-&nbsp;&nbsp;defined.<br>
-- compile options that are an expression, e.g. &quot;expr:&quot; in&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>,<br>
+- Compile options that are an expression, e.g. &quot;expr:&quot; in&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>,<br>
 &nbsp;&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>,&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>,&nbsp;<a class="Type" href="options.html#'printexpr'">'printexpr'</a>,&nbsp;<a class="Type" href="options.html#'diffexpr'">'diffexpr'</a>,&nbsp;<a class="Type" href="options.html#'patchexpr'">'patchexpr'</a>,&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>,<br>
 &nbsp;&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>,&nbsp;<a class="Type" href="options.html#'includeexpr'">'includeexpr'</a>,&nbsp;<a class="Type" href="options.html#'indentexpr'">'indentexpr'</a>,&nbsp;<a class="Type" href="options.html#'formatexpr'">'formatexpr'</a>.<br>
 &nbsp;&nbsp;Give an error if compilation fails. (#7625)<br>
 &nbsp;&nbsp;Use the location where the option was set for deciding whether it's to be<br>
 &nbsp;&nbsp;evaluated in Vim9 script context.<br>
-- implement :type; import type declaration.<br>
-- implement enum;&nbsp;&nbsp;import enum.<br>
+- implement :type, import type declaration.<br>
+- implement enum,&nbsp;&nbsp;import enum.<br>
 - Future work: See&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Define the keywords and commands to make sure it will be backwards<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;compatible.<br>
-- Make debugging work - at least per function.&nbsp;&nbsp;Need to recompile a function<br>
-&nbsp;&nbsp;to step through it line-by-line?&nbsp;&nbsp;Evaluate the stack and variables on the<br>
-&nbsp;&nbsp;stack?<br>
-- List commands when&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;is set or :verbose is used.<br>
-<br>
-Further Vim9 improvements, possibly after launch:<br>
 - For range: make table of first ASCII character with flag to quickly check if<br>
 &nbsp;&nbsp;it can be a Vim9 command. E.g. &quot;+&quot; can, but &quot;.&quot; can't.<br>
 - compile get_lambda_tv() in popup_add_timeout()<br>
@@ -113,6 +100,9 @@ Further Vim9 improvements, possibly after launch:<br>
 - Make accessing varargs faster: arg[expr]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVAL expr<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varargs idx)<br>
+- When evaluating constants for script variables, some functions could work:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has(featureName), len(someString)<br>
+- Implement as part of an expression: ++expr, --expr, expr++, expr--.<br>
 <br>
 <br>
 Popup windows:<br>
@@ -1408,9 +1398,6 @@ Patch to make tests pass with EBCDIC. (Owen Leibman, 2016 Apr 10)<br>
 <br>
 Add &quot;:read :command&quot;, to insert the output of an Ex command?<br>
 Can already do it with &quot;:$put =execute(<span class="MissingTag">'command'</span>)&quot;.<br>
-<br>
-When repeating the&nbsp;<a class="Type" href="options.html#'confirm'">'confirm'</a>&nbsp;dialog one needs to press Enter. (ds26gte, 2016<br>
-Apr 17)&nbsp;&nbsp;#762<br>
 <br>
 exists(&quot;:tearoff&quot;) does not tell you if the command is implemented. (Tony<br>
 Mechelynck)&nbsp;&nbsp;Perhaps use exists(&quot;::tearoff&quot;) to check?<br>

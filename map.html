@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'map'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="map.html" name="map.txt">map.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Mar 17<br>
+<a class="Constant" href="map.html" name="map.txt">map.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Apr 23<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -249,9 +249,12 @@ have a look at&nbsp;<a class="Identifier" href="eval.html#maparg()">maparg()</a>
 If the first argument to one of these commands is &quot;<span class="Special">&lt;expr&gt;</span>&quot; and it is used to<br>
 define a new mapping or abbreviation, the argument is an expression.&nbsp;&nbsp;The<br>
 expression is evaluated to obtain the&nbsp;<span class="Special">{rhs}</span>&nbsp;that is used.&nbsp;&nbsp;Example:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:inoremap &lt;expr&gt; . InsertDot()</div>
-The result of the InsertDot() function will be inserted.&nbsp;&nbsp;It could check the<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:inoremap &lt;expr&gt; . &lt;SID&gt;InsertDot()</div>
+The result of the s:InsertDot() function will be inserted.&nbsp;&nbsp;It could check the<br>
 text before the cursor and start omni completion when some condition is met.<br>
+Using a script-local function is preferred, to avoid polluting the global<br>
+namespace.&nbsp;&nbsp;Use&nbsp;<span class="Special">&lt;SID&gt;</span>&nbsp;in the RHS so that the script that the mapping was<br>
+defined in can be found.<br>
 <br>
 For abbreviations&nbsp;<a class="Identifier" href="eval.html#v:char">v:char</a>&nbsp;is set to the character that was typed to trigger<br>
 the abbreviation.&nbsp;&nbsp;You can use this to decide how to expand the&nbsp;<span class="Special">{lhs}</span>.&nbsp;&nbsp;You<br>
@@ -266,7 +269,7 @@ input. Example:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call popup_create(... arguments ...)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return &quot;\&lt;Ignore&gt;&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;expr&gt; &lt;F3&gt; &lt;Sid&gt;OpenPopup()</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;expr&gt; &lt;F3&gt; &lt;SID&gt;OpenPopup()</div>
 <br>
 Also, keep in mind that the expression may be evaluated when looking for<br>
 typeahead, before the previous command has been executed.&nbsp;&nbsp;For example:<br>
