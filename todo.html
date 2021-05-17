@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Apr 29<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 May 15<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,13 +44,14 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 Vim9 - Make everything work:<br>
-- expandcmd() with&nbsp;<span class="Comment">=expr</span>&nbsp;in filename uses legacy expression.<br>
-- eval_expr() in ex_cexpr()<br>
-- eval_expr() call in dbg_parsearg() and debuggy_find()<br>
-- compile_member() guesses the type, should figure out at runtime.<br>
-- compile &quot;skip&quot; argument of searchpair()<br>
+- function returning nothing should return void instead of zero<br>
 - compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
-- give an error for &quot;echo Func()&quot; if Func() does not return anything.<br>
+- Need some solution for dict function.&nbsp;&nbsp;Can we implement part of classes?<br>
+- A lambda without {} does not require a return type, using { return x } does.<br>
+&nbsp;&nbsp;That's unexpected, since the arguments are not required to have a type.<br>
+&nbsp;&nbsp;alt 1: not require a return type, figure it out from the common type of all<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the return statements found<br>
+&nbsp;&nbsp;alt 2: also require argument types<br>
 - Using &quot;windo echo expr&quot; does not accept a line break inside &quot;expr&quot; (in a<br>
 &nbsp;&nbsp;:def function and at script level in a not executed block). #7681<br>
 - use CheckLegacyAndVim9Success(lines) in many more places<br>
@@ -244,6 +245,10 @@ Memory leak in test_alot with pyeval() (allocating partial)<br>
 Memory leak in test_alot with expand()<br>
 Memory leaks in test_channel? (or is it because of fork())<br>
 <br>
+&quot;:set &amp;shellpipe&quot; and &quot;:set &amp;shellredir&quot; should use the logic from<br>
+initialization to figure out the default value from&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>.&nbsp;&nbsp;Add a test for<br>
+this.<br>
+<br>
 test_arglist func Test_all_not_allowed_from_cmdwin() hangs on MS-Windows.<br>
 <br>
 Mapping with partial match not executed properly in GTK. (Ingo Karkat, #7082)<br>
@@ -253,6 +258,9 @@ Have another look at the implementation.<br>
 <br>
 Patch to implement the vimtutor with a plugin: #6414<br>
 Was originally written by Felipe Morales.<br>
+<br>
+Request to use &quot;.&quot; for the cursor column in search pattern \%&lt;.c and \%&lt;.v.<br>
+(#8179)<br>
 <br>
 Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;causes spell suggestions to become very slow.<br>
 (#4087)&nbsp;&nbsp;Did patch 8.2.2379 help?<br>
@@ -281,6 +289,9 @@ Missing filetype test for bashrc, PKGBUILD, etc.<br>
 Add an option to not fetch terminal codes in xterm, to avoid flicker when t_Co<br>
 changes.<br>
 <br>
+When using &quot;:bwipe!&quot; also get rid of references to be buffer, e.g. in the<br>
+jumplist and alternate file.<br>
+<br>
 Add an option to start_timer() to return from the input loop with K_IGNORE.<br>
 This is useful e.g. when a popup was created that disables mappings, we need<br>
 to return from vgetc() to make this happen.&nbsp;&nbsp;#7011<br>
@@ -297,6 +308,9 @@ Regexp to search for duplicate lines does not work correctly:<br>
 MS-Windows: when writing undo file the infostreams are copied in&nbsp;<br>
 mch_copy_file_attribute(), that seems unnecessary. (#7925)<br>
 Add a flag to only copy attributes?<br>
+<br>
+Make the jumplist behave like a tag stack. (#7738)&nbsp;&nbsp;Should there be a more<br>
+time bound navigation, like with undo?<br>
 <br>
 Changing a capturing group to non-capturing changes the result: #7607<br>
 &nbsp;&nbsp;&nbsp;&nbsp;:echo matchstr('aaa bbb', '\(.\<span class="Special">{-1,}</span>\&gt;\)\|.*')<br>
@@ -1220,7 +1234,7 @@ Undo problem: &quot;g-&quot; doesn't go back, gets stuck. (Björn Linse, 2016 Ju
 Add &quot;unicode true&quot; to NSIS installer.&nbsp;&nbsp;Doesn't work with Windows 95, which we<br>
 no longer support.<br>
 <br>
-Suppoert sort(l, 'F'), convert strings to float. (#7857)<br>
+Support sort(l, 'F'), convert strings to float. (#7857)<br>
 <br>
 sort() is not stable when using numeric/float sort (Nikolay Pavlov, 2016 Sep<br>
 4#1038)<br>

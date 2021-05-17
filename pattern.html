@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'pattern'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="pattern.html" name="pattern.txt">pattern.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Feb 16<br>
+<a class="Constant" href="pattern.html" name="pattern.txt">pattern.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 May 02<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -24,6 +24,7 @@ explanations are in chapter 27&nbsp;<a class="Identifier" href="usr_27.html">usr
 8. Composing characters&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pattern.html#patterns-composing">patterns-composing</a><br>
 9. Compare with Perl patterns&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pattern.html#perl-patterns">perl-patterns</a><br>
 10. Highlighting matches&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pattern.html#match-highlight">match-highlight</a><br>
+11. Fuzzy matching&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pattern.html#fuzzy-match">fuzzy-match</a><br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 1. Search commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pattern.html#search-commands" name="search-commands">search-commands</a><br>
@@ -1435,6 +1436,39 @@ Finally, these constructs are unique to Perl:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;:3match&quot; command is used by the&nbsp;<a class="Identifier" href="pi_paren.html#matchparen">matchparen</a>&nbsp;plugin.&nbsp;&nbsp;You<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;are suggested to use &quot;:match&quot; for manual matching and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;:2match&quot; for another plugin.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+11. Fuzzy matching&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pattern.html#fuzzy-match" name="fuzzy-match">fuzzy-match</a><br>
+<br>
+Fuzzy matching refers to matching strings using a non-exact search string.<br>
+Fuzzy matching will match a string, if all the characters in the search string<br>
+are present anywhere in the string in the same order. Case is ignored.&nbsp;&nbsp;In a<br>
+matched string, other characters can be present between two consecutive<br>
+characters in the search string. If the search string has multiple words, then<br>
+each word is matched separately. So the words in the search string can be<br>
+present in any order in a string.<br>
+<br>
+Fuzzy matching assigns a score for each matched string based on the following<br>
+criteria:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- The number of sequentially matching characters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- The number of characters (distance) between two consecutive matching<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;characters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- Matches at the beginning of a word<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- Matches after a camel case character or a path separator or a hyphen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- The number of unmatched characters in a string.<br>
+The matching string with the highest score is returned first.<br>
+<br>
+For example, when you search for the &quot;get pat&quot; string using fuzzy matching, it<br>
+will match the strings &quot;GetPattern&quot;, &quot;PatternGet&quot;, &quot;getPattern&quot;, &quot;patGetter&quot;,<br>
+&quot;getSomePattern&quot;, &quot;MatchpatternGet&quot; etc.<br>
+<br>
+The functions&nbsp;<a class="Identifier" href="eval.html#matchfuzzy()">matchfuzzy()</a>&nbsp;and&nbsp;<a class="Identifier" href="eval.html#matchfuzzypos()">matchfuzzypos()</a>&nbsp;can be used to fuzzy search<br>
+a string in a List of strings. The matchfuzzy() function returns a List of<br>
+matching strings. The matchfuzzypos() functions returns the List of matches,<br>
+the matching positions and the fuzzy match scores.<br>
+<br>
+The &quot;f&quot; flag of&nbsp;<a class="Comment" href="quickfix.html#:vimgrep">:vimgrep</a>&nbsp;enables fuzzy matching.<br>
+<br>
 <br>
 <br>
 &nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
