@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 May 15<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 May 28<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -42,6 +42,20 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 (replace 1234 with the issue/pull number)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
+<br>
+Geen memory leak?<br>
+<br>
+Crash using outer var from nested lambda:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def F(text: string): func(string): func(string): string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return (arg: string): func(string): string =&gt; ((sep: string): string =&gt; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return text .. ' ' .. arg<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo F(<span class="MissingTag">'hello'</span>)(' ')(<span class="MissingTag">'there'</span>)<br>
+<br>
+<br>
 <br>
 Vim9 - Make everything work:<br>
 - function returning nothing should return void instead of zero<br>
@@ -107,6 +121,9 @@ Further Vim9 improvements, possibly after launch:<br>
 <br>
 <br>
 Popup windows:<br>
+- Preview popup not properly updated when it overlaps with completion menu.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Yegappan Lakshmanan, 2021 May 22<br>
+- In some cases prop_remove() does not work correctly. (#8261)<br>
 - Add a flag to make a popup window focusable?<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-W</span>&nbsp;P cycle over any preview window or focusable popup, end up back in<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current window.<br>
@@ -139,6 +156,11 @@ Popup windows:<br>
 - Figure out the size and position better if wrapping inserts indent<br>
 <br>
 Text properties:<br>
+- property is overruled by cursorline. (#8225).<br>
+&nbsp;&nbsp;Add better control over priority?&nbsp;&nbsp;Make list of all highlighting, specify<br>
+&nbsp;&nbsp;where property fits in.<br>
+&nbsp;&nbsp;Or Should we let the textprop highlight overrule other (e.g. diff) highlight<br>
+&nbsp;&nbsp;if the priority is above a certain value?&nbsp;&nbsp;(#7392)<br>
 - Popup attached to text property stays visible when text is no longer<br>
 &nbsp;&nbsp;visible. (#7736)<br>
 - Popup attached to text property stays visible when text is deleted with<br>
@@ -148,8 +170,6 @@ Text properties:<br>
 - &quot;cc&quot; does not call inserted_bytes(). (Axel Forsman, #5763)<br>
 - Combining text property with&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;does not always work (Billie<br>
 &nbsp;&nbsp;Cleek, #5533)<br>
-- Should we let the textprop highlight overrule other (e.g. diff) highlight if<br>
-&nbsp;&nbsp;the priority is above a certain value?&nbsp;&nbsp;(#7392)<br>
 - See remarks at top of src/textprop.c<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s:<br>
@@ -226,6 +246,11 @@ Terminal emulator window:<br>
 <br>
 Include patch #6290: recognize shell directory change.<br>
 <br>
+MS-Windows GUI: default&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;to &quot;utf-8&quot; ?&nbsp;&nbsp;(#8221)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Add #ifdef MSWIN before enc_locale() in set_init_1().<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Or just always for MS-Windows?&nbsp;&nbsp;Conversion to&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;should always<br>
+&nbsp;&nbsp;&nbsp;&nbsp;work?<br>
+<br>
 Valgrind reports memory leaks in test_options.<br>
 Valgrind reports overlapping memcpy in<br>
 &nbsp;&nbsp;&nbsp;&nbsp;test_conceal.3<br>
@@ -268,6 +293,9 @@ Also, z= in German on a long word can take a very long time, but&nbsp;<span clas
 interrupt does not work. Where to add ui_breakcheck()?<br>
 <br>
 Remove SPACE_IN_FILENAME ? It is only used for completion.<br>
+<br>
+Searching for \%'&gt; does not find anything when using line Visual selection.<br>
+Probably because it's using MAXCOL.&nbsp;&nbsp;#8238<br>
 <br>
 Add optional argument to virtcol() that specifies &quot;start&quot;, &quot;cursor&quot; or &quot;end&quot;<br>
 to tell which value from getvvcol() should be used. (#7964)<br>
@@ -412,6 +440,8 @@ With bash &quot;:make&quot; does not set v:shell_error.&nbsp;&nbsp;Possible solu
 Using mode() when &quot;/pat&quot; is used in Visual mode returns &quot;v&quot; instead of &quot;c&quot;,<br>
 which is not useful.&nbsp;&nbsp;Return &quot;c/v&quot; instead.&nbsp;&nbsp;And &quot;c/o&quot; when using &quot;d/pat&quot;.<br>
 #6127<br>
+<br>
+Add a cterm attribute for &quot;dimmed&quot; or &quot;faint&quot; text. (#8269)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'fileignorecase'">'fileignorecase'</a>&nbsp;is set &quot;:e testfile.c&quot; works to edit TestFile.c, but<br>
 &quot;:find testfile.c&quot; does not ignore case.<br>
@@ -2990,7 +3020,7 @@ More patches:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;vimtutor.vim. (Jan Minar, 2008 Jul 20)<br>
 -&nbsp;&nbsp; When fsync() fails there is no hint about what went wrong.&nbsp;&nbsp;Patch by Ben<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Schmidt, 2008 Jul 22.<br>
--&nbsp;&nbsp; testdir/Make_dos_sh.mak for running tests with MingW. (Bill Mccarthy, 2008<br>
+-&nbsp;&nbsp; testdir/Make_dos_sh.mak for running tests with MingW. (Bill McCarthy, 2008<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Sep 13)<br>
 -&nbsp;&nbsp; Replace ccomplete.vim by cppcomplete.vim from&nbsp;<span class="Constant">www.vim.org</span>?&nbsp;&nbsp;script 1520 by<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Vissale Neang.&nbsp;&nbsp;(Martin Stubenschrott) Asked Vissale to make the scripts<br>
