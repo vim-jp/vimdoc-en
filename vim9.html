@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 May 26<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jun 12<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -173,6 +173,14 @@ created yet.&nbsp;&nbsp;In this case you can call&nbsp;<a class="Comment" href="
 &quot;closure&quot;.&nbsp;&nbsp;A&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function always aborts on an error (unless&nbsp;<a class="Comment" href="various.html#:silent!">:silent!</a>&nbsp;was<br>
 used for the command or inside a&nbsp;<a class="Comment" href="eval.html#:try">:try</a>&nbsp;block), does not get a range passed<br>
 cannot be a &quot;dict&quot; function, and can always be a closure.<br>
+<br>
+Later classes will be added, which replaces the &quot;dict function&quot; mechanism.<br>
+For now you will need to pass the dictionary explicitly:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def DictFunc(d: dict&lt;any&gt;, arg: string)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo d[arg]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var d = {item: 'value', func: DictFunc}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d.func(d, 'item')</div>
 <br>
 The argument types and return type need to be specified.&nbsp;&nbsp;The &quot;any&quot; type can<br>
 be used, type checking will then be done at runtime, like with legacy<br>
@@ -450,7 +458,7 @@ it is the start of a lambda or a dictionary, which is now more complicated<br>
 because of the use of argument types.<br>
 <br>
 To avoid these problems Vim9 script uses a different syntax for a lambda,<br>
-which is similar to Javascript:<br>
+which is similar to JavaScript:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Lambda = (arg) =&gt; expression</div>
 <br>
 No line break is allowed in the arguments of a lambda up to and including the<br>
@@ -527,7 +535,7 @@ And when a dict spans multiple lines:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;one: 1,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;two: 2,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</div>
-Function call:<br>
+With a function call:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var result = Func(<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arg1,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arg2<br>
@@ -560,10 +568,31 @@ at the start of the line indicates line continuation:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp; echo 'match'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| endif</div>
 <br>
+<span class="Todo">Note</span>&nbsp;that this means that in heredoc the first line cannot be a bar:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var lines =&lt;&lt; trim END<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | this doesn't work<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END</div>
+Either use an empty line at the start or do not use heredoc.&nbsp;&nbsp;Or temporarily<br>
+add the &quot;C&quot; flag to&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set cpo+=C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var lines =&lt;&lt; trim END<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | this doesn't work<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set cpo-=C</div>
+If the heredoc is inside a function&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;must be set before :def and<br>
+restored after the :enddef.<br>
+<br>
+In places where line continuation with a backslash is still needed, such as<br>
+splitting up a long Ex command, comments can start with #\ instead of &quot;\:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;syn region Text<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ start='foo'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#\ comment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ end='bar'</div>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1050" name="E1050">E1050</a><br>
 To make it possible for the operator at the start of the line to be<br>
-recognized, it is required to put a colon before a range.&nbsp;&nbsp;This will add<br>
-&quot;start&quot; and print:<br>
+recognized, it is required to put a colon before a range.&nbsp;&nbsp;This example will<br>
+add &quot;start&quot; and print:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var result = start<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ print</div>
 Like this:<br>
@@ -615,6 +644,9 @@ example, after &quot;windo echo expr&quot; a line break inside &quot;expr&quot; 
 &nbsp;&nbsp;&nbsp;This does not work:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo [1, 2]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3, 4]</div>
+- In some cases it is difficult for Vim to parse a command, especially when<br>
+&nbsp;&nbsp;commands are used as an argument to another command, such as&nbsp;<a class="Comment" href="windows.html#:windo">windo</a>.&nbsp;&nbsp;In<br>
+&nbsp;&nbsp;those cases the line continuation with a backslash has to be used.<br>
 <br>
 <br>
 <span class="PreProc">White space</span><br>
@@ -1244,10 +1276,11 @@ Exporting an item can be written as:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export final someValue = ...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export const someValue = ...<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export def MyFunc() ...<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export class MyClass ...</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export class MyClass ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export interface MyClass ...</div>
 <br>
 As this suggests, only constants, variables,&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions and classes can<br>
-be exported.&nbsp;<span class="Special">{not implemented yet: export class}</span><br>
+be exported.&nbsp;<span class="Special">{not implemented yet: class, interface}</span><br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1042" name="E1042">E1042</a><br>
 <a class="Comment" href="vim9.html#:export">:export</a>&nbsp;can only be used in Vim9 script, at the script level.<br>
@@ -1347,26 +1380,45 @@ implementing classes is going to be a lot of work, it is left for the future.<br
 For now we'll just make sure classes can be added later.<br>
 <br>
 Thoughts:<br>
--&nbsp;<span class="Comment">class</span>&nbsp;/&nbsp;<span class="Comment">endclass</span>, everything in one file<br>
-- Class names are always CamelCase<br>
-- Single constructor<br>
+-&nbsp;<span class="Comment">class</span>&nbsp;/&nbsp;<span class="Comment">endclass</span>, the whole class must be in one file<br>
+- Class names are always CamelCase (to avoid a name clash with builtin types)<br>
+- A single constructor called &quot;constructor&quot;<br>
 - Single inheritance with&nbsp;<span class="Comment">class ThisClass extends BaseClass</span><br>
--&nbsp;<span class="Comment">abstract class</span><br>
--&nbsp;<span class="Comment">interface</span>&nbsp;(Abstract class without any implementation)<br>
+-&nbsp;<span class="Comment">abstract class</span>&nbsp;(class with incomplete implementation)<br>
+-&nbsp;<span class="Comment">interface</span>&nbsp;/&nbsp;<span class="Comment">endinterface</span>&nbsp;(abstract class without any implementation)<br>
 -&nbsp;<span class="Comment">class SomeClass implements SomeInterface</span><br>
 - Generics for class:&nbsp;<span class="Comment">class &lt;Tkey, Tentry&gt;</span><br>
 - Generics for function:&nbsp;<span class="Comment">def &lt;Tkey&gt; GetLast(key: Tkey)</span><br>
 <br>
-Again, much of this is from TypeScript.<br>
+Again, much of this is from TypeScript with a slightly different syntax.<br>
 <br>
 Some things that look like good additions:<br>
 - Use a class as an interface (like Dart)<br>
 - Extend a class with methods, using an import (like Dart)<br>
+- Mixins<br>
+- For testing: Mock mechanism<br>
 <br>
 An important class that will be provided is &quot;Promise&quot;.&nbsp;&nbsp;Since Vim is single<br>
 threaded, connecting asynchronous operations is a natural way of allowing<br>
 plugins to do their work without blocking the user.&nbsp;&nbsp;It's a uniform way to<br>
 invoke callbacks and handle timeouts and errors.<br>
+<br>
+Some examples:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abstract class Person&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static const prefix = 'xxx'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var name: string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def constructor(name: string)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.name = name;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def display(): void<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abstract def find(string): Person<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
