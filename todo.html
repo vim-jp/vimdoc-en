@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 May 28<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jun 13<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,57 +43,30 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Geen memory leak?<br>
-<br>
-Crash using outer var from nested lambda:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def F(text: string): func(string): func(string): string<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return (arg: string): func(string): string =&gt; ((sep: string): string =&gt; {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return text .. ' ' .. arg<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;})<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo F(<span class="MissingTag">'hello'</span>)(' ')(<span class="MissingTag">'there'</span>)<br>
-<br>
-<br>
-<br>
 Vim9 - Make everything work:<br>
-- function returning nothing should return void instead of zero<br>
-- compile &quot;expr&quot; and &quot;call&quot; expression of a channel in channel_exe_cmd()?<br>
-- Need some solution for dict function.&nbsp;&nbsp;Can we implement part of classes?<br>
-- A lambda without {} does not require a return type, using { return x } does.<br>
-&nbsp;&nbsp;That's unexpected, since the arguments are not required to have a type.<br>
-&nbsp;&nbsp;alt 1: not require a return type, figure it out from the common type of all<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the return statements found<br>
-&nbsp;&nbsp;alt 2: also require argument types<br>
-- Using &quot;windo echo expr&quot; does not accept a line break inside &quot;expr&quot; (in a<br>
-&nbsp;&nbsp;:def function and at script level in a not executed block). #7681<br>
-- use CheckLegacyAndVim9Success(lines) in many more places<br>
+- Make debugging work - at least per function.&nbsp;&nbsp;<br>
+&nbsp;&nbsp;- How to evaluate the stack and variables on the stack?<br>
+&nbsp;&nbsp;- FIXME in test_debugger.vim<br>
 - For builtin functions using tv_get_string*() use check_for_string() to be<br>
 &nbsp;&nbsp;more strict about the argument type (not a bool).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;done: balloon_()<br>
 - Check many more builtin function arguments at compile time.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;map() could check that the return type of the function argument matches<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the type of the list or dict member. (#8092)<br>
-- Allow for using an autoload function name without quotes.&nbsp;&nbsp;It is then loaded<br>
-&nbsp;&nbsp;(and compiled) right away.&nbsp;&nbsp;#8124<br>
-- Test more expressions in legacy and Vim9 script, using<br>
-&nbsp;&nbsp;CheckLegacyAndVim9Success()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Same for other functions, such as searchpair().<br>
+- use CheckLegacyAndVim9Success(lines) in many more places<br>
 - Test try/catch and throw better, also nested.<br>
 &nbsp;&nbsp;Test that return inside try/finally jumps to finally and then returns.<br>
 - Test that a function defined inside a :def function is local to that<br>
 &nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
 &nbsp;&nbsp;defined.<br>
-- Make debugging work - at least per function.&nbsp;&nbsp;Need to recompile a function<br>
-&nbsp;&nbsp;to step through it line-by-line?&nbsp;&nbsp;Evaluate the stack and variables on the<br>
-&nbsp;&nbsp;stack?<br>
-- Reserve command for future use: :type, :class, :enum<br>
+- compile get_lambda_tv() in popup_add_timeout()<br>
 <br>
 Once Vim9 is stable:<br>
+- Add the &quot;vim9script&quot; feature, can use has('vim9script')<br>
 - Change the help to prefer Vim9 syntax where appropriate<br>
 - Add all the error numbers in a good place in documentation.<br>
 - In the generic eval docs, point out the Vim9 syntax where it differs.<br>
-- Add the &quot;vim9script&quot; feature, can use has('vim9script')<br>
 - Use Vim9 for runtime files.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;PR #7497 for autoload/ccomplete.vim<br>
 <br>
@@ -105,13 +78,12 @@ Further Vim9 improvements, possibly after launch:<br>
 &nbsp;&nbsp;Give an error if compilation fails. (#7625)<br>
 &nbsp;&nbsp;Use the location where the option was set for deciding whether it's to be<br>
 &nbsp;&nbsp;evaluated in Vim9 script context.<br>
-- implement :type, import type declaration.<br>
-- implement enum,&nbsp;&nbsp;import enum.<br>
-- Future work: See&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a><br>
+- implement :type, &quot;import type&quot;<br>
+- implement enum,&nbsp;&nbsp;&quot;import enum&quot;.<br>
+- implement class and interface: See&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a><br>
 - For range: make table of first ASCII character with flag to quickly check if<br>
 &nbsp;&nbsp;it can be a Vim9 command. E.g. &quot;+&quot; can, but &quot;.&quot; can't.<br>
-- compile get_lambda_tv() in popup_add_timeout()<br>
-- inline call to map() and filter()<br>
+- Inline call to map() and filter(), better type checking.<br>
 - Make accessing varargs faster: arg[expr]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVAL expr<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOADVARARG (varargs idx)<br>
@@ -305,6 +277,9 @@ inconsistent with the documentation.<br>
 Making breakat support multibyte characters (Yasuhiro Matsumoto, #6598)<br>
 Scroll doesn't work correctly, why?<br>
 <br>
+glob() and globfile() do not always honor&nbsp;<a class="Type" href="options.html#'wildignorecase'">'wildignorecase'</a>. #8350<br>
+globpath() does not use&nbsp;<a class="Type" href="options.html#'wildignorecase'">'wildignorecase'</a>&nbsp;at all?<br>
+<br>
 Add&nbsp;<span class="MissingTag">'termguiattr'</span>&nbsp;option, use &quot;gui=&quot; attributes in the terminal?&nbsp;&nbsp;Would work<br>
 with&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>. #1740<br>
 <br>
@@ -349,6 +324,9 @@ Should also work without any group:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;:echo matchstr('aaa bbb', '.\<span class="Special">{-1,}</span>\&gt;\|.*')<br>
 &nbsp;&nbsp;&nbsp;&nbsp;aaa bbb&nbsp;&nbsp;(should be aaa)<br>
 <br>
+Should add a match/str/list/pos method that also returns the test and position<br>
+of submatches.&nbsp;&nbsp;#8355<br>
+<br>
 Check out PR #543 (Roland Puntaier).<br>
 Patch for multibyte characters in langmap and applying a mapping on them.<br>
 (Christian Brabandt, 2015 Jun 12, update July 25)<br>
@@ -384,6 +362,10 @@ work.<br>
 <br>
 Using &quot;au!&quot; after &quot;filetype on&quot; is a bit slow.&nbsp;&nbsp;Can the matching of<br>
 autocommands be made faster?&nbsp;&nbsp;(#7056)<br>
+<br>
+Append in Visual block mode inserts the wrong character.<br>
+Test_visual_block_mode() already has the proper check, which is commented out.<br>
+(#8288)<br>
 <br>
 Add the &lt;=&gt; (spaceship) operator and &quot;cond ?&lt; expr ?= expr ?&gt; expr&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;replace this:<br>
@@ -2267,9 +2249,6 @@ Are they all OK?&nbsp;&nbsp;Update Jul 22.<br>
 Win32: Improved Makefile for MSVC. (Leonardo Valeri Manera, 2010 Aug 18)<br>
 <br>
 Win32: Expanding&nbsp;<a class="Type" href="options.html#'path'">'path'</a>&nbsp;runs into a maximum size limit. (bgold12, 2009 Nov 15)<br>
-<br>
-Win32: Patch for enabling quick edit mode in console. (Craig Barkhouse, 2010<br>
-Sep 1)<br>
 <br>
 Win32: Patch for using .png files for icons. (Charles Peacech, 2012 Feb 5)<br>
 <br>
