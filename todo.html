@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jun 13<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jun 26<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,10 +43,13 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Memory eaten up by function returning a closure.&nbsp;&nbsp;#8439<br>
+Circular reference.&nbsp;&nbsp;Should garbage collector find unused local variables?<br>
+<br>
 Vim9 - Make everything work:<br>
-- Make debugging work - at least per function.&nbsp;&nbsp;<br>
-&nbsp;&nbsp;- How to evaluate the stack and variables on the stack?<br>
-&nbsp;&nbsp;- FIXME in test_debugger.vim<br>
+- possible leak in test_vim9_builtin ?<br>
+- use CheckLegacyAndVim9Success(lines) in many more places<br>
+- compile get_lambda_tv() in popup_add_timeout()<br>
 - For builtin functions using tv_get_string*() use check_for_string() to be<br>
 &nbsp;&nbsp;more strict about the argument type (not a bool).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;done: balloon_()<br>
@@ -54,13 +57,13 @@ Vim9 - Make everything work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;map() could check that the return type of the function argument matches<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the type of the list or dict member. (#8092)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Same for other functions, such as searchpair().<br>
-- use CheckLegacyAndVim9Success(lines) in many more places<br>
 - Test try/catch and throw better, also nested.<br>
 &nbsp;&nbsp;Test that return inside try/finally jumps to finally and then returns.<br>
 - Test that a function defined inside a :def function is local to that<br>
 &nbsp;&nbsp;function, g: functions can be defined and script-local functions cannot be<br>
 &nbsp;&nbsp;defined.<br>
-- compile get_lambda_tv() in popup_add_timeout()<br>
+- Unexpected error message when using &quot;var x: any | x.key = 9&quot;, because &quot;x&quot; is<br>
+&nbsp;&nbsp;given the type number.&nbsp;&nbsp;Can we use VAR_ANY?<br>
 <br>
 Once Vim9 is stable:<br>
 - Add the &quot;vim9script&quot; feature, can use has('vim9script')<br>
@@ -292,6 +295,9 @@ Missing filetype test for bashrc, PKGBUILD, etc.<br>
 Add an option to not fetch terminal codes in xterm, to avoid flicker when t_Co<br>
 changes.<br>
 <br>
+MS-Windows: instead of &quot;edit with multiple Vims&quot; use &quot;Edit with Vim in<br>
+multiple tabs&quot;. #8404<br>
+<br>
 When using &quot;:bwipe!&quot; also get rid of references to be buffer, e.g. in the<br>
 jumplist and alternate file.<br>
 <br>
@@ -327,6 +333,9 @@ Should also work without any group:<br>
 Should add a match/str/list/pos method that also returns the test and position<br>
 of submatches.&nbsp;&nbsp;#8355<br>
 <br>
+Syntax highlight for a region does not work with a &quot;nextgroup&quot; if the start<br>
+match is empty. #8449<br>
+<br>
 Check out PR #543 (Roland Puntaier).<br>
 Patch for multibyte characters in langmap and applying a mapping on them.<br>
 (Christian Brabandt, 2015 Jun 12, update July 25)<br>
@@ -351,6 +360,7 @@ The buffer list and windows are locked, no changes possible<br>
 <br>
 Add a ModeChanged autocommand that has an argument indicating the old and new<br>
 mode, as what's returned from mode().&nbsp;&nbsp;Also used for switching Terminal mode.<br>
+#8360, #7863, #7363<br>
 <br>
 Matchparen doesn't remove highlight after undo. (#7054)<br>
 Is OK when syntax HL is active.<br>
