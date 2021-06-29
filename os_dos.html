@@ -22,6 +22,7 @@ versions of Vim.&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="os_win32.h
 7. Interrupting&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-CTRL-Break">dos-CTRL-Break</a><br>
 8. Temp files&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-temp-files">dos-temp-files</a><br>
 9. Shell option default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-shell">dos-shell</a><br>
+10. PowerShell&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="os_dos.html#dos-powershell">dos-powershell</a><br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 1. File locations&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_dos.html#dos-locations" name="dos-locations">dos-locations</a><br>
@@ -302,9 +303,47 @@ For Win32 as:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;shell&gt;</span>&nbsp;-c &quot;command name &gt;file&quot;<br>
 For DOS 32 bit, DJGPP does this internally somehow.<br>
 <br>
-When starting up, Vim checks for the presence of &quot;sh&quot; anywhere in the&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a><br>
-option.&nbsp;&nbsp;If it is present, Vim sets the&nbsp;<a class="Type" href="options.html#'shellcmdflag'">'shellcmdflag'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'shellquote'">'shellquote'</a>&nbsp;or<br>
-<a class="Type" href="options.html#'shellxquote'">'shellxquote'</a>&nbsp;options will be set as described above.<br>
+When starting up, if Vim does not recognise a standard Windows shell it checks<br>
+for the presence of &quot;sh&quot; anywhere in the&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>&nbsp;option.&nbsp;&nbsp;If it is present,<br>
+Vim sets the&nbsp;<a class="Type" href="options.html#'shellcmdflag'">'shellcmdflag'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'shellquote'">'shellquote'</a>&nbsp;or&nbsp;<a class="Type" href="options.html#'shellxquote'">'shellxquote'</a>&nbsp;options will be<br>
+set as described above.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+10. PowerShell&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_dos.html#dos-powershell" name="dos-powershell">dos-powershell</a><br>
+<br>
+Vim also supports Windows PowerShell.&nbsp;&nbsp;If&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>&nbsp;has been set to<br>
+&quot;powershell.exe&quot; at startup then VIM sets&nbsp;<a class="Type" href="options.html#'shellcmdflag'">'shellcmdflag'</a>,&nbsp;<a class="Type" href="options.html#'shellxquote'">'shellxquote'</a>,<br>
+<a class="Type" href="options.html#'shellpipe'">'shellpipe'</a>, and&nbsp;<a class="Type" href="options.html#'shellredir'">'shellredir'</a>&nbsp;options to the following values:<br>
+<br>
+<a class="Type" href="options.html#'shellcmdflag'">'shellcmdflag'</a>&nbsp;&nbsp;-Command<br>
+<a class="Type" href="options.html#'shellxquote'">'shellxquote'</a>&nbsp;&nbsp; &quot;<br>
+<a class="Type" href="options.html#'shellpipe'">'shellpipe'</a>&nbsp;&nbsp;&nbsp;&nbsp; 2&gt;&amp;1 | Out-File -Encoding default<br>
+<a class="Type" href="options.html#'shellredir'">'shellredir'</a>&nbsp;&nbsp;&nbsp;&nbsp;2&gt;&amp;1 | Out-File -Encoding default<br>
+<br>
+If you find that PowerShell commands are taking a long time to run then try<br>
+setting&nbsp;<a class="Type" href="options.html#'shellcmdflag'">'shellcmdflag'</a>&nbsp;to &quot;-NoProfile -Command&quot;.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;this will prevent any<br>
+PowerShell environment setup by the profile from taking place.<br>
+<br>
+If you have problems running PowerShell scripts through the&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>&nbsp;then try<br>
+setting&nbsp;<a class="Type" href="options.html#'shellcmdflag'">'shellcmdflag'</a>&nbsp;to &quot;-ExecutionPolicy RemoteSigned -Command&quot;.&nbsp;&nbsp;See<br>
+online Windows documentation for more information on PowerShell Execution<br>
+Policy settings.<br>
+<br>
+The&nbsp;<a class="Type" href="options.html#'shellpipe'">'shellpipe'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'shellredir'">'shellredir'</a>&nbsp;option values re-encode the UTF-16le output<br>
+from Windows PowerShell to your currently configured console codepage.&nbsp;&nbsp;The<br>
+output can be forced into a different encoding by changing &quot;default&quot; to one of<br>
+the following:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unicode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- UTF-16le (default output from PowerShell 5.1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bigendianunicode - UTF-16<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;utf8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - UTF-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;utf7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - UTF-7 (no-BOM)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;utf32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- UTF-32<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ascii&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 7-bit ASCII character set<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- System's active code page (typically ANSI)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oem&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- System's current OEM code page<br>
+<br>
+<span class="Todo">Note</span>&nbsp;Multi-byte Unicode encodings include a leading BOM.<br>
 <br>
 &nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
 </div>
