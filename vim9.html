@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jun 25<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jul 07<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -447,7 +447,8 @@ The function must already have been defined.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var Funcref = MyFunction</div>
 <br>
 When using&nbsp;<a class="Comment" href="eval.html#function()">function()</a>&nbsp;the resulting type is &quot;func&quot;, a function with any<br>
-number of arguments and any return type.&nbsp;&nbsp;The function can be defined later.<br>
+number of arguments and any return type (including void).&nbsp;&nbsp;The function can be<br>
+defined later.<br>
 <br>
 <br>
 <span class="PreProc">Lambda using =&gt; instead of -&gt;</span><br>
@@ -584,11 +585,16 @@ If the heredoc is inside a function&nbsp;<a class="Type" href="options.html#'cpo
 restored after the :enddef.<br>
 <br>
 In places where line continuation with a backslash is still needed, such as<br>
-splitting up a long Ex command, comments can start with #\ instead of &quot;\:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;syn region Text<br>
+splitting up a long Ex command, comments can start with '#\ ':<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;syn region Text<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ start='foo'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#\ comment<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ end='bar'</div>
+Like with legacy script '&quot;\ ' is used.&nbsp;&nbsp;This is also needed when line<br>
+continuation is used without a backslash and a line starts with a bar:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au CursorHold * echom 'BEFORE bar'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#\ some comment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| echom 'AFTER bar'</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1050" name="E1050">E1050</a><br>
 To make it possible for the operator at the start of the line to be<br>
@@ -1089,10 +1095,8 @@ The following builtin types are supported:<br>
 Not supported yet:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tuple&lt;a:&nbsp;<span class="Special">{type}</span>, b:&nbsp;<span class="Special">{type}</span>, ...&gt;<br>
 <br>
-These types can be used in declarations, but no value will have this type:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{type}</span>|<span class="Special">{type}</span>&nbsp;&nbsp;<span class="Special">{not implemented yet}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any<br>
+These types can be used in declarations, but no simple value will actually<br>
+have the &quot;void&quot; type.<br>
 <br>
 There is no array type, use list&lt;<span class="Special">{type}</span>&gt; instead.&nbsp;&nbsp;For a list constant an<br>
 efficient implementation is used that avoids allocating lot of small pieces of<br>
@@ -1101,8 +1105,16 @@ memory.<br>
 A partial and function can be declared in more or less specific ways:<br>
 func&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any kind of function reference, no type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;checking for arguments or return value<br>
+func: void&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any number and type of arguments, no return<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value<br>
 func:&nbsp;<span class="Special">{type}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any number and type of arguments with specific<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return type<br>
+<br>
+func()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function with no argument, does not return a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value<br>
+func(): void&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same<br>
+func():&nbsp;<span class="Special">{type}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function with no argument and return type<br>
+<br>
 func(<span class="Special">{type}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function with argument type, does not return<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a value<br>
 func(<span class="Special">{type}</span>):&nbsp;<span class="Special">{type}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function with argument type and return type<br>
@@ -1191,6 +1203,18 @@ dictionary.&nbsp;&nbsp;If there is a mix of types, the &quot;any&quot; type is u
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['a', 'b', 'c'] list&lt;string&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1, 'x', 3]&nbsp;&nbsp;&nbsp;&nbsp; list&lt;any&gt;</div>
 <br>
+The common type of function references, if they do not all have the same<br>
+number of arguments, uses &quot;(...)&quot; to indicate the number of arguments is not<br>
+specified.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Foo(x: bool)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Bar(x: bool, y: bool)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var funclist = [Foo, Bar]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo funclist-&gt;typename()</div>
+Results in:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list&lt;func(...)&gt;<br>
+<br>
 For script-local variables in Vim9 script the type is checked, also when the<br>
 variable was declared in a legacy function.<br>
 <br>
@@ -1207,16 +1231,24 @@ In Vim9 script this has been made stricter.&nbsp;&nbsp;In most places it works j
 before, if the value used matches the expected type.&nbsp;&nbsp;There will sometimes be<br>
 an error, thus breaking backwards compatibility.&nbsp;&nbsp;For example:<br>
 - Using a number other than 0 or 1 where a boolean is expected.&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1023" name="E1023">E1023</a><br>
-- Using a string value when setting a number options.<br>
+- Using a string value when setting a number option.<br>
 - Using a number where a string is expected.&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1024" name="E1024">E1024</a><br>
 <br>
 One consequence is that the item type of a list or dict given to map() must<br>
 not change.&nbsp;&nbsp;This will give an error in Vim9 script:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map([1, 2, 3], (i, v) =&gt; 'item ' .. i)<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9 echo map([1, 2, 3], (i, v) =&gt; 'item ' .. i)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E1012: Type mismatch; expected number but got string</div>
-Instead use&nbsp;<a class="Identifier" href="eval.html#mapnew()">mapnew()</a>.&nbsp;&nbsp;If the item type was determined to be &quot;any&quot; it can<br>
-change to a more specific type.&nbsp;&nbsp;E.g. when a list of mixed types gets changed<br>
-to a list of numbers.<br>
+Instead use |mapnew():<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9 echo mapnew([1, 2, 3], (i, v) =&gt; 'item ' .. i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['item 0', 'item 1', 'item 2']</div>
+<br>
+If the item type was determined to be &quot;any&quot; it can change to a more specific<br>
+type.&nbsp;&nbsp;E.g. when a list of mixed types gets changed to a list of numbers:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var mylist = [1, 2.0, '3']<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# typename(mylist) == &quot;list&lt;any&gt;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(mylist, (i, v) =&gt; 'item ' .. i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# typename(mylist) == &quot;list&lt;string&gt;&quot;, no error</div>
+<br>
 Same for&nbsp;<a class="Identifier" href="eval.html#extend()">extend()</a>, use&nbsp;<a class="Identifier" href="eval.html#extendnew()">extendnew()</a>&nbsp;instead, and for&nbsp;<a class="Identifier" href="eval.html#flatten()">flatten()</a>, use<br>
 <a class="Identifier" href="eval.html#flattennew()">flattennew()</a>&nbsp;instead.<br>
 <br>
