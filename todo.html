@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jul 05<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jul 26<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,11 +43,14 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Try out callgrind with kcachegrind.<br>
+<br>
 Vim9 - Make everything work:<br>
-- possible leak in test_vim9_builtin ?<br>
-- Make &quot;for _ in range()&quot; work, do not store the value in a var.<br>
+- Check TODO items in vim9compile.c and vim9execute.c<br>
 - use CheckLegacyAndVim9Success(lines) in many more places<br>
-- compile get_lambda_tv() in popup_add_timeout()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;This doesn't work - Test_list_assign():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var l = [0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l[:] = [1, 2]<br>
 - For builtin functions using tv_get_string*() use check_for_string() to be<br>
 &nbsp;&nbsp;more strict about the argument type (not a bool).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;done: balloon_()<br>
@@ -219,10 +222,13 @@ Terminal emulator window:<br>
 <br>
 Include patch #6290: recognize shell directory change.<br>
 <br>
-MS-Windows GUI: default&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;to &quot;utf-8&quot; ?&nbsp;&nbsp;(#8221)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Add #ifdef MSWIN before enc_locale() in set_init_1().<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Or just always for MS-Windows?&nbsp;&nbsp;Conversion to&nbsp;<a class="Type" href="options.html#'termencoding'">'termencoding'</a>&nbsp;should always<br>
-&nbsp;&nbsp;&nbsp;&nbsp;work?<br>
+When using&nbsp;<a class="Type" href="options.html#'cryptmethod'">'cryptmethod'</a>&nbsp;xchaha20 the undo file is not encrypted.<br>
+Need to handle extra bytes.<br>
+<br>
+Test_communicate_ipv6(): is flaky on many systems<br>
+Fails in line 64 of Ch_communicate, no exception is thrown.<br>
+<br>
+Rename getdigraphlist -&gt; digraph_getlist() etc.<br>
 <br>
 Valgrind reports memory leaks in test_options.<br>
 Valgrind reports overlapping memcpy in<br>
@@ -246,6 +252,8 @@ Memory leaks in test_channel? (or is it because of fork())<br>
 &quot;:set &amp;shellpipe&quot; and &quot;:set &amp;shellredir&quot; should use the logic from<br>
 initialization to figure out the default value from&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>.&nbsp;&nbsp;Add a test for<br>
 this.<br>
+<br>
+MS-Windows: did path modifier :p:8 stop working?&nbsp;&nbsp;#8600<br>
 <br>
 test_arglist func Test_all_not_allowed_from_cmdwin() hangs on MS-Windows.<br>
 <br>
@@ -274,6 +282,9 @@ Remove SPACE_IN_FILENAME ? It is only used for completion.<br>
 Searching for \%'&gt; does not find anything when using line Visual selection.<br>
 Probably because it's using MAXCOL.&nbsp;&nbsp;#8238<br>
 <br>
+Make &quot;g&gt;&quot; and &quot;g&lt;&quot; in Visual mode move the text right or left.<br>
+Also for a block selection.&nbsp;&nbsp;#8558<br>
+<br>
 Add optional argument to virtcol() that specifies &quot;start&quot;, &quot;cursor&quot; or &quot;end&quot;<br>
 to tell which value from getvvcol() should be used. (#7964)<br>
 Value returned by virtcol() changes depending on how lines wrap.&nbsp;&nbsp;This is<br>
@@ -285,10 +296,12 @@ Scroll doesn't work correctly, why?<br>
 glob() and globfile() do not always honor&nbsp;<a class="Type" href="options.html#'wildignorecase'">'wildignorecase'</a>. #8350<br>
 globpath() does not use&nbsp;<a class="Type" href="options.html#'wildignorecase'">'wildignorecase'</a>&nbsp;at all?<br>
 <br>
+&quot;:find&quot; incorrectly searches parent directory of path (#8533)<br>
+<br>
 Add&nbsp;<span class="MissingTag">'termguiattr'</span>&nbsp;option, use &quot;gui=&quot; attributes in the terminal?&nbsp;&nbsp;Would work<br>
 with&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>. #1740<br>
 <br>
-Patch for blockwise paste reporting changes: #6660.<br>
+Patch for blockwise paste reporting changes: #6660.&nbsp;&nbsp;Asked for a PR.<br>
 <br>
 Patch to make fillchars global-local. (#5206)<br>
 <br>
@@ -3074,7 +3087,7 @@ Awaiting updated patches:<br>
 7&nbsp;&nbsp; When&nbsp;<a class="Type" href="options.html#'rightleft'">'rightleft'</a>&nbsp;is set, the search pattern should be displayed right<br>
 &nbsp;&nbsp;&nbsp;&nbsp;to left as well?&nbsp;&nbsp;See patch of Dec 26. (Nadim Shaikli)<br>
 8&nbsp;&nbsp; Option to lock all used memory so that it doesn't get swapped to disk<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(uncrypted).&nbsp;&nbsp;Patch by Jason Holt, 2003 May 23.&nbsp;&nbsp;Uses mlock.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(unencrypted).&nbsp;&nbsp;Patch by Jason Holt, 2003 May 23.&nbsp;&nbsp;Uses mlock.<br>
 7&nbsp;&nbsp; Add ! register, for shell commands. (patch from Grenie)<br>
 8&nbsp;&nbsp; In the gzip plugin, also recognize *.gz.orig, *.gz.bak, etc.&nbsp;&nbsp;Like it's<br>
 &nbsp;&nbsp;&nbsp;&nbsp;done for filetype detection.&nbsp;&nbsp;Patch from Walter Briscoe, 2003 Jul 1.<br>
