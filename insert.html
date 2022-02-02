@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'insert'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="insert.html" name="insert.txt">insert.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jul 05<br>
+<a class="Constant" href="insert.html" name="insert.txt">insert.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Dec 29<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -89,6 +89,8 @@ See&nbsp;<a class="Identifier" href="options.html#'insertmode'">'insertmode'</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line.&nbsp;&nbsp;If there are no newly entered characters and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'backspace'">'backspace'</a>&nbsp;is not empty, delete all characters before the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cursor in the current line.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If C-indenting is enabled the indent will be adjusted if the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line becomes blank.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="insert.html#i_backspacing">i_backspacing</a>&nbsp;about joining lines.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#i_CTRL-I" name="i_CTRL-I">i_CTRL-I</a>&nbsp;<a class="Constant" href="insert.html#i_<Tab>" name="i_&lt;Tab&gt;">i_&lt;Tab&gt;</a>&nbsp;<a class="Constant" href="insert.html#i_Tab" name="i_Tab">i_Tab</a><br>
 <span class="Special">&lt;Tab&gt;</span>&nbsp;or&nbsp;<span class="Special">CTRL-I</span>&nbsp;Insert a tab.&nbsp;&nbsp;If the&nbsp;<a class="Type" href="options.html#'expandtab'">'expandtab'</a>&nbsp;option is on, the<br>
@@ -645,13 +647,15 @@ Completion can be done for:<br>
 12. Spelling suggestions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_s">i_CTRL-X_s</a><br>
 13. keywords in&nbsp;<a class="Type" href="options.html#'complete'">'complete'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-N">i_CTRL-N</a>&nbsp;<a class="Identifier" href="insert.html#i_CTRL-P">i_CTRL-P</a><br>
 <br>
+Additionally,&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-Z">i_CTRL-X_CTRL-Z</a>&nbsp;stops completion without changing the text.<br>
+<br>
 All these, except&nbsp;<span class="Special">CTRL-N</span>&nbsp;and&nbsp;<span class="Special">CTRL-P</span>, are done in&nbsp;<span class="Special">CTRL-X</span>&nbsp;mode.&nbsp;&nbsp;This is a<br>
 sub-mode of Insert and Replace modes.&nbsp;&nbsp;You enter&nbsp;<span class="Special">CTRL-X</span>&nbsp;mode by typing&nbsp;<span class="Special">CTRL-X</span><br>
 and one of the&nbsp;<span class="Special">CTRL-X</span>&nbsp;commands.&nbsp;&nbsp;You exit&nbsp;<span class="Special">CTRL-X</span>&nbsp;mode by typing a key that is<br>
 not a valid&nbsp;<span class="Special">CTRL-X</span>&nbsp;mode command.&nbsp;&nbsp;Valid keys are the&nbsp;<span class="Special">CTRL-X</span>&nbsp;command itself,<br>
 <span class="Special">CTRL-N</span>&nbsp;(next), and&nbsp;<span class="Special">CTRL-P</span>&nbsp;(previous).<br>
 <br>
-To get the current completion information,&nbsp;<a class="Identifier" href="eval.html#complete_info()">complete_info()</a>&nbsp;can be used.<br>
+To get the current completion information,&nbsp;<a class="Identifier" href="builtin.html#complete_info()">complete_info()</a>&nbsp;can be used.<br>
 Also see the&nbsp;<a class="Type" href="options.html#'infercase'">'infercase'</a>&nbsp;option if you want to adjust the case of the match.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#complete_CTRL-E" name="complete_CTRL-E">complete_CTRL-E</a><br>
@@ -827,6 +831,9 @@ Completing keywords in&nbsp;<a class="Type" href="options.html#'dictionary'">'di
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-P</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search backwards for next matching keyword.&nbsp;&nbsp;This<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;keyword replaces the previous matching keyword.<br>
 <br>
+<br>
+Completing words in&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#compl-thesaurus" name="compl-thesaurus">compl-thesaurus</a><br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#i_CTRL-X_CTRL-T" name="i_CTRL-X_CTRL-T">i_CTRL-X_CTRL-T</a><br>
 <span class="Special">CTRL-X</span>&nbsp;<span class="Special">CTRL-T</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Works as&nbsp;<span class="Special">CTRL-X</span>&nbsp;<span class="Special">CTRL-K</span>, but in a special way.&nbsp;&nbsp;It uses<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;option instead of&nbsp;<a class="Type" href="options.html#'dictionary'">'dictionary'</a>.&nbsp;&nbsp;If a<br>
@@ -835,22 +842,63 @@ Completing keywords in&nbsp;<a class="Type" href="options.html#'dictionary'">'di
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matches, even though they don't complete the word.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thus a word can be completely replaced.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For an example, imagine the&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;file has a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line like this:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;angry furious mad enraged</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Placing the cursor after the letters &quot;ang&quot; and typing<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-X</span>&nbsp;<span class="Special">CTRL-T</span>&nbsp;would complete the word &quot;angry&quot;;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;subsequent presses would change the word to &quot;furious&quot;,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;mad&quot; etc.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other uses include translation between two languages,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or grouping API functions by keyword.<br>
-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-T</span>&nbsp;&nbsp;or<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-N</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search forward for next matching keyword.&nbsp;&nbsp;This<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;keyword replaces the previous matching keyword.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-P</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search backwards for next matching keyword.&nbsp;&nbsp;This<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;keyword replaces the previous matching keyword.<br>
+<br>
+In the file used by the&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;option each line in the file should<br>
+contain words with similar meaning, separated by non-keyword characters (white<br>
+space is preferred).&nbsp;&nbsp;Maximum line length is 510 bytes.<br>
+<br>
+For an example, imagine the&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;file has a line like this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;angry furious mad enraged</div>
+Placing the cursor after the letters &quot;ang&quot; and typing&nbsp;<span class="Special">CTRL-X</span>&nbsp;<span class="Special">CTRL-T</span>&nbsp;would<br>
+complete the word &quot;angry&quot;; subsequent presses would change the word to<br>
+&quot;furious&quot;, &quot;mad&quot; etc.<br>
+<br>
+Other uses include translation between two languages, or grouping API<br>
+functions by keyword.<br>
+<br>
+An English word list was added to this github issue:<br>
+<span class="Constant"><a href="https://github.com/vim/vim/issues/629#issuecomment-443293282">https://github.com/vim/vim/issues/629#issuecomment-443293282</a></span><br>
+Unpack thesaurus_pkg.zip, put the thesaurus.txt file somewhere, e.g.<br>
+~/.vim/thesaurus/english.txt, and the&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;option to this file name.<br>
+<br>
+<br>
+Completing keywords with&nbsp;<a class="Type" href="options.html#'thesaurusfunc'">'thesaurusfunc'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#compl-thesaurusfunc" name="compl-thesaurusfunc">compl-thesaurusfunc</a><br>
+<br>
+If the&nbsp;<a class="Type" href="options.html#'thesaurusfunc'">'thesaurusfunc'</a>&nbsp;option is set, then the user specified function is<br>
+invoked to get the list of completion matches and the&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;option is<br>
+not used. See&nbsp;<a class="Identifier" href="insert.html#complete-functions">complete-functions</a>&nbsp;for an explanation of how the function is<br>
+invoked and what it should return.<br>
+<br>
+Here is an example that uses the &quot;aiksaurus&quot; command (provided by Magnus<br>
+Groß):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;func Thesaur(findstart, base)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if a:findstart<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return searchpos('\&lt;', 'bnW', line('.'))[1] - 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let res = []<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let h = ''<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for l in systemlist('aiksaurus '.shellescape(a:base))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if l[:3] == '=== '<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let h = '('.substitute(l[4:], ' =*$', ')', '')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif l ==# 'Alphabetically similar known words are: '<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let h = &quot;\U0001f52e&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elseif l[0] =~ '\a' || (h ==# &quot;\U0001f52e&quot; &amp;&amp; l[0] ==# &quot;\t&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call extend(res, map(split(substitute(l, '^\t', '', ''), ', '), {_, val -&gt; {'word': val, 'menu': h}}))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return res<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if exists('+thesaurusfunc')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set thesaurusfunc=Thesaur<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
 <br>
 <br>
 Completing keywords in the current and included files&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#compl-keyword" name="compl-keyword">compl-keyword</a><br>
@@ -1047,9 +1095,15 @@ Completing keywords from different sources&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;other contexts unless a double&nbsp;<span class="Special">CTRL-X</span>&nbsp;is used.<br>
 <br>
 <br>
+Stop completion&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#compl-stop" name="compl-stop">compl-stop</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#i_CTRL-X_CTRL-Z" name="i_CTRL-X_CTRL-Z">i_CTRL-X_CTRL-Z</a><br>
+<span class="Special">CTRL-X</span>&nbsp;<span class="Special">CTRL-Z</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Stop completion without changing the text.<br>
+<br>
+<br>
 <span class="Statement">FUNCTIONS FOR FINDING COMPLETIONS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="insert.html#complete-functions" name="complete-functions">complete-functions</a><br>
 <br>
-This applies to&nbsp;<a class="Type" href="options.html#'completefunc'">'completefunc'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'omnifunc'">'omnifunc'</a>.<br>
+This applies to&nbsp;<a class="Type" href="options.html#'completefunc'">'completefunc'</a>,&nbsp;<a class="Type" href="options.html#'thesaurusfunc'">'thesaurusfunc'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'omnifunc'">'omnifunc'</a>.<br>
 <br>
 The function is called in two different ways:<br>
 - First the function is called to find the start of the text to be completed.<br>
@@ -1092,7 +1146,7 @@ that contains the List.&nbsp;&nbsp;The Dict can have these items:<br>
 <br>
 If you want to suppress the warning message for an empty result, return<br>
 <a class="Identifier" href="eval.html#v:none">v:none</a>.&nbsp;&nbsp;This is useful to implement asynchronous completion with<br>
-<a class="Identifier" href="eval.html#complete()">complete()</a>.<br>
+<a class="Identifier" href="builtin.html#complete()">complete()</a>.<br>
 <br>
 Other items are ignored.<br>
 <br>
@@ -1194,12 +1248,12 @@ Currently these types can be used:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; typedef<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #define or macro<br>
 <br>
-When searching for matches takes some time call&nbsp;<a class="Identifier" href="eval.html#complete_add()">complete_add()</a>&nbsp;to add each<br>
+When searching for matches takes some time call&nbsp;<a class="Identifier" href="builtin.html#complete_add()">complete_add()</a>&nbsp;to add each<br>
 match to the total list.&nbsp;&nbsp;These matches should then not appear in the returned<br>
-list!&nbsp;&nbsp;Call&nbsp;<a class="Identifier" href="eval.html#complete_check()">complete_check()</a>&nbsp;now and then to allow the user to press a key<br>
+list!&nbsp;&nbsp;Call&nbsp;<a class="Identifier" href="builtin.html#complete_check()">complete_check()</a>&nbsp;now and then to allow the user to press a key<br>
 while still searching for matches.&nbsp;&nbsp;Stop searching when it returns non-zero.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#E839" name="E839">E839</a>&nbsp;<a class="Constant" href="insert.html#E840" name="E840">E840</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#E840" name="E840">E840</a><br>
 The function is allowed to move the cursor, it is restored afterwards.<br>
 The function is not allowed to move to another window or delete text.<br>
 <br>
@@ -1334,7 +1388,7 @@ PmenuSbar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; scrollbar&nbsp;&nbsp;<a class="Ide
 PmenuThumb&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;thumb of the scrollbar&nbsp;&nbsp;<a class="Identifier" href="syntax.html#hl-PmenuThumb">hl-PmenuThumb</a><br>
 <br>
 There are no special mappings for when the popup menu is visible.&nbsp;&nbsp;However,<br>
-you can use an Insert mode mapping that checks the&nbsp;<a class="Identifier" href="eval.html#pumvisible()">pumvisible()</a>&nbsp;function to<br>
+you can use an Insert mode mapping that checks the&nbsp;<a class="Identifier" href="builtin.html#pumvisible()">pumvisible()</a>&nbsp;function to<br>
 do something different.&nbsp;&nbsp;Example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:inoremap &lt;Down&gt; &lt;C-R&gt;=pumvisible() ? &quot;\&lt;lt&gt;C-N&gt;&quot; : &quot;\&lt;lt&gt;Down&gt;&quot;&lt;CR&gt;</div>
 <br>
@@ -1898,6 +1952,9 @@ When&nbsp;<a class="Type" href="options.html#'autoindent'">'autoindent'</a>&nbsp
 previous line.&nbsp;&nbsp;When&nbsp;<a class="Type" href="options.html#'smartindent'">'smartindent'</a>&nbsp;or&nbsp;<a class="Type" href="options.html#'cindent'">'cindent'</a>&nbsp;is on, the indent for a line<br>
 is automatically adjusted for C programs.<br>
 <br>
+<a class="Type" href="options.html#'formatoptions'">'formatoptions'</a>&nbsp;can be set to copy the comment leader when opening a new<br>
+line.<br>
+<br>
 <a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;can be set to the maximum width for a line.&nbsp;&nbsp;When a line becomes<br>
 too long when appending characters a line break is automatically inserted.<br>
 <br>
@@ -1911,6 +1968,9 @@ too long when appending characters a line break is automatically inserted.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inserted after the current line.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adding [!] toggles&nbsp;<a class="Type" href="options.html#'autoindent'">'autoindent'</a>&nbsp;for the time this<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command is executed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This command is not supported in&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;because it is too easily confused with a variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="insert.html#:i" name=":i">:i</a>&nbsp;<a class="Constant" href="insert.html#:in" name=":in">:in</a>&nbsp;<a class="Constant" href="insert.html#:insert" name=":insert">:insert</a><br>
 :<span class="Special">{range}</span>i[nsert][!]&nbsp;&nbsp;&nbsp;&nbsp; Insert several lines of text above the specified<br>
@@ -1918,6 +1978,9 @@ too long when appending characters a line break is automatically inserted.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inserted before the current line.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adding [!] toggles&nbsp;<a class="Type" href="options.html#'autoindent'">'autoindent'</a>&nbsp;for the time this<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command is executed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This command is not supported in&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;because it is too easily confused with a variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name.<br>
 <br>
 These two commands will keep on asking for lines, until you type a line<br>
 containing only a &quot;.&quot;.&nbsp;&nbsp;Watch out for lines starting with a backslash, see<br>

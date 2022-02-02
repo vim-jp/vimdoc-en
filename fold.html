@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'fold'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="fold.html" name="fold.txt">fold.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jul 13<br>
+<a class="Constant" href="fold.html" name="fold.txt">fold.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Jan 22<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -69,7 +69,7 @@ with a character in&nbsp;<a class="Type" href="options.html#'foldignore'">'foldi
 characters in&nbsp;<a class="Type" href="options.html#'foldignore'">'foldignore'</a>.&nbsp;&nbsp;For C use &quot;#&quot; to ignore preprocessor lines.<br>
 <br>
 When you want to ignore lines in another way, use the &quot;expr&quot; method.&nbsp;&nbsp;The<br>
-<a class="Identifier" href="eval.html#indent()">indent()</a>&nbsp;function can be used in&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;to get the indent of a line.<br>
+<a class="Identifier" href="builtin.html#indent()">indent()</a>&nbsp;function can be used in&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;to get the indent of a line.<br>
 <br>
 <br>
 <span class="Statement">EXPR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-expr" name="fold-expr">fold-expr</a><br>
@@ -126,6 +126,11 @@ method can be very slow!<br>
 Try to avoid the &quot;=&quot;, &quot;a&quot; and &quot;s&quot; return values, since Vim often has to search<br>
 backwards for a line for which the fold level is defined.&nbsp;&nbsp;This can be slow.<br>
 <br>
+If the&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;expression starts with s: or&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>, then it is replaced<br>
+with the script ID (<a class="Identifier" href="eval.html#local-function">local-function</a>). Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set foldexpr=s:MyFoldExpr()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set foldexpr=&lt;SID&gt;SomeFoldExpr()</div>
+<br>
 An example of using &quot;a1&quot; and &quot;s1&quot;: For a multi-line C comment, a line<br>
 containing &quot;/*&quot; would return &quot;a1&quot; to start a fold, and a line containing &quot;*/&quot;<br>
 would return &quot;s1&quot; to end the fold after that line:<br>
@@ -138,7 +143,7 @@ would return &quot;s1&quot; to end the fold after that line:<br>
 &nbsp;&nbsp;endif</div>
 However, this won't work for single line comments, strings, etc.<br>
 <br>
-<a class="Identifier" href="eval.html#foldlevel()">foldlevel()</a>&nbsp;can be useful to compute a fold level relative to a previous<br>
+<a class="Identifier" href="builtin.html#foldlevel()">foldlevel()</a>&nbsp;can be useful to compute a fold level relative to a previous<br>
 fold level.&nbsp;&nbsp;But&nbsp;<span class="Todo">note</span>&nbsp;that foldlevel() may return -1 if the level is not known<br>
 yet.&nbsp;&nbsp;And it returns the level at the start of the line, while a fold might<br>
 end in that line.<br>
@@ -511,9 +516,12 @@ This shows the first line of the fold, with &quot;/*&quot;, &quot;*/&quot; and &
 &nbsp;&nbsp;&nbsp;&nbsp;:endfunction</div>
 <br>
 Evaluating&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;is done in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>.&nbsp;&nbsp;The current window is set to<br>
-the window that displays the line.&nbsp;&nbsp;Errors are ignored.<br>
+the window that displays the line.&nbsp;&nbsp;The context is set to the script where the<br>
+option was last set.<br>
 <br>
-The default value is&nbsp;<a class="Identifier" href="eval.html#foldtext()">foldtext()</a>.&nbsp;&nbsp;This returns a reasonable text for most<br>
+Errors are ignored.&nbsp;&nbsp;For debugging set the&nbsp;<a class="Type" href="options.html#'debug'">'debug'</a>&nbsp;option to &quot;throw&quot;.<br>
+<br>
+The default value is&nbsp;<a class="Identifier" href="builtin.html#foldtext()">foldtext()</a>.&nbsp;&nbsp;This returns a reasonable text for most<br>
 types of folding.&nbsp;&nbsp;If you don't like it, you can specify your own&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a><br>
 expression.&nbsp;&nbsp;It can use these special Vim variables:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v:foldstart&nbsp;&nbsp;&nbsp;&nbsp; line number of first line in the fold<br>
@@ -528,6 +536,11 @@ made into printable characters.<br>
 The resulting line is truncated to fit in the window, it never wraps.<br>
 When there is room after the text, it is filled with the character specified<br>
 by&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>.<br>
+<br>
+If the&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;expression starts with s: or&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>, then it is replaced<br>
+with the script ID (<a class="Identifier" href="eval.html#local-function">local-function</a>). Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set foldtext=s:MyFoldText()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set foldtext=&lt;SID&gt;SomeFoldText()</div>
 <br>
 <span class="Todo">Note</span>&nbsp;that backslashes need to be used for characters that the &quot;:set&quot; command<br>
 handles differently: Space, backslash and double-quote.&nbsp;<a class="Identifier" href="options.html#option-backslash">option-backslash</a><br>

@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'options'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="options.html" name="options.txt">options.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jul 22<br>
+<a class="Constant" href="options.html" name="options.txt">options.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Jan 29<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -39,6 +39,8 @@ achieve special effects.&nbsp;&nbsp;These options come in three forms:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key codes are not shown, because they are generated<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;internally and can't be changed.&nbsp;&nbsp;Changing the terminal<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;codes in the GUI is not useful either...<br>
+<br>
+:se[t]! termcap&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Idem, but don't use multiple columns.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#E518" name="E518">E518</a>&nbsp;<a class="Constant" href="options.html#E519" name="E519">E519</a><br>
 :se[t]&nbsp;<span class="Special">{option}</span>?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show value of&nbsp;<span class="Special">{option}</span>.<br>
@@ -172,8 +174,8 @@ codes as you like:<br>
 When a key code is not set, it's like it does not exist.&nbsp;&nbsp;Trying to get its<br>
 value will result in an error:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set t_kb=<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set t_kb<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E846: Key code not set: t_kb</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set t_kb</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">E846: Key code not set: t_kb</span><br>
 <br>
 The t_xx options cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>, for<br>
 security reasons.<br>
@@ -200,10 +202,17 @@ include the &quot;|&quot; in the option value, use &quot;\|&quot; instead.&nbsp;
 This sets the&nbsp;<a class="Type" href="options.html#'titlestring'">'titlestring'</a>&nbsp;option to &quot;hi&quot; and&nbsp;<a class="Type" href="options.html#'iconstring'">'iconstring'</a>&nbsp;to &quot;there&quot;:<br>
 <div class="helpExample">&nbsp;&nbsp; :set titlestring=hi|set iconstring=there</div>
 <br>
-Similarly, the double quote character starts a comment.&nbsp;&nbsp;To include the '&quot;' in<br>
-the option value, use '\&quot;' instead.&nbsp;&nbsp;This example sets the&nbsp;<a class="Type" href="options.html#'titlestring'">'titlestring'</a><br>
-option to 'hi &quot;there&quot;':<br>
+Similarly, in legacy script the double quote character starts a comment.&nbsp;&nbsp;To<br>
+include the '&quot;' in the option value, use '\&quot;' instead.&nbsp;&nbsp;This example sets the<br>
+<a class="Type" href="options.html#'titlestring'">'titlestring'</a>&nbsp;option to 'hi &quot;there&quot;':<br>
 <div class="helpExample">&nbsp;&nbsp; :set titlestring=hi\ \&quot;there\&quot;</div>
+<br>
+In&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script it's simpler, comments start with a '#' character, and only<br>
+when preceded by white space.&nbsp;&nbsp;A backslash is needed less often:<br>
+<div class="helpExample">&nbsp;&nbsp; vim9script<br>
+&nbsp;&nbsp; set titlestring=hi\ &quot;there&quot;<br>
+&nbsp;&nbsp; set titlestring=hi#there#<br>
+&nbsp;&nbsp; set titlestring=hi\ \#there#</div>
 <br>
 For Win32 backslashes in file names are mostly not removed.&nbsp;&nbsp;More precise: For<br>
 options that expect a file name (those where environment variables are<br>
@@ -365,8 +374,32 @@ value to the local value, it doesn't switch back to using the global value<br>
 This will make the local value of&nbsp;<a class="Type" href="options.html#'path'">'path'</a>&nbsp;empty, so that the global value is<br>
 used.&nbsp;&nbsp;Thus it does the same as:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:setlocal path=</div>
-<span class="Todo">Note</span>: In the future more global options can be made global-local.&nbsp;&nbsp;Using<br>
+<span class="Todo">Note</span>: In the future more global options can be made&nbsp;<a class="Identifier" href="options.html#global-local">global-local</a>.&nbsp;&nbsp;Using<br>
 &quot;:setlocal&quot; on a global option might work differently then.<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#option-value-function" name="option-value-function">option-value-function</a><br>
+Some options (<a class="Type" href="options.html#'completefunc'">'completefunc'</a>,&nbsp;<a class="Type" href="options.html#'imactivatefunc'">'imactivatefunc'</a>,&nbsp;<a class="Type" href="options.html#'imstatusfunc'">'imstatusfunc'</a>,&nbsp;<a class="Type" href="options.html#'omnifunc'">'omnifunc'</a>,<br>
+<a class="Type" href="options.html#'operatorfunc'">'operatorfunc'</a>,&nbsp;<a class="Type" href="options.html#'quickfixtextfunc'">'quickfixtextfunc'</a>,&nbsp;<a class="Type" href="options.html#'tagfunc'">'tagfunc'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'thesaurusfunc'">'thesaurusfunc'</a>) are set to<br>
+a function name or a function reference or a lambda function.&nbsp;&nbsp;When using a<br>
+lambda it will be converted to the name, e.g. &quot;<span class="Special">&lt;lambda&gt;</span>123&quot;.&nbsp;&nbsp;Examples:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set opfunc=MyOpFunc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set opfunc=function('MyOpFunc')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set opfunc=funcref('MyOpFunc')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set opfunc={a\ -&gt;\ MyOpFunc(a)}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; set using a funcref variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let Fn = function('MyTagFunc')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;tagfunc = Fn<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; set using a lambda expression<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;tagfunc = {t -&gt; MyTagFunc(t)}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; set using a variable with lambda expression<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let L = {a, b, c -&gt; MyTagFunc(a, b , c)}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;tagfunc = L</div>
+<br>
+In Vim9 script, in a compiled function, you can use a lambda, but a<br>
+closured does not work, because the function will be called without the<br>
+context of where it was defined.<br>
 <br>
 <br>
 Setting the filetype<br>
@@ -385,7 +418,7 @@ Setting the filetype<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When the optional FALLBACK argument is present, a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;later :setfiletype command will override the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>.&nbsp;&nbsp;This is to be used for filetype<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;detections that are just a guess.&nbsp;&nbsp;<a class="Identifier" href="eval.html#did_filetype()">did_filetype()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;detections that are just a guess.&nbsp;&nbsp;<a class="Identifier" href="builtin.html#did_filetype()">did_filetype()</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will return false after this command.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#option-window" name="option-window">option-window</a>&nbsp;<a class="Constant" href="options.html#optwin" name="optwin">optwin</a><br>
@@ -545,6 +578,15 @@ chance that a normal word like &quot;lex:&quot; is caught.&nbsp;&nbsp;There is o
 &quot;vi:&quot; and &quot;vim:&quot; can also be at the start of the line (for compatibility with<br>
 version 3.0).&nbsp;&nbsp;Using &quot;ex:&quot; at the start of the line will be ignored (this<br>
 could be short for &quot;example:&quot;).<br>
+<br>
+If the modeline is disabled within a modeline, subsequent modelines will be<br>
+ignored.&nbsp;&nbsp;This is to allow turning off modeline on a per-file basis.&nbsp;&nbsp;This is<br>
+useful when a line looks like a modeline but isn't.&nbsp;&nbsp;For example, it would be<br>
+good to start a YAML file containing strings like &quot;vim:&quot; with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc"># vim&#0058; nomodeline</span><br>
+so as to avoid modeline misdetection.&nbsp;&nbsp;Following options on the same line<br>
+after modeline deactivation, if any, are still evaluated (but you would<br>
+normally not have any).<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#modeline-local" name="modeline-local">modeline-local</a><br>
 The options are set like with &quot;:setlocal&quot;: The new value only applies to the<br>
@@ -706,10 +748,11 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;double&quot;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Use twice the width of ASCII characters.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#E834" name="E834">E834</a>&nbsp;<a class="Constant" href="options.html#E835" name="E835">E835</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The value &quot;double&quot; cannot be used if&nbsp;<a class="Type" href="options.html#'listchars'">'listchars'</a>&nbsp;or&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contains a character that would be double width.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contains a character that would be double width.&nbsp;&nbsp;These errors may<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;also be given when calling setcellwidths().<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The values are overruled for characters specified with<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#setcellwidths()">setcellwidths()</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="builtin.html#setcellwidths()">setcellwidths()</a>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There are a number of CJK fonts for which the width of glyphs for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;those characters are solely based on how many octets they take in<br>
@@ -838,9 +881,12 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 <a class="Type" href="options.html#'autowrite'">'autowrite'</a>&nbsp;<a class="Type" href="options.html#'aw'">'aw'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default off)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write the contents of the file, if it has been modified, on each<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:next, :rewind, :last, :first, :previous, :stop, :suspend, :tag, :!,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:make,&nbsp;<span class="Special">CTRL-]</span>&nbsp;and&nbsp;<span class="Special">CTRL-^</span>&nbsp;command; and when a :buffer,&nbsp;<span class="Special">CTRL-O</span>,&nbsp;<span class="Special">CTRL-I</span>,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'<span class="Special">{A-Z0-9}</span>, or `<span class="Special">{A-Z0-9}</span>&nbsp;command takes one to another file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Comment" href="editing.html#:next">:next</a>,&nbsp;<a class="Comment" href="editing.html#:rewind">:rewind</a>,&nbsp;<a class="Comment" href="editing.html#:last">:last</a>,&nbsp;<a class="Comment" href="editing.html#:first">:first</a>,&nbsp;<a class="Comment" href="editing.html#:previous">:previous</a>,&nbsp;<a class="Comment" href="starting.html#:stop">:stop</a>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Comment" href="starting.html#:suspend">:suspend</a>,&nbsp;<a class="Comment" href="tagsrch.html#:tag">:tag</a>,&nbsp;<a class="Comment" href="various.html#:!">:!</a>,&nbsp;<a class="Comment" href="quickfix.html#:make">:make</a>,&nbsp;<span class="Special">CTRL-]</span>&nbsp;and&nbsp;<span class="Special">CTRL-^</span>&nbsp;command; and when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;<a class="Comment" href="windows.html#:buffer">:buffer</a>,&nbsp;<span class="Special">CTRL-O</span>,&nbsp;<span class="Special">CTRL-I</span>, '<span class="Special">{A-Z0-9}</span>, or `<span class="Special">{A-Z0-9}</span>&nbsp;command takes one<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to another file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A buffer is not written if it becomes hidden, e.g. when&nbsp;<a class="Type" href="options.html#'bufhidden'">'bufhidden'</a>&nbsp;is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set to &quot;hide&quot; and&nbsp;<a class="Comment" href="editing.html#:next">:next</a>&nbsp;is used.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that for some commands the&nbsp;<a class="Type" href="options.html#'autowrite'">'autowrite'</a>&nbsp;option is not used, see<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'autowriteall'">'autowriteall'</a>&nbsp;for that.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Some buffers will not be written, specifically when&nbsp;<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;is<br>
@@ -1174,7 +1220,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;set bexpr=MyBalloonExpr()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;set ballooneval</div>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="eval.html#balloon_show()">balloon_show()</a>, it can be used if the content of the balloon<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="builtin.html#balloon_show()">balloon_show()</a>, it can be used if the content of the balloon<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is to be fetched asynchronously.&nbsp;&nbsp;In that case evaluating<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>&nbsp;should result in an empty string.&nbsp;&nbsp;If you get a balloon<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with only &quot;0&quot; you probably didn't return anything from your function.<br>
@@ -1183,6 +1229,13 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;character.&nbsp;&nbsp;If the result of evaluating&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>&nbsp;is not empty,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vim does not try to send a message to an external debugger (Netbeans<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or Sun Workshop).<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the expression starts with s: or&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>, then it is replaced with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the script ID (<a class="Identifier" href="eval.html#local-function">local-function</a>). Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set bexpr=s:MyBalloonExpr()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set bexpr=&lt;SID&gt;SomeBalloonExpr()</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Otherwise, the expression is evaluated in the context of the script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where the option was set, thus script-local items are available.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression will be evaluated in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>&nbsp;when set from a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modeline, see&nbsp;<a class="Identifier" href="eval.html#sandbox-option">sandbox-option</a>.<br>
@@ -1324,6 +1377,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text should normally be narrower. This prevents<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text indented almost to the right window border<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;occupying lot of vertical space when broken.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(default: 20)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shift:<span class="Special">{n}</span>&nbsp;&nbsp; After applying&nbsp;<a class="Type" href="options.html#'breakindent'">'breakindent'</a>, the wrapped line's<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beginning will be shifted by the given number of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;characters.&nbsp;&nbsp;It permits dynamic French paragraph<br>
@@ -1405,9 +1459,11 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option is used together with&nbsp;<a class="Type" href="options.html#'bufhidden'">'bufhidden'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'swapfile'">'swapfile'</a>&nbsp;to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specify special kinds of buffers.&nbsp;&nbsp; See&nbsp;<a class="Identifier" href="windows.html#special-buffers">special-buffers</a>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="eval.html#win_gettype()">win_gettype()</a>, which returns the type of the window.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="builtin.html#win_gettype()">win_gettype()</a>, which returns the type of the window.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Be careful with changing this option, it can have many side effects!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;One such effect is that Vim will not check the timestamp of the file,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if the file is changed by another program this will not be noticed.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A &quot;quickfix&quot; buffer is only used for the error list and the location<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list.&nbsp;&nbsp;This value is set by the&nbsp;<a class="Identifier" href="quickfix.html#:cwindow">:cwindow</a>&nbsp;and&nbsp;<a class="Identifier" href="quickfix.html#:lwindow">:lwindow</a>&nbsp;commands and<br>
@@ -1449,6 +1505,15 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;keepascii&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For the ASCII characters (0x00 to 0x7f) use the US<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case mapping, the current locale is not effective.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This probably only matters for Turkish.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'cdhome'" name="'cdhome'">'cdhome'</a>&nbsp;<a class="Constant" href="options.html#'cdh'" name="'cdh'">'cdh'</a><br>
+<a class="Type" href="options.html#'cdhome'">'cdhome'</a>&nbsp;<a class="Type" href="options.html#'cdh'">'cdh'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default: off)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When on,&nbsp;<a class="Identifier" href="editing.html#:cd">:cd</a>,&nbsp;<a class="Identifier" href="editing.html#:tcd">:tcd</a>&nbsp;and&nbsp;<a class="Identifier" href="editing.html#:lcd">:lcd</a>&nbsp;without an argument changes the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;current working directory to the&nbsp;<a class="Identifier" href="options.html#$HOME">$HOME</a>&nbsp;directory like in Unix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When off, those commands just print the current directory name.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;On Unix this option has no effect.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">NOTE</span>: This option is reset when&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;is set.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'cdpath'" name="'cdpath'">'cdpath'</a>&nbsp;<a class="Constant" href="options.html#'cd'" name="'cd'">'cd'</a>&nbsp;<a class="Constant" href="options.html#E344" name="E344">E344</a>&nbsp;<a class="Constant" href="options.html#E346" name="E346">E346</a><br>
 <a class="Type" href="options.html#'cdpath'">'cdpath'</a>&nbsp;<a class="Type" href="options.html#'cd'">'cd'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string&nbsp;&nbsp;(default: equivalent to $CDPATH or &quot;,,&quot;)<br>
@@ -1498,8 +1563,8 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preferred, because it is much faster.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>&nbsp;is not used when reading stdin&nbsp;<a class="Identifier" href="starting.html#--">--</a>, because there is no<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file to convert from.&nbsp;&nbsp;You will have to save the text in a file first.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression must return zero or an empty string for success,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-zero for failure.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression must return zero, false or an empty string for success,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;non-zero or true for failure.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The possible encoding names encountered are in&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Additionally, names given in&nbsp;<a class="Type" href="options.html#'fileencodings'">'fileencodings'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'fileencoding'">'fileencoding'</a>&nbsp;are<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used.<br>
@@ -1523,9 +1588,18 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that v:fname_in and v:fname_out will never be the same.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that v:charconvert_from and v:charconvert_to may be different<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>.&nbsp;&nbsp;Vim internally uses UTF-8 instead of UCS-2 or UCS-4.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Encryption is not done by Vim when using&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>.&nbsp;&nbsp;If you want<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to encrypt the file after conversion,&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>&nbsp;should take care<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of this.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the&nbsp;<a class="Type" href="options.html#'charconvert'">'charconvert'</a>&nbsp;expression starts with s: or&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>, then it is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;replaced with the script ID (<a class="Identifier" href="eval.html#local-function">local-function</a>). Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set charconvert=s:MyConvert()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set charconvert=&lt;SID&gt;SomeConvert()</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Otherwise the expression is evaluated in the context of the script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where the option was set, thus script-local items are available.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>, for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;security reasons.<br>
 <br>
@@ -1791,6 +1865,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'balloonexpr'">'balloonexpr'</a>&nbsp;&nbsp; + &quot;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text to show in evaluation balloon<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'breakindent'">'breakindent'</a>&nbsp;&nbsp; + off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; don't indent when wrapping lines<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'cedit'">'cedit'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;<span class="Special">{unchanged}</span>&nbsp;&nbsp; {set vim default only on resetting&nbsp;<a class="Type" href="options.html#'cp'">'cp'</a>}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'cdhome'">'cdhome'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;:cd&quot; don't chdir to home on non-Unix<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'cindent'">'cindent'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; no C code indentation<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<span class="Special">{unchanged}</span>&nbsp;&nbsp; {set vim default only on resetting&nbsp;<a class="Type" href="options.html#'cp'">'cp'</a>}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'copyindent'">'copyindent'</a>&nbsp;&nbsp;&nbsp;&nbsp;+ off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; don't copy indent structure<br>
@@ -1906,7 +1981,9 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option specifies a function to be used for Insert mode completion<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;<span class="Special">CTRL-X</span>&nbsp;<span class="Special">CTRL-U</span>.&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-U">i_CTRL-X_CTRL-U</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="insert.html#complete-functions">complete-functions</a>&nbsp;for an explanation of how the function is<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;invoked and what it should return.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;invoked and what it should return.&nbsp;&nbsp;The value can be the name of a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function, a&nbsp;<a class="Identifier" href="eval.html#lambda">lambda</a>&nbsp;or a&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>. See&nbsp;<a class="Identifier" href="options.html#option-value-function">option-value-function</a>&nbsp;for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;more information.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>, for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;security reasons.<br>
 <br>
@@ -2041,7 +2118,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;<a class="Type" href="options.html#'confirm'">'confirm'</a>&nbsp;is off you can still activate confirmation for one<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command only (this is most useful in mappings) with the&nbsp;<a class="Identifier" href="editing.html#:confirm">:confirm</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see the&nbsp;<a class="Identifier" href="eval.html#confirm()">confirm()</a>&nbsp;function and the 'v' flag in&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see the&nbsp;<a class="Identifier" href="builtin.html#confirm()">confirm()</a>&nbsp;function and the 'v' flag in&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'conskey'" name="'conskey'">'conskey'</a>&nbsp;<a class="Constant" href="options.html#'consk'" name="'consk'">'consk'</a>&nbsp;<a class="Constant" href="options.html#'noconskey'" name="'noconskey'">'noconskey'</a>&nbsp;<a class="Constant" href="options.html#'noconsk'" name="'noconsk'">'noconsk'</a><br>
 <a class="Type" href="options.html#'conskey'">'conskey'</a>&nbsp;<a class="Type" href="options.html#'consk'">'consk'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boolean (default off)<br>
@@ -2073,8 +2150,18 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commas can be added for readability.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To avoid problems with flags that are added in the future, use the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;+=&quot; and &quot;-=&quot; feature of &quot;:set&quot;&nbsp;<a class="Identifier" href="options.html#add-option-flags">add-option-flags</a>.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">NOTE</span>: This option is set to the Vi default value when&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set and to the Vim default value when&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;is reset.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">NOTE</span>: In a&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script, when&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;is encountered, the value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is saved,&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;is set to the Vim default, and the saved value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is restored at the end of the script.&nbsp;&nbsp;Changes to the value of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;will be applied to the saved value, but keep in mind that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;removing a flag that is not present when&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;is changed has no<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;effect.&nbsp;&nbsp;In the&nbsp;<a class="Identifier" href="starting.html#.vimrc">.vimrc</a>&nbsp;file the value is not restored, thus using<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;in the&nbsp;<a class="Identifier" href="starting.html#.vimrc">.vimrc</a>&nbsp;file results in using the Vim default.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">NOTE</span>: This option is set to the POSIX default value at startup when<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the Vi default value would be used and the $VIM_POSIX environment<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable exists&nbsp;<a class="Identifier" href="vi_diff.html#posix">posix</a>.&nbsp;&nbsp;This means Vim tries to behave like the<br>
@@ -2399,7 +2486,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xchacha20&nbsp;&nbsp;&nbsp;&nbsp;XChaCha20 Cipher with Poly1305 Message Authentication<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Code.&nbsp;&nbsp;Medium strong till strong encryption.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Encryption is provided by the libsodium library, it<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;requires Vim to be built with&nbsp;<a class="Identifier" href="various.html#+sodium">+sodium</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;requires Vim to be built with&nbsp;<a class="Identifier" href="various.html#+sodium">+sodium</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It adds a seed and a message authentication code (MAC)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to the file.&nbsp;&nbsp;This needs at least a Vim 8.2.3022 to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;read the encrypted file.<br>
@@ -2852,7 +2939,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This excludes &quot;text emoji&quot; characters, which are normally displayed as<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;single width.&nbsp;&nbsp;Unfortunately there is no good specification for this<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and it has been determined on trial-and-error basis.&nbsp;&nbsp;Use the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#setcellwidths()">setcellwidths()</a>&nbsp;function to change the behavior.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="builtin.html#setcellwidths()">setcellwidths()</a>&nbsp;function to change the behavior.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'encoding'" name="'encoding'">'encoding'</a>&nbsp;<a class="Constant" href="options.html#'enc'" name="'enc'">'enc'</a>&nbsp;<a class="Constant" href="options.html#E543" name="E543">E543</a><br>
 <a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;<a class="Type" href="options.html#'enc'">'enc'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string (default for MS-Windows: &quot;utf-8&quot;,<br>
@@ -3368,7 +3455,9 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+folding">+folding</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">or&nbsp;</span><a class="Identifier" href="various.html#+eval">+eval</a><span class="Special">&nbsp;features}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression used for when&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;is &quot;expr&quot;.&nbsp;&nbsp;It is evaluated<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for each line to obtain its fold level.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="fold.html#fold-expr">fold-expr</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for each line to obtain its fold level.&nbsp;&nbsp;The context is set to the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;script where&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;was set, script-local items can be accessed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="fold.html#fold-expr">fold-expr</a>&nbsp;for the usage.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression will be evaluated in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>&nbsp;if set from a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modeline, see&nbsp;<a class="Identifier" href="eval.html#sandbox-option">sandbox-option</a>.<br>
@@ -3502,7 +3591,9 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+folding">+folding</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An expression which is used to specify the text displayed for a closed<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fold.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="fold.html#fold-foldtext">fold-foldtext</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fold.&nbsp;&nbsp;The context is set to the script where&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;was set,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;script-local items can be accessed.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="fold.html#fold-foldtext">fold-foldtext</a>&nbsp;for the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usage.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression will be evaluated in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>&nbsp;if set from a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modeline, see&nbsp;<a class="Identifier" href="eval.html#sandbox-option">sandbox-option</a>.<br>
@@ -3535,11 +3626,18 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression is also evaluated when&nbsp;<a class="Type" href="options.html#'textwidth'">'textwidth'</a>&nbsp;is set and adding<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text beyond that limit.&nbsp;&nbsp;This happens under the same conditions as<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when internal formatting is used.&nbsp;&nbsp;Make sure the cursor is kept in the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same spot relative to the text then!&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="eval.html#mode()">mode()</a>&nbsp;function will<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same spot relative to the text then!&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="builtin.html#mode()">mode()</a>&nbsp;function will<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return &quot;i&quot; or &quot;R&quot; in this situation.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When the expression evaluates to non-zero Vim will fall back to using<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the internal format mechanism.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the expression starts with s: or&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>, then it is replaced with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the script ID (<a class="Identifier" href="eval.html#local-function">local-function</a>). Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set formatexpr=s:MyFormatExpr()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set formatexpr=&lt;SID&gt;SomeFormatExpr()</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Otherwise, the expression is evaluated in the context of the script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where the option was set, thus script-local items are available.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression will be evaluated in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>&nbsp;when set from a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modeline, see&nbsp;<a class="Identifier" href="eval.html#sandbox-option">sandbox-option</a>.&nbsp;&nbsp;That stops the option from working,<br>
@@ -3599,8 +3697,8 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;systems without an fsync() implementation, this variable is always<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;off.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Type" href="options.html#'swapsync'">'swapsync'</a>&nbsp;for controlling fsync() on swap files.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'fsync'">'fsync'</a>&nbsp;also applies to&nbsp;<a class="Identifier" href="eval.html#writefile()">writefile()</a>, unless a flag is used to<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;overrule it.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'fsync'">'fsync'</a>&nbsp;also applies to&nbsp;<a class="Identifier" href="builtin.html#writefile()">writefile()</a>&nbsp;(unless a flag is used to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;overrule it) and when writing undo files (see&nbsp;<a class="Identifier" href="undo.html#undo-persistence">undo-persistence</a>).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>, for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;security reasons.<br>
 <br>
@@ -3778,6 +3876,18 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lines will be left for window decorations and other items on the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screen.&nbsp;&nbsp;Set it to a negative value to allow windows taller than the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screen.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'guiligatures'" name="'guiligatures'">'guiligatures'</a>&nbsp;<a class="Constant" href="options.html#'gli'" name="'gli'">'gli'</a>&nbsp;<a class="Constant" href="options.html#E1243" name="E1243">E1243</a><br>
+<a class="Type" href="options.html#'guiligatures'">'guiligatures'</a>&nbsp;<a class="Type" href="options.html#'gli'">'gli'</a>&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;&nbsp;(default &quot;&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{only for GTK GUI}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List of ASCII characters that, when combined together, can create more<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;complex shapes. Each character must be a printable ASCII character<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with a value in the 32-127 range.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set guiligatures=!\&quot;#$%&amp;()*+-./:&lt;=&gt;?@[]^_{\|~</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Changing this option updates screen output immediately. Set it to an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;empty string to disable ligatures.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'guioptions'" name="'guioptions'">'guioptions'</a>&nbsp;<a class="Constant" href="options.html#'go'" name="'go'">'go'</a><br>
 <a class="Type" href="options.html#'guioptions'">'guioptions'</a>&nbsp;<a class="Type" href="options.html#'go'">'go'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string&nbsp;&nbsp;(default &quot;egmrLtT&quot;&nbsp;&nbsp; (MS-Windows,<br>
@@ -4153,8 +4263,6 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'icon'" name="'icon'">'icon'</a>&nbsp;<a class="Constant" href="options.html#'noicon'" name="'noicon'">'noicon'</a><br>
 <a class="Type" href="options.html#'icon'">'icon'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default off, on when title can be restored)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+title">+title</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When on, the icon text of the window will be set to the value of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'iconstring'">'iconstring'</a>&nbsp;(if it is not empty), or to the name of the file<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;currently being edited.&nbsp;&nbsp;Only the last part of the name is used.<br>
@@ -4171,8 +4279,6 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'iconstring'" name="'iconstring'">'iconstring'</a><br>
 <a class="Type" href="options.html#'iconstring'">'iconstring'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;&nbsp;(default &quot;&quot;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+title">+title</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When this option is not empty, it will be used for the icon text of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the window.&nbsp;&nbsp;This happens only when the&nbsp;<a class="Type" href="options.html#'icon'">'icon'</a>&nbsp;option is on.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only works if the terminal supports setting window icon text<br>
@@ -4199,7 +4305,9 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 <a class="Type" href="options.html#'imactivatefunc'">'imactivatefunc'</a>&nbsp;<a class="Type" href="options.html#'imaf'">'imaf'</a>&nbsp;string (default &quot;&quot;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option specifies a function that will be called to<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;activate or deactivate the Input Method.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;activate or deactivate the Input Method.&nbsp;&nbsp;The value can be the name of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a function, a&nbsp;<a class="Identifier" href="eval.html#lambda">lambda</a>&nbsp;or a&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>. See&nbsp;<a class="Identifier" href="options.html#option-value-function">option-value-function</a>&nbsp;for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;more information.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It is not used in the MS-Windows GUI version.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression will be evaluated in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>&nbsp;when set from a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modeline, see&nbsp;<a class="Identifier" href="eval.html#sandbox-option">sandbox-option</a>.<br>
@@ -4309,6 +4417,8 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option specifies a function that is called to obtain the status<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of Input Method.&nbsp;&nbsp;It must return a positive number when IME is active.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The value can be the name of a function, a&nbsp;<a class="Identifier" href="eval.html#lambda">lambda</a>&nbsp;or a&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="options.html#option-value-function">option-value-function</a>&nbsp;for more information.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It is not used in the MS-Windows GUI version.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
@@ -4370,6 +4480,13 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also used for the&nbsp;<a class="Identifier" href="editing.html#gf">gf</a>&nbsp;command if an unmodified file name can't be<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;found.&nbsp;&nbsp;Allows doing &quot;gf&quot; on the name after an&nbsp;<a class="Type" href="options.html#'include'">'include'</a>&nbsp;statement.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also used for&nbsp;<a class="Identifier" href="cmdline.html#<cfile>">&lt;cfile&gt;</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the expression starts with s: or&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>, then it is replaced with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the script ID (<a class="Identifier" href="eval.html#local-function">local-function</a>). Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set includeexpr=s:MyIncludeExpr(v:fname)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set includeexpr=&lt;SID&gt;SomeIncludeExpr(v:fname)</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Otherwise, the expression is evaluated in the context of the script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where the option was set, thus script-local items are available.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression will be evaluated in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>&nbsp;when set from a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modeline, see&nbsp;<a class="Identifier" href="eval.html#sandbox-option">sandbox-option</a>.<br>
@@ -4444,11 +4561,19 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression is evaluated with&nbsp;<a class="Identifier" href="eval.html#v:lnum">v:lnum</a>&nbsp;set to the line number for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which the indent is to be computed.&nbsp;&nbsp;The cursor is also in this line<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;when the expression is evaluated (but it may be moved around).<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the expression starts with s: or&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>, then it is replaced with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the script ID (<a class="Identifier" href="eval.html#local-function">local-function</a>). Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set indentexpr=s:MyIndentExpr()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set indentexpr=&lt;SID&gt;SomeIndentExpr()</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Otherwise, the expression is evaluated in the context of the script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where the option was set, thus script-local items are available.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression must return the number of spaces worth of indent.&nbsp;&nbsp;It<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;can return &quot;-1&quot; to keep the current indent (this means&nbsp;<a class="Type" href="options.html#'autoindent'">'autoindent'</a>&nbsp;is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;used for the indent).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Functions useful for computing the indent are&nbsp;<a class="Identifier" href="eval.html#indent()">indent()</a>,&nbsp;<a class="Identifier" href="eval.html#cindent()">cindent()</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;<a class="Identifier" href="eval.html#lispindent()">lispindent()</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Functions useful for computing the indent are&nbsp;<a class="Identifier" href="builtin.html#indent()">indent()</a>,&nbsp;<a class="Identifier" href="builtin.html#cindent()">cindent()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;<a class="Identifier" href="builtin.html#lispindent()">lispindent()</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The evaluation of the expression must not have side effects!&nbsp;&nbsp;It must<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not change the text, jump to another window, etc.&nbsp;&nbsp;Afterwards the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cursor position is always restored, thus the cursor may be moved.<br>
@@ -4882,9 +5007,10 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'list'" name="'list'">'list'</a>&nbsp;<a class="Constant" href="options.html#'nolist'" name="'nolist'">'nolist'</a><br>
 <a class="Type" href="options.html#'list'">'list'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default off)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;local to window<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List mode: Show tabs as&nbsp;<span class="Special">CTRL-I</span>&nbsp;is displayed, display $ after end of<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line.&nbsp;&nbsp;Useful to see the difference between tabs and spaces and for<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;trailing blanks.&nbsp;&nbsp;Further changed by the&nbsp;<a class="Type" href="options.html#'listchars'">'listchars'</a>&nbsp;option.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List mode: By default show tabs as&nbsp;<span class="Special">CTRL-I</span>&nbsp;is displayed, display $<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;after end of line.&nbsp;&nbsp;Useful to see the difference between tabs and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;spaces and for trailing blanks.&nbsp;&nbsp;Further changed by the&nbsp;<a class="Type" href="options.html#'listchars'">'listchars'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;option.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The cursor is displayed at the start of the space a Tab character<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;occupies, not at the end as usual in Normal mode.&nbsp;&nbsp;To get this cursor<br>
@@ -4928,16 +5054,25 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#lcs-space" name="lcs-space">lcs-space</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;space:c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Character to show for a space.&nbsp;&nbsp;When omitted, spaces<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;are left blank.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#lcs-multispace" name="lcs-multispace">lcs-multispace</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;multispace:c...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;One or more characters to use cyclically to show for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;multiple consecutive spaces.&nbsp;&nbsp;Overrides the &quot;space&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setting, except for single spaces.&nbsp;&nbsp;When omitted, the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;space&quot; setting is used.&nbsp;&nbsp;For example,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">:set listchars=multispace:---+</span>&nbsp;shows ten consecutive<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;spaces as:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---+---+--<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#lcs-lead" name="lcs-lead">lcs-lead</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lead:c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Character to show for leading spaces.&nbsp;&nbsp;When omitted,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;leading spaces are blank.&nbsp;&nbsp;Overrides the &quot;space&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setting for leading spaces.&nbsp;&nbsp;You can combine it with<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;tab:&quot;, for example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;leading spaces are blank.&nbsp;&nbsp;Overrides the &quot;space&quot; and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;multispace&quot; settings for leading spaces.&nbsp;&nbsp;You can<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;combine it with &quot;tab:&quot;, for example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set listchars+=tab:&gt;-,lead:.</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#lcs-trail" name="lcs-trail">lcs-trail</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;trail:c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Character to show for trailing spaces.&nbsp;&nbsp;When omitted,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;trailing spaces are blank.&nbsp;&nbsp;Overrides the &quot;space&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setting for trailing spaces.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;trailing spaces are blank.&nbsp;&nbsp;Overrides the &quot;space&quot; and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;multispace&quot; settings for trailing spaces.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#lcs-extends" name="lcs-extends">lcs-extends</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extends:c&nbsp;&nbsp;&nbsp;&nbsp; Character to show in the last column, when&nbsp;<a class="Type" href="options.html#'wrap'">'wrap'</a>&nbsp;is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;off and the line continues beyond the right of the<br>
@@ -4958,12 +5093,20 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be used when&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is &quot;utf-8&quot;, otherwise only printable<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;characters are allowed.&nbsp;&nbsp;All characters must be single width.<br>
 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each character can be specified as hex:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set listchars=eol:\\x24<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set listchars=eol:\\u21b5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set listchars=eol:\\U000021b5</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that a double backslash is used.&nbsp;&nbsp;The number of hex characters<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;must be exactly 2 for \\x, 4 for \\u and 8 for \\U.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Examples:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set lcs=tab:&gt;-,trail:-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set lcs=tab:&gt;-,eol:&lt;,nbsp:%<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set lcs=extends:&gt;,precedes:&lt;</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The &quot;NonText&quot; highlighting will be used for &quot;eol&quot;, &quot;extends&quot; and<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;precedes&quot;.&nbsp;&nbsp;&quot;SpecialKey&quot; for &quot;nbsp&quot;, &quot;space&quot;, &quot;tab&quot; and &quot;trail&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;precedes&quot;.&nbsp;&nbsp;&quot;SpecialKey&quot; will be used for &quot;tab&quot;, &quot;nbsp&quot;, &quot;space&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;multispace&quot;, &quot;lead&quot; and &quot;trail&quot;.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="syntax.html#hl-NonText">hl-NonText</a>&nbsp;<a class="Identifier" href="syntax.html#hl-SpecialKey">hl-SpecialKey</a><br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'lpl'" name="'lpl'">'lpl'</a>&nbsp;<a class="Constant" href="options.html#'nolpl'" name="'nolpl'">'nolpl'</a>&nbsp;<a class="Constant" href="options.html#'loadplugins'" name="'loadplugins'">'loadplugins'</a>&nbsp;<a class="Constant" href="options.html#'noloadplugins'" name="'noloadplugins'">'noloadplugins'</a><br>
@@ -5516,8 +5659,8 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When a long, wrapped line doesn't start with the first character, '-'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;characters are put before the number.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="syntax.html#hl-LineNr">hl-LineNr</a>&nbsp;&nbsp;and&nbsp;<a class="Identifier" href="syntax.html#hl-CursorLineNr">hl-CursorLineNr</a>&nbsp;for the highlighting used for<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the number.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For highlighting see&nbsp;<a class="Identifier" href="syntax.html#hl-LineNr">hl-LineNr</a>, and&nbsp;<a class="Identifier" href="syntax.html#hl-CursorLineNr">hl-CursorLineNr</a>, and the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="sign.html#:sign-define">:sign-define</a>&nbsp;&quot;numhl&quot; argument.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#number_relativenumber" name="number_relativenumber">number_relativenumber</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Type" href="options.html#'relativenumber'">'relativenumber'</a>&nbsp;option changes the displayed number to be<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;relative to the cursor.&nbsp;&nbsp;Together with&nbsp;<a class="Type" href="options.html#'number'">'number'</a>&nbsp;there are these<br>
@@ -5557,7 +5700,9 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option specifies a function to be used for Insert mode omni<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;completion with&nbsp;<span class="Special">CTRL-X</span>&nbsp;<span class="Special">CTRL-O</span>.&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-O">i_CTRL-X_CTRL-O</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="insert.html#complete-functions">complete-functions</a>&nbsp;for an explanation of how the function is<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;invoked and what it should return.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;invoked and what it should return.&nbsp;&nbsp;The value can be the name of a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function, a&nbsp;<a class="Identifier" href="eval.html#lambda">lambda</a>&nbsp;or a&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>. See&nbsp;<a class="Identifier" href="options.html#option-value-function">option-value-function</a>&nbsp;for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;more information.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option is usually set by a filetype plugin:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="filetype.html#:filetype-plugin-on">:filetype-plugin-on</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>, for<br>
@@ -5567,7 +5712,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'opendevice'" name="'opendevice'">'opendevice'</a>&nbsp;<a class="Constant" href="options.html#'odev'" name="'odev'">'odev'</a>&nbsp;<a class="Constant" href="options.html#'noopendevice'" name="'noopendevice'">'noopendevice'</a>&nbsp;<a class="Constant" href="options.html#'noodev'" name="'noodev'">'noodev'</a><br>
 <a class="Type" href="options.html#'opendevice'">'opendevice'</a>&nbsp;<a class="Type" href="options.html#'odev'">'odev'</a>&nbsp;&nbsp;&nbsp;&nbsp; boolean (default off)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{only for MS-Windows}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{only for MS-Windows}</span>&nbsp;&nbsp;<a class="Constant" href="options.html#E796" name="E796">E796</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enable reading and writing from devices.&nbsp;&nbsp;This may get Vim stuck on a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;device that can be opened but doesn't actually do the I/O.&nbsp;&nbsp;Therefore<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it is off by default.<br>
@@ -5579,7 +5724,9 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 <a class="Type" href="options.html#'operatorfunc'">'operatorfunc'</a>&nbsp;<a class="Type" href="options.html#'opfunc'">'opfunc'</a>&nbsp;string&nbsp;&nbsp;(default: empty)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option specifies a function to be called by the&nbsp;<a class="Identifier" href="map.html#g@">g@</a>&nbsp;operator.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="map.html#:map-operator">:map-operator</a>&nbsp;for more info and an example.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="map.html#:map-operator">:map-operator</a>&nbsp;for more info and an example.&nbsp;&nbsp;The value can be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the name of a function, a&nbsp;<a class="Identifier" href="eval.html#lambda">lambda</a>&nbsp;or a&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>. See<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#option-value-function">option-value-function</a>&nbsp;for more information.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>, for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;security reasons.<br>
@@ -5979,8 +6126,9 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;customize the information displayed in the quickfix or location window<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for each entry in the corresponding quickfix or location list.&nbsp;&nbsp;See<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="quickfix.html#quickfix-window-function">quickfix-window-function</a>&nbsp;for an explanation of how to write the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function and an example. The value can be the name of a function or a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lambda.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function and an example.&nbsp;&nbsp;The value can be the name of a function, a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#lambda">lambda</a>&nbsp;or a&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>. See&nbsp;<a class="Identifier" href="options.html#option-value-function">option-value-function</a>&nbsp;for more<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;information.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>, for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;security reasons.<br>
@@ -6564,6 +6712,8 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Don't include both &quot;curdir&quot; and &quot;sesdir&quot;.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When neither &quot;curdir&quot; nor &quot;sesdir&quot; is included, file names are stored<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with absolute paths.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you leave out &quot;options&quot; many things won't work well after restoring<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the session.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;slash&quot; and &quot;unix&quot; are useful on Windows when sharing session files<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with Unix.&nbsp;&nbsp;The Unix version of Vim cannot source dos format scripts,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;but the Windows version of Vim can source unix format scripts.<br>
@@ -6731,7 +6881,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="autocmd.html#FilterReadPre">FilterReadPre</a>,&nbsp;<a class="Identifier" href="autocmd.html#FilterReadPost">FilterReadPost</a>&nbsp;and&nbsp;<a class="Identifier" href="autocmd.html#FilterWritePre">FilterWritePre</a>,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="autocmd.html#FilterWritePost">FilterWritePost</a>&nbsp;autocommands event are not triggered when<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'shelltemp'">'shelltemp'</a>&nbsp;is off.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Comment" href="eval.html#system()">system()</a>&nbsp;function does not respect this option and always uses<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Comment" href="builtin.html#system()">system()</a>&nbsp;function does not respect this option and always uses<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;temp files.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">NOTE</span>: This option is set to the Vim default value when&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is reset.<br>
@@ -6797,7 +6947,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;local to buffer<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of spaces to use for each step of (auto)indent.&nbsp;&nbsp;Used for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#'cindent'">'cindent'</a>,&nbsp;<a class="Identifier" href="change.html#>>">&gt;&gt;</a>,&nbsp;<a class="Identifier" href="change.html#<<">&lt;&lt;</a>, etc.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When zero the&nbsp;<a class="Type" href="options.html#'ts'">'ts'</a>&nbsp;value will be used.&nbsp;&nbsp;Use the&nbsp;<a class="Identifier" href="eval.html#shiftwidth()">shiftwidth()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When zero the&nbsp;<a class="Type" href="options.html#'ts'">'ts'</a>&nbsp;value will be used.&nbsp;&nbsp;Use the&nbsp;<a class="Identifier" href="builtin.html#shiftwidth()">shiftwidth()</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function to get the effective shiftwidth value.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'shortmess'" name="'shortmess'">'shortmess'</a>&nbsp;<a class="Constant" href="options.html#'shm'" name="'shm'">'shm'</a><br>
@@ -7165,6 +7315,8 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the name &quot;cjk&quot; is included East Asian characters are excluded from<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;spell checking.&nbsp;&nbsp;This is useful when editing text that also has Asian<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;words.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that the &quot;medical&quot; dictionary does not exist, it is just an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;example of a longer name.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#E757" name="E757">E757</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As a special case the name of a .spl file can be given as-is.&nbsp;&nbsp;The<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first &quot;_xx&quot; in the name is removed and used as the region name<br>
@@ -7202,7 +7354,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+syntax">+syntax</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Methods used for spelling suggestions.&nbsp;&nbsp;Both for the&nbsp;<a class="Identifier" href="spell.html#z=">z=</a>&nbsp;command and<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;<a class="Identifier" href="eval.html#spellsuggest()">spellsuggest()</a>&nbsp;function.&nbsp;&nbsp;This is a comma-separated list of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;<a class="Identifier" href="builtin.html#spellsuggest()">spellsuggest()</a>&nbsp;function.&nbsp;&nbsp;This is a comma-separated list of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;items:<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;best&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Internal method that works best for English.&nbsp;&nbsp;Finds<br>
@@ -7221,9 +7373,15 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;simple typing mistakes.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{number}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The maximum number of suggestions listed for&nbsp;<a class="Identifier" href="spell.html#z=">z=</a>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Not used for&nbsp;<a class="Identifier" href="eval.html#spellsuggest()">spellsuggest()</a>.&nbsp;&nbsp;The number of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Not used for&nbsp;<a class="Identifier" href="builtin.html#spellsuggest()">spellsuggest()</a>.&nbsp;&nbsp;The number of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;suggestions is never more than the value of&nbsp;<a class="Type" href="options.html#'lines'">'lines'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;minus two.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timeout:<span class="Special">{millisec}</span>&nbsp;&nbsp; Limit the time searching for suggestions to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{millisec}</span>&nbsp;milli seconds.&nbsp;&nbsp;Applies to the following<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;methods.&nbsp;&nbsp;When omitted the limit is 5000. When<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;negative there is no limit.&nbsp;&nbsp;<span class="Special">{only works when built</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">with the +reltime feature}</span><br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant">file:{filename</span>} Read file&nbsp;<span class="Special">{filename}</span>, which must have two columns,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;separated by a slash.&nbsp;&nbsp;The first column contains the<br>
@@ -7248,7 +7406,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[['the', 33], ['that', 44]]</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;and use&nbsp;<a class="Identifier" href="spell.html#z=">z=</a>&nbsp;to see the scores that the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;internal methods use.&nbsp;&nbsp;A lower score is better.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This may invoke&nbsp;<a class="Identifier" href="eval.html#spellsuggest()">spellsuggest()</a>&nbsp;if you temporarily<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This may invoke&nbsp;<a class="Identifier" href="builtin.html#spellsuggest()">spellsuggest()</a>&nbsp;if you temporarily<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set&nbsp;<a class="Type" href="options.html#'spellsuggest'">'spellsuggest'</a>&nbsp;to exclude the &quot;expr:&quot; part.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Errors are silently ignored, unless you set the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;option to a non-zero value.<br>
@@ -7383,13 +7541,13 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return value of expr contains % items they will get expanded.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expression can contain the } character, the end of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expression is denoted by %}.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The For example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func! Stl_filename() abort<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return &quot;%t&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">stl=%{Stl_filename()}</span>&nbsp;&nbsp; results in&nbsp;<span class="Comment">&quot;%t&quot;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">stl=%{{ "{%" }}Stl_filename()%}</span>&nbsp;results in&nbsp;<span class="Comment">&quot;Name of current file&quot;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} -&nbsp;&nbsp; End of&nbsp;<span class="Comment">{{ "{%" }}</span>&nbsp;expression<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%} -&nbsp;&nbsp;End of&nbsp;<span class="Comment">{{ "{%" }}</span>&nbsp;expression<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;( -&nbsp;&nbsp; Start of item group.&nbsp;&nbsp;Can be used for setting the width and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alignment of a section.&nbsp;&nbsp;Must be followed by %) somewhere.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;) -&nbsp;&nbsp; End of item group.&nbsp;&nbsp;No width fields allowed.<br>
@@ -7427,7 +7585,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;While evaluating %{} the current buffer and current window will be set<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;temporarily to that of the window (and buffer) whose statusline is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;currently being drawn.&nbsp;&nbsp;The expression will evaluate in this context.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The variable &quot;g:actual_curbuf&quot; is set to the&nbsp;<a class="Comment" href="eval.html#bufnr()">bufnr()</a>&nbsp;number of the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The variable &quot;g:actual_curbuf&quot; is set to the&nbsp;<a class="Comment" href="builtin.html#bufnr()">bufnr()</a>&nbsp;number of the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;real current buffer and &quot;g:actual_curwin&quot; to the&nbsp;<a class="Identifier" href="windows.html#window-ID">window-ID</a>&nbsp;of the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;real current window.&nbsp;&nbsp;These values are strings.<br>
 <br>
@@ -7610,7 +7768,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instead.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that the two tab pages lines are very different.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The value is evaluated like with&nbsp;<a class="Type" href="options.html#'statusline'">'statusline'</a>.&nbsp;&nbsp;You can use<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#tabpagenr()">tabpagenr()</a>,&nbsp;<a class="Identifier" href="eval.html#tabpagewinnr()">tabpagewinnr()</a>&nbsp;and&nbsp;<a class="Identifier" href="eval.html#tabpagebuflist()">tabpagebuflist()</a>&nbsp;to figure out<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="builtin.html#tabpagenr()">tabpagenr()</a>,&nbsp;<a class="Identifier" href="builtin.html#tabpagewinnr()">tabpagewinnr()</a>&nbsp;and&nbsp;<a class="Identifier" href="builtin.html#tabpagebuflist()">tabpagebuflist()</a>&nbsp;to figure out<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the text to be displayed.&nbsp;&nbsp;Use &quot;%1T&quot; for the first label, &quot;%2T&quot; for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the second one, etc.&nbsp;&nbsp;Use &quot;%X&quot; items for closing labels.<br>
 <br>
@@ -7633,10 +7791,11 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 <a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;<a class="Type" href="options.html#'ts'">'ts'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;&nbsp;(default 8)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;local to buffer<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of spaces that a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;in the file counts for.&nbsp;&nbsp;Also see<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="change.html#:retab">:retab</a>&nbsp;command, and&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>&nbsp;option.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;<a class="Identifier" href="change.html#:retab">:retab</a>&nbsp;command, and the&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>&nbsp;option.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>: Setting&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;to any other value than 8 can make your file<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;appear wrong in many places (e.g., when printing it).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;appear wrong in many places, e.g., when printing it.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The value must be more than 0 and less than 10000.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There are four main ways to use tabs in Vim&#0058;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Always keep&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;at 8, set&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;to 4<br>
@@ -7732,7 +7891,9 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option specifies a function to be used to perform tag searches.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The function gets the tag pattern and should return a List of matching<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tags.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="tagsrch.html#tag-function">tag-function</a>&nbsp;for an explanation of how to write the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function and an example.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function and an example.&nbsp;&nbsp;The value can be the name of a function, a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#lambda">lambda</a>&nbsp;or a&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>. See&nbsp;<a class="Identifier" href="options.html#option-value-function">option-value-function</a>&nbsp;for more<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;information.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'taglength'" name="'taglength'">'taglength'</a>&nbsp;<a class="Constant" href="options.html#'tl'" name="'tl'">'tl'</a><br>
 <a class="Type" href="options.html#'taglength'">'taglength'</a>&nbsp;<a class="Type" href="options.html#'tl'">'tl'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;&nbsp;(default 0)<br>
@@ -7764,7 +7925,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contain wildcards, it is used as-is.&nbsp;&nbsp;E.g., &quot;/lib/**/tags?&quot; will find<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;files called &quot;tags?&quot;.&nbsp;&nbsp;<span class="Special">{not available when compiled without the</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="various.html#+path_extra">+path_extra</a><span class="Special">&nbsp;feature}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="eval.html#tagfiles()">tagfiles()</a>&nbsp;function can be used to get a list of the file names<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="builtin.html#tagfiles()">tagfiles()</a>&nbsp;function can be used to get a list of the file names<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;actually used.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If Vim was compiled with the&nbsp;<a class="Identifier" href="various.html#+emacs_tags">+emacs_tags</a>&nbsp;feature, Emacs-style tag<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;files are also supported.&nbsp;&nbsp;They are automatically recognized.&nbsp;&nbsp;The<br>
@@ -7895,6 +8056,9 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of scrollback lines to keep.&nbsp;&nbsp;When going over this limit the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first 10% of the scrollback lines are deleted.&nbsp;&nbsp;This is just to reduce<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the memory usage.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="terminal.html#Terminal-Normal">Terminal-Normal</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also used as a limit for text sent to the terminal in one write,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;multiplied by the number of columns times 3 (average number of bytes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;per cell).<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'termwinsize'" name="'termwinsize'">'termwinsize'</a>&nbsp;<a class="Constant" href="options.html#'tws'" name="'tws'">'tws'</a><br>
 <a class="Type" href="options.html#'termwinsize'">'termwinsize'</a>&nbsp;<a class="Type" href="options.html#'tws'">'tws'</a>&nbsp;&nbsp;&nbsp;&nbsp; string&nbsp;&nbsp;(default &quot;&quot;)<br>
@@ -7985,25 +8149,32 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 <a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;<a class="Type" href="options.html#'tsr'">'tsr'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string&nbsp;&nbsp;(default &quot;&quot;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global or local to buffer&nbsp;<a class="Identifier" href="options.html#global-local">global-local</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List of file names, separated by commas, that are used to lookup words<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for thesaurus completion commands&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-T">i_CTRL-X_CTRL-T</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for thesaurus completion commands&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-T">i_CTRL-X_CTRL-T</a>.&nbsp;&nbsp;See<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="insert.html#compl-thesaurus">compl-thesaurus</a>.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each line in the file should contain words with similar meaning,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;separated by non-keyword characters (white space is preferred).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maximum line length is 510 bytes.<br>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An English word list was added to this github issue:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/issues/629#issuecomment-443293282">https://github.com/vim/vim/issues/629#issuecomment-443293282</a></span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unpack thesaurus_pkg.zip, put the thesaurus.txt file somewhere, e.g.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~/.vim/thesaurus/english.txt, and the&nbsp;<a class="Type" href="options.html#'thesaurus'">'thesaurus'</a>&nbsp;option to this file<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option is not used if&nbsp;<a class="Type" href="options.html#'thesaurusfunc'">'thesaurusfunc'</a>&nbsp;is set, either for the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buffer or globally.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To include a comma in a file name precede it with a backslash.&nbsp;&nbsp;Spaces<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;after a comma are ignored, otherwise spaces are included in the file<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="options.html#option-backslash">option-backslash</a>&nbsp;about using backslashes.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The use of&nbsp;<a class="Identifier" href="options.html#:set+=">:set+=</a>&nbsp;and&nbsp;<a class="Identifier" href="options.html#:set-=">:set-=</a>&nbsp;is preferred when adding or removing<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;directories from the list.&nbsp;&nbsp;This avoids problems when a future version<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uses another default.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Backticks cannot be used in this option for security reasons.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="options.html#option-backslash">option-backslash</a>&nbsp;about using backslashes.&nbsp;&nbsp;The use of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#:set+=">:set+=</a>&nbsp;and&nbsp;<a class="Identifier" href="options.html#:set-=">:set-=</a>&nbsp;is preferred when adding or removing directories<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from the list.&nbsp;&nbsp;This avoids problems when a future version uses<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;another default.&nbsp;&nbsp;Backticks cannot be used in this option for security<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reasons.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'thesaurusfunc'" name="'thesaurusfunc'">'thesaurusfunc'</a>&nbsp;<a class="Constant" href="options.html#'tsrfu'" name="'tsrfu'">'tsrfu'</a><br>
+<a class="Type" href="options.html#'thesaurusfunc'">'thesaurusfunc'</a>&nbsp;<a class="Type" href="options.html#'tsrfu'">'tsrfu'</a>&nbsp;string&nbsp;&nbsp;(default: empty)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global or local to buffer&nbsp;<a class="Identifier" href="options.html#global-local">global-local</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+eval">+eval</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option specifies a function to be used for thesaurus completion<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;<span class="Special">CTRL-X</span>&nbsp;<span class="Special">CTRL-T</span>.&nbsp;<a class="Identifier" href="insert.html#i_CTRL-X_CTRL-T">i_CTRL-X_CTRL-T</a>&nbsp;See&nbsp;<a class="Identifier" href="insert.html#compl-thesaurusfunc">compl-thesaurusfunc</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The value can be the name of a function, a&nbsp;<a class="Identifier" href="eval.html#lambda">lambda</a>&nbsp;or a&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="options.html#option-value-function">option-value-function</a>&nbsp;for more information.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option cannot be set from a&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>&nbsp;or in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>, for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;security reasons.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'tildeop'" name="'tildeop'">'tildeop'</a>&nbsp;<a class="Constant" href="options.html#'top'" name="'top'">'top'</a>&nbsp;<a class="Constant" href="options.html#'notildeop'" name="'notildeop'">'notildeop'</a>&nbsp;<a class="Constant" href="options.html#'notop'" name="'notop'">'notop'</a><br>
 <a class="Type" href="options.html#'tildeop'">'tildeop'</a>&nbsp;<a class="Type" href="options.html#'top'">'top'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boolean (default off)<br>
@@ -8071,8 +8242,6 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'title'" name="'title'">'title'</a>&nbsp;<a class="Constant" href="options.html#'notitle'" name="'notitle'">'notitle'</a><br>
 <a class="Type" href="options.html#'title'">'title'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boolean (default off, on when title can be restored)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+title">+title</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When on, the title of the window will be set to the value of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'titlestring'">'titlestring'</a>&nbsp;(if it is not empty), or to:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filename [+=-] (path) - VIM<br>
@@ -8106,8 +8275,6 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'titlelen'" name="'titlelen'">'titlelen'</a><br>
 <a class="Type" href="options.html#'titlelen'">'titlelen'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;&nbsp;(default 85)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+title">+title</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gives the percentage of&nbsp;<a class="Type" href="options.html#'columns'">'columns'</a>&nbsp;to use for the length of the window<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;title.&nbsp;&nbsp;When the title is longer, only the end of the path name is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shown.&nbsp;&nbsp;A '&lt;' character before the path name is used to indicate this.<br>
@@ -8121,8 +8288,6 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'titleold'" name="'titleold'">'titleold'</a><br>
 <a class="Type" href="options.html#'titleold'">'titleold'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;&nbsp;(default &quot;Thanks for flying Vim&quot;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{only available when compiled with the&nbsp;</span><a class="Identifier" href="various.html#+title">+title</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option will be used for the window title when exiting Vim if the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;original title cannot be restored.&nbsp;&nbsp;Only happens if&nbsp;<a class="Type" href="options.html#'title'">'title'</a>&nbsp;is on or<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'titlestring'">'titlestring'</a>&nbsp;is not empty.<br>
@@ -8131,8 +8296,6 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'titlestring'" name="'titlestring'">'titlestring'</a><br>
 <a class="Type" href="options.html#'titlestring'">'titlestring'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string&nbsp;&nbsp;(default &quot;&quot;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{not available when compiled without the&nbsp;</span><a class="Identifier" href="various.html#+title">+title</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When this option is not empty, it will be used for the title of the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;window.&nbsp;&nbsp;This happens only when the&nbsp;<a class="Type" href="options.html#'title'">'title'</a>&nbsp;option is on.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only works if the terminal supports setting window titles (currently<br>
@@ -8648,7 +8811,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'virtualedit'" name="'virtualedit'">'virtualedit'</a>&nbsp;<a class="Constant" href="options.html#'ve'" name="'ve'">'ve'</a><br>
 <a class="Type" href="options.html#'virtualedit'">'virtualedit'</a>&nbsp;<a class="Type" href="options.html#'ve'">'ve'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;&nbsp;(default &quot;&quot;)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global or local to buffer&nbsp;<a class="Identifier" href="options.html#global-local">global-local</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global or local to window&nbsp;<a class="Identifier" href="options.html#global-local">global-local</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A comma separated list of these words:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;block&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Allow virtual editing in Visual block mode.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Allow virtual editing in Insert mode.<br>
@@ -8758,8 +8921,9 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;More info here:&nbsp;<a class="Identifier" href="cmdline.html#cmdline-completion">cmdline-completion</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The character is not recognized when used inside a macro.&nbsp;&nbsp;See<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'wildcharm'">'wildcharm'</a>&nbsp;for that.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Some keys will not work, such as&nbsp;<span class="Special">CTRL-C</span>,&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;and Enter.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Although&nbsp;<a class="Type" href="options.html#'wc'">'wc'</a>&nbsp;is a number option, you can set it to a special key:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set wc=&lt;Esc&gt;</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set wc=&lt;Tab&gt;</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">NOTE</span>: This option is set to the Vi default value when&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set and to the Vim default value when&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;is reset.<br>
 <br>
@@ -8782,8 +8946,8 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">feature}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A list of file patterns.&nbsp;&nbsp;A file that matches with one of these<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;patterns is ignored when expanding&nbsp;<a class="Identifier" href="editing.html#wildcards">wildcards</a>, completing file or<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;directory names, and influences the result of&nbsp;<a class="Identifier" href="eval.html#expand()">expand()</a>,&nbsp;<a class="Identifier" href="eval.html#glob()">glob()</a>&nbsp;and<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="eval.html#globpath()">globpath()</a>&nbsp;unless a flag is passed to disable this.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;directory names, and influences the result of&nbsp;<a class="Identifier" href="builtin.html#expand()">expand()</a>,&nbsp;<a class="Identifier" href="builtin.html#glob()">glob()</a>&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="builtin.html#globpath()">globpath()</a>&nbsp;unless a flag is passed to disable this.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The pattern is used like with&nbsp;<a class="Identifier" href="autocmd.html#:autocmd">:autocmd</a>, see&nbsp;<a class="Identifier" href="autocmd.html#autocmd-patterns">autocmd-patterns</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also see&nbsp;<a class="Type" href="options.html#'suffixes'">'suffixes'</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
@@ -8815,7 +8979,7 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-P</span>/<span class="Special">CTRL-N</span>, cause the highlight to move to the appropriate match.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<a class="Type" href="options.html#'wildmode'">'wildmode'</a>&nbsp;is used, &quot;wildmenu&quot; mode is used where &quot;full&quot; is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specified.&nbsp;&nbsp;&quot;longest&quot; and &quot;list&quot; do not start &quot;wildmenu&quot; mode.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can check the current mode with&nbsp;<a class="Identifier" href="eval.html#wildmenumode()">wildmenumode()</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can check the current mode with&nbsp;<a class="Identifier" href="builtin.html#wildmenumode()">wildmenumode()</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there are more matches than can fit in the line, a &quot;&gt;&quot; is shown on<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the right and/or a &quot;&lt;&quot; is shown on the left.&nbsp;&nbsp;The status line scrolls<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as needed.<br>
@@ -9108,6 +9272,18 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The number of milliseconds to wait for each character sent to the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screen.&nbsp;&nbsp;When non-zero, characters are sent to the terminal one by<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;one.&nbsp;&nbsp;For debugging purposes.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="options.html#'xtermcodes'" name="'xtermcodes'">'xtermcodes'</a>&nbsp;<a class="Constant" href="options.html#'noxtermcodes'" name="'noxtermcodes'">'noxtermcodes'</a><br>
+<a class="Type" href="options.html#'xtermcodes'">'xtermcodes'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean (default on)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When detecting xterm patchlevel 141 or higher with the termresponse<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mechanism and this option is set, Vim will request the actual terminal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key codes and number of colors from the terminal.&nbsp;&nbsp;This takes care of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;various configuration options of the terminal that cannot be obtained<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from the termlib/terminfo entry, see&nbsp;<a class="Identifier" href="term.html#xterm-codes">xterm-codes</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A side effect may be that t_Co changes and Vim will redraw the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display.<br>
+<br>
 <br>
 &nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
 </div>

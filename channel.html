@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'channel'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="channel.html" name="channel.txt">channel.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2020 Oct 17<br>
+<a class="Constant" href="channel.html" name="channel.txt">channel.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Nov 28<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -56,8 +56,8 @@ For 4 use the &quot;:<span class="Special">{range}</span>!cmd&quot; command, see
 Over the socket and pipes these protocols are available:<br>
 RAW&nbsp;&nbsp;&nbsp;&nbsp; nothing known, Vim cannot tell where a message ends<br>
 NL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;every message ends in a NL (newline) character<br>
-JSON&nbsp;&nbsp;&nbsp;&nbsp;JSON encoding&nbsp;<a class="Identifier" href="eval.html#json_encode()">json_encode()</a><br>
-JS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JavaScript style JSON-like encoding&nbsp;<a class="Identifier" href="eval.html#js_encode()">js_encode()</a><br>
+JSON&nbsp;&nbsp;&nbsp;&nbsp;JSON encoding&nbsp;<a class="Identifier" href="builtin.html#json_encode()">json_encode()</a><br>
+JS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JavaScript style JSON-like encoding&nbsp;<a class="Identifier" href="builtin.html#js_encode()">js_encode()</a><br>
 <br>
 Common combination are:<br>
 - Using a job connected through pipes in NL mode.&nbsp;&nbsp;E.g., to run a style<br>
@@ -106,7 +106,7 @@ Instead of giving a callback with every send call, it can also be specified<br>
 when opening the channel:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call ch_close(channel)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let channel = ch_open('localhost:8765', {'callback': &quot;MyHandler&quot;})<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendexpr(channel, 'hello!')</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendexpr(channel, 'hello channel!')</div>
 <br>
 When trying out channels it's useful to see what is going on.&nbsp;&nbsp;You can tell<br>
 Vim to write lines in log file:<br>
@@ -137,8 +137,9 @@ When using an IPv6 address, enclose it within square brackets.&nbsp;&nbsp;E.g.,<
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;raw&quot;&nbsp;&nbsp;- Use raw messages<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-callback" name="channel-callback">channel-callback</a>&nbsp;<a class="Constant" href="channel.html#E921" name="E921">E921</a><br>
 &quot;callback&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function that is called when a message is received that is<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not handled otherwise.&nbsp;&nbsp;It gets two arguments: the channel<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and the received message. Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not handled otherwise (e.g. a JSON message with ID zero).&nbsp;&nbsp;It<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gets two arguments: the channel and the received message.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Handle(channel, msg)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'Received: ' . a:msg<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
@@ -151,7 +152,7 @@ When using an IPv6 address, enclose it within square brackets.&nbsp;&nbsp;E.g.,<
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When &quot;mode&quot; is &quot;raw&quot; the &quot;msg&quot; argument is the whole message<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as a string.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For all callbacks: Use&nbsp;<a class="Identifier" href="eval.html#function()">function()</a>&nbsp;to bind it to arguments<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For all callbacks: Use&nbsp;<a class="Identifier" href="builtin.html#function()">function()</a>&nbsp;to bind it to arguments<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and/or a Dictionary.&nbsp;&nbsp;Or use the form &quot;dict.function&quot; to bind<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the Dictionary.<br>
 <br>
@@ -241,7 +242,7 @@ If mode is JSON then a message can be sent synchronously like this:<br>
 This awaits a response from the other side.<br>
 <br>
 When mode is JS this works the same, except that the messages use<br>
-JavaScript encoding.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="eval.html#js_encode()">js_encode()</a>&nbsp;for the difference.<br>
+JavaScript encoding.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="builtin.html#js_encode()">js_encode()</a>&nbsp;for the difference.<br>
 <br>
 To send a message, without handling a response or letting the channel callback<br>
 handle the response:<br>
@@ -308,7 +309,7 @@ Possible commands are:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs
 &nbsp;&nbsp;&nbsp;&nbsp;[&quot;call&quot;,&nbsp;&nbsp; {func name}, {argument list}]<br>
 <br>
 With all of these: Be careful what these commands do!&nbsp;&nbsp;You can easily<br>
-interfere with what the user is doing.&nbsp;&nbsp;To avoid trouble use&nbsp;<a class="Identifier" href="eval.html#mode()">mode()</a>&nbsp;to check<br>
+interfere with what the user is doing.&nbsp;&nbsp;To avoid trouble use&nbsp;<a class="Identifier" href="builtin.html#mode()">mode()</a>&nbsp;to check<br>
 that the editor is in the expected state.&nbsp;&nbsp;E.g., to send keys that must be<br>
 inserted as text, not executed as a command:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;ex&quot;,&quot;if mode() == 'i' | call feedkeys('ClassName') | endif&quot;]</span><br>
@@ -337,7 +338,7 @@ The &quot;ex&quot; command is executed as any Ex command.&nbsp;&nbsp;There is no
 completion or error.&nbsp;&nbsp;You could use functions in an&nbsp;<a class="Identifier" href="eval.html#autoload">autoload</a>&nbsp;script:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;ex&quot;,&quot;call myscript#MyFunc(arg)&quot;]<br>
 <br>
-You can also use &quot;call&nbsp;<a class="Identifier" href="eval.html#feedkeys()">feedkeys()</a>&quot; to insert any key sequence.<br>
+You can also use &quot;call&nbsp;<a class="Identifier" href="builtin.html#feedkeys()">feedkeys()</a>&quot; to insert any key sequence.<br>
 <br>
 When there is an error a message is written to the channel log, if it exists,<br>
 and v:errmsg is set to the error.<br>
@@ -415,8 +416,8 @@ To send a message and letting the response handled by a specific function,<br>
 asynchronously:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendraw(channel, {string}, {'callback': 'MyHandler'})</div>
 <br>
-This&nbsp;<span class="Special">{string}</span>&nbsp;can also be JSON, use&nbsp;<a class="Identifier" href="eval.html#json_encode()">json_encode()</a>&nbsp;to create it and<br>
-<a class="Identifier" href="eval.html#json_decode()">json_decode()</a>&nbsp;to handle a received JSON message.<br>
+This&nbsp;<span class="Special">{string}</span>&nbsp;can also be JSON, use&nbsp;<a class="Identifier" href="builtin.html#json_encode()">json_encode()</a>&nbsp;to create it and<br>
+<a class="Identifier" href="builtin.html#json_decode()">json_decode()</a>&nbsp;to handle a received JSON message.<br>
 <br>
 It is not possible to use&nbsp;<a class="Identifier" href="channel.html#ch_evalexpr()">ch_evalexpr()</a>&nbsp;or&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;on a raw channel.<br>
 <br>
@@ -541,7 +542,7 @@ ch_evalraw(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{st
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_evalraw(rawstring)</div>
 <br>
 ch_getbufnr(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{what}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_getbufnr()" name="ch_getbufnr()">ch_getbufnr()</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the buffer number that&nbsp;<span class="Special">{handle}</span>&nbsp;is using for&nbsp;<span class="Special">{what}</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the buffer number that&nbsp;<span class="Special">{handle}</span>&nbsp;is using for String&nbsp;<span class="Special">{what}</span>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{handle}</span>&nbsp;can be a Channel or a Job that has a Channel.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{what}</span>&nbsp;can be &quot;err&quot; for stderr, &quot;out&quot; for stdout or empty for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;socket output.<br>
@@ -591,8 +592,8 @@ ch_info(<span class="Special">{handle}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs
 <br>
 <br>
 ch_log(<span class="Special">{msg}</span>&nbsp;[,&nbsp;<span class="Special">{handle}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_log()" name="ch_log()">ch_log()</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write&nbsp;<span class="Special">{msg}</span>&nbsp;in the channel log file, if it was opened with<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="channel.html#ch_logfile()">ch_logfile()</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write String&nbsp;<span class="Special">{msg}</span>&nbsp;in the channel log file, if it was opened<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;<a class="Identifier" href="channel.html#ch_logfile()">ch_logfile()</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">{handle}</span>&nbsp;is passed the channel number is used for the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{handle}</span>&nbsp;can be a Channel or a Job that has a Channel.&nbsp;&nbsp;The<br>
@@ -630,7 +631,7 @@ ch_open(<span class="Special">{address}</span>&nbsp;[,&nbsp;<span class="Special
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Open a channel to&nbsp;<span class="Special">{address}</span>.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel">channel</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a Channel.&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="channel.html#ch_status()">ch_status()</a>&nbsp;to check for failure.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{address}</span>&nbsp;has the form &quot;hostname:port&quot;, e.g.,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{address}</span>&nbsp;is a String and has the form &quot;hostname:port&quot;, e.g.,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;localhost:8765&quot;.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When using an IPv6 address, enclose it within square brackets.<br>
@@ -770,7 +771,7 @@ If you want to handle both stderr and stdout with one handler use the<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(command, {&quot;callback&quot;: &quot;MyHandler&quot;})</div>
 <br>
 Depending on the system, starting a job can put Vim in the background, the<br>
-started job gets the focus.&nbsp;&nbsp;To avoid that, use the&nbsp;<a class="Comment" href="eval.html#foreground()">foreground()</a>&nbsp;function.<br>
+started job gets the focus.&nbsp;&nbsp;To avoid that, use the&nbsp;<a class="Comment" href="builtin.html#foreground()">foreground()</a>&nbsp;function.<br>
 This might not always work when called early, put in the callback handler or<br>
 use a timer to call it after the job has started.<br>
 <br>
@@ -791,7 +792,7 @@ To run a job that reads from a buffer:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ {'in_io': 'buffer', 'in_name': 'mybuffer'})</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#E915" name="E915">E915</a>&nbsp;<a class="Constant" href="channel.html#E918" name="E918">E918</a><br>
-The buffer is found by name, similar to&nbsp;<a class="Identifier" href="eval.html#bufnr()">bufnr()</a>. The buffer must exist and<br>
+The buffer is found by name, similar to&nbsp;<a class="Identifier" href="builtin.html#bufnr()">bufnr()</a>. The buffer must exist and<br>
 be loaded when job_start() is called.<br>
 <br>
 By default this reads the whole buffer.&nbsp;&nbsp;This can be changed with the &quot;in_top&quot;<br>
@@ -900,7 +901,7 @@ job_setoptions(<span class="Special">{job}</span>,&nbsp;<span class="Special">{o
 <br>
 <br>
 job_start(<span class="Special">{command}</span>&nbsp;[,&nbsp;<span class="Special">{options}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#job_start()" name="job_start()">job_start()</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start a job and return a Job object.&nbsp;&nbsp;Unlike&nbsp;<a class="Identifier" href="eval.html#system()">system()</a>&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start a job and return a Job object.&nbsp;&nbsp;Unlike&nbsp;<a class="Identifier" href="builtin.html#system()">system()</a>&nbsp;and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="various.html#:!cmd">:!cmd</a>&nbsp;this does not wait for the job to finish.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To start a job in a terminal window see&nbsp;<a class="Identifier" href="terminal.html#term_start()">term_start()</a>.<br>
 <br>
@@ -1219,7 +1220,7 @@ stores these as NL bytes).<br>
 <span class="PreProc">Writing to a file</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#E920" name="E920">E920</a><br>
 The file is created with permissions 600 (read-write for the user, not<br>
-accessible for others).&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="eval.html#setfperm()">setfperm()</a>&nbsp;to change this.<br>
+accessible for others).&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="builtin.html#setfperm()">setfperm()</a>&nbsp;to change this.<br>
 <br>
 If the file already exists it is truncated.<br>
 <br>
@@ -1256,22 +1257,22 @@ normally only do that in a newly created buffer.<br>
 <br>
 The user can edit and enter one line of text at the very last line of the<br>
 buffer.&nbsp;&nbsp;When pressing Enter in the prompt line the callback set with<br>
-<a class="Identifier" href="eval.html#prompt_setcallback()">prompt_setcallback()</a>&nbsp;is invoked.&nbsp;&nbsp;It would normally send the line to a job.<br>
+<a class="Identifier" href="builtin.html#prompt_setcallback()">prompt_setcallback()</a>&nbsp;is invoked.&nbsp;&nbsp;It would normally send the line to a job.<br>
 Another callback would receive the output from the job and display it in the<br>
 buffer, below the prompt (and above the next prompt).<br>
 <br>
 Only the text in the last line, after the prompt, is editable. The rest of the<br>
 buffer is not modifiable with Normal mode commands.&nbsp;&nbsp;It can be modified by<br>
-calling functions, such as&nbsp;<a class="Identifier" href="eval.html#append()">append()</a>.&nbsp;&nbsp;Using other commands may mess up the<br>
+calling functions, such as&nbsp;<a class="Identifier" href="builtin.html#append()">append()</a>.&nbsp;&nbsp;Using other commands may mess up the<br>
 buffer.<br>
 <br>
 After setting&nbsp;<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;to &quot;prompt&quot; Vim does not automatically start Insert<br>
 mode, use&nbsp;<a class="Comment" href="insert.html#:startinsert">:startinsert</a>&nbsp;if you want to enter Insert mode, so that the user<br>
 can start typing a line.<br>
 <br>
-The text of the prompt can be set with the&nbsp;<a class="Identifier" href="eval.html#prompt_setprompt()">prompt_setprompt()</a>&nbsp;function. If<br>
-no prompt is set with&nbsp;<a class="Identifier" href="eval.html#prompt_setprompt()">prompt_setprompt()</a>, &quot;% &quot; is used. You can get the<br>
-effective prompt text for a buffer, with&nbsp;<a class="Identifier" href="eval.html#prompt_getprompt()">prompt_getprompt()</a>.<br>
+The text of the prompt can be set with the&nbsp;<a class="Identifier" href="builtin.html#prompt_setprompt()">prompt_setprompt()</a>&nbsp;function. If<br>
+no prompt is set with&nbsp;<a class="Identifier" href="builtin.html#prompt_setprompt()">prompt_setprompt()</a>, &quot;% &quot; is used. You can get the<br>
+effective prompt text for a buffer, with&nbsp;<a class="Identifier" href="builtin.html#prompt_getprompt()">prompt_getprompt()</a>.<br>
 <br>
 The user can go to Normal mode and navigate through the buffer.&nbsp;&nbsp;This can be<br>
 useful to see older output or copy text.<br>

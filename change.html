@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'change'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="change.html" name="change.txt">change.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2021 Jun 23<br>
+<a class="Constant" href="change.html" name="change.txt">change.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Jan 28<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -264,6 +264,9 @@ Or use &quot;caw&quot; (see&nbsp;<a class="Identifier" href="motion.html#aw">aw<
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adding [!] toggles&nbsp;<a class="Type" href="options.html#'autoindent'">'autoindent'</a>&nbsp;for the time this<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command is executed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This command is not supported in&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;because it is too easily confused with a variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 3. Simple changes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="change.html#simple-change" name="simple-change">simple-change</a><br>
@@ -842,7 +845,7 @@ then the&nbsp;<span class="Special">{string}</span>&nbsp;of the previous substit
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reserved for future expansion<br>
 <br>
 The special meaning is also used inside the third argument&nbsp;<span class="Special">{sub}</span>&nbsp;of<br>
-the&nbsp;<a class="Identifier" href="eval.html#substitute()">substitute()</a>&nbsp;function with the following exceptions:<br>
+the&nbsp;<a class="Identifier" href="builtin.html#substitute()">substitute()</a>&nbsp;function with the following exceptions:<br>
 &nbsp;&nbsp;- A % inserts a percent literally without regard to&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>.<br>
 &nbsp;&nbsp;- magic is always set without regard to&nbsp;<a class="Type" href="options.html#'magic'">'magic'</a>.<br>
 &nbsp;&nbsp;- A ~ inserts a tilde literally.<br>
@@ -930,7 +933,7 @@ can get one with a double-quote string: &quot;\n&quot;.&nbsp;&nbsp;Prepend a bac
 real&nbsp;<span class="Special">&lt;NL&gt;</span>&nbsp;character (which will be a NUL in the file).<br>
 <br>
 The &quot;\=&quot; notation can also be used inside the third argument&nbsp;<span class="Special">{sub}</span>&nbsp;of<br>
-<a class="Identifier" href="eval.html#substitute()">substitute()</a>&nbsp;function.&nbsp;&nbsp;In this case, the special meaning for characters as<br>
+<a class="Identifier" href="builtin.html#substitute()">substitute()</a>&nbsp;function.&nbsp;&nbsp;In this case, the special meaning for characters as<br>
 mentioned at&nbsp;<a class="Identifier" href="change.html#sub-replace-special">sub-replace-special</a>&nbsp;does not apply at all. Especially,&nbsp;<span class="Special">&lt;CR&gt;</span>&nbsp;and<br>
 <span class="Special">&lt;NL&gt;</span>&nbsp;are interpreted not as a line break but as a carriage-return and a<br>
 new-line respectively.<br>
@@ -939,7 +942,7 @@ When the result is a&nbsp;<a class="Identifier" href="eval.html#List">List</a>&n
 breaks.&nbsp;&nbsp;Thus each item becomes a line, except that they can contain line<br>
 breaks themselves.<br>
 <br>
-The&nbsp;<a class="Identifier" href="eval.html#submatch()">submatch()</a>&nbsp;function can be used to obtain matched text.&nbsp;&nbsp;The whole<br>
+The&nbsp;<a class="Identifier" href="builtin.html#submatch()">submatch()</a>&nbsp;function can be used to obtain matched text.&nbsp;&nbsp;The whole<br>
 matched text can be accessed with &quot;submatch(0)&quot;.&nbsp;&nbsp;The text matched with the<br>
 first pair of () with &quot;submatch(1)&quot;.&nbsp;&nbsp;Likewise for further sub-matches in ().<br>
 <br>
@@ -1178,19 +1181,19 @@ register.&nbsp;&nbsp;With blockwise selection it also depends on the size of the
 and whether the corners are on an existing character.&nbsp;&nbsp;(Implementation detail:<br>
 it actually works by first putting the register after the selection and then<br>
 deleting the selection.)<br>
-The previously selected text is put in the unnamed register.&nbsp;&nbsp;If you want to<br>
-put the same text into a Visual selection several times you need to use<br>
+With 'p' the previously selected text is put in the unnamed register.&nbsp;&nbsp;This is<br>
+useful if you want to put that text somewhere else.&nbsp;&nbsp;But you cannot repeat the<br>
+same change.<br>
+With 'P' the unnamed register is not changed, you can repeat the same change.<br>
+But the deleted text cannot be used.&nbsp;&nbsp;If you do need it you can use 'p' with<br>
 another register.&nbsp;&nbsp;E.g., yank the text to copy, Visually select the text to<br>
-replace and use &quot;0p .&nbsp;&nbsp;You can repeat this as many times as you like, the<br>
+replace and use &quot;0p .&nbsp;&nbsp;You can repeat this as many times as you like, and the<br>
 unnamed register will be changed each time.<br>
 <br>
 When you use a blockwise Visual mode command and yank only a single line into<br>
 a register, a paste on a visual selected area will paste that single line on<br>
 each of the selected lines (thus replacing the blockwise selected region by a<br>
 block of the pasted line).<br>
-<br>
-Use&nbsp;<a class="Identifier" href="change.html#zP">zP</a><a class="Identifier" href="pattern.html#/">/</a><a class="Identifier" href="change.html#zp">zp</a>&nbsp;to paste a blockwise yanked register without appending trailing<br>
-spaces.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="change.html#blockwise-register" name="blockwise-register">blockwise-register</a><br>
 If you use a blockwise Visual mode command to get the text into the register,<br>
@@ -1201,6 +1204,9 @@ yanked or deleted.&nbsp;&nbsp;Vim may replace some&nbsp;<span class="Special">&l
 this happen.&nbsp;&nbsp;However, if the width of the block is not a multiple of a&nbsp;<span class="Special">&lt;Tab&gt;</span><br>
 width and the text after the inserted block contains&nbsp;<span class="Special">&lt;Tab&gt;</span>s, that text may be<br>
 misaligned.<br>
+<br>
+Use&nbsp;<a class="Identifier" href="change.html#zP">zP</a><a class="Identifier" href="pattern.html#/">/</a><a class="Identifier" href="change.html#zp">zp</a>&nbsp;to paste a blockwise yanked register without appending trailing<br>
+spaces.<br>
 <br>
 <span class="Todo">Note</span>&nbsp;that after a characterwise yank command, Vim leaves the cursor on the<br>
 first yanked character that is closest to the start of the buffer.&nbsp;&nbsp;This means<br>
@@ -1379,6 +1385,9 @@ The next three commands always work on whole lines.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="change.html#:t" name=":t">:t</a><br>
 :t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Synonym for copy.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This command is not supported in&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;because it is too easily confused with a variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name.<br>
 <br>
 :<span class="Special">[range]</span>m[ove]&nbsp;<span class="Special">{address}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="change.html#:m" name=":m">:m</a>&nbsp;<a class="Constant" href="change.html#:mo" name=":mo">:mo</a>&nbsp;<a class="Constant" href="change.html#:move" name=":move">:move</a>&nbsp;<a class="Constant" href="change.html#E134" name="E134">E134</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Move the lines given by&nbsp;<span class="Special">[range]</span>&nbsp;to below the line<br>
@@ -1676,7 +1685,8 @@ r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Automatically insert the current comment l
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;in Insert mode.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="change.html#fo-o" name="fo-o">fo-o</a><br>
 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Automatically insert the current comment leader after hitting 'o' or<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'O' in Normal mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'O' in Normal mode.&nbsp;&nbsp;In case comment is unwanted in a specific place<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;use&nbsp;<span class="Special">CTRL-U</span>&nbsp;to quickly delete it.&nbsp;<a class="Identifier" href="insert.html#i_CTRL-U">i_CTRL-U</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="change.html#fo-q" name="fo-q">fo-q</a><br>
 q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Allow formatting of comments with &quot;gq&quot;.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that formatting will not change blank lines or lines containing<br>
@@ -1851,7 +1861,7 @@ And a few warnings:<br>
 7. Sorting text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="change.html#sorting" name="sorting">sorting</a><br>
 <br>
 Vim has a sorting function and a sorting command.&nbsp;&nbsp;The sorting function can be<br>
-found here:&nbsp;<a class="Identifier" href="eval.html#sort()">sort()</a>,&nbsp;<a class="Identifier" href="eval.html#uniq()">uniq()</a>.<br>
+found here:&nbsp;<a class="Identifier" href="builtin.html#sort()">sort()</a>,&nbsp;<a class="Identifier" href="builtin.html#uniq()">uniq()</a>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="change.html#:sor" name=":sor">:sor</a>&nbsp;<a class="Constant" href="change.html#:sort" name=":sort">:sort</a><br>
 :<span class="Special">[range]</span>sor[t][!] [b][f][i][l][n][o][r][u][x] [/<span class="Special">{pattern}</span>/]<br>

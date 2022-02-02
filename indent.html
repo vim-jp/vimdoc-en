@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'indent'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="indent.html" name="indent.txt">indent.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2019 Dec 07<br>
+<a class="Constant" href="indent.html" name="indent.txt">indent.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Jan 31<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -613,26 +613,25 @@ See the $VIMRUNTIME/indent directory for examples.<br>
 Clojure indentation differs somewhat from traditional Lisps, due in part to<br>
 the use of square and curly brackets, and otherwise by community convention.<br>
 These conventions are not universally followed, so the Clojure indent script<br>
-offers a few configurable options, listed below.<br>
+offers a few configuration options.<br>
 <br>
-If the current vim does not include searchpairpos(), the indent script falls<br>
-back to normal&nbsp;<a class="Type" href="options.html#'lisp'">'lisp'</a>&nbsp;indenting, and the following options are ignored.<br>
+(If the current Vim does not include&nbsp;<a class="Identifier" href="builtin.html#searchpairpos()">searchpairpos()</a>, the indent script falls<br>
+back to normal&nbsp;<a class="Type" href="options.html#'lisp'">'lisp'</a>&nbsp;indenting, and the following options are ignored.)<br>
+<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="indent.html#g:clojure_maxlines" name="g:clojure_maxlines">g:clojure_maxlines</a><br>
 <br>
-Set maximum scan distance of searchpairpos(). Larger values trade performance<br>
-for correctness when dealing with very long forms. A value of 0 will scan<br>
-without limits.<br>
+Sets maximum scan distance of&nbsp;<a class="Comment" href="builtin.html#searchpairpos()">searchpairpos()</a>.&nbsp;&nbsp;Larger values trade<br>
+performance for correctness when dealing with very long forms.&nbsp;&nbsp;A value of<br>
+0 will scan without limits.&nbsp;&nbsp;The default is 300.<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Default<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:clojure_maxlines = 100</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="indent.html#g:clojure_fuzzy_indent" name="g:clojure_fuzzy_indent">g:clojure_fuzzy_indent</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="indent.html#g:clojure_fuzzy_indent_patterns" name="g:clojure_fuzzy_indent_patterns">g:clojure_fuzzy_indent_patterns</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="indent.html#g:clojure_fuzzy_indent_blacklist" name="g:clojure_fuzzy_indent_blacklist">g:clojure_fuzzy_indent_blacklist</a><br>
 <br>
 The&nbsp;<a class="Type" href="options.html#'lispwords'">'lispwords'</a>&nbsp;option is a list of comma-separated words that mark special<br>
-forms whose subforms must be indented with two spaces.<br>
+forms whose subforms should be indented with two spaces.<br>
 <br>
 For example:<br>
 <br>
@@ -651,14 +650,10 @@ the fuzzy indent feature:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:clojure_fuzzy_indent_blacklist =<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ ['-fn$', '\v^with-%(meta|out-str|loading-context)$']</div>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Legacy comma-delimited string version; the list format above is<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; recommended. Note that patterns are implicitly anchored with ^ and $<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:clojure_fuzzy_indent_patterns = 'with.*,def.*,let.*'</div>
-<br>
 <a class="Identifier" href="indent.html#g:clojure_fuzzy_indent_patterns">g:clojure_fuzzy_indent_patterns</a>&nbsp;and&nbsp;<a class="Identifier" href="indent.html#g:clojure_fuzzy_indent_blacklist">g:clojure_fuzzy_indent_blacklist</a>&nbsp;are<br>
-<a class="Identifier" href="eval.html#Lists">Lists</a>&nbsp;of patterns that will be matched against the unquoted, unqualified<br>
-symbol at the head of a list. This means that a pattern like &quot;^foo&quot; will match<br>
-all these candidates: &quot;foobar&quot;, &quot;my.ns/foobar&quot;, and &quot;#'foobar&quot;.<br>
+lists of patterns that will be matched against the unqualified symbol at the<br>
+head of a list.&nbsp;&nbsp;This means that a pattern like&nbsp;<span class="Comment">&quot;^foo&quot;</span>&nbsp;will match all these<br>
+candidates:&nbsp;<span class="Comment">foobar</span>,&nbsp;<span class="Comment">my.ns/foobar</span>, and&nbsp;<span class="Comment">#'foobar</span>.<br>
 <br>
 Each candidate word is tested for special treatment in this order:<br>
 <br>
@@ -669,20 +664,22 @@ Each candidate word is tested for special treatment in this order:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="indent.html#g:clojure_fuzzy_indent_patterns">g:clojure_fuzzy_indent_patterns</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. Return false and indent normally otherwise<br>
 <br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="indent.html#g:clojure_special_indent_words" name="g:clojure_special_indent_words">g:clojure_special_indent_words</a><br>
 <br>
-Some forms in Clojure are indented so that every subform is indented only two<br>
-spaces, regardless of&nbsp;<a class="Type" href="options.html#'lispwords'">'lispwords'</a>. If you have a custom construct that should<br>
-be indented in this idiosyncratic fashion, you can add your symbols to the<br>
-default list below.<br>
+Some forms in Clojure are indented such that every subform is indented by only<br>
+two spaces, regardless of&nbsp;<a class="Type" href="options.html#'lispwords'">'lispwords'</a>.&nbsp;&nbsp;If you have a custom construct that<br>
+should be indented in this idiosyncratic fashion, you can add your symbols to<br>
+the default list below.<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Default<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:clojure_special_indent_words =<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ 'deftype,defrecord,reify,proxy,extend-type,extend-protocol,letfn'</div>
 <br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="indent.html#g:clojure_align_multiline_strings" name="g:clojure_align_multiline_strings">g:clojure_align_multiline_strings</a><br>
 <br>
-Align subsequent lines in multiline strings to the column after the opening<br>
+Align subsequent lines in multi-line strings to the column after the opening<br>
 quote, instead of the same column.<br>
 <br>
 For example:<br>
@@ -699,10 +696,6 @@ For example:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enim ad minim veniam, quis nostrud exercitation ullamco laboris<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nisi ut aliquip ex ea commodo consequat.&quot;)</div>
 <br>
-This option is off by default.<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Default<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:clojure_align_multiline_strings = 0</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="indent.html#g:clojure_align_subforms" name="g:clojure_align_subforms">g:clojure_align_subforms</a><br>
 <br>
@@ -714,17 +707,13 @@ two spaces relative to the opening paren:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bar<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;baz)</div>
 <br>
-Setting this option changes this behavior so that all subforms are aligned to<br>
-the same column, emulating the default behavior of clojure-mode.el:<br>
+Setting this option to&nbsp;<span class="Comment">1</span>&nbsp;changes this behaviour so that all subforms are<br>
+aligned to the same column, emulating the default behaviour of<br>
+clojure-mode.el:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(foo<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bar<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; baz)</div>
-<br>
-This option is off by default.<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Default<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:clojure_align_subforms = 0</div>
 <br>
 <br>
 <span class="Statement">FORTRAN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="indent.html#ft-fortran-indent" name="ft-fortran-indent">ft-fortran-indent</a><br>
@@ -793,6 +782,15 @@ You can set the indent for the first line after&nbsp;<span class="Special">&lt;s
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;zero&quot;&nbsp;&nbsp;&nbsp;&nbsp;zero indent<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;auto&quot;&nbsp;&nbsp;&nbsp;&nbsp;auto indent (same indent as the blocktag)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;inc&quot;&nbsp;&nbsp;&nbsp;&nbsp; auto indent + one indent step<br>
+<br>
+You can set the indent for attributes after an open &lt;tag line:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let g:html_indent_attribute = 1</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">VALUE&nbsp;&nbsp;&nbsp;&nbsp; MEANING</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; auto indent, one indent step more than &lt;tag<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; auto indent, two indent steps (default)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; auto indent, more indent steps<br>
 <br>
 Many tags increase the indent for what follows per default (see &quot;Add Indent<br>
 Tags&quot; in the script).&nbsp;&nbsp;You can add further tags with:<br>
@@ -895,7 +893,7 @@ For example, with&nbsp;<span class="Special">N</span>&nbsp;= 1, this will give:<
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="indent.html#PHP_outdentphpescape" name="PHP_outdentphpescape">PHP_outdentphpescape</a><br>
 To indent PHP escape tags as the surrounding non-PHP code (only affects the<br>
 PHP escape tags):<br>
-:let g:PHP_outdentphpescape = 0<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:let g:PHP_outdentphpescape = 0</div>
 <span class="PreProc">-------------</span><br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="indent.html#PHP_removeCRwhenUnix" name="PHP_removeCRwhenUnix">PHP_removeCRwhenUnix</a><br>
@@ -1001,7 +999,7 @@ Indent after a nested paren:<br>
 Indent for a continuation line:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:pyindent_continue = 'shiftwidth() * 2'</div>
 <br>
-The method uses&nbsp;<a class="Identifier" href="eval.html#searchpair()">searchpair()</a>&nbsp;to look back for unclosed parentheses.&nbsp;&nbsp;This<br>
+The method uses&nbsp;<a class="Identifier" href="builtin.html#searchpair()">searchpair()</a>&nbsp;to look back for unclosed parentheses.&nbsp;&nbsp;This<br>
 can sometimes be slow, thus it timeouts after 150 msec.&nbsp;&nbsp;If you notice the<br>
 indenting isn't correct, you can set a larger timeout in msec:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:pyindent_searchpair_timeout = 500</div>
@@ -1222,7 +1220,7 @@ comments will be indented according to the correctly indented code.<br>
 <br>
 <br>
 <span class="Statement">VIM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="indent.html#ft-vim-indent" name="ft-vim-indent">ft-vim-indent</a><br>
-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="indent.html#g:vim_indent_cont" name="g:vim_indent_cont">g:vim_indent_cont</a><br>
 For indenting Vim scripts there is one variable that specifies the amount of<br>
 indent for a continuation line, a line that starts with a backslash:<br>
 <br>
