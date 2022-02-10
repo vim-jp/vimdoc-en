@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Feb 04<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Feb 09<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -226,12 +226,12 @@ be given.<br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a new function at the script level<br>
 in a Vim9 script, the function is local to the script, as if &quot;s:&quot; was<br>
 prefixed.&nbsp;&nbsp;Using the &quot;s:&quot; prefix is optional.&nbsp;&nbsp;To define a global function or<br>
-variable the &quot;g:&quot; prefix must be used.&nbsp;&nbsp;For functions in an autoload script<br>
-the &quot;name#&quot; prefix is sufficient.<br>
+variable the &quot;g:&quot; prefix must be used.&nbsp;&nbsp;For functions in a script that is to<br>
+be imported and in an autoload script &quot;export&quot; needs to be used.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ThisFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# script-local<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def s:ThisFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# script-local<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def g:ThatFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# global<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def scriptname#function()&nbsp;&nbsp; # autoload</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export def Function()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # for import and import autoload</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1058" name="E1058">E1058</a>&nbsp;<a class="Constant" href="vim9.html#E1075" name="E1075">E1075</a><br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a nested function inside a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a><br>
 function and no namespace was given, this nested function is local to the code<br>
@@ -285,7 +285,9 @@ You want to use this in scripts that use a&nbsp;<a class="Comment" href="repeat.
 some point when loaded again.&nbsp;&nbsp;E.g. when a buffer local option is set:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script noclear<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setlocal completefunc=SomeFunc<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if exists('*g:SomeFunc') | finish | endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if exists('*g:SomeFunc')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def g:SomeFunc()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....</div>
 <br>
@@ -1403,13 +1405,23 @@ Results in:<br>
 For script-local variables in Vim9 script the type is checked, also when the<br>
 variable was declared in a legacy function.<br>
 <br>
-When a type has been declared this is attached to a list or string.&nbsp;&nbsp;When<br>
+When a type has been declared this is attached to a List or Dictionary.&nbsp;&nbsp;When<br>
 later some expression attempts to change the type an error will be given:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var ll: list&lt;number&gt; = [1, 2, 3]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ll-&gt;extend(['x'])&nbsp;&nbsp;# Error, 'x' is not a number</div>
 <br>
-If the type is inferred then the type is allowed to change:<br>
+If the type is not declared then it is allowed to change:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1, 2, 3]-&gt;extend(['x'])&nbsp;&nbsp;# result: [1, 2, 3, 'x']</div>
+<br>
+For a variable declaration an inferred type matters:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var ll = [1, 2, 3]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ll-&gt;extend(['x'])&nbsp;&nbsp;# Error, 'x' is not a number</div>
+That is because the declaration looks like a list of numbers, thus is<br>
+equivalent to:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var ll: list&lt;number&gt; = [1, 2, 3]</div>
+If you do want a more permissive list you need to declare the type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var ll: list&lt;any = [1, 2, 3]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ll-&gt;extend(['x'])&nbsp;&nbsp;# OK</div>
 <br>
 <br>
 <span class="PreProc">Stricter type checking</span><br>
