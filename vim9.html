@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Feb 09<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Feb 11<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -62,13 +62,13 @@ rewrite old scripts, they keep working as before.&nbsp;&nbsp;You may want to use
 <a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions for code that needs to be fast.<br>
 <br>
 :vim9<span class="Special">[cmd]</span>&nbsp;<span class="Special">{cmd}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:vim9" name=":vim9">:vim9</a>&nbsp;<a class="Constant" href="vim9.html#:vim9cmd" name=":vim9cmd">:vim9cmd</a>&nbsp;<a class="Constant" href="vim9.html#E1164" name="E1164">E1164</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute&nbsp;<span class="Special">{cmd}</span>&nbsp;using Vim9 script syntax and semantics.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Useful when typing a command and in a legacy script or<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluate and execute&nbsp;<span class="Special">{cmd}</span>&nbsp;using Vim9 script syntax and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;semantics.&nbsp;&nbsp;Useful when typing a command and in a legacy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;script or function.<br>
 <br>
 :leg[acy]&nbsp;<span class="Special">{cmd}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:leg" name=":leg">:leg</a>&nbsp;<a class="Constant" href="vim9.html#:legacy" name=":legacy">:legacy</a>&nbsp;<a class="Constant" href="vim9.html#E1189" name="E1189">E1189</a>&nbsp;<a class="Constant" href="vim9.html#E1234" name="E1234">E1234</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute&nbsp;<span class="Special">{cmd}</span>&nbsp;using legacy script syntax and semantics.&nbsp;&nbsp;Only<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;useful in a Vim9 script or a :def function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluate and execute&nbsp;<span class="Special">{cmd}</span>&nbsp;using legacy script syntax and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;semantics.&nbsp;&nbsp;Only useful in a Vim9 script or a :def function.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that&nbsp;<span class="Special">{cmd}</span>&nbsp;cannot use local variables, since it is parsed<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with legacy expression syntax.<br>
 <br>
@@ -224,20 +224,18 @@ be given.<br>
 <span class="PreProc">Functions and variables are script-local by default</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-scopes" name="vim9-scopes">vim9-scopes</a><br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a new function at the script level<br>
-in a Vim9 script, the function is local to the script, as if &quot;s:&quot; was<br>
-prefixed.&nbsp;&nbsp;Using the &quot;s:&quot; prefix is optional.&nbsp;&nbsp;To define a global function or<br>
-variable the &quot;g:&quot; prefix must be used.&nbsp;&nbsp;For functions in a script that is to<br>
-be imported and in an autoload script &quot;export&quot; needs to be used.<br>
+in a Vim9 script, the function is local to the script.&nbsp;&nbsp;Like prefixing &quot;s:&quot; in<br>
+legacy script.&nbsp;&nbsp;To define a global function or variable the &quot;g:&quot; prefix must<br>
+be used.&nbsp;&nbsp;For functions in a script that is to be imported and in an autoload<br>
+script &quot;export&quot; needs to be used.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ThisFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# script-local<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def s:ThisFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# script-local<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def g:ThatFunction()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# global<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export def Function()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # for import and import autoload</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1058" name="E1058">E1058</a>&nbsp;<a class="Constant" href="vim9.html#E1075" name="E1075">E1075</a><br>
 When using&nbsp;<a class="Comment" href="eval.html#:function">:function</a>&nbsp;or&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;to specify a nested function inside a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a><br>
 function and no namespace was given, this nested function is local to the code<br>
-block it is defined in.&nbsp;&nbsp;In a&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;function it is not possible to define a<br>
-script-local function.&nbsp;&nbsp;It is possible to define a global function by using<br>
-the &quot;g:&quot; prefix.<br>
+block it is defined in.&nbsp;&nbsp;It is not possible to define a script-local function.<br>
+It is possible to define a global function by using the &quot;g:&quot; prefix.<br>
 <br>
 When referring to a function and no &quot;s:&quot; or &quot;g:&quot; prefix is used, Vim will<br>
 search for the function:<br>
@@ -249,6 +247,13 @@ start with an upper case letter even when using the &quot;s:&quot; prefix.&nbsp;
 script &quot;s:funcref&quot; could be used, because it could not be referred to with<br>
 &quot;funcref&quot;.&nbsp;&nbsp;In Vim9 script it can, therefore &quot;s:Funcref&quot; must be used to avoid<br>
 that the name interferes with builtin functions.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-s-namespace" name="vim9-s-namespace">vim9-s-namespace</a><br>
+The use of the &quot;s:&quot; prefix is not supported at the Vim9 script level.&nbsp;&nbsp;All<br>
+functions and variables without a prefix are script-local.<br>
+In :def functions the use of &quot;s:&quot; is optional.&nbsp;&nbsp;This is because in legacy<br>
+script the &quot;s:&quot; might be needed.&nbsp;&nbsp;Disallowing the use of &quot;s:&quot; only in a :def<br>
+function in Vim9 script would be a bit confusing.<br>
+In legacy functions the use of &quot;s:&quot; for script items is required, as before.<br>
 <br>
 In all cases the function must be defined before used.&nbsp;&nbsp;That is when it is<br>
 called, when&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;causes it to be compiled, or when code that calls<br>
