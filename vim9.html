@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Feb 11<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Feb 18<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -287,13 +287,14 @@ If you do want to keep items, use:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script noclear</div>
 <br>
 You want to use this in scripts that use a&nbsp;<a class="Comment" href="repeat.html#:finish">finish</a>&nbsp;command to bail out at<br>
-some point when loaded again.&nbsp;&nbsp;E.g. when a buffer local option is set:<br>
+some point when loaded again.&nbsp;&nbsp;E.g. when a buffer local option is set to a<br>
+function, the function does not need to be defined more than once:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script noclear<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setlocal completefunc=SomeFunc<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if exists('*g:SomeFunc')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if exists('*SomeFunc')<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def g:SomeFunc()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeFunc()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....</div>
 <br>
 <br>
@@ -427,7 +428,7 @@ similar to how a function argument can be ignored:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[a, _, c] = theList</div>
 To ignore any remaining items:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[a, b; _] = longList</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1163" name="E1163">E1163</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1163" name="E1163">E1163</a>&nbsp;<a class="Constant" href="vim9.html#E1080" name="E1080">E1080</a><br>
 Declaring more than one variable at a time, using the unpack notation, is<br>
 possible.&nbsp;&nbsp;Each variable can have a type or infer it from the value:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var [v1: number, v2] = GetValues()</div>
@@ -842,6 +843,7 @@ Instead of&nbsp;<a class="Comment" href="motion.html#:k">:k</a>&nbsp;you can use
 <span class="PreProc">Comparators</span><br>
 <br>
 The&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>&nbsp;option is not used for comparators that use strings.<br>
+Thus &quot;=~&quot; works like &quot;=~#&quot;.<br>
 <br>
 <br>
 <span class="PreProc">Abort after error</span><br>
@@ -1435,32 +1437,61 @@ In legacy Vim script, where a number was expected, a string would be<br>
 automatically converted to a number.&nbsp;&nbsp;This was convenient for an actual number<br>
 such as &quot;123&quot;, but leads to unexpected problems (and no error message) if the<br>
 string doesn't start with a number.&nbsp;&nbsp;Quite often this leads to hard-to-find<br>
-bugs.<br>
+bugs. e.g.:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 123 == '123'</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">1</span><br>
+With an accidental space:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 123 == ' 123'</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">0</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1206" name="E1206">E1206</a>&nbsp;<a class="Constant" href="vim9.html#E1210" name="E1210">E1210</a>&nbsp;<a class="Constant" href="vim9.html#E1212" name="E1212">E1212</a><br>
 In Vim9 script this has been made stricter.&nbsp;&nbsp;In most places it works just as<br>
-before, if the value used matches the expected type.&nbsp;&nbsp;There will sometimes be<br>
+before if the value used matches the expected type.&nbsp;&nbsp;There will sometimes be<br>
 an error, thus breaking backwards compatibility.&nbsp;&nbsp;For example:<br>
 - Using a number other than 0 or 1 where a boolean is expected.&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1023" name="E1023">E1023</a><br>
 - Using a string value when setting a number option.<br>
 - Using a number where a string is expected.&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1024" name="E1024">E1024</a>&nbsp;<a class="Constant" href="vim9.html#E1105" name="E1105">E1105</a><br>
 <br>
 One consequence is that the item type of a list or dict given to&nbsp;<a class="Identifier" href="builtin.html#map()">map()</a>&nbsp;must<br>
-not change.&nbsp;&nbsp;This will give an error in Vim9 script:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo map([1, 2, 3], (i, v) =&gt; 'item ' .. i)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E1012: Type mismatch; expected number but got string</div>
-Instead use&nbsp;<a class="Identifier" href="builtin.html#mapnew()">mapnew()</a>:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo mapnew([1, 2, 3], (i, v) =&gt; 'item ' .. i)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['item 0', 'item 1', 'item 2']</div>
+not change, if the type was declared.&nbsp;&nbsp;This will give an error in Vim9<br>
+script:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var mylist: list&lt;number&gt; = [1, 2, 3]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo map(mylist, (i, v) =&gt; 'item ' .. i)</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">E1012: Type mismatch; expected number but got string in map()</span><br>
 <br>
-If the item type was determined to be &quot;any&quot; it can change to a more specific<br>
-type.&nbsp;&nbsp;E.g. when a list of mixed types gets changed to a list of strings:<br>
+Instead use&nbsp;<a class="Identifier" href="builtin.html#mapnew()">mapnew()</a>, it creates a new list:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var mylist: list&lt;number&gt; = [1, 2, 3]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo mapnew(mylist, (i, v) =&gt; 'item ' .. i)</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">['item 0', 'item 1', 'item 2']</span><br>
+<br>
+If the item type was not declared or determined to be &quot;any&quot; it can change to a<br>
+more specific type.&nbsp;&nbsp;E.g. when a list of mixed types gets changed to a list of<br>
+strings:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var mylist = [1, 2.0, '3']<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# typename(mylist) == &quot;list&lt;any&gt;&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map(mylist, (i, v) =&gt; 'item ' .. i)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# typename(mylist) == &quot;list&lt;string&gt;&quot;, no error</div>
+<br>
+There is a subtle difference between using a list constant directly and<br>
+through a variable declaraiton.&nbsp;&nbsp;Because of type inference, when using a list<br>
+constant to initialize a variable, this also sets the declared type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var mylist = [1, 2, 3]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# typename(mylist) == &quot;list&lt;number&gt;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo map(mylist, (i, v) =&gt; 'item ' .. i)&nbsp;&nbsp;# Error!</div>
+<br>
+When using the list constant directly, the type is not declared and is allowed<br>
+to change:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo map([1, 2, 3], (i, v) =&gt; 'item ' .. i)&nbsp;&nbsp;# OK</div>
+<br>
+The reasoning behind this is that when a type is declared and the list is<br>
+passed around and changed, the declaration must always hold.&nbsp;&nbsp;So that you can<br>
+rely on the type to match the declared type.&nbsp;&nbsp;For a constant this is not<br>
+needed.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1158" name="E1158">E1158</a><br>
 Same for&nbsp;<a class="Identifier" href="builtin.html#extend()">extend()</a>, use&nbsp;<a class="Identifier" href="builtin.html#extendnew()">extendnew()</a>&nbsp;instead, and for&nbsp;<a class="Identifier" href="builtin.html#flatten()">flatten()</a>, use<br>
-<a class="Identifier" href="builtin.html#flattennew()">flattennew()</a>&nbsp;instead.<br>
+<a class="Identifier" href="builtin.html#flattennew()">flattennew()</a>&nbsp;instead.&nbsp;&nbsp;Since&nbsp;<a class="Identifier" href="builtin.html#flatten()">flatten()</a>&nbsp;is intended to always change the<br>
+type, it can not be used in Vim9 script.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1211" name="E1211">E1211</a>&nbsp;<a class="Constant" href="vim9.html#E1217" name="E1217">E1217</a>&nbsp;<a class="Constant" href="vim9.html#E1218" name="E1218">E1218</a>&nbsp;<a class="Constant" href="vim9.html#E1219" name="E1219">E1219</a>&nbsp;<a class="Constant" href="vim9.html#E1220" name="E1220">E1220</a>&nbsp;<a class="Constant" href="vim9.html#E1221" name="E1221">E1221</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1222" name="E1222">E1222</a>&nbsp;<a class="Constant" href="vim9.html#E1223" name="E1223">E1223</a>&nbsp;<a class="Constant" href="vim9.html#E1224" name="E1224">E1224</a>&nbsp;<a class="Constant" href="vim9.html#E1225" name="E1225">E1225</a>&nbsp;<a class="Constant" href="vim9.html#E1226" name="E1226">E1226</a>&nbsp;<a class="Constant" href="vim9.html#E1227" name="E1227">E1227</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1228" name="E1228">E1228</a>&nbsp;<a class="Constant" href="vim9.html#E1238" name="E1238">E1238</a>&nbsp;<a class="Constant" href="vim9.html#E1250" name="E1250">E1250</a>&nbsp;<a class="Constant" href="vim9.html#E1251" name="E1251">E1251</a>&nbsp;<a class="Constant" href="vim9.html#E1252" name="E1252">E1252</a>&nbsp;<a class="Constant" href="vim9.html#E1253" name="E1253">E1253</a><br>
