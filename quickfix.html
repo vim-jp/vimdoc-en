@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'quickfix'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="quickfix.html" name="quickfix.txt">quickfix.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Feb 08<br>
+<a class="Constant" href="quickfix.html" name="quickfix.txt">quickfix.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Feb 22<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -358,7 +358,7 @@ processing a quickfix or location list command, it will be aborted.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cursor position will not be changed. See&nbsp;<a class="Identifier" href="quickfix.html#:cexpr">:cexpr</a>&nbsp;for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;more information.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:g/mypattern/caddexpr expand(&quot;%&quot;) . &quot;:&quot; . line(&quot;.&quot;) .&nbsp;&nbsp;&quot;:&quot; . getline(&quot;.&quot;)</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:g/mypattern/caddexpr expand(&quot;%&quot;) .. &quot;:&quot; .. line(&quot;.&quot;) ..&nbsp;&nbsp;&quot;:&quot; .. getline(&quot;.&quot;)</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="quickfix.html#:lad" name=":lad">:lad</a>&nbsp;<a class="Constant" href="quickfix.html#:addd" name=":addd">:addd</a>&nbsp;<a class="Constant" href="quickfix.html#:laddexpr" name=":laddexpr">:laddexpr</a><br>
 :lad[dexpr]&nbsp;<span class="Special">{expr}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as &quot;:caddexpr&quot;, except the location list for the<br>
@@ -659,6 +659,24 @@ quickfix window.&nbsp;&nbsp;If there already is a window for that file, it is us
 instead.&nbsp;&nbsp;If the buffer in the used window has changed, and the error is in<br>
 another file, jumping to the error will fail.&nbsp;&nbsp;You will first have to make<br>
 sure the window contains a buffer which can be abandoned.<br>
+<br>
+The following steps are used to find a window to open the file selected from<br>
+the quickfix window:<br>
+1. If&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>&nbsp;contains &quot;usetab&quot;, then find a window in any tabpage<br>
+&nbsp;&nbsp; (starting with the first tabpage) that has the selected file and jump to<br>
+&nbsp;&nbsp; it.<br>
+2. Otherwise find a window displaying the selected file in the current tab<br>
+&nbsp;&nbsp; page (starting with the window before the quickfix window) and use it.<br>
+3. Otherwise find a window displaying a normal buffer (<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;is empty)<br>
+&nbsp;&nbsp; starting with the window before the quickfix window. If a window is found,<br>
+&nbsp;&nbsp; open the file in that window.<br>
+4. If a usable window is not found and&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>&nbsp;contains &quot;uselast&quot;, then<br>
+&nbsp;&nbsp; open the file in the last used window.<br>
+5. Otherwise open the file in the window before the quickfix window.&nbsp;&nbsp;If there<br>
+&nbsp;&nbsp; is no previous window, then open the file in the next window.<br>
+6. If a usable window is not found in the above steps, then create a new<br>
+&nbsp;&nbsp; horizontally split window above the quickfix window and open the file.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="quickfix.html#CTRL-W_<Enter>" name="CTRL-W_&lt;Enter&gt;">CTRL-W_&lt;Enter&gt;</a>&nbsp;<a class="Constant" href="quickfix.html#CTRL-W_<CR>" name="CTRL-W_&lt;CR&gt;">CTRL-W_&lt;CR&gt;</a><br>
 You can use&nbsp;<span class="Special">CTRL-W</span>&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;to open a new window and jump to the error there.<br>
 <br>
@@ -668,7 +686,7 @@ FileType event (also see&nbsp;<a class="Identifier" href="filetype.html#qf.vim">
 using &quot;quickfix&quot; for the buffer name.&nbsp;&nbsp;This can be used to perform some action<br>
 on the listed errors.&nbsp;&nbsp;Example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au BufReadPost quickfix&nbsp;&nbsp;setlocal modifiable<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ | silent exe 'g/^/s//\=line(&quot;.&quot;).&quot; &quot;/'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ | silent exe 'g/^/s//\=line(&quot;.&quot;) .. &quot; &quot;/'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ | setlocal nomodifiable</div>
 This prepends the line number to each line.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;the use of &quot;\=&quot; in the<br>
 substitute string of the &quot;:s&quot; command, which is used to evaluate an<br>
