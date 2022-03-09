@@ -660,22 +660,25 @@ instead.&nbsp;&nbsp;If the buffer in the used window has changed, and the error 
 another file, jumping to the error will fail.&nbsp;&nbsp;You will first have to make<br>
 sure the window contains a buffer which can be abandoned.<br>
 <br>
-The following steps are used to find a window to open the file selected from<br>
-the quickfix window:<br>
-1. If&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>&nbsp;contains &quot;usetab&quot;, then find a window in any tabpage<br>
-&nbsp;&nbsp; (starting with the first tabpage) that has the selected file and jump to<br>
-&nbsp;&nbsp; it.<br>
-2. Otherwise find a window displaying the selected file in the current tab<br>
-&nbsp;&nbsp; page (starting with the window before the quickfix window) and use it.<br>
-3. Otherwise find a window displaying a normal buffer (<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;is empty)<br>
-&nbsp;&nbsp; starting with the window before the quickfix window. If a window is found,<br>
-&nbsp;&nbsp; open the file in that window.<br>
-4. If a usable window is not found and&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>&nbsp;contains &quot;uselast&quot;, then<br>
-&nbsp;&nbsp; open the file in the last used window.<br>
-5. Otherwise open the file in the window before the quickfix window.&nbsp;&nbsp;If there<br>
-&nbsp;&nbsp; is no previous window, then open the file in the next window.<br>
-6. If a usable window is not found in the above steps, then create a new<br>
-&nbsp;&nbsp; horizontally split window above the quickfix window and open the file.<br>
+When you select a file from the quickfix window, the following steps are used<br>
+to find a window to edit the file:<br>
+<br>
+1. If a window displaying the selected file is present in the current tabpage<br>
+&nbsp;&nbsp; (starting with the window before the quickfix window), then that window is<br>
+&nbsp;&nbsp; used.<br>
+2. If the above step fails and if&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>&nbsp;contains &quot;usetab&quot; and a window<br>
+&nbsp;&nbsp; displaying the selected file is present in any one of the tabpages<br>
+&nbsp;&nbsp; (starting with the first tabpage) then that window is used.<br>
+3. If the above step fails then a window in the current tabpage displaying a<br>
+&nbsp;&nbsp; buffer with&nbsp;<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;not set (starting with the window before the quickfix<br>
+&nbsp;&nbsp; window) is used.<br>
+4. If the above step fails and if&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>&nbsp;contains &quot;uselast&quot;, then the<br>
+&nbsp;&nbsp; previously accessed window is used.<br>
+5. If the above step fails then the window before the quickfix window is used.<br>
+&nbsp;&nbsp; If there is no previous window, then the window after the quickfix window<br>
+&nbsp;&nbsp; is used.<br>
+6. If the above step fails, then a new horizontally split window above the<br>
+&nbsp;&nbsp; quickfix window is used.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="quickfix.html#CTRL-W_<Enter>" name="CTRL-W_&lt;Enter&gt;">CTRL-W_&lt;Enter&gt;</a>&nbsp;<a class="Constant" href="quickfix.html#CTRL-W_<CR>" name="CTRL-W_&lt;CR&gt;">CTRL-W_&lt;CR&gt;</a><br>
 You can use&nbsp;<span class="Special">CTRL-W</span>&nbsp;<span class="Special">&lt;Enter&gt;</span>&nbsp;to open a new window and jump to the error there.<br>
@@ -715,13 +718,15 @@ this window, the displayed location list is used.<br>
 When you select a file from the location list window, the following steps are<br>
 used to find a window to edit the file:<br>
 <br>
-1. If a window with the location list displayed in the location list window is<br>
-&nbsp;&nbsp; present, then the file is opened in that window.<br>
-2. If the above step fails and if the file is already opened in another<br>
-&nbsp;&nbsp; window, then that window is used.<br>
-3. If the above step fails then an existing window showing a buffer with<br>
-&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;not set is used.<br>
-4. If the above step fails, then the file is edited in a new window.<br>
+1. If a non-quickfix window associated with the location list is present in<br>
+&nbsp;&nbsp; the current tabpage, then that window is used.<br>
+2. If the above step fails and if the file is already opened in another window<br>
+&nbsp;&nbsp; in the current tabpage, then that window is used.<br>
+3. If the above step fails and&nbsp;<a class="Type" href="options.html#'switchbuf'">'switchbuf'</a>&nbsp;contains &quot;usetab&quot; and if the file<br>
+&nbsp;&nbsp; is opened in a window in any one of the tabpages, then that window is used.<br>
+4. If the above step fails then a window in the current tabpage showing a<br>
+&nbsp;&nbsp; buffer with&nbsp;<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;not set is used.<br>
+5. If the above step fails, then the file is edited in a new window.<br>
 <br>
 In all of the above cases, if the location list for the selected window is not<br>
 yet set, then it is set to the location list displayed in the location list<br>
@@ -1060,7 +1065,7 @@ commands can be combined to create a NewGrep command:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; matching is used to find matching lines. In this<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case,&nbsp;<span class="Special">{pattern}</span>&nbsp;is treated as a literal string<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; instead of a regular expression.&nbsp;&nbsp;See<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pattern.html#fuzzy-match">fuzzy-match</a>&nbsp;for more information about fuzzy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pattern.html#fuzzy-matching">fuzzy-matching</a>&nbsp;for more information about fuzzy<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; matching strings.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="autocmd.html#QuickFixCmdPre">QuickFixCmdPre</a>&nbsp;and&nbsp;<a class="Identifier" href="autocmd.html#QuickFixCmdPost">QuickFixCmdPost</a>&nbsp;are triggered.<br>

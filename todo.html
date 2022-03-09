@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Feb 16<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Mar 08<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,10 +43,29 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Allow for assigning v:null to job/channel/funcref etc.<br>
+- Check that the declared type is not lost.<br>
+- Check: var d: dict<span class="Special">&lt;func&gt;</span>&nbsp;= {a: function(<a class="Type" href="options.html#'tr'">'tr'</a>), b: null}<br>
+<br>
+Fix that with s being an empty string, this returns TRUE:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo s is null_string<br>
+<br>
+Make sure null types work to:<br>
+- assign to a variable<br>
+- use as an argument<br>
+- use as default value of optional argument<br>
+- use as return value<br>
+- use in a list/dict constant, type is correct<br>
+- revert comparing with null?<br>
+<br>
+TODO item in eval.c<br>
+<br>
+Really drop the Athena GUI?&nbsp;&nbsp;And NeXtaw?<br>
+<br>
 Once Vim9 is stable:<br>
 - Use Vim9 for runtime files.<br>
 - Check code coverage, add more tests if needed.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9execute.c<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9execute.c&nbsp;&nbsp;line 1900<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9expr.c<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9instr.c<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script.c<br>
@@ -214,6 +233,13 @@ Use&nbsp;<span class="Special">CTRL-R</span>&nbsp;to specify the register to use
 <br>
 Some prompts are not translated: #9495<br>
 <br>
+Improvement in terminal configuration mess: Request the terminfo entry from<br>
+the terminal itself.&nbsp;&nbsp;The $TERM value then is only relevant for whether this<br>
+feature is supported or not.&nbsp;&nbsp;Replaces the xterm mechanism to request each<br>
+entry separately. #6609<br>
+Multiplexers (screen, tmux) can request it to the underlaying terminal, and<br>
+pass it on with modifications.<br>
+<br>
 Test_communicate_ipv6(): is flaky on many systems<br>
 Fails in line 64 of Ch_communicate, no exception is thrown.<br>
 <br>
@@ -290,6 +316,9 @@ Probably because it's using MAXCOL.&nbsp;&nbsp;#8238<br>
 <br>
 Make &quot;g&gt;&quot; and &quot;g&lt;&quot; in Visual mode move the text right or left.<br>
 Also for a block selection.&nbsp;&nbsp;#8558<br>
+<br>
+When using dictionary insert completion with&nbsp;<a class="Type" href="options.html#'ignorecase'">'ignorecase'</a>, the leading capital<br>
+in a word should be preserved.<br>
 <br>
 Add optional argument to virtcol() that specifies &quot;start&quot;, &quot;cursor&quot; or &quot;end&quot;<br>
 to tell which value from getvvcol() should be used. (#7964)<br>
