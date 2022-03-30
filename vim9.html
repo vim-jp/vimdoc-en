@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Mar 18<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Mar 28<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -189,8 +189,8 @@ For now you will need to pass the dictionary explicitly:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def DictFunc(d: dict&lt;any&gt;, arg: string)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo d[arg]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var d = {item: 'value', func: DictFunc}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d.func(d, 'item')</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var ad = {item: 'value', func: DictFunc}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ad.func(d, 'item')</div>
 <br>
 You can call a legacy dict function though:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Legacy() dict<br>
@@ -381,12 +381,22 @@ And with autocommands:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</div>
 <br>
 Although using a :def function probably works better.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1022" name="E1022">E1022</a>&nbsp;<a class="Constant" href="vim9.html#E1103" name="E1103">E1103</a>&nbsp;<a class="Constant" href="vim9.html#E1130" name="E1130">E1130</a>&nbsp;<a class="Constant" href="vim9.html#E1131" name="E1131">E1131</a>&nbsp;<a class="Constant" href="vim9.html#E1133" name="E1133">E1133</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1134" name="E1134">E1134</a>&nbsp;<a class="Constant" href="vim9.html#E1235" name="E1235">E1235</a><br>
 Declaring a variable with a type but without an initializer will initialize to<br>
 false (for bool), empty (for string, list, dict, etc.) or zero (for number,<br>
 any, etc.).&nbsp;&nbsp;This matters especially when using the &quot;any&quot; type, the value will<br>
-default to the number zero.<br>
+default to the number zero.&nbsp;&nbsp;For example, when declaring a list, items can be<br>
+added:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var myList: list&lt;number&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList-&gt;add(7)</div>
+<br>
+Initializing a variable to a null value, e.g.&nbsp;<span class="Comment">null_list</span>, differs from not<br>
+initializing the variable.&nbsp;&nbsp;This throws an error:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var myList = null_list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myList-&gt;add(7)&nbsp;&nbsp;# E1130: Cannot add to null list</div>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1016" name="E1016">E1016</a>&nbsp;<a class="Constant" href="vim9.html#E1052" name="E1052">E1052</a>&nbsp;<a class="Constant" href="vim9.html#E1066" name="E1066">E1066</a><br>
 In Vim9 script&nbsp;<a class="Comment" href="eval.html#:let">:let</a>&nbsp;cannot be used.&nbsp;&nbsp;An existing variable is assigned to<br>
 without any command.&nbsp;&nbsp;The same for global, window, tab, buffer and Vim<br>
@@ -1248,7 +1258,7 @@ Closures defined in a loop will share the same context.&nbsp;&nbsp;For example:<
 A closure must be compiled in the context that it is defined in, so that<br>
 variables in that context can be found.&nbsp;&nbsp;This mostly happens correctly, except<br>
 when a function is marked for debugging with&nbsp;<a class="Comment" href="repeat.html#:breakadd">breakadd</a>&nbsp;after it was compiled.<br>
-Make sure the define the breakpoint before compiling the outerh function.<br>
+Make sure to define the breakpoint before compiling the outer function.<br>
 <br>
 The &quot;inloop&quot; variable will exist only once, all closures put in the list refer<br>
 to the same instance, which in the end will have the value 4.&nbsp;&nbsp;This is<br>

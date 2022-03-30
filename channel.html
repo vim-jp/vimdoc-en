@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'channel'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="channel.html" name="channel.txt">channel.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Feb 27<br>
+<a class="Constant" href="channel.html" name="channel.txt">channel.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Mar 26<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -58,6 +58,7 @@ RAW&nbsp;&nbsp;&nbsp;&nbsp; nothing known, Vim cannot tell where a message ends<
 NL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;every message ends in a NL (newline) character<br>
 JSON&nbsp;&nbsp;&nbsp;&nbsp;JSON encoding&nbsp;<a class="Identifier" href="builtin.html#json_encode()">json_encode()</a><br>
 JS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JavaScript style JSON-like encoding&nbsp;<a class="Identifier" href="builtin.html#js_encode()">js_encode()</a><br>
+LSP&nbsp;&nbsp;&nbsp;&nbsp; Language Server Protocol encoding&nbsp;<a class="Identifier" href="channel.html#language-server-protocol">language-server-protocol</a><br>
 <br>
 Common combination are:<br>
 - Using a job connected through pipes in NL mode.&nbsp;&nbsp;E.g., to run a style<br>
@@ -135,6 +136,7 @@ When using an IPv6 address, enclose it within square brackets.&nbsp;&nbsp;E.g.,<
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;js&quot;&nbsp;&nbsp; - Use JS (JavaScript) encoding, more efficient than JSON.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;nl&quot;&nbsp;&nbsp; - Use messages that end in a NL character<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;raw&quot;&nbsp;&nbsp;- Use raw messages<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;lsp&quot;&nbsp;&nbsp;- Use language server protocol encoding<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-callback" name="channel-callback">channel-callback</a>&nbsp;<a class="Constant" href="channel.html#E921" name="E921">E921</a><br>
 &quot;callback&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function that is called when a message is received that is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not handled otherwise (e.g. a JSON message with ID zero).&nbsp;&nbsp;It<br>
@@ -145,8 +147,8 @@ When using an IPv6 address, enclose it within square brackets.&nbsp;&nbsp;E.g.,<
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let channel = ch_open(&quot;localhost:8765&quot;, {&quot;callback&quot;: &quot;Handle&quot;})</div>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When &quot;mode&quot; is &quot;json&quot; or &quot;js&quot; the &quot;msg&quot; argument is the body<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of the received message, converted to Vim types.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When &quot;mode&quot; is &quot;json&quot; or &quot;js&quot; or &quot;lsp&quot; the &quot;msg&quot; argument is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the body of the received message, converted to Vim types.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When &quot;mode&quot; is &quot;nl&quot; the &quot;msg&quot; argument is one message,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;excluding the NL.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When &quot;mode&quot; is &quot;raw&quot; the &quot;msg&quot; argument is the whole message<br>
@@ -170,6 +172,18 @@ When using an IPv6 address, enclose it within square brackets.&nbsp;&nbsp;E.g.,<
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to check for messages, the close_cb may be invoked while still<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in the callback.&nbsp;&nbsp;The plugin must handle this somehow, it can<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be useful to know that no more data is coming.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If it is not known if there is a message to be read, use a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try/catch block:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let msg = ch_readraw(a:channel)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let msg = 'no message'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endtry<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let err = ch_readraw(a:channel, #{part: 'err'})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let err = 'no error'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endtry</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-drop" name="channel-drop">channel-drop</a><br>
 &quot;drop&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies when to drop messages:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;auto&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When there is no callback to handle a message.<br>
@@ -448,7 +462,7 @@ to check if there is something to read.<br>
 <span class="Todo">Note</span>&nbsp;that when there is no callback, messages are dropped.&nbsp;&nbsp;To avoid that add<br>
 a close callback to the channel.<br>
 <br>
-To read all output from a RAW channel that is available:<br>
+To read all normal output from a RAW channel that is available:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let output = ch_readraw(channel)</div>
 To read the error output:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let output = ch_readraw(channel, {&quot;part&quot;: &quot;err&quot;})</div>
@@ -508,6 +522,7 @@ ch_evalexpr(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{e
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;according to the type of channel.&nbsp;&nbsp;The function cannot be used<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with a raw channel.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel-use">channel-use</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{handle}</span>&nbsp;can be a Channel or a Job that has a Channel.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When using the &quot;lsp&quot; channel mode,&nbsp;<span class="Special">{expr}</span>&nbsp;must be a&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#E917" name="E917">E917</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{options}</span>&nbsp;must be a Dictionary.&nbsp;&nbsp;It must not have a &quot;callback&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;entry.&nbsp;&nbsp;It can have a &quot;timeout&quot; entry to specify the timeout<br>
@@ -583,7 +598,7 @@ ch_info(<span class="Special">{handle}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;err_io&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;out&quot;, &quot;null&quot;, &quot;pipe&quot;, &quot;file&quot; or &quot;buffer&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;err_timeout&quot;&nbsp;&nbsp;timeout in msec<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;in_status&quot;&nbsp;&nbsp;&nbsp;&nbsp;&quot;open&quot; or &quot;closed&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;in_mode&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;NL&quot;, &quot;RAW&quot;, &quot;JSON&quot; or &quot;JS&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;in_mode&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;NL&quot;, &quot;RAW&quot;, &quot;JSON&quot;, &quot;JS&quot; or &quot;LSP&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;in_io&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;null&quot;, &quot;pipe&quot;, &quot;file&quot; or &quot;buffer&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;in_timeout&quot;&nbsp;&nbsp; timeout in msec<br>
 <br>
@@ -679,6 +694,7 @@ ch_sendexpr(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{e
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with a raw channel.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel-use">channel-use</a>.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#E912" name="E912">E912</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{handle}</span>&nbsp;can be a Channel or a Job that has a Channel.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When using the &quot;lsp&quot; channel mode,&nbsp;<span class="Special">{expr}</span>&nbsp;must be a&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_sendexpr(expr)</div>
@@ -1366,6 +1382,77 @@ The same in&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;scrip
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# start accepting shell commands<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;startinsert</div>
 <br>
+<span class="PreProc">==============================================================================</span><br>
+14. Language Server Protocol&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#language-server-protocol" name="language-server-protocol">language-server-protocol</a><br>
 <br>
-<div class="helpExample">&nbsp;vim:tw=78:ts=8:noet:ft=help:norl:</div>
+The language server protocol specification is available at:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="https://microsoft.github.io/language-server-protocol/specification">https://microsoft.github.io/language-server-protocol/specification</a></span><br>
+<br>
+Each LSP protocol message starts with a simple HTTP header followed by the<br>
+payload encoded in JSON-RPC format.&nbsp;&nbsp;This is described in:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="https://www.jsonrpc.org/specification">https://www.jsonrpc.org/specification</a></span><br>
+<br>
+For messages received on a channel with mode set to &quot;lsp&quot;, Vim will process<br>
+the HTTP header and decode the payload into a Vim&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>&nbsp;type and call the<br>
+channel callback or the specified callback function.&nbsp;&nbsp;When sending messages on<br>
+a channel using&nbsp;<a class="Identifier" href="channel.html#ch_evalexpr()">ch_evalexpr()</a>&nbsp;or&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>, Vim will add the HTTP<br>
+header and encode the Vim expression into JSON-RPC.<br>
+<br>
+To open a channel using the&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>&nbsp;mode, set the&nbsp;<span class="MissingTag">'mode'</span>&nbsp;item in the&nbsp;<a class="Identifier" href="channel.html#ch_open()">ch_open()</a><br>
+<span class="Special">{options}</span>&nbsp;argument to&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>.&nbsp;&nbsp;Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let ch = ch_open(..., #{mode: 'lsp'})</div>
+<br>
+To open a channel using the&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>&nbsp;mode with a job, set the 'in_mode' and<br>
+'out_mode' items in the&nbsp;<a class="Identifier" href="channel.html#job_start()">job_start()</a>&nbsp;<span class="Special">{options}</span>&nbsp;argument to&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>. Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(...., #{in_mode: 'lsp', out_mode: 'lsp'})</div>
+<br>
+To synchronously send a JSON-RPC request to the server, use the&nbsp;<a class="Identifier" href="channel.html#ch_evalexpr()">ch_evalexpr()</a><br>
+function. This function will return the response from the server. You can use<br>
+the&nbsp;<a class="Type" href="options.html#'timeout'">'timeout'</a>&nbsp;field in the&nbsp;<span class="Special">{options}</span>&nbsp;argument to control the response wait<br>
+time. Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let req = {}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let req.method = 'textDocument/definition'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let req.params = {}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let req.params.textDocument = #{uri: 'a.c'}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let req.params.position = #{line: 10, character: 3}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let resp = ch_evalexpr(ch, req, #{timeout: 100})</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that in the request message the&nbsp;<span class="MissingTag">'id'</span>&nbsp;field should not be specified. If it<br>
+is specified, then Vim will overwrite the value with an internally generated<br>
+identifier.&nbsp;&nbsp;Vim currently supports only a number type for the&nbsp;<span class="MissingTag">'id'</span>&nbsp;field.<br>
+<br>
+To send a JSON-RPC request to the server and asynchronously process the<br>
+response, use the&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function and supply a callback function.<br>
+Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let req = {}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let req.method = 'textDocument/hover'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let req.params = {}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let req.params.textDocument = #{uri: 'a.c'}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let req.params.position = #{line: 10, character: 3}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let resp = ch_sendexpr(ch, req, #{callback: 'MyFn'})</div>
+<br>
+To send a JSON-RPC notification message to the server, use the&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a><br>
+function. Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendexpr(ch, #{method: 'initialized'})</div>
+<br>
+To respond to a JSON-RPC request message from the server, use the<br>
+<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function.&nbsp;&nbsp;In the response message, copy the&nbsp;<span class="MissingTag">'id'</span>&nbsp;field value<br>
+from the server request message. Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let resp = {}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let resp.id = req.id<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let resp.result = 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendexpr(ch, resp)</div>
+<br>
+The JSON-RPC notification messages from the server are delivered through the<br>
+<a class="Identifier" href="channel.html#channel-callback">channel-callback</a>&nbsp;function.<br>
+<br>
+&nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
 </div>
