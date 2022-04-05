@@ -124,10 +124,13 @@ To open a channel:<br>
 <br>
 Use&nbsp;<a class="Identifier" href="channel.html#ch_status()">ch_status()</a>&nbsp;to see if the channel could be opened.<br>
 <br>
-<span class="Special">{address}</span>&nbsp;has the form &quot;hostname:port&quot;.&nbsp;&nbsp;E.g., &quot;localhost:8765&quot;.<br>
-<br>
-When using an IPv6 address, enclose it within square brackets.&nbsp;&nbsp;E.g.,<br>
-&quot;[2001:db8::1]:8765&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-address" name="channel-address">channel-address</a><br>
+<span class="Special">{address}</span>&nbsp;can be a domain name or an IP address, followed by a port number, or<br>
+a Unix-domain socket path prefixed by &quot;unix:&quot;.&nbsp;&nbsp;E.g.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;www.example.com:80&nbsp;&nbsp; &quot; domain + port<br>
+&nbsp;&nbsp;&nbsp;&nbsp;127.0.0.1:1234&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; IPv4 + port<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[2001:db8::1]:8765&nbsp;&nbsp; &quot; IPv6 + port<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unix:/tmp/my-socket&nbsp;&nbsp;&quot; Unix-domain socket path</div>
 <br>
 <span class="Special">{options}</span>&nbsp;is a dictionary with optional entries:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-open-options" name="channel-open-options">channel-open-options</a><br>
 <br>
@@ -584,10 +587,15 @@ ch_info(<span class="Special">{handle}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When opened with ch_open():<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;hostname&quot;&nbsp;&nbsp;&nbsp;&nbsp; the hostname of the address<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;port&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the port of the address<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;path&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the path of the Unix-domain socket<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;sock_status&quot;&nbsp;&nbsp;&quot;open&quot; or &quot;closed&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;sock_mode&quot;&nbsp;&nbsp;&nbsp;&nbsp;&quot;NL&quot;, &quot;RAW&quot;, &quot;JSON&quot; or &quot;JS&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;sock_io&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;socket&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;sock_timeout&quot; timeout in msec<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that &quot;pair&quot; is only present for Unix-domain sockets, for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;regular ones &quot;hostname&quot; and &quot;port&quot; are present instead.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When opened with job_start():<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;out_status&quot;&nbsp;&nbsp; &quot;open&quot;, &quot;buffered&quot; or &quot;closed&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;out_mode&quot;&nbsp;&nbsp;&nbsp;&nbsp; &quot;NL&quot;, &quot;RAW&quot;, &quot;JSON&quot; or &quot;JS&quot;<br>
@@ -646,11 +654,8 @@ ch_open(<span class="Special">{address}</span>&nbsp;[,&nbsp;<span class="Special
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Open a channel to&nbsp;<span class="Special">{address}</span>.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel">channel</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a Channel.&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="channel.html#ch_status()">ch_status()</a>&nbsp;to check for failure.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{address}</span>&nbsp;is a String and has the form &quot;hostname:port&quot;, e.g.,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;localhost:8765&quot;.<br>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When using an IPv6 address, enclose it within square brackets.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E.g., &quot;[2001:db8::1]:8765&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{address}</span>&nbsp;is a String, see&nbsp;<a class="Identifier" href="channel.html#channel-address">channel-address</a>&nbsp;for the possible<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;accepted forms.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;<span class="Special">{options}</span>&nbsp;is given it must be a&nbsp;<a class="Identifier" href="eval.html#Dictionary">Dictionary</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel-open-options">channel-open-options</a>.<br>
