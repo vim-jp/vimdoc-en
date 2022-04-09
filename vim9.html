@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Mar 28<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Mar 30<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -190,7 +190,7 @@ For now you will need to pass the dictionary explicitly:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo d[arg]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var ad = {item: 'value', func: DictFunc}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ad.func(d, 'item')</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ad.func(ad, 'item')</div>
 <br>
 You can call a legacy dict function though:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Legacy() dict<br>
@@ -1750,7 +1750,8 @@ actually needed.&nbsp;&nbsp;Using the autoload mechanism is recommended:<br>
 &nbsp;&nbsp; The &quot;autoload&quot; argument to&nbsp;<a class="Comment" href="vim9.html#:import">:import</a>&nbsp;means that the script is not loaded<br>
 &nbsp;&nbsp; until one of the items is actually used.&nbsp;&nbsp;The script will be found under<br>
 &nbsp;&nbsp; the &quot;autoload&quot; directory in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;instead of the &quot;import&quot;<br>
-&nbsp;&nbsp; directory.<br>
+&nbsp;&nbsp; directory.&nbsp;&nbsp;Alternatively a relative or absolute name can be used, see<br>
+&nbsp;&nbsp; below.<br>
 <br>
 2. In the autoload script put the bulk of the code.<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
@@ -1769,6 +1770,14 @@ actually needed.&nbsp;&nbsp;Using the autoload mechanism is recommended:<br>
 <br>
 &nbsp;&nbsp; You can split up the functionality and import other scripts from the<br>
 &nbsp;&nbsp; autoload script as you like.&nbsp;&nbsp;This way you can share code between plugins.<br>
+<br>
+Searching for the autoload script in all entries in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;can be a bit<br>
+slow.&nbsp;&nbsp;If the plugin knows where the script is located, quite often a relative<br>
+path can be used.&nbsp;&nbsp;This avoids the search and should be quite a bit faster.<br>
+Another advantage is that the script name does not need to be unique.&nbsp;&nbsp;An<br>
+absolute path is also possible.&nbsp;&nbsp;Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import autoload '../lib/implement.vim'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import autoload MyScriptsDir .. '/lib/implement.vim'</div>
 <br>
 For defining a mapping that uses the imported autoload script the special key<br>
 <a class="Identifier" href="map.html#<ScriptCmd>">&lt;ScriptCmd&gt;</a>&nbsp;is useful.&nbsp;&nbsp;It allows for a command in a mapping to use the<br>

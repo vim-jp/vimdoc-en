@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Mar 30<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Apr 06<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,15 +43,10 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Allow for: &quot;import autoload '../lib/script.vim'&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;avoids going through&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>&nbsp;and avoids name collisions.<br>
-<br>
-Really drop the Athena and NeXtaw GUI?&nbsp;&nbsp;Decide end of March.<br>
-<br>
 Once Vim9 is stable:<br>
 - Use Vim9 for more runtime files.<br>
 - Check code coverage, add more tests if needed.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9execute.c&nbsp;&nbsp;line 1900<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9execute.c&nbsp;&nbsp;line 3500<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9expr.c<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9instr.c<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script.c<br>
@@ -60,6 +55,7 @@ Once Vim9 is stable:<br>
 <br>
 Further Vim9 improvements, possibly after launch:<br>
 - Check performance with callgrind and kcachegrind.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;getline()/substitute()/setline() in #5632<br>
 - Better implementation for partial and tests for that.<br>
 - when using &quot;const&quot; mark the variable type as const with TTFLAG_CONST, so<br>
 &nbsp;&nbsp;that an error is given at compile time when trying to change it.&nbsp;&nbsp;E.g. for a<br>
@@ -205,7 +201,7 @@ Terminal emulator window:<br>
 - When the job only outputs lines, we could handle resizing the terminal<br>
 &nbsp;&nbsp;better: store lines separated by line breaks, instead of screen lines,<br>
 &nbsp;&nbsp;then when the window is resized redraw those lines.<br>
-- Redrawing is slow with Athena and Motif. (Ramel Eshed)<br>
+- Redrawing is slow with Motif. (Ramel Eshed)<br>
 - For the GUI fill termios with default values, perhaps like pangoterm:<br>
 &nbsp;&nbsp;<span class="Constant"><a href="http://bazaar.launchpad.net/~leonerd/pangoterm/trunk/view/head:/main.c#L134">http://bazaar.launchpad.net/~leonerd/pangoterm/trunk/view/head:/main.c#L134</a></span><br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
@@ -235,6 +231,8 @@ Have another look at the implementation.<br>
 Add expanding&nbsp;<span class="Special">&lt;script&gt;</span>&nbsp;which works like&nbsp;<span class="Special">&lt;sfile&gt;</span>&nbsp;everywhere. #9189<br>
 <br>
 Rename getdigraphlist -&gt; digraph_getlist() etc.<br>
+<br>
+Can &quot;CSI nr X&quot; be used instead of outputting spaces?&nbsp;&nbsp;Is it faster?&nbsp;&nbsp;#8002<br>
 <br>
 Valgrind reports memory leaks in test_options.<br>
 Valgrind reports overlapping memcpy in<br>
@@ -314,8 +312,7 @@ inconsistent with the documentation.<br>
 Making breakat support multibyte characters (Yasuhiro Matsumoto, #6598)<br>
 Scroll doesn't work correctly, why?<br>
 <br>
-glob() and globfile() do not always honor&nbsp;<a class="Type" href="options.html#'wildignorecase'">'wildignorecase'</a>. #8350<br>
-globpath() does not use&nbsp;<a class="Type" href="options.html#'wildignorecase'">'wildignorecase'</a>&nbsp;at all?<br>
+globpath() does not use&nbsp;<a class="Type" href="options.html#'wildignorecase'">'wildignorecase'</a>&nbsp;at all? (related to #8350)<br>
 <br>
 Add&nbsp;<span class="MissingTag">'termguiattr'</span>&nbsp;option, use &quot;gui=&quot; attributes in the terminal?&nbsp;&nbsp;Would work<br>
 with&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>. #1740<br>
@@ -2398,11 +2395,6 @@ probably causes this.<br>
 <a class="Type" href="options.html#'scrollbind'">'scrollbind'</a>&nbsp;is not respected when deleting lines or undo. (Milan Vancura,<br>
 2009 Jan 16)<br>
 <br>
-Document that default font in Athena can be set with resources:<br>
-&nbsp;&nbsp; XtDefaultFont: &quot;9x15&quot;<br>
-&nbsp;&nbsp; XtDefaultFontSet: &quot;9x15&quot;<br>
-(Richard Sherman, 2009 Apr 12)<br>
-<br>
 Having &quot;Syntax&quot; in&nbsp;<a class="Type" href="options.html#'eventignore'">'eventignore'</a>&nbsp;for :bufdo may cause problems, e.g. for<br>
 &quot;:bufdo e&quot; when buffers are open in windows.&nbsp;&nbsp;ex_listdo(eap) could set the<br>
 option only for when jumping to another buffer, not when the command argument<br>
@@ -3244,7 +3236,7 @@ Win32 GUI known bugs:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the font name).<br>
 <br>
 <br>
-Athena and Motif:<br>
+Motif:<br>
 6&nbsp;&nbsp; New Motif toolbar button from Marcin Dalecki:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;- When the mouse pointer is over an Agide button the red becomes black.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Something with the way colors are specified in the .xpm file.<br>
@@ -3256,7 +3248,7 @@ Athena and Motif:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;wrong.<br>
 9&nbsp;&nbsp; XIM is disabled by default for SGI/IRIX.&nbsp;&nbsp;Fix XIM so that&nbsp;<a class="Type" href="options.html#'imdisable'">'imdisable'</a>&nbsp;can<br>
 &nbsp;&nbsp;&nbsp;&nbsp;be off by default.<br>
-9&nbsp;&nbsp; XIM doesn't work properly for Athena/Motif. (Yasuhiro Matsumoto)&nbsp;&nbsp;For now,<br>
+9&nbsp;&nbsp; XIM doesn't work properly for Motif. (Yasuhiro Matsumoto)&nbsp;&nbsp;For now,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;keep XIM active at all times when the input method has the preediting<br>
 &nbsp;&nbsp;&nbsp;&nbsp;flag.<br>
 8&nbsp;&nbsp; X11: A menu that contains an umlaut is truncated at that character.<br>
@@ -3272,27 +3264,6 @@ Athena and Motif:<br>
 8&nbsp;&nbsp; When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is different from the current locale (e.g., utf-8) the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;menu strings don't work.&nbsp;&nbsp;Requires conversion from&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;to the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;current locale.&nbsp;&nbsp;Workaround: set&nbsp;<a class="Type" href="options.html#'langmenu'">'langmenu'</a>.<br>
-<br>
-<br>
-Athena GUI:<br>
-9&nbsp;&nbsp; The first event for any button in the menu or toolbar appears to get lost.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The second click on a menu does work.<br>
-9&nbsp;&nbsp; When dragging the scrollbar thumb very fast, focus is only obtained in<br>
-&nbsp;&nbsp;&nbsp;&nbsp;the scrollbar itself.&nbsp;&nbsp;And the thumb is no longer updated when moving<br>
-&nbsp;&nbsp;&nbsp;&nbsp;through files.<br>
-7&nbsp;&nbsp; The file selector is not resizable.&nbsp;&nbsp;With a big font it is difficult to<br>
-&nbsp;&nbsp;&nbsp;&nbsp;read long file names. (Schroeder)<br>
-4&nbsp;&nbsp; Re-write the widget attachments and code so that we will not have to go<br>
-&nbsp;&nbsp;&nbsp;&nbsp;through and calculate the absolute position of every widget every time the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;window is refreshed/changes size.&nbsp;&nbsp;This will help the &quot;flashing-widgets&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;problem during a refresh.<br>
-5&nbsp;&nbsp; When starting gvim with all the default colors and then typing<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&quot;:hi Menu guibg=cyan&quot;, the menus change color but the background of the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;pullright pixmap doesn't change colors.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;If you type &quot;:hi Menu guibg=cyan font=anyfont&quot;, then the pixmap changes<br>
-&nbsp;&nbsp;&nbsp;&nbsp;colors as it should.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Allocating a new pixmap and setting the resource doesn't change the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;pullright pixmap's colors.&nbsp;&nbsp;Why?&nbsp;&nbsp;Possible Athena bug?<br>
 <br>
 <br>
 Motif GUI:<br>
@@ -3773,7 +3744,7 @@ Problems that will (probably) not be solved:<br>
 <br>
 Most interesting new features to be added when all bugs have been fixed:<br>
 -&nbsp;&nbsp; Using &quot;:exe edit fname&quot; has escaping problems.&nbsp;&nbsp;Use &quot;:edit ++(fname)&quot;.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Thus use &quot;++=&quot; to give arguments as expressions, comma separated as if<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Thus use &quot;++=&quot; to give arguments as expressions, comma-separated as if<br>
 &nbsp;&nbsp;&nbsp;&nbsp;calling a function.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;With options: &quot;:edit ++(['!', '++enc=abc'], ['+/pat'], fname)&quot;.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Alternative: Make a function for Ex commands: cmd_edit().<br>
@@ -5664,7 +5635,7 @@ Options:<br>
 7&nbsp;&nbsp; &quot;:with option=value | command&quot;: temporarily set an option value and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;restore it after the command has executed.<br>
 8&nbsp;&nbsp; Make &quot;old&quot; number options that really give a number of effects into string<br>
-&nbsp;&nbsp;&nbsp;&nbsp;options that are a comma separated list.&nbsp;&nbsp;The old number values should<br>
+&nbsp;&nbsp;&nbsp;&nbsp;options that are a comma-separated list.&nbsp;&nbsp;The old number values should<br>
 &nbsp;&nbsp;&nbsp;&nbsp;also be supported.<br>
 8&nbsp;&nbsp; Add commands to save and restore an option, which also preserves the flag<br>
 &nbsp;&nbsp;&nbsp;&nbsp;that marks if the option was set.&nbsp;&nbsp;Useful to keep the effect of setting<br>
