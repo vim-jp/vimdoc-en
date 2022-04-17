@@ -535,7 +535,8 @@ ch_evalexpr(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{e
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ch_evalexpr() waits for a response and returns the decoded<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expression.&nbsp;&nbsp;When there is an error or timeout it returns an<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;empty string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;empty&nbsp;<a class="Identifier" href="eval.html#String">String</a>&nbsp;or, when using the &quot;lsp&quot; channel mode, returns an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;empty&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that while waiting for the response, Vim handles other<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages.&nbsp;&nbsp;You need to make sure this doesn't cause trouble.<br>
@@ -707,7 +708,8 @@ ch_sendexpr(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{e
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns an empty String.&nbsp;&nbsp;If the &quot;callback&quot; item is present in<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{options}</span>, then the returned Dict contains the ID of the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;request message.&nbsp;&nbsp;The ID can be used to send a cancellation<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;request to the LSP server (if needed).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;request to the LSP server (if needed).&nbsp;&nbsp;Returns an empty Dict<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on error.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If a response message is not expected for&nbsp;<span class="Special">{expr}</span>, then don't<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specify the &quot;callback&quot; item in&nbsp;<span class="Special">{options}</span>.<br>
@@ -1410,11 +1412,19 @@ payload encoded in JSON-RPC format.&nbsp;&nbsp;This is described in:<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="Constant"><a href="https://www.jsonrpc.org/specification">https://www.jsonrpc.org/specification</a></span><br>
 <br>
-For messages received on a channel with mode set to &quot;lsp&quot;, Vim will process<br>
-the HTTP header and decode the payload into a Vim&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>&nbsp;type and call the<br>
-channel callback or the specified callback function.&nbsp;&nbsp;When sending messages on<br>
-a channel using&nbsp;<a class="Identifier" href="channel.html#ch_evalexpr()">ch_evalexpr()</a>&nbsp;or&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>, Vim will add the HTTP<br>
-header and encode the Vim expression into JSON-RPC.<br>
+To encode and send a LSP request/notification message in a Vim&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>&nbsp;into a<br>
+LSP JSON-RPC message and to receive and decode a LSP JSON-RPC<br>
+response/notification message into a Vim&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>, connect to the LSP server<br>
+with the&nbsp;<a class="Identifier" href="channel.html#channel-mode">channel-mode</a>&nbsp;set to &quot;lsp&quot;.<br>
+<br>
+For messages received on a channel with&nbsp;<a class="Identifier" href="channel.html#channel-mode">channel-mode</a>&nbsp;set to &quot;lsp&quot;, Vim will<br>
+process the HTTP header and decode the JSON-RPC payload into a Vim&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>&nbsp;type<br>
+and call the&nbsp;<a class="Identifier" href="channel.html#channel-callback">channel-callback</a>&nbsp;function or the specified<br>
+<a class="Identifier" href="channel.html#channel-onetime-callback">channel-onetime-callback</a>&nbsp;function.&nbsp;&nbsp;When sending messages on a channel using<br>
+the&nbsp;<a class="Identifier" href="channel.html#ch_evalexpr()">ch_evalexpr()</a>&nbsp;or&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;functions, Vim will add the HTTP header<br>
+and encode the Vim expression into JSON.&nbsp;&nbsp;Refer to&nbsp;<a class="Identifier" href="builtin.html#json_encode()">json_encode()</a>&nbsp;and<br>
+<a class="Identifier" href="builtin.html#json_decode()">json_decode()</a>&nbsp;for more information about how Vim encodes and decodes the<br>
+builtin types into JSON.<br>
 <br>
 To open a channel using the&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>&nbsp;mode, set the&nbsp;<span class="MissingTag">'mode'</span>&nbsp;item in the&nbsp;<a class="Identifier" href="channel.html#ch_open()">ch_open()</a><br>
 <span class="Special">{options}</span>&nbsp;argument to&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>.&nbsp;&nbsp;Example:<br>
@@ -1424,34 +1434,43 @@ To open a channel using the&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'
 To open a channel using the&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>&nbsp;mode with a job, set the 'in_mode' and<br>
 'out_mode' items in the&nbsp;<a class="Identifier" href="channel.html#job_start()">job_start()</a>&nbsp;<span class="Special">{options}</span>&nbsp;argument to&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>. Example:<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(...., #{in_mode: 'lsp', out_mode: 'lsp'})</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let cmd = ['clangd', '--background-index', '--clang-tidy']<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let opts = {}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let opts.in_mode = 'lsp'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let opts.out_mode = 'lsp'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let opts.out_cb = function('LspOutCallback')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let opts.err_cb = function('LspErrCallback')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let opts.exit_cb = function('LspExitCallback')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(cmd, opts)</div>
 <br>
 To synchronously send a JSON-RPC request to the server, use the<br>
 <a class="Identifier" href="channel.html#ch_evalexpr()">ch_evalexpr()</a>&nbsp;function. This function will wait and return the decoded<br>
 response message from the server. You can use either the&nbsp;<a class="Identifier" href="channel.html#channel-timeout">channel-timeout</a>&nbsp;or<br>
 the&nbsp;<a class="Type" href="options.html#'timeout'">'timeout'</a>&nbsp;field in the&nbsp;<span class="Special">{options}</span>&nbsp;argument to control the response wait<br>
-time.&nbsp;&nbsp;If the request times out, then an empty string is returned.&nbsp;&nbsp;Example:<br>
+time.&nbsp;&nbsp;If the request times out, then an empty&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>&nbsp;is returned.&nbsp;&nbsp;Example:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let req = {}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.method = 'textDocument/definition'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.params = {}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.params.textDocument = #{uri: 'a.c'}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.params.position = #{line: 10, character: 3}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let resp = ch_evalexpr(ch, req, #{timeout: 100})</div>
+&nbsp;&nbsp;&nbsp;&nbsp;let defs = ch_evalexpr(ch, req, #{timeout: 100})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if defs-&gt;empty()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... &lt;handle failure&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
 <br>
 <span class="Todo">Note</span>&nbsp;that in the request message the&nbsp;<span class="MissingTag">'id'</span>&nbsp;field should not be specified. If it<br>
 is specified, then Vim will overwrite the value with an internally generated<br>
 identifier.&nbsp;&nbsp;Vim currently supports only a number type for the&nbsp;<span class="MissingTag">'id'</span>&nbsp;field.<br>
 The callback function will be invoked for both a successful and a failed RPC<br>
-request.&nbsp;&nbsp;If the &quot;id&quot; field is present in the request message, then Vim will<br>
-overwrite it with an internally generated number.&nbsp;&nbsp;This function returns a<br>
-Dict with the identifier used for the message.&nbsp;&nbsp;This can be used to send<br>
-cancellation request to the LSP server (if needed).<br>
+request.<br>
 <br>
 To send a JSON-RPC request to the server and asynchronously process the<br>
-response, use the&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function and supply a callback function.<br>
-<br>
-Example:<br>
+response, use the&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function and supply a callback function.&nbsp;&nbsp;If<br>
+the &quot;id&quot; field is present in the request message, then Vim will overwrite it<br>
+with an internally generated number.&nbsp;&nbsp;This function returns a Dict with the<br>
+identifier used for the message.&nbsp;&nbsp;This can be used to send cancellation<br>
+request to the LSP server (if needed).&nbsp;&nbsp;Example:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let req = {}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.method = 'textDocument/hover'<br>
@@ -1459,11 +1478,12 @@ Example:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.params = {}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.params.textDocument = #{uri: 'a.c'}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.params.position = #{line: 10, character: 3}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let resp = ch_sendexpr(ch, req, #{callback: 'MyFn'})</div>
+&nbsp;&nbsp;&nbsp;&nbsp;let resp = ch_sendexpr(ch, req, #{callback: 'HoverFunc'})</div>
 <br>
-To cancel an outstanding LSP request sent to the server using the<br>
+To cancel an outstanding asynchronous LSP request sent to the server using the<br>
 <a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function, send a cancelation message to the server using the<br>
-<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function with the ID returned by&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>.&nbsp;&nbsp;Example:<br>
+<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function with the ID returned by the&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function<br>
+for the request.&nbsp;&nbsp;Example:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&quot; send a completion request<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req = {}<br>
@@ -1471,7 +1491,7 @@ To cancel an outstanding LSP request sent to the server using the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.params = {}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.params.textDocument = #{uri: 'a.c'}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.params.position = #{line: 10, character: 3}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let reqstatus = ch_sendexpr(ch, req, #{callback: 'MyComplete'})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let reqstatus = ch_sendexpr(ch, req, #{callback: 'LspComplete'})<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&quot; send a cancellation notification<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let notif = {}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let notif.method = '$/cancelRequest'<br>
