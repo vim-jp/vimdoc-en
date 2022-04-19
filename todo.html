@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Apr 06<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Apr 18<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -42,6 +42,8 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 (replace 1234 with the issue/pull number)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
+<br>
+Use &quot;<span class="Comment">=expr</span>&quot; in heredoc also in :def function.&nbsp;&nbsp;#10216&nbsp;&nbsp;Yegappan will do it.<br>
 <br>
 Once Vim9 is stable:<br>
 - Use Vim9 for more runtime files.<br>
@@ -156,7 +158,6 @@ Terminal debugger:<br>
 - Add option to not open the program window.&nbsp;&nbsp;It's not used when attaching to<br>
 &nbsp;&nbsp;an already running program. (M. Kelly)<br>
 - When only gdb window exists, on &quot;quit&quot; edit another buffer.<br>
-- Use a sign group<br>
 - Termdebug does not work when Vim was built with mzscheme: gdb hangs just<br>
 &nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
 &nbsp;&nbsp;initializing mzscheme avoid the problem, thus it's not some #ifdef.<br>
@@ -207,6 +208,11 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
+CurSearch highlight is wrong when searching for a space, matches all spaces<br>
+instead of only the current one.<br>
+<br>
+Can deref_func_name() and deref_function_name() be merged?<br>
+<br>
 When using&nbsp;<a class="Type" href="options.html#'cryptmethod'">'cryptmethod'</a>&nbsp;xchaha20 the undo file is not encrypted.<br>
 Need to handle extra bytes.<br>
 <br>
@@ -227,8 +233,6 @@ Fails in line 64 of Ch_communicate, no exception is thrown.<br>
 <br>
 Patch for Template string: #4634<br>
 Have another look at the implementation.<br>
-<br>
-Add expanding&nbsp;<span class="Special">&lt;script&gt;</span>&nbsp;which works like&nbsp;<span class="Special">&lt;sfile&gt;</span>&nbsp;everywhere. #9189<br>
 <br>
 Rename getdigraphlist -&gt; digraph_getlist() etc.<br>
 <br>
@@ -259,6 +263,14 @@ Idea: when typing &quot;:e /some/dir/&quot; and &quot;dir&quot; does not exist, 
 &quot;:set &amp;shellpipe&quot; and &quot;:set &amp;shellredir&quot; should use the logic from<br>
 initialization to figure out the default value from&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>.&nbsp;&nbsp;Add a test for<br>
 this.<br>
+<br>
+With concealed text mouse click doesn't put the cursor in the right position.<br>
+(Herb Sitz)&nbsp;&nbsp;Fix by Christian Brabandt, 2011 Jun 16.&nbsp;&nbsp;Doesn't work properly,<br>
+need to make the change in where RET_WIN_BUF_CHARTABSIZE() is called.<br>
+IDEA: when drawing the text, store the text byte index in ScreenLinesIdx[].<br>
+When converting screen column to text position use this.<br>
+Store the line number and byte index for the start of the line, when<br>
+converting the screen line to text position use this, add the byte offset.<br>
 <br>
 MS-Windows: did path modifier :p:8 stop working?&nbsp;&nbsp;#8600<br>
 <br>
@@ -1924,10 +1936,6 @@ On MS-Windows a temp dir with a &amp; init causes system() to fail. (Ben Fritz,<
 <a class="Type" href="options.html#'list'">'list'</a>&nbsp;is set.&nbsp;&nbsp;(Dennis Preiser)<br>
 Patch 7.3.116 was the wrong solution.<br>
 Christian Brabandt has another incomplete patch. (2011 Jul 13)<br>
-<br>
-With concealed text mouse click doesn't put the cursor in the right position.<br>
-(Herb Sitz)&nbsp;&nbsp;Fix by Christian Brabandt, 2011 Jun 16.&nbsp;&nbsp;Doesn't work properly,<br>
-need to make the change in where RET_WIN_BUF_CHARTABSIZE() is called.<br>
 <br>
 Syntax region with&nbsp;<span class="MissingTag">'concealends'</span>&nbsp;and a&nbsp;<span class="MissingTag">'cchar'</span>&nbsp;value,&nbsp;<a class="Type" href="options.html#'conceallevel'">'conceallevel'</a>&nbsp;set to 2,<br>
 only one of the two ends gets the cchar displayed. (Brett Stahlman, 2010 Aug<br>
