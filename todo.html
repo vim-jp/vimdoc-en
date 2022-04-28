@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Apr 18<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Apr 27<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -42,8 +42,6 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 (replace 1234 with the issue/pull number)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
-<br>
-Use &quot;<span class="Comment">=expr</span>&quot; in heredoc also in :def function.&nbsp;&nbsp;#10216&nbsp;&nbsp;Yegappan will do it.<br>
 <br>
 Once Vim9 is stable:<br>
 - Use Vim9 for more runtime files.<br>
@@ -93,6 +91,8 @@ Update list of features to vote on:<br>
 Popup windows:<br>
 - Preview popup not properly updated when it overlaps with completion menu.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(Yegappan Lakshmanan, 2021 May 22<br>
+- Add a function to redraw a specific popup window.&nbsp;&nbsp;Esp. to be used when<br>
+&nbsp;&nbsp;editing the command line, when screen updating doesn't happen. (Shougo)<br>
 - In some cases prop_remove() does not work correctly. (#8261)<br>
 - Add a flag to make a popup window focusable?<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-W</span>&nbsp;P cycle over any preview window or focusable popup, end up back in<br>
@@ -208,18 +208,15 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
-CurSearch highlight is wrong when searching for a space, matches all spaces<br>
-instead of only the current one.<br>
+Add autocmd functions. PR #10291<br>
 <br>
 Can deref_func_name() and deref_function_name() be merged?<br>
 <br>
-When using&nbsp;<a class="Type" href="options.html#'cryptmethod'">'cryptmethod'</a>&nbsp;xchaha20 the undo file is not encrypted.<br>
-Need to handle extra bytes.<br>
-<br>
-In Select mode the deleted text always goes into the unnamed register.<br>
-Use&nbsp;<span class="Special">CTRL-R</span>&nbsp;to specify the register to use. (#9531)<br>
-<br>
 Some prompts are not translated: #9495<br>
+<br>
+NFA regexp does not handle composing characters well: #10286<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[ɔ̃] matches both ɔ and ɔ̃<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\(ɔ\|ɔ̃\) matches ɔ and not ɔ̃<br>
 <br>
 Improvement in terminal configuration mess: Request the terminfo entry from<br>
 the terminal itself.&nbsp;&nbsp;The $TERM value then is only relevant for whether this<br>
@@ -258,6 +255,8 @@ Memory leaks in test_channel? (or is it because of fork())<br>
 <br>
 PR to support %e and %k in&nbsp;<a class="Type" href="options.html#'errorformat'">'errorformat'</a>. #9624<br>
 <br>
+PR to add left and right bitwise shift. #8457<br>
+<br>
 Idea: when typing &quot;:e /some/dir/&quot; and &quot;dir&quot; does not exist, highlight in red.<br>
 <br>
 &quot;:set &amp;shellpipe&quot; and &quot;:set &amp;shellredir&quot; should use the logic from<br>
@@ -269,8 +268,7 @@ With concealed text mouse click doesn't put the cursor in the right position.<br
 need to make the change in where RET_WIN_BUF_CHARTABSIZE() is called.<br>
 IDEA: when drawing the text, store the text byte index in ScreenLinesIdx[].<br>
 When converting screen column to text position use this.<br>
-Store the line number and byte index for the start of the line, when<br>
-converting the screen line to text position use this, add the byte offset.<br>
+The line number can be obtained from win-&gt;w_lines[].<br>
 <br>
 MS-Windows: did path modifier :p:8 stop working?&nbsp;&nbsp;#8600<br>
 <br>
@@ -307,9 +305,6 @@ Also, z= in German on a long word can take a very long time, but&nbsp;<span clas
 interrupt does not work. Where to add ui_breakcheck()?<br>
 New English spell files also have very slow suggestions.<br>
 <br>
-Searching for \%'&gt; does not find anything when using line Visual selection.<br>
-Probably because it's using MAXCOL.&nbsp;&nbsp;#8238<br>
-<br>
 Make &quot;g&gt;&quot; and &quot;g&lt;&quot; in Visual mode move the text right or left.<br>
 Also for a block selection.&nbsp;&nbsp;#8558<br>
 <br>
@@ -338,9 +333,6 @@ Missing filetype test for bashrc, PKGBUILD, etc.<br>
 Add an option to not fetch terminal codes in xterm, to avoid flicker when t_Co<br>
 changes.<br>
 <br>
-When using &quot;:bwipe!&quot; also get rid of references to be buffer, e.g. in the<br>
-jumplist and alternate file.<br>
-<br>
 Add an option to start_timer() to return from the input loop with K_IGNORE.<br>
 This is useful e.g. when a popup was created that disables mappings, we need<br>
 to return from vgetc() to make this happen.&nbsp;&nbsp;#7011<br>
@@ -350,13 +342,6 @@ Any way to convert &quot;$&quot; back by using a special value? (#6901)<br>
 <br>
 Can we detect true color support?&nbsp;&nbsp;<span class="Constant"><a href="https://gist.github.com/XVilka/8346728">https://gist.github.com/XVilka/8346728</a></span><br>
 Try setting a color then request the current color, like using t_u7.<br>
-<br>
-Regexp to search for duplicate lines does not work correctly:<br>
-/\(^.*\n\)\1&nbsp;&nbsp;(Chris Morgan, #6239)<br>
-<br>
-MS-Windows: when writing undo file the infostreams are copied in&nbsp;<br>
-mch_copy_file_attribute(), that seems unnecessary. (#7925)<br>
-Add a flag to only copy attributes?<br>
 <br>
 Make the jumplist behave like a tag stack. (#7738)&nbsp;&nbsp;Should there be a more<br>
 time bound navigation, like with undo?<br>
@@ -389,15 +374,6 @@ So that replaying the register doesn't use keymap/langmap and still does the<br>
 same thing.<br>
 Also see #737: langmap not applied to replaying recording.<br>
 <br>
-Buffer autocommands are a bit inconsistent.&nbsp;&nbsp;Add a separate set of<br>
-autocommands for the buffer lifecycle:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;BufIsCreated&nbsp;&nbsp;(after buffer ID exists)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;BufIsLoaded&nbsp;&nbsp; (after buffer ID has content)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;BufIsUnloaded (after buffer ID no longer has)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;BufIsWiped&nbsp;&nbsp;&nbsp;&nbsp;(after buffer ID was wiped)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;BufIsRenamed&nbsp;&nbsp;(after buffer ID gets another name)<br>
-The buffer list and windows are locked, no changes possible<br>
-<br>
 Matchparen doesn't remove highlight after undo. (#7054)<br>
 Is OK when syntax HL is active.<br>
 <br>
@@ -429,26 +405,10 @@ Why does Test_invalid_sid() not work in the GUI?<br>
 Lua: updating wrong buffer when using newly created, unloaded buffer.<br>
 (#6539)<br>
 <br>
-When &quot;+ register is set then &quot;&quot; points to it.&nbsp;&nbsp;If another Vim grabs the &quot;+<br>
-register, then &quot;&quot; doesn't contain anything.&nbsp;&nbsp;Make it still follow &quot;+.<br>
-(#6435)<br>
-<br>
 File marks merging has duplicates since 7.4.1925. (Ingo Karkat, #5733)<br>
-<br>
-When editing a file with &quot;:edit&quot; the output of :swapname is relative, while<br>
-editing it with &quot;vim file&quot; it is absolute. (#355)<br>
-Which one should it be?<br>
 <br>
 Problem with auto-formatting - inserting space and putting cursor before added<br>
 character. (#6154)<br>
-<br>
-undo result wrong: Masato Nishihata, #4798<br>
-<br>
-After recovering from a swap file the undofile should not be used, it causes<br>
-corruption.&nbsp;&nbsp;(#6631)<br>
-<br>
-When the computer crashes while writing the undofile, the contents may be<br>
-lost.&nbsp;&nbsp;Write to a temp file, fsync and rename. (#8879)<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'lazyredraw'">'lazyredraw'</a>&nbsp;is set sometimes the title is not updated.<br>
 (Jason Franklin, 2020 Feb 3)&nbsp;&nbsp;Looks like a race condition.<br>
@@ -487,8 +447,6 @@ Wrong error when using local arglist. (Harm te Hennepe, #6133)<br>
 <br>
 Test loose_clipboard() by selecting text before suspending.<br>
 <br>
-Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</span>&quot; undo.<br>
-<br>
 :unmap&nbsp;<span class="Special">&lt;c-n&gt;</span>&nbsp;gives error but does remove the mapping. (Antony Scriven, 2019<br>
 Dec 19)<br>
 <br>
@@ -510,17 +468,9 @@ in terminal.c and then&nbsp;<span class="Special">CTRL-N</span>&nbsp;twice.<br>
 Should do current file first and not split it up when more results are found.<br>
 (Also #1890)<br>
 <br>
-Undo history wrong when &quot;:next file&quot; re-uses a buffer. (#5426)<br>
-ex_next() should pass flag to do_argfile(), then to do_ecmd().<br>
-Is there a test for this?<br>
-<br>
 Help for &quot;:argadd fname&quot; says that if &quot;fname&quot; is already in the argument list<br>
 that entry is used.&nbsp;&nbsp;But instead it's always added. (#6210)<br>
 Add flag AL_FIND_ADD, if there is one argument find it in the list.<br>
-<br>
-&quot;:bnext&quot; in a help buffer is supposed to go to the next help buffer, but it<br>
-goes to any buffer, and then :bnext skips help buffers, since they are<br>
-unlisted. (#4478)<br>
 <br>
 Statusline highlighting error, off by one. (#5599)<br>
 <br>
@@ -575,9 +525,6 @@ When getting a focus event halfway a mapping this aborts the mapping.&nbsp;&nbsp
 when &quot;qq&quot; is mapped and after the first &quot;q&quot; the mouse is moved outside of the<br>
 gvim window (with focus follows mouse), then the K_FOCUSLOST key is put in the<br>
 input buffer. (#5302)<br>
-<br>
-:buffer completion does not escape &quot;+&quot; properly and results in a regexp error.<br>
-(#5467)<br>
 <br>
 Check_external_diff() is used too often. (Daniel Hahler, #4800)<br>
 <br>
@@ -779,9 +726,6 @@ punctuation is repeated. (Smylers, 2018 Nov 17, #3621)<br>
 Using single wide base character with double wide composing character gives<br>
 drawing errors.&nbsp;&nbsp;Fill up the base character?&nbsp;&nbsp;(Dominique, #4328)<br>
 <br>
-Problem with two buffers with the same name a/b, if it didn't exist before and<br>
-is created outside of Vim. (dskloetg, 2018 Jul 16, #3219)<br>
-<br>
 When&nbsp;<a class="Type" href="options.html#'sidescrolloff'">'sidescrolloff'</a>&nbsp;is set, using &quot;zl&quot; to go to the end of the line, suddenly<br>
 scrolls back.&nbsp;&nbsp;Should allow for this scrolling, like&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;does when<br>
 using&nbsp;<span class="Special">CTRL-E</span>. (Yee Cheng Chin, #3721)<br>
@@ -799,8 +743,6 @@ when possible. (Dylan Lloyd, #3973)<br>
 <br>
 Make &quot;:interactive !cmd&quot; stop termcap mode, also when used in an autocommand.<br>
 (#3692)<br>
-<br>
-Add buffer argument to undotree(). (#4001)<br>
 <br>
 matchaddpos() gets slow with many matches.&nbsp;&nbsp;Proposal by Rick Howe, 2018 Jul<br>
 19.<br>
@@ -884,10 +826,6 @@ Try out background make plugin:<br>
 or asyncmake:<br>
 &nbsp;&nbsp;<span class="Constant"><a href="https://github.com/yegappan/asyncmake">https://github.com/yegappan/asyncmake</a></span><br>
 <br>
-Add an option with file patterns, to be used when unloading a buffer: If there<br>
-is a match, remove entries for the buffer from marks, jumplist, etc.&nbsp;&nbsp;To be<br>
-used for git temp files.<br>
-<br>
 Cursor in wrong position when line wraps. (#2540)<br>
 <br>
 Setting&nbsp;<a class="Type" href="options.html#'columns'">'columns'</a>&nbsp;in a BufEnter autocommand causes a second tab width to<br>
@@ -938,14 +876,9 @@ Python indenting: alternative way to indent arguments:<br>
 <span class="Constant"><a href="http://orchistro.tistory.com/236">http://orchistro.tistory.com/236</a></span><br>
 Should be supported with a flag.<br>
 <br>
-Add the debug command line history to viminfo.<br>
-<br>
 Add Makefiles to the runtime/spell directory tree, since nobody uses Aap.<br>
 Will have to explain the manual steps (downloading the .aff and .dic files,<br>
 applying the diff, etc.<br>
-<br>
-Pasting a register in Visual mode cannot be repeated. (Mahmoud Al-Qudsi, 2018<br>
-Apr 26, #2849)<br>
 <br>
 User dictionary ~/.vim/spell/lang.utf-8.add not used for spell checking until a<br>
 word is re-added to it. (Matej Cepl, 2018 Feb 6)<br>
@@ -1079,9 +1012,6 @@ behavior.&nbsp;&nbsp;Skip when &quot;uname&quot; returns &quot;SunOS&quot;? (Pav
 <br>
 The ++ options for the :edit command are also useful on the Vim command line.<br>
 <br>
-When recovering a file, put the swap file name in b:recovered_swapfile.&nbsp;&nbsp;Then<br>
-a command can delete it.<br>
-<br>
 Overlong utf-8 sequence is displayed wrong. (Harm te Hennepe, 2017 Sep 14,<br>
 #2089)&nbsp;&nbsp;Patch with possible solution by Björn Linse.<br>
 <br>
@@ -1140,9 +1070,6 @@ Use gvimext.dll from the nightly build? (Issue #249)<br>
 <br>
 Problem with using :cd when remotely editing a file. (Gerd Wachsmuth, 2017 May<br>
 8, #1690)<br>
-<br>
-Using &quot;wviminfo /tmp/viminfo&quot; does not store file marks that Vim knows about,<br>
-it only works when merging with an existing file.&nbsp;&nbsp;(Shougo, 2017 Jun 19, #1781)<br>
 <br>
 Memory leak in test97?&nbsp;&nbsp;The string is actually freed.&nbsp;&nbsp;Weird.<br>
 <br>
@@ -1263,8 +1190,6 @@ Should :vmap in matchit.vim be :xmap?&nbsp;&nbsp;(Tony Mechelynck)<br>
 <br>
 Problem with whitespace in errorformat. (Gerd Wachsmuth, 2016 May 15, #807)<br>
 <br>
-Undo problem: &quot;g-&quot; doesn't go back, gets stuck. (Björn Linse, 2016 Jul 18)<br>
-<br>
 Add &quot;unicode true&quot; to NSIS installer.&nbsp;&nbsp;Doesn't work with Windows 95, which we<br>
 no longer support.<br>
 <br>
@@ -1361,10 +1286,6 @@ Regexp problems:<br>
 &nbsp;&nbsp;Another one: echom matchstr(&quot; sdfsfsf\n sfdsdfsdf&quot;,'[^\n]*')<br>
 &nbsp;&nbsp;(2017 May 15, #1252)<br>
 <br>
-Undo message is not always properly displayed.&nbsp;&nbsp;Patch by Ken Takata, 2013 oct<br>
-3.&nbsp;&nbsp;Doesn't work properly according to Yukihiro Nakadaira.<br>
-Also see #1635.<br>
-<br>
 Idea from Sven: record sequence of keys.&nbsp;&nbsp;Useful to show others what they are<br>
 doing (look over the shoulder), and also to see what happened.<br>
 Probably list of keystrokes, with some annotations for mode changes.<br>
@@ -1376,9 +1297,6 @@ cmap using execute() has side effects. (Killthemule, 2016 Aug 17, #983)<br>
 :map X may print invalid data. (Nikolay Pavlov, 2017 Jul 3, #1816)<br>
 <br>
 Patch to order results from taglist(). (Duncan McDougall, 2016 Oct 25)<br>
-<br>
-When using &quot;:diffput&quot; through a mapping, undo in the target buffer isn't<br>
-synced.&nbsp;&nbsp;(Ryan Carney, 2016 Sep 14)<br>
 <br>
 Syntax highlighting for messages with RFC3339 timestamp (#946)<br>
 Did maintainer reply?<br>
@@ -1667,9 +1585,6 @@ This neither: (ZyX)<br>
 Change&nbsp;<a class="Type" href="options.html#'viewdir'">'viewdir'</a>&nbsp;to &quot;$HOME/vimfiles/view&quot; and use&nbsp;<span class="MissingTag">'viewdiralt'</span>&nbsp;to also read<br>
 from?<br>
 <br>
-Problem with upwards search on Windows (works OK on Linux). (Brett Stahlman,<br>
-2014 Jun 8)<br>
-<br>
 Include a plugin manager with Vim? vim-plug seems to be the best currently:<br>
 <span class="Constant"><a href="https://github.com/junegunn/vim-plug">https://github.com/junegunn/vim-plug</a></span>.<br>
 Also Vundle:&nbsp;<span class="Constant"><a href="https://github.com/gmarik/vundle">https://github.com/gmarik/vundle</a></span><br>
@@ -1733,12 +1648,6 @@ Patch to define macros for hardcoded values. (Elias Diem, 2013 Dec 14)<br>
 Several syntax file match &quot;^\s*&quot; which may get underlined if that's in the<br>
 highlight group.&nbsp;&nbsp;Add a &quot;\zs&quot; after it?<br>
 <br>
-The undo file name can get too long. (Issue 346)<br>
-For the path use a hash instead of dir%dir%dir%name&nbsp;&nbsp;hash%name.<br>
-<br>
-Patch to add &quot;:undorecover&quot;, get as much text out of the undo file as<br>
-possible. (Christian Brabandt, 2014 Mar 12, update Aug 22)<br>
-<br>
 Updated spec ftplugin. (Matěj Cepl, 2013 Oct 16)<br>
 <br>
 Patch to handle integer overflow. (Aaron Burrow, 2013 Dec 12)<br>
@@ -1762,9 +1671,6 @@ Dec 13.&nbsp;&nbsp;Only helps a bit, 10000ii<span class="Special">&lt;Esc&gt;</s
 <br>
 GTK: problem with 'L' in&nbsp;<a class="Type" href="options.html#'guioptions'">'guioptions'</a>&nbsp;changing the window width.<br>
 (Aaron Cornelius, 2012 Feb 6)<br>
-<br>
-Patch to add option that tells whether small deletes go into the numbered<br>
-registers. (Aryeh Leib Taurog, 2013 Nov 18)<br>
 <br>
 Javascript file where indent gets stuck on: GalaxyMaster, 2012 May 3.<br>
 <br>
@@ -1814,10 +1720,6 @@ Patch to make fold updates much faster. (Christian Brabandt, 2012 Dec)<br>
 Patch by Christian Brabandt, 2013 Apr 20, unfinished.<br>
 <br>
 Bug: findfile(&quot;any&quot;, &quot;<span class="Constant">file:///tmp</span>;&quot;) does not work.<br>
-<br>
-In the ATTENTION message about an existing swap file, mention the name of the<br>
-process that is running.&nbsp;&nbsp;It might actually be some other program, e.g. after<br>
-a reboot.<br>
 <br>
 patch to add &quot;combine&quot; flag to&nbsp;&nbsp;syntax commands. (so8res, 2012 Dec 6)<br>
 Patch to add &quot;combine&quot; to :syntax, combines highlight attributes. (Nate<br>
@@ -1882,10 +1784,6 @@ Alternate suggestion: let all columns continue, also the number column.<br>
 <br>
 Patch to add tests for if_xcmdsrv.c., Jul 8, need some more work. (Brian Burns)<br>
 New tests Jul 13.&nbsp;&nbsp; Update Jul 17.&nbsp;&nbsp;Discussion Jul 18.<br>
-<br>
-When running Vim in silent ex mode, an existing swapfile causes Vim to wait<br>
-for a user action without a prompt. (Maarten Billemont, 2012 Feb 3)<br>
-Do give the prompt? Quit with an error?<br>
 <br>
 Patch for input method status. (Hirohito Higashi, 2012 Apr 18)<br>
 <br>
@@ -1958,9 +1856,6 @@ meaning already.&nbsp;&nbsp;Would be possible to use $$HOME where $HOME is to be
 Oct 26)<br>
 <br>
 Bug in repeating Visual &quot;u&quot;. (Lawrence Kesteloot, 2010 Dec 20)<br>
-<br>
-With &quot;unamedplus&quot; in&nbsp;<a class="Type" href="options.html#'clipboard'">'clipboard'</a>&nbsp;pasting in Visual mode causes error for empty<br>
-register. (Michael Seiwald, 2011 Jun 28)&nbsp;&nbsp;I can't reproduce it.<br>
 <br>
 Windows keys not set properly on Windows 7?&nbsp;&nbsp;(cncyber, 2010 Aug 26)<br>
 <br>
@@ -2066,9 +1961,6 @@ Version of netbeans.c for use with MacVim. (Kazuki Sakamoto, 2010 Nov 18)<br>
 there is one backslash. (Ray Frush, 2010 Nov 18)&nbsp;&nbsp;What does the original ex<br>
 do?<br>
 <br>
-Searching mixed with Visual mode doesn't redraw properly. (James Vega, 2010 Nov<br>
-22)<br>
-<br>
 New esperanto spell file can't be processed. (Dominique Pelle, 2011 Jan 30)<br>
 - move compflags to separate growarray?<br>
 - instead of a regexp use a hashtable.&nbsp;&nbsp;Expand '?', '*', '+'.&nbsp;&nbsp;What would be<br>
@@ -2161,9 +2053,6 @@ Gui menu edit/paste in block mode insert only inserts in one line (Bjorn<br>
 Winckler, 2011 May 11)<br>
 Requires a map mode for Insert mode started from blockwise Visual mode.<br>
 <br>
-Writing nested List and Dict in viminfo gives error message and can't be read<br>
-back. (Yukihiro Nakadaira, 2010 Nov 13)<br>
-<br>
 Problem with cursor in the wrong column. (SungHyun Nam, 2010 Mar 11)<br>
 Additional info by Dominique Pelle. (also on 2010 Apr 10)<br>
 <br>
@@ -2206,9 +2095,6 @@ like it has &quot;:keepjumps&quot; before it.<br>
 <br>
 Coverity: Check if there are new reported defects:<br>
 <span class="Constant"><a href="https://scan.coverity.com/projects/241">https://scan.coverity.com/projects/241</a></span><br>
-<br>
-Patch to support :undo absolute jump to file save number. (Christian Brabandt,<br>
-2010 Nov 5)<br>
 <br>
 Patch to use&nbsp;<a class="Type" href="options.html#'foldnestmax'">'foldnestmax'</a>&nbsp;also for &quot;marker&quot; foldmethod. (Arnaud Lacombe, 2011<br>
 Jan 7)<br>
@@ -2320,10 +2206,6 @@ displayed in a window should return the value that's stored for that buffer.<br>
 <br>
 &quot;:he ctrl_u&quot; can be auto-corrected to &quot;:he ctrl-u&quot;.<br>
 <br>
-There should be a way after an abbreviation has expanded to go back to what<br>
-was typed.&nbsp;&nbsp;<span class="Special">CTRL-G</span>&nbsp;h ?&nbsp;&nbsp;Would also undo last word or line break inserted<br>
-perhaps.&nbsp;&nbsp;And undo&nbsp;<span class="Special">CTRL-W</span>.&nbsp;&nbsp;<span class="Special">CTRL-G</span>&nbsp;l would redo.<br>
-<br>
 Diff mode out of sync. (Gary Johnson, 2010 Aug 4)<br>
 <br>
 Win32 GUI: last message from startup doesn't show up when there is an echoerr<br>
@@ -2342,9 +2224,6 @@ Session file generates error upon loading, cause by --remote-silent-tab.<br>
 Using ~ works OK on 'a' with composing char, but not on 0x0418&nbsp;&nbsp;with composing<br>
 char 0x0301. (Tony Mechelynck, 2009 Mar 4)<br>
 <br>
-Searching for composing char works, but not when inside []. (ZyX, Benjamin R.<br>
-Haskell, 2010 Aug 24)<br>
-<br>
 This does not work yet: &quot;a\(%C\)&quot; (get composing characters into a submatch).<br>
 <br>
 Inconsistent: starting with $LANG set to es_ES.utf-8 gives Spanish<br>
@@ -2361,16 +2240,6 @@ a modeline.<br>
 <br>
 Add cscope target to Makefile. (Tony Mechelynck, 2009 Jun 18, replies by<br>
 Sergey Khorev)<br>
-<br>
-Consider making YankRing or something else that keeps a list of yanked text<br>
-part of standard Vim.&nbsp;&nbsp;The &quot;1 to &quot;9 registers are not sufficient.<br>
-6&nbsp;&nbsp; When yanking into the unnamed registers several times, somehow make the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;previous contents also available (like it's done for deleting).&nbsp;&nbsp;What<br>
-&nbsp;&nbsp;&nbsp;&nbsp;register names to use?&nbsp;&nbsp;g&quot;1, g&quot;2, etc.?<br>
-Also do this for the small delete register &quot;-.<br>
-<br>
-After doing &quot;su&quot; $HOME can be the old user's home, thus ~root/file is not<br>
-correct.&nbsp;&nbsp;Don't use it in the swap file.<br>
 <br>
 Completion for &quot;:buf&quot; doesn't work properly on Win32 when&nbsp;<a class="Type" href="options.html#'shellslash'">'shellslash'</a>&nbsp;is off.<br>
 (Henrik Ohman, 2009, Jan 29)<br>
@@ -2533,21 +2402,11 @@ Try to reproduce at work.<br>
 Patch for default choice in file changed dialog. (Bjorn Winckler, 2008 Oct 19)<br>
 Is there a way to list all the files first?<br>
 <br>
-When&nbsp;<a class="Type" href="options.html#'smartcase'">'smartcase'</a>&nbsp;is set and using&nbsp;<span class="Special">CTRL-L</span>&nbsp;to add to the search pattern it may<br>
-result in no matches.&nbsp;&nbsp;Convert chars to lower case? (Erik Wognsen, 2009 Apr<br>
-16)<br>
-<br>
 Fail to edit file after failed register access.&nbsp;&nbsp;Error flag remains set?<br>
 (Lech Lorens, 2010 Aug 30)<br>
 <br>
-Patch for redo register. (Ben Schmidt, 2007 Oct 19)<br>
-Await response to question to make the register writable.<br>
-<br>
 Problem with&nbsp;<a class="Type" href="options.html#'ts'">'ts'</a>&nbsp;set to 9 and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;to &quot;&gt;&gt;&gt;&quot;. (Matthew Winn, 2007 Oct<br>
 1)<br>
-<br>
-In the swapfile dialog, add a H(elp) option that gives more info about what<br>
-each choice does.&nbsp;&nbsp;Similar to&nbsp;&nbsp;&quot;:help swap-exists-choices&quot;<br>
 <br>
 &quot;:tab help&quot; always opens a new tab, while &quot;:help&quot; re-uses an existing window.<br>
 Would be more consistent when an existing tab is re-used. (Tony Mechelynck)<br>
@@ -2611,9 +2470,6 @@ Popup menu redraw: Instead of first redrawing the text and then drawing the<br>
 popup menu over it, first draw the new popup menu, remember its position and<br>
 size and then redraw the text, skipping the characters under the popup menu.<br>
 This should avoid flicker.&nbsp;&nbsp;Other solution by A.Politz, 2007 Aug 22.<br>
-<br>
-When a register contains illegal bytes, writing viminfo in utf-8 and reading<br>
-it back doesn't result in utf-8. (Devin Bayer)<br>
 <br>
 When the file name has parenthesis, e.g., &quot;foo (bar).txt&quot;, &quot;:!ls '%'&quot; has the<br>
 parenthesis escaped but not the space.&nbsp;&nbsp;That's inconsistent.&nbsp;&nbsp;Either escape<br>
@@ -2692,9 +2548,6 @@ Cursor displayed in the wrong position when using&nbsp;<a class="Type" href="opt
 <br>
 When $VAR contains a backslash expand('$VAR') removes it. (Teemu Likonen, 2008<br>
 Jun 18)<br>
-<br>
-In debug mode, using&nbsp;<span class="Special">CTRL-R</span>&nbsp;= to evaluate a function causes stepping through<br>
-the function. (Hari Krishna Dara, 2006 Jun 28)<br>
 <br>
 C++ indenting wrong with &quot;=&quot;. (James Kanze, 2007 Jan 26)<br>
 <br>
@@ -3046,6 +2899,9 @@ Awaiting updated patches:<br>
 -&nbsp;&nbsp; For GUI Find/Replace dialog support using a regexp.&nbsp;&nbsp;Patch for Motif<br>
 &nbsp;&nbsp;&nbsp;&nbsp;and GTK by degreneir (nov 10 and nov 18).<br>
 -&nbsp;&nbsp; Patch for &quot;paranoid mode&quot; by Kevin Collins, March 7.&nbsp;&nbsp;Needs much more work.<br>
+-&nbsp;&nbsp; Patch for redo register. (Ben Schmidt, 2007 Oct 19)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Await response to question to make the register writable.<br>
+<br>
 <br>
 Better&nbsp;<a class="Type" href="options.html#'rightleft'">'rightleft'</a>&nbsp;or BIDI support:<br>
 - Minimal Vi with bidi support:&nbsp;<span class="Constant"><a href="https://github.com/aligrudi/neatvi">https://github.com/aligrudi/neatvi</a></span><br>
@@ -3588,10 +3444,6 @@ Macintosh:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;maximum number of open files, error messages will appear.&nbsp;&nbsp;Detect that<br>
 &nbsp;&nbsp;&nbsp;&nbsp;this problem is present, and close any hidden files that don't have<br>
 &nbsp;&nbsp;&nbsp;&nbsp;changes.<br>
-8&nbsp;&nbsp; With&nbsp;<a class="Type" href="options.html#'viminfo'">'viminfo'</a>&nbsp;set such that the &quot;.viminfo&quot; file is written on a FAT<br>
-&nbsp;&nbsp;&nbsp;&nbsp;filesystem, an illegal file name may be created: &quot;.vim&quot;.<br>
-8&nbsp;&nbsp; For each buffer that is opened, the viminfo file is opened and read to<br>
-&nbsp;&nbsp;&nbsp;&nbsp;check for file marks.&nbsp;&nbsp;This can be slow.<br>
 8&nbsp;&nbsp; Core dump within signal function: gdb doesn't show stack backtrace!&nbsp;&nbsp;Option<br>
 &nbsp;&nbsp;&nbsp;&nbsp;to skip catch_signals()?<br>
 9&nbsp;&nbsp; Repeating a &quot;cw&quot; with &quot;.&quot; doesn't work if the text was pasted from the<br>
@@ -3641,9 +3493,6 @@ Macintosh:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&quot;initdir&quot; is the default path to be used.<br>
 7&nbsp;&nbsp; When&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;is exactly half the window height, &quot;j&quot; causes a scroll of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;two lines at a time.&nbsp;&nbsp;&quot;k&quot; doesn't do this. (Cory T. Echols)<br>
-8&nbsp;&nbsp; When write_viminfo() is used while there are many orphaned viminfo<br>
-&nbsp;&nbsp;&nbsp;&nbsp;tempfiles writing the viminfo file fails.&nbsp;&nbsp;Give a clear error message so<br>
-&nbsp;&nbsp;&nbsp;&nbsp;that the user knows the files have to be deleted.<br>
 <br>
 <br>
 I can't reproduce these (if you can, let me know how!):<br>
@@ -4802,6 +4651,14 @@ Autocommands:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default: 0 = do not autosave the buffer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Alternative: have&nbsp;<a class="Type" href="todo.html#'autosave'">'autosave'</a>&nbsp;use&nbsp;<a class="Type" href="options.html#'updatetime'">'updatetime'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'updatecount'">'updatecount'</a>&nbsp;but make<br>
 &nbsp;&nbsp;&nbsp;&nbsp;them save the file itself besides the swapfile.<br>
+-&nbsp;&nbsp; Buffer autocommands are a bit inconsistent.&nbsp;&nbsp;Add a separate set of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;autocommands for the buffer lifecycle:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufIsCreated&nbsp;&nbsp;(after buffer ID exists)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufIsLoaded&nbsp;&nbsp; (after buffer ID has content)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufIsUnloaded (after buffer ID no longer has)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufIsWiped&nbsp;&nbsp;&nbsp;&nbsp;(after buffer ID was wiped)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufIsRenamed&nbsp;&nbsp;(after buffer ID gets another name)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The buffer list and windows are locked, no changes possible<br>
 <br>
 <br>
 Omni completion:<br>
@@ -5473,6 +5330,19 @@ Searching:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[not in xvim:] Add option to switch on matches crossing ONE line boundary.<br>
 7&nbsp;&nbsp; Add &quot;:iselect&quot;, a combination of &quot;:ilist&quot; and &quot;:tselect&quot;. (Aaron) (Zellner)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Also &quot;:dselect&quot;.<br>
+-&nbsp;&nbsp; Searching for \%'&gt; does not find anything when using line Visual<br>
+&nbsp;&nbsp;&nbsp;&nbsp;selection.&nbsp;&nbsp;Probably because it's using MAXCOL.&nbsp;&nbsp;#8238<br>
+-&nbsp;&nbsp; Regexp to search for duplicate lines does not work correctly:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;/\(^.*\n\)\1&nbsp;&nbsp;(Chris Morgan, #6239)<br>
+-&nbsp;&nbsp; Problem with upwards search on Windows (works OK on Linux). (Brett<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Stahlman, 2014 Jun 8)<br>
+-&nbsp;&nbsp; Searching mixed with Visual mode doesn't redraw properly. (James Vega,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2010 Nov 22)<br>
+-&nbsp;&nbsp; Searching for composing char works, but not when inside []. (ZyX, Benjamin<br>
+&nbsp;&nbsp;&nbsp;&nbsp;R. Haskell, 2010 Aug 24)<br>
+-&nbsp;&nbsp; When&nbsp;<a class="Type" href="options.html#'smartcase'">'smartcase'</a>&nbsp;is set and using&nbsp;<span class="Special">CTRL-L</span>&nbsp;to add to the search pattern it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;may result in no matches.&nbsp;&nbsp;Convert chars to lower case? (Erik Wognsen,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2009 Apr 16)<br>
 <br>
 <br>
 Undo:<br>
@@ -5514,6 +5384,36 @@ Undo:<br>
 -&nbsp;&nbsp; When executing macro's: Save each line for undo only once.<br>
 -&nbsp;&nbsp; When doing a global substitute, causing almost all lines to be changed,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;undo info becomes very big.&nbsp;&nbsp;Put undo info in swap file??<br>
+-&nbsp;&nbsp; MS-Windows: when writing undo file the infostreams are copied in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mch_copy_file_attribute(), that seems unnecessary. (#7925) Add a flag to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;only copy attributes?<br>
+-&nbsp;&nbsp; undo result wrong: Masato Nishihata, #4798<br>
+-&nbsp;&nbsp; After recovering from a swap file the undofile should not be used, it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;causes corruption.&nbsp;&nbsp;(#6631)<br>
+-&nbsp;&nbsp; When the computer crashes while writing the undofile, the contents may be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lost.&nbsp;&nbsp;Write to a temp file, fsync and rename. (#8879)<br>
+-&nbsp;&nbsp; Undo puts cursor in wrong line after &quot;cG<span class="Special">&lt;Esc&gt;</span>&quot; undo.<br>
+-&nbsp;&nbsp; Undo history wrong when &quot;:next file&quot; re-uses a buffer. (#5426) ex_next()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;should pass flag to do_argfile(), then to do_ecmd().&nbsp;&nbsp;Is there a test for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;this?<br>
+-&nbsp;&nbsp; Add buffer argument to undotree(). (#4001)<br>
+-&nbsp;&nbsp; Undo problem: &quot;g-&quot; doesn't go back, gets stuck. (Björn Linse, 2016 Jul 18)<br>
+-&nbsp;&nbsp; Undo message is not always properly displayed.&nbsp;&nbsp;Patch by Ken Takata, 2013<br>
+&nbsp;&nbsp;&nbsp;&nbsp;oct 3.&nbsp;&nbsp;Doesn't work properly according to Yukihiro Nakadaira.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Also see #1635.<br>
+-&nbsp;&nbsp; When using &quot;:diffput&quot; through a mapping, undo in the target buffer isn't<br>
+&nbsp;&nbsp;&nbsp;&nbsp;synced.&nbsp;&nbsp;(Ryan Carney, 2016 Sep 14)<br>
+-&nbsp;&nbsp; The undo file name can get too long. (Issue 346)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;For the path use a hash instead of dir%dir%dir%name&nbsp;&nbsp;hash%name.<br>
+-&nbsp;&nbsp; Patch to add &quot;:undorecover&quot;, get as much text out of the undo file as<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possible. (Christian Brabandt, 2014 Mar 12, update Aug 22)<br>
+-&nbsp;&nbsp; Patch to support :undo absolute jump to file save number. (Christian<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Brabandt, 2010 Nov 5)<br>
+-&nbsp;&nbsp; There should be a way after an abbreviation has expanded to go back to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;what was typed.&nbsp;&nbsp;<span class="Special">CTRL-G</span>&nbsp;h ?&nbsp;&nbsp;Would also undo last word or line break<br>
+&nbsp;&nbsp;&nbsp;&nbsp;inserted perhaps.&nbsp;&nbsp;And undo&nbsp;<span class="Special">CTRL-W</span>.&nbsp;&nbsp;<span class="Special">CTRL-G</span>&nbsp;l would redo.<br>
+-&nbsp;&nbsp; When using&nbsp;<a class="Type" href="options.html#'cryptmethod'">'cryptmethod'</a>&nbsp;xchaha20 the undo file is not encrypted.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Need to handle extra bytes.<br>
 <br>
 <br>
 Buffer list:<br>
@@ -5544,6 +5444,18 @@ Buffer list:<br>
 8&nbsp;&nbsp; Some file systems are case-sensitive, some are not.&nbsp;&nbsp;Besides<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'wildignorecase'">'wildignorecase'</a>&nbsp;there might be more parts inside<br>
 &nbsp;&nbsp;&nbsp;&nbsp;CASE_INSENSITIVE_FILENAME that are useful on Unix.<br>
+-&nbsp;&nbsp; When using &quot;:bwipe!&quot; also get rid of references to be buffer, e.g. in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;jumplist and alternate file.<br>
+-&nbsp;&nbsp; &quot;:bnext&quot; in a help buffer is supposed to go to the next help buffer, but<br>
+&nbsp;&nbsp;&nbsp;&nbsp;it goes to any buffer, and then :bnext skips help buffers, since they are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unlisted. (#4478)<br>
+-&nbsp;&nbsp; :buffer completion does not escape &quot;+&quot; properly and results in a regexp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;error.&nbsp;&nbsp;(#5467)<br>
+-&nbsp;&nbsp; Problem with two buffers with the same name a/b, if it didn't exist before<br>
+&nbsp;&nbsp;&nbsp;&nbsp;and is created outside of Vim. (dskloetg, 2018 Jul 16, #3219)<br>
+-&nbsp;&nbsp; Add an option with file patterns, to be used when unloading a buffer: If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;there is a match, remove entries for the buffer from marks, jumplist, etc.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;To be used for git temp files.<br>
 <br>
 <br>
 Swap (.swp) files:<br>
@@ -5574,6 +5486,21 @@ Swap (.swp) files:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;original file.&nbsp;&nbsp;Also do this when the file is huge (&gt;<a class="Type" href="options.html#'maxmem'">'maxmem'</a>).&nbsp;&nbsp;We do<br>
 &nbsp;&nbsp;&nbsp;&nbsp;need to load the file once to count the number of lines?&nbsp;&nbsp;Perhaps keep a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;cached list of which line is where.<br>
+-&nbsp;&nbsp; When editing a file with &quot;:edit&quot; the output of :swapname is relative,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;while editing it with &quot;vim file&quot; it is absolute. (#355) Which one should<br>
+&nbsp;&nbsp;&nbsp;&nbsp;it be?<br>
+-&nbsp;&nbsp; When recovering a file, put the swap file name in b:recovered_swapfile.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Then a command can delete it.<br>
+-&nbsp;&nbsp; In the ATTENTION message about an existing swap file, mention the name of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the process that is running.&nbsp;&nbsp;It might actually be some other program,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;e.g. after a reboot.<br>
+-&nbsp;&nbsp; When running Vim in silent ex mode, an existing swapfile causes Vim to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;wait for a user action without a prompt. (Maarten Billemont, 2012 Feb 3)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Do give the prompt? Quit with an error?<br>
+-&nbsp;&nbsp; After doing &quot;su&quot; $HOME can be the old user's home, thus ~root/file is not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;correct.&nbsp;&nbsp;Don't use it in the swap file.<br>
+-&nbsp;&nbsp; In the swapfile dialog, add a H(elp) option that gives more info about<br>
+&nbsp;&nbsp;&nbsp;&nbsp;what each choice does.&nbsp;&nbsp;Similar to&nbsp;&nbsp;&quot;:help swap-exists-choices&quot;<br>
 <br>
 <br>
 Viminfo:<br>
@@ -5600,6 +5527,21 @@ Viminfo:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;same files in the windows.&nbsp;&nbsp;Use &quot;:mksession&quot; code?<br>
 -&nbsp;&nbsp; Make marks present in .viminfo usable as file marks: Display a list of<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&quot;last visited files&quot; and select one to jump to.<br>
+-&nbsp;&nbsp; Add the debug command line history to viminfo.<br>
+-&nbsp;&nbsp; Using &quot;wviminfo /tmp/viminfo&quot; does not store file marks that Vim knows<br>
+&nbsp;&nbsp;&nbsp;&nbsp;about, it only works when merging with an existing file.&nbsp;&nbsp;(Shougo, 2017<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Jun 19, #1781)<br>
+-&nbsp;&nbsp; Writing nested List and Dict in viminfo gives error message and can't be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;read back. (Yukihiro Nakadaira, 2010 Nov 13)<br>
+-&nbsp;&nbsp; When a register contains illegal bytes, writing viminfo in utf-8 and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reading it back doesn't result in utf-8. (Devin Bayer)<br>
+8&nbsp;&nbsp; With&nbsp;<a class="Type" href="options.html#'viminfo'">'viminfo'</a>&nbsp;set such that the &quot;.viminfo&quot; file is written on a FAT<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filesystem, an illegal file name may be created: &quot;.vim&quot;.<br>
+8&nbsp;&nbsp; For each buffer that is opened, the viminfo file is opened and read to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;check for file marks.&nbsp;&nbsp;This can be slow.<br>
+8&nbsp;&nbsp; When write_viminfo() is used while there are many orphaned viminfo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tempfiles writing the viminfo file fails.&nbsp;&nbsp;Give a clear error message so<br>
+&nbsp;&nbsp;&nbsp;&nbsp;that the user knows the files have to be deleted.<br>
 <br>
 <br>
 Modelines:<br>
@@ -5818,6 +5760,23 @@ Registers:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to position of previous deleted (to swap foo and bar in &quot; + foo&quot;)<br>
 8&nbsp;&nbsp; Should be able to yank and delete into the &quot;/ register.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;How to take care of the flags (offset, magic)?<br>
+-&nbsp;&nbsp; In Select mode the deleted text always goes into the unnamed register.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Use&nbsp;<span class="Special">CTRL-R</span>&nbsp;to specify the register to use. (#9531)<br>
+-&nbsp;&nbsp; When &quot;+ register is set then &quot;&quot; points to it.&nbsp;&nbsp;If another Vim grabs the &quot;+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;register, then &quot;&quot; doesn't contain anything.&nbsp;&nbsp;Make it still follow &quot;+.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(#6435)<br>
+-&nbsp;&nbsp; Pasting a register in Visual mode cannot be repeated. (Mahmoud Al-Qudsi,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2018 Apr 26, #2849)<br>
+-&nbsp;&nbsp; Patch to add option that tells whether small deletes go into the numbered<br>
+&nbsp;&nbsp;&nbsp;&nbsp;registers. (Aryeh Leib Taurog, 2013 Nov 18)<br>
+-&nbsp;&nbsp; With &quot;unamedplus&quot; in&nbsp;<a class="Type" href="options.html#'clipboard'">'clipboard'</a>&nbsp;pasting in Visual mode causes error for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;empty register. (Michael Seiwald, 2011 Jun 28)&nbsp;&nbsp;I can't reproduce it.<br>
+-&nbsp;&nbsp; Consider making YankRing or something else that keeps a list of yanked<br>
+&nbsp;&nbsp;&nbsp;&nbsp;text part of standard Vim.&nbsp;&nbsp;The &quot;1 to &quot;9 registers are not sufficient.<br>
+6&nbsp;&nbsp; When yanking into the unnamed registers several times, somehow make the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;previous contents also available (like it's done for deleting).&nbsp;&nbsp;What<br>
+&nbsp;&nbsp;&nbsp;&nbsp;register names to use?&nbsp;&nbsp;g&quot;1, g&quot;2, etc.?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Also do this for the small delete register &quot;-.<br>
 <br>
 <br>
 Debug mode:<br>
@@ -5825,6 +5784,9 @@ Debug mode:<br>
 8&nbsp;&nbsp; Add breakpoints for assigning to a variable.<br>
 7&nbsp;&nbsp; Store the history from debug mode in viminfo.<br>
 7&nbsp;&nbsp; Make the debug mode history available with histget() et al.<br>
+-&nbsp;&nbsp; In debug mode, using&nbsp;<span class="Special">CTRL-R</span>&nbsp;= to evaluate a function causes stepping<br>
+&nbsp;&nbsp;&nbsp;&nbsp;through the function. (Hari Krishna Dara, 2006 Jun 28)<br>
+<br>
 <br>
 Various improvements:<br>
 7&nbsp;&nbsp; Add plugins for formatting?&nbsp;&nbsp;Should be able to make a choice depending on<br>
