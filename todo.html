@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Apr 27<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 May 07<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -46,7 +46,6 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 Once Vim9 is stable:<br>
 - Use Vim9 for more runtime files.<br>
 - Check code coverage, add more tests if needed.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9execute.c&nbsp;&nbsp;line 3500<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9expr.c<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9instr.c<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script.c<br>
@@ -133,6 +132,9 @@ Text properties:<br>
 - Popup attached to text property stays visible when text is deleted with<br>
 &nbsp;&nbsp;&quot;cc&quot;. (#7737)&nbsp;&nbsp;&quot;C&quot; works OK.&nbsp;&nbsp;&quot;dd&quot; also files in a buffer with a single<br>
 &nbsp;&nbsp;line.<br>
+- Add text property that shifts text to make room for annotation (e.g.<br>
+&nbsp;&nbsp;variable type).&nbsp;&nbsp;Like the opposite of conceal.&nbsp;&nbsp;Requires fixing the cursor<br>
+&nbsp;&nbsp;positioning and mouse clicks as with conceal mode.<br>
 - Auto-indenting may cause highlighting to shift. (#7719)<br>
 - &quot;cc&quot; does not call inserted_bytes(). (Axel Forsman, #5763)<br>
 - Combining text property with&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;does not always work (Billie<br>
@@ -157,6 +159,7 @@ Terminal debugger:<br>
 - Make prompt-buffer variant work better.<br>
 - Add option to not open the program window.&nbsp;&nbsp;It's not used when attaching to<br>
 &nbsp;&nbsp;an already running program. (M. Kelly)<br>
+- Use the optional token on requests, match the result with it. #10300<br>
 - When only gdb window exists, on &quot;quit&quot; edit another buffer.<br>
 - Termdebug does not work when Vim was built with mzscheme: gdb hangs just<br>
 &nbsp;&nbsp;after &quot;run&quot;.&nbsp;&nbsp;Everything else works, including communication channel.&nbsp;&nbsp;Not<br>
@@ -208,7 +211,11 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
+String interpolation: Handle backslash and quotes in the expression normally,<br>
+do not require escaping.<br>
+<br>
 Add autocmd functions. PR #10291<br>
+&nbsp;&nbsp;a couple of outstanding comments, wait for Yegappan to respond<br>
 <br>
 Can deref_func_name() and deref_function_name() be merged?<br>
 <br>
@@ -227,9 +234,6 @@ pass it on with modifications.<br>
 <br>
 Test_communicate_ipv6(): is flaky on many systems<br>
 Fails in line 64 of Ch_communicate, no exception is thrown.<br>
-<br>
-Patch for Template string: #4634<br>
-Have another look at the implementation.<br>
 <br>
 Rename getdigraphlist -&gt; digraph_getlist() etc.<br>
 <br>
@@ -332,6 +336,8 @@ Missing filetype test for bashrc, PKGBUILD, etc.<br>
 <br>
 Add an option to not fetch terminal codes in xterm, to avoid flicker when t_Co<br>
 changes.<br>
+<br>
+Add ??= operator, &quot;a ??= b&quot; works like &quot;a = a ?? b&quot;. #10343<br>
 <br>
 Add an option to start_timer() to return from the input loop with K_IGNORE.<br>
 This is useful e.g. when a popup was created that disables mappings, we need<br>
