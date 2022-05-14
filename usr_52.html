@@ -1,0 +1,198 @@
+---
+layout: vimdoc
+helpname: 'usr_52'
+---
+<div id='vimCodeElement'>
+<a class="Constant" href="usr_52.html" name="usr_52.txt">usr_52.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 May 13<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Write plugins using Vim9 script<br>
+<br>
+<br>
+The Vim9 script language is used for writing plugins, especially larger ones<br>
+that use multiple files.&nbsp;&nbsp;This chapter explains how to split up a plugin into<br>
+modules, import and export items and keep the rest local.<br>
+<br>
+<a class="Identifier" href="usr_52.html#52.1">52.1</a>&nbsp;&nbsp;Introduction<br>
+<a class="Identifier" href="usr_52.html#52.2">52.2</a>&nbsp;&nbsp;Variable declarations<br>
+<a class="Identifier" href="usr_52.html#52.3">52.3</a>&nbsp;&nbsp;Functions and types<br>
+<a class="Identifier" href="usr_52.html#52.4">52.4</a>&nbsp;&nbsp;Using a Vim9 script from legacy script<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_90.html">usr_90.txt</a>&nbsp;&nbsp;Installing Vim<br>
+&nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_51.html">usr_51.txt</a>&nbsp;&nbsp;Create a plugin<br>
+Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">usr_toc.txt</a><br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_52.html#52.1" name="52.1">52.1</a>&nbsp;&nbsp;Introduction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_52.html#vim9-script-intro" name="vim9-script-intro">vim9-script-intro</a><br>
+<br>
+Vim9 script was designed to make it easier to write large Vim scripts.&nbsp;&nbsp;It<br>
+looks more like other script languages, especially Typescript.&nbsp;&nbsp;Also,<br>
+functions are compiled into instructions that can be executed quickly.&nbsp;&nbsp;This<br>
+makes Vim9 script a lot faster, up to a 100 times.<br>
+<br>
+The basic idea is that a script file has items that are private, only used<br>
+inside the script file, and items that are exported, used outside of the<br>
+script file.&nbsp;&nbsp;The exported items can then be used by scripts that import them.<br>
+That makes very clear what is defined where.<br>
+<br>
+Let's start with an example, a script that exports one function and has one<br>
+private function:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script&nbsp;&nbsp;&quot; This indicates a Vim9 script file.</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export def GetMessage(): string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let result = ''<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; result = GetPart(count)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return result<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def GetPart(nr: number): string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if nr == 4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 'yes'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 'no'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+The&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;command must be the very first command in the file.&nbsp;&nbsp;Without<br>
+it Vim will assume legacy script syntax.<br>
+<br>
+The&nbsp;<span class="Comment">export def GetMessage(): string</span>&nbsp;line starts with&nbsp;<a class="Comment" href="vim9.html#:export">export</a>, meaning that<br>
+this function can be imported and called by other scripts. The line<br>
+<span class="Comment">def GetPart(...</span>&nbsp;does not start with&nbsp;<a class="Comment" href="vim9.html#:export">export</a>, this is a script-local<br>
+function, it can only be used inside this script file.<br>
+<br>
+In the&nbsp;<span class="Comment">export def GetMessage(): string</span>&nbsp;line you will notice the colon and<br>
+the return type.&nbsp;&nbsp;Vim9 functions, defined with&nbsp;<a class="Comment" href="vim9.html#:def">def</a>, require specifying the<br>
+type of arguments and the return type.&nbsp;&nbsp;That way Vim can compile the code<br>
+efficiently.&nbsp;&nbsp;The GetPart function defines an argument &quot;nr&quot; of type &quot;number&quot;.<br>
+<br>
+Notice that the assignment&nbsp;<span class="Comment">result = GetPart(count)</span>&nbsp;does not use the&nbsp;<a class="Comment" href="eval.html#:let">let</a><br>
+command.&nbsp;&nbsp;That is explained in the next section.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_52.html#52.2" name="52.2">52.2</a>&nbsp;&nbsp;Variable declarations&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_52.html#vim9-declarations" name="vim9-declarations">vim9-declarations</a><br>
+<br>
+In Vim9 script variables are declared once with a&nbsp;<a class="Comment" href="eval.html#:let">:let</a>&nbsp;or&nbsp;<a class="Comment" href="eval.html#:const">:const</a>&nbsp;command.<br>
+Assigning a value is done without&nbsp;<a class="Comment" href="eval.html#:let">:let</a>&nbsp;and it is not possible to&nbsp;<a class="Comment" href="eval.html#:unlet">:unlet</a><br>
+the variable.<br>
+<br>
+In most cases you will want to declare the variable and initialize it at the<br>
+same time:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let myText = 'some text'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myText = 'other text'</div>
+<br>
+The type of the variable will be inferred from the expression.&nbsp;&nbsp;In this case<br>
+it is a string.&nbsp;&nbsp;If you initialize with a number, then the type is number:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let myNumber = 1234<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myNumber = 0</div>
+<br>
+If you try to assign a string to this variable, you will get an error:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let myNumber = 'this fails!'</div>
+<br>
+In the rare case you want a variable that can take values of any type, you<br>
+have to specify the type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let myVar: any = 1234<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myVar = 'text also works'</div>
+<br>
+You can also declare a variable without assigning a value.&nbsp;&nbsp;In that case Vim<br>
+will initialize it to zero or empty:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let word: string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if condition<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;word = 'yes'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;word = 'no'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+Although it's shorter to do:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let word = condition ? 'yes' : 'no'</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_52.html#52.3" name="52.3">52.3</a>&nbsp;&nbsp;Functions and types<br>
+<br>
+Legacy Vim script does have type checking, but this happens at runtime, when<br>
+the code is executed.&nbsp;&nbsp;And it's permissive, often a computation gives an<br>
+unexpected value instead of reporting an error.&nbsp;&nbsp;Thus you can define a<br>
+function and think it's fine, but see a problem only later when it is called:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let s:collected = ''<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func ExtendAndReturn(add)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let s:collected += a:add<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return s:collected<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
+<br>
+Can you spot the error?&nbsp;&nbsp;Try this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo ExtendAndReturn('text')</div>
+And you'll see zero.&nbsp;&nbsp;Why?&nbsp;&nbsp;Because in legacy Vim script &quot;+=&quot; will convert the<br>
+arguments to numbers, and any string without a number results in zero!<br>
+<br>
+With&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;the type checking happens when compiling the function.&nbsp;&nbsp;For that<br>
+you need to specify the argument types and the return type.&nbsp;&nbsp;Also notice that<br>
+the argument is used without the &quot;a:&quot; prefix:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let s:collected = ''<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ExtendAndReturn(add: string): string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s:collected += add<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return s:collected<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defcompile</div>
+<br>
+Here we use&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;to do the compilation right away, without it the<br>
+compilation would happen when the function is called.&nbsp;&nbsp;Vim will tell you what<br>
+you did wrong:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E1013: type mismatch, expected number but got string</div>
+<br>
+Vim9 script is strict, it uses the &quot;+&quot; operator only for numbers and floats.<br>
+For string concatenation &quot;..&quot; must be used.&nbsp;&nbsp;This avoids mistakes and avoids<br>
+the automatic conversion that gave a surprising result above.&nbsp;&nbsp;So you change<br>
+the first line of the function to:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s:collected ..= add</div>
+And now it works.<br>
+<br>
+If the function does not return anything, just leave out the return type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ReportResult(result: string)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo 'The result is: ' .. result<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+This is also checked, if you try to return a value you'll get an error.<br>
+<br>
+In case you don't care about types or have a function that does work with<br>
+multiple types, you can use the &quot;any&quot; type:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Store(key: string, value: any)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resultDict[key] = value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<a class="Constant" href="usr_52.html#52.4" name="52.4">52.4</a>&nbsp;&nbsp;Using a Vim9 script from legacy script&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_52.html#source-vim9-script" name="source-vim9-script">source-vim9-script</a><br>
+<br>
+In some cases you have a legacy Vim script where you want to use items from a<br>
+Vim9 script.&nbsp;&nbsp;For example in your .vimrc you want to initialize a plugin.&nbsp;&nbsp;The<br>
+best way to do this is to use&nbsp;<a class="Comment" href="vim9.html#:import">:import</a>.&nbsp;&nbsp;For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import Init as NiceInit from 'myNicePlugin.vim'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call NiceInit('today')</div>
+<br>
+This finds the exported function &quot;Init&quot; in the Vim9 script file and makes it<br>
+available as script-local item &quot;NiceInit&quot;.&nbsp;<a class="Comment" href="vim9.html#:import">:import</a>&nbsp;always uses the script<br>
+namespace, even when &quot;s:&quot; is not given.&nbsp;&nbsp;If &quot;myNicePlugin.vim&quot; was already<br>
+sourced it is not sourced again.<br>
+<br>
+Besides avoiding putting any items in the global namespace (where name clashes<br>
+can cause unexpected errors), this also means the script is sourced only once,<br>
+no matter how many times items from it are imported.<br>
+<br>
+In some cases, e.g. for testing, you may just want to source the Vim9 script.<br>
+That is OK, but then only global items will be available.&nbsp;&nbsp;The Vim9 script<br>
+will have to make sure to use a unique name for these global items. Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source ~/.vim/extra/myNicePlugin.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call g:NicePluginTest()</div>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_90.html">usr_90.txt</a>&nbsp;&nbsp;Installing Vim<br>
+<br>
+Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">manual-copyright</a>&nbsp;&nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
+</div>
