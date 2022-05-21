@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 May 14<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 May 21<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,6 +43,9 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Make :defcompile accept a function argument, like :disassemble<br>
+Useful for global functions.<br>
+<br>
 Once Vim9 is stable:<br>
 - Use Vim9 for more runtime files.<br>
 - Check code coverage, add more tests if needed.<br>
@@ -55,9 +58,10 @@ Once Vim9 is stable:<br>
 Graduate FEAT_CINDENT and FEAT_SMARTINDENT ?<br>
 <br>
 Update the user manual:<br>
-- Move most of usr_52.txt into usr_41.txt<br>
-- Make usr_41.txt only about basic script writing<br>
+- Update usr_41.txt for Vim9 script<br>
 - Fill usr_50.txt as an &quot;advanced section&quot; of usr_41.txt<br>
+&nbsp;&nbsp;Add links from usr_41 to usr_50.<br>
+- Make usr_51.txt use Vim9 script.&nbsp;&nbsp;Still need usr_52.txt?<br>
 <br>
 <br>
 Further Vim9 improvements, possibly after launch:<br>
@@ -135,14 +139,13 @@ Text properties:<br>
 &nbsp;&nbsp;where property fits in.<br>
 &nbsp;&nbsp;Or Should we let the textprop highlight overrule other (e.g. diff) highlight<br>
 &nbsp;&nbsp;if the priority is above a certain value?&nbsp;&nbsp;(#7392)<br>
+&nbsp;&nbsp;Combining text property with&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;does not always work (Billie<br>
+&nbsp;&nbsp;Cleek, #5533)<br>
 - &quot;C&quot; works OK.&nbsp;&nbsp;&quot;dd&quot; fails to delete text property in a buffer with a single<br>
 &nbsp;&nbsp;line.<br>
 - Add text property that shifts text to make room for annotation (e.g.<br>
 &nbsp;&nbsp;variable type).&nbsp;&nbsp;Like the opposite of conceal.&nbsp;&nbsp;Requires fixing the cursor<br>
 &nbsp;&nbsp;positioning and mouse clicks as with conceal mode.<br>
-- Auto-indenting may cause highlighting to shift. (#7719)<br>
-- Combining text property with&nbsp;<a class="Type" href="options.html#'cursorline'">'cursorline'</a>&nbsp;does not always work (Billie<br>
-&nbsp;&nbsp;Cleek, #5533)<br>
 - See remarks at top of src/textprop.c<br>
 <br>
 <a class="Type" href="options.html#'incsearch'">'incsearch'</a>&nbsp;with :s:<br>
@@ -664,9 +667,6 @@ that Vim doesn't find the edited file in the buffer list, causing the<br>
 ATTENTION message?&nbsp;&nbsp;(Tony Mechelynck, 2008 Dec 1)<br>
 Also: swap files are in ~/tmp/&nbsp;&nbsp;One has relative file name &quot;.mozilla/...&quot;.<br>
 <br>
-<a class="Type" href="options.html#'foldcolumn'">'foldcolumn'</a>&nbsp;in modeline applied to wrong window when using a session. (Teemu<br>
-Likonen, March 19)<br>
-<br>
 When using a timer callback vgetc_busy is reset, allowing for using input().<br>
 But in a channel callback this does not happen.&nbsp;&nbsp;We need to do something<br>
 similar to check_due_timer().&nbsp;&nbsp;Also see #3809.<br>
@@ -891,9 +891,6 @@ word is re-added to it. (Matej Cepl, 2018 Feb 6)<br>
 <br>
 Fold at end of the buffer behaves inconsistently. (James McCoy, 2017 Oct 9)<br>
 <br>
-With foldmethod=syntax and nofoldenable comment highlighting isn't removed.<br>
-(Marcin Szewczyk, 2017 Apr 26)<br>
-<br>
 Using&nbsp;<a class="Type" href="options.html#'wildignore'">'wildignore'</a>&nbsp;also applies to literally entered file name.&nbsp;&nbsp;Also with<br>
 :drop (remote commands).<br>
 <br>
@@ -1006,8 +1003,6 @@ After using :noautocmd CursorMoved may still trigger. (Andy Stewart, 2017 Sep<br
 <br>
 When bracketed paste is used, pasting at the &quot;:append&quot; prompt does not get the<br>
 line breaks. (Ken Takata, 2017 Aug 22)<br>
-<br>
-The &quot;:move&quot; command does not honor closed folds. (Ryan Lue, #2351)<br>
 <br>
 Cannot copy modeless selection when cursor is inside it. (lkintact, #2300)<br>
 <br>
@@ -1539,11 +1534,6 @@ was already defined.<br>
 <br>
 Patch for ordered dict. (Ozaki Kiichi, 2015 May 7)<br>
 <br>
-Patch to make closed folds line up. (Charles Campbell, 2014 Sep 12)<br>
-Remark from Roland Eggner: does it cause crashes? (2014 Dec 12)<br>
-Updated patch by Roland Eggner, Dec 16<br>
-Updated patch from Charles, 2016 Jul 2<br>
-<br>
 Patch for building a 32bit Vim with 64bit MingW compiler.<br>
 (Michael Soyka, 2014 Oct 15)<br>
 <br>
@@ -1719,8 +1709,6 @@ Patch to support 'u' in interactive substitute. (Christian Brabandt, 2012 Sep<br
 <br>
 Dialog is too big on Linux too. (David Fishburn, 2013 Sep 2)<br>
 <br>
-Patch to make fold updates much faster. (Christian Brabandt, 2012 Dec)<br>
-<br>
 -&nbsp;&nbsp; Add regex for&nbsp;<a class="Type" href="options.html#'paragraphs'">'paragraphs'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'sections'">'sections'</a>:&nbsp;<span class="MissingTag">'parare'</span>&nbsp;and&nbsp;<span class="MissingTag">'sectre'</span>.&nbsp;&nbsp;Combine<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the two into a regex for searching. (Ned Konz)<br>
 Patch by Christian Brabandt, 2013 Apr 20, unfinished.<br>
@@ -1783,10 +1771,6 @@ URXVT:<br>
 - will get stuck if byte sequence does not contain the expected semicolon.<br>
 - Use urxvt mouse support also in xterm.&nbsp;&nbsp;Explanations:<br>
 &nbsp;&nbsp;<span class="Constant"><a href="http://www.midnight-commander.org/ticket/2662">http://www.midnight-commander.org/ticket/2662</a></span><br>
-<br>
-Patch to have the fold and sign column and at the last line of the buffer.<br>
-(Marco Hinz, 2014 Sep 25)<br>
-Alternate suggestion: let all columns continue, also the number column.<br>
 <br>
 Patch to add tests for if_xcmdsrv.c., Jul 8, need some more work. (Brian Burns)<br>
 New tests Jul 13.&nbsp;&nbsp; Update Jul 17.&nbsp;&nbsp;Discussion Jul 18.<br>
@@ -1988,9 +1972,6 @@ the command line. (Ingo Karkat, 2011 Jan 25)<br>
 Since patch 7.2.46 Yankring plugin has become very slow, eventually make Vim<br>
 crash? (Raiwil, 2010 Nov 17)<br>
 <br>
-Patch to add FoldedLineNr highlighting: different highlighting for the line<br>
-number of a closed fold. (eXerigumo Clanjor, 2013 Jul 15)<br>
-<br>
 Regexp engine performance:<br>
 - Profiling:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;./vim -u NONE -s ~/vim/test/ruby.vim<br>
@@ -2102,9 +2083,6 @@ like it has &quot;:keepjumps&quot; before it.<br>
 Coverity: Check if there are new reported defects:<br>
 <span class="Constant"><a href="https://scan.coverity.com/projects/241">https://scan.coverity.com/projects/241</a></span><br>
 <br>
-Patch to use&nbsp;<a class="Type" href="options.html#'foldnestmax'">'foldnestmax'</a>&nbsp;also for &quot;marker&quot; foldmethod. (Arnaud Lacombe, 2011<br>
-Jan 7)<br>
-<br>
 Problem with editing file in binary mode. (Ingo Krabbe, 2009 Oct 8)<br>
 <br>
 Display error when&nbsp;<a class="Type" href="options.html#'tabline'">'tabline'</a>&nbsp;that includes a file name with double-width<br>
@@ -2116,9 +2094,6 @@ Using ']' as the end of a range in a pattern requires double escaping:<br>
 &nbsp;&nbsp;&nbsp;&nbsp; /[@-\\]]&nbsp;&nbsp;(Andy Wokula, 2011 Jun 28)<br>
 <br>
 Syntax priority problem. (Charles Campbell, 2011 Sep 15)<br>
-<br>
-When completion inserts the first match, it may trigger the line to be folded.<br>
-Disable updating folds while completion is active? (Peter Odding, 2010 Jun 9)<br>
 <br>
 For running gvim on a USB stick: avoid the OLE registration.&nbsp;&nbsp;Use a command<br>
 line argument -noregister.<br>
@@ -2193,10 +2168,6 @@ Don't load macmap.vim on startup, turn it into a plugin. (Ron Aaron,<br>
 2009 Apr 7)&nbsp;&nbsp;Reminder Apr 14.<br>
 <br>
 Add &quot;no_hlsearch&quot; to winsaveview().<br>
-<br>
-When&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;is &quot;indent&quot;, adding an empty line below a fold and then<br>
-indented text, creates a new fold instead of joining it with the previous one.<br>
-(Evan Laforge, 2009 Oct 17)<br>
 <br>
 Bug: When reloading a buffer changed outside of Vim, BufRead autocommands<br>
 are applied to the wrong buffer/window. (Ben Fritz, 2009 Apr 2, May 11)<br>
@@ -2416,8 +2387,6 @@ Problem with&nbsp;<a class="Type" href="options.html#'ts'">'ts'</a>&nbsp;set to 
 <br>
 &quot;:tab help&quot; always opens a new tab, while &quot;:help&quot; re-uses an existing window.<br>
 Would be more consistent when an existing tab is re-used. (Tony Mechelynck)<br>
-<br>
-Add &quot;:nofold&quot;.&nbsp;&nbsp;Range will apply without expanding to closed fold.<br>
 <br>
 Using Aap to build Vim&#0058; add remarks about how to set personal preferences.<br>
 Example on&nbsp;<span class="Constant"><a href="http://www.calmar.ws/tmp/aap.html">http://www.calmar.ws/tmp/aap.html</a></span><br>
@@ -3814,6 +3783,30 @@ Diff mode:<br>
 Folding:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(commands still available: zI zJ zK zp zP zq zQ zV zy zY;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;secondary: zB zS zT zZ, z=)<br>
+-&nbsp;&nbsp; Patch to make closed folds line up. (Charles Campbell, 2014 Sep 12)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Remark from Roland Eggner: does it cause crashes? (2014 Dec 12)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Updated patch by Roland Eggner, Dec 16<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Updated patch from Charles, 2016 Jul 2<br>
+-&nbsp;&nbsp; Patch to make fold updates much faster. (Christian Brabandt, 2012 Dec)<br>
+-&nbsp;&nbsp; Patch to have the fold and sign column and at the last line of the buffer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Marco Hinz, 2014 Sep 25)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Alternate suggestion: let all columns continue, also the number column.<br>
+-&nbsp;&nbsp; Patch to add FoldedLineNr highlighting: different highlighting for the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;line number of a closed fold. (eXerigumo Clanjor, 2013 Jul 15)<br>
+-&nbsp;&nbsp; Patch to use&nbsp;<a class="Type" href="options.html#'foldnestmax'">'foldnestmax'</a>&nbsp;also for &quot;marker&quot; foldmethod. (Arnaud Lacombe,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2011 Jan 7)<br>
+-&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldcolumn'">'foldcolumn'</a>&nbsp;in modeline applied to wrong window when using a session.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(Teemu Likonen, March 19)<br>
+-&nbsp;&nbsp; With foldmethod=syntax and nofoldenable comment highlighting isn't<br>
+&nbsp;&nbsp;&nbsp;&nbsp;removed.&nbsp;&nbsp;(Marcin Szewczyk, 2017 Apr 26)<br>
+-&nbsp;&nbsp; The &quot;:move&quot; command does not honor closed folds. (Ryan Lue, #2351)<br>
+-&nbsp;&nbsp; When completion inserts the first match, it may trigger the line to be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;folded.&nbsp;&nbsp;Disable updating folds while completion is active? (Peter Odding,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2010 Jun 9)<br>
+-&nbsp;&nbsp; When&nbsp;<a class="Type" href="options.html#'foldmethod'">'foldmethod'</a>&nbsp;is &quot;indent&quot;, adding an empty line below a fold and then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;indented text, creates a new fold instead of joining it with the previous<br>
+&nbsp;&nbsp;&nbsp;&nbsp;one.&nbsp;&nbsp;(Evan Laforge, 2009 Oct 17)<br>
+-&nbsp;&nbsp; Add &quot;:nofold&quot;.&nbsp;&nbsp;Range will apply without expanding to closed fold.<br>
 8&nbsp;&nbsp; Vertical folds: looks like vertically split windows, but the cursor moves<br>
 &nbsp;&nbsp;&nbsp;&nbsp;through the vertical separator, separator moves when scrolling.<br>
 8&nbsp;&nbsp; Add &quot;z/&quot; and &quot;z?&quot; for searching in not folded text only.&nbsp;&nbsp;Or use a regexp<br>
