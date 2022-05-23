@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'usr_52'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="usr_52.html" name="usr_52.txt">usr_52.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 May 16<br>
+<a class="Constant" href="usr_52.html" name="usr_52.txt">usr_52.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 May 21<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
 <br>
@@ -118,36 +118,33 @@ Although it's shorter to do:<br>
 Legacy Vim script only checks types at runtime, when the code is executed.<br>
 And it's permissive, often a computation gives an unexpected value instead of<br>
 reporting an error.&nbsp;&nbsp;Thus you can define a function and think it's fine, but<br>
-see a problem only later when it is called:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let s:collected = ''<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func ExtendAndReturn(add)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let s:collected += a:add<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return s:collected<br>
+notice a problem only later when the function is called:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Concatenate(base, add)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return a:base + a:add<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
 <br>
 Can you spot the error?&nbsp;&nbsp;Try this:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo ExtendAndReturn('text')</div>
-And you'll see zero.&nbsp;&nbsp;Why?&nbsp;&nbsp;Because in legacy Vim script &quot;+=&quot; will convert the<br>
-arguments to numbers, and any string without a number results in zero!<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo Concatenate('base', 'text')</div>
+And you'll see zero.&nbsp;&nbsp;Why?&nbsp;&nbsp;Because in legacy Vim script &quot;+&quot; will convert the<br>
+arguments to numbers, and any string without a number results in zero!&nbsp;&nbsp;That's<br>
+not what you expected.<br>
 <br>
-With&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;the type checking happens when compiling the function.&nbsp;&nbsp;For that<br>
-you need to specify the argument types and the return type.&nbsp;&nbsp;Also notice that<br>
-the argument is used without the &quot;a:&quot; prefix:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let s:collected = ''<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ExtendAndReturn(add: string): string<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s:collected += add<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return s:collected<br>
+With&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;the type checking happens when compiling the function.&nbsp;&nbsp;You need<br>
+to specify the argument types and the return type to make that possible.&nbsp;&nbsp;Also<br>
+notice that the argument names are used without the &quot;a:&quot; prefix:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def Concatenate(base: string, add: string): string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return base + add<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;disassemble ExtendAndReturn</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defcompile Concatenate</div>
 <br>
-Here we use&nbsp;<a class="Comment" href="vim9.html#:disassemble">:disassemble</a>&nbsp;to do the compilation right away, without it the<br>
-compilation would happen when the function is called.&nbsp;&nbsp;Vim will tell you what<br>
-you did wrong:<br>
+Here we use&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;to do the compilation right away, without it the<br>
+compilation would happen when the function is first called.&nbsp;&nbsp;Vim will tell you<br>
+what you did wrong:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E1051: Wrong argument type for +</div>
 <br>
-Side&nbsp;<span class="Todo">note</span>: here the context is legacy script, when using Vim9 script you would<br>
-put&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;at the end of the script to check for errors in the<br>
-functions defined in it.<br>
+Side&nbsp;<span class="Todo">note</span>: here the context is legacy script.&nbsp;&nbsp;When using Vim9 script you<br>
+would put&nbsp;<a class="Comment" href="vim9.html#:defcompile">:defcompile</a>&nbsp;at the end of the script to check for errors in all<br>
+the functions defined in it.<br>
 <br>
 Vim9 script is strict, it uses the &quot;+&quot; operator only for numbers and floats.<br>
 For string concatenation &quot;..&quot; must be used.&nbsp;&nbsp;This avoids mistakes and avoids<br>
