@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'usr_51'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="usr_51.html" name="usr_51.txt">usr_51.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 May 14<br>
+<a class="Constant" href="usr_51.html" name="usr_51.txt">usr_51.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Jun 03<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
 <br>
@@ -17,11 +17,9 @@ most common Vim plugins.<br>
 <a class="Identifier" href="usr_51.html#51.1">51.1</a>&nbsp;&nbsp;Writing a generic plugin<br>
 <a class="Identifier" href="usr_51.html#51.2">51.2</a>&nbsp;&nbsp;Writing a filetype plugin<br>
 <a class="Identifier" href="usr_51.html#51.3">51.3</a>&nbsp;&nbsp;Writing a compiler plugin<br>
-<a class="Identifier" href="usr_51.html#51.4">51.4</a>&nbsp;&nbsp;Writing a plugin that loads quickly<br>
-<a class="Identifier" href="usr_51.html#51.5">51.5</a>&nbsp;&nbsp;Writing library scripts<br>
-<a class="Identifier" href="usr_51.html#51.6">51.6</a>&nbsp;&nbsp;Distributing Vim scripts<br>
+<a class="Identifier" href="usr_51.html#51.4">51.4</a>&nbsp;&nbsp;Distributing Vim scripts<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_52.html">usr_52.txt</a>&nbsp;&nbsp;Write plugins using Vim9 script<br>
+&nbsp;&nbsp;&nbsp;&nbsp; Next chapter:&nbsp;<a class="Identifier" href="usr_52.html">usr_52.txt</a>&nbsp;&nbsp;Write large plugins<br>
 &nbsp;Previous chapter:&nbsp;<a class="Identifier" href="usr_50.html">usr_50.txt</a>&nbsp;&nbsp;Advanced Vim script writing<br>
 Table of contents:&nbsp;<a class="Identifier" href="usr_toc.html">usr_toc.txt</a><br>
 <br>
@@ -40,6 +38,9 @@ filetype plugins: Only for files of a specific type.<br>
 In this section the first type is explained.&nbsp;&nbsp;Most items are also relevant for<br>
 writing filetype plugins.&nbsp;&nbsp;The specifics for filetype plugins are in the next<br>
 section&nbsp;<a class="Identifier" href="usr_51.html#write-filetype-plugin">write-filetype-plugin</a>.<br>
+<br>
+We will use&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;syntax here, the recommended way to write new plugins.<br>
+Make sure the file starts with the&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;command.<br>
 <br>
 <br>
 NAME<br>
@@ -60,11 +61,11 @@ BODY<br>
 <br>
 Let's start with the body of the plugin, the lines that do the actual work:<br>
 <br>
-<div class="helpExample">&nbsp;14&nbsp;&nbsp;&nbsp;&nbsp; iabbrev teh the<br>
-&nbsp;15&nbsp;&nbsp;&nbsp;&nbsp; iabbrev otehr other<br>
-&nbsp;16&nbsp;&nbsp;&nbsp;&nbsp; iabbrev wnat want<br>
-&nbsp;17&nbsp;&nbsp;&nbsp;&nbsp; iabbrev synchronisation<br>
-&nbsp;18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ synchronization</div>
+<div class="helpExample">&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp; iabbrev teh the<br>
+&nbsp;13&nbsp;&nbsp;&nbsp;&nbsp; iabbrev otehr other<br>
+&nbsp;14&nbsp;&nbsp;&nbsp;&nbsp; iabbrev wnat want<br>
+&nbsp;15&nbsp;&nbsp;&nbsp;&nbsp; iabbrev synchronisation<br>
+&nbsp;16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ synchronization</div>
 <br>
 The actual list should be much longer, of course.<br>
 <br>
@@ -103,28 +104,6 @@ the top of the plugin should be sufficient.&nbsp;&nbsp;Example:<br>
 <div class="helpExample">&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp; # License:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file is placed in the public domain.</div>
 <br>
 <br>
-<span class="Statement">LINE CONTINUATION AND AVOIDING SIDE EFFECTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="usr_51.html#use-cpo-save" name="use-cpo-save">use-cpo-save</a><br>
-<br>
-In line 18 above, the line-continuation mechanism is used&nbsp;<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>.<br>
-Users with&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>&nbsp;set will run into trouble here, they will get an error<br>
-message.&nbsp;&nbsp;We can't just reset&nbsp;<a class="Type" href="options.html#'compatible'">'compatible'</a>, because that has a lot of side<br>
-effects.&nbsp;&nbsp;Instead, we will set the&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;option to its Vim default<br>
-value and restore it later.&nbsp;&nbsp;That will allow the use of line-continuation and<br>
-make the script work for most people.&nbsp;&nbsp;It is done like this:<br>
-<br>
-<div class="helpExample">&nbsp;11&nbsp;&nbsp;&nbsp;&nbsp; var save_cpo = &amp;cpo<br>
-&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp; set cpo&amp;vim<br>
-&nbsp;..<br>
-&nbsp;42&nbsp;&nbsp;&nbsp;&nbsp; &amp;cpo = save_cpo</div>
-<br>
-We first store the old value of&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;in the &quot;save_cpo&quot; variable.&nbsp;&nbsp;At<br>
-the end of the plugin this value is restored.<br>
-<br>
-Notice that &quot;save_cpo&quot; is a script-local variable.&nbsp;&nbsp;A global variable could<br>
-already be in use for something else.&nbsp;&nbsp;Always use script-local variables for<br>
-things that are only used in the script.<br>
-<br>
-<br>
 NOT LOADING<br>
 <br>
 It is possible that a user doesn't always want to load this plugin.&nbsp;&nbsp;Or the<br>
@@ -158,7 +137,7 @@ for this mapping, but the user might already use it for something else.&nbsp;&nb
 allow the user to define which keys a mapping in a plugin uses, the&nbsp;<span class="Special">&lt;Leader&gt;</span><br>
 item can be used:<br>
 <br>
-<div class="helpExample">&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;</div>
+<div class="helpExample">&nbsp;20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;</div>
 <br>
 The &quot;<span class="Special">&lt;Plug&gt;</span>TypecorrAdd;&quot; thing will do the work, more about that further on.<br>
 <br>
@@ -176,9 +155,9 @@ already happened to exist.&nbsp;<a class="Identifier" href="map.html#:map-<uniqu
 But what if the user wants to define his own key sequence?&nbsp;&nbsp;We can allow that<br>
 with this mechanism:<br>
 <br>
-<div class="helpExample">&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp; if !hasmapto('&lt;Plug&gt;TypecorrAdd;')<br>
-&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;<br>
-&nbsp;23&nbsp;&nbsp;&nbsp;&nbsp; endif</div>
+<div class="helpExample">&nbsp;19&nbsp;&nbsp;&nbsp;&nbsp; if !hasmapto('&lt;Plug&gt;TypecorrAdd;')<br>
+&nbsp;20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;<br>
+&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp; endif</div>
 <br>
 This checks if a mapping to &quot;<span class="Special">&lt;Plug&gt;</span>TypecorrAdd;&quot; already exists, and only<br>
 defines the mapping from &quot;<span class="Special">&lt;Leader&gt;</span>a&quot; if it doesn't.&nbsp;&nbsp;The user then has a<br>
@@ -201,11 +180,11 @@ would need to prefix the name with &quot;s:&quot;.<br>
 <br>
 We will define a function that adds a new typing correction:<br>
 <br>
-<div class="helpExample">&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp; def Add(from: string, correct: bool)<br>
-&nbsp;31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var to = input($&quot;type the correction for {from}: &quot;)<br>
-&nbsp;32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exe $&quot;:iabbrev {from} {to}&quot;<br>
-&nbsp;..<br>
-&nbsp;36&nbsp;&nbsp;&nbsp;&nbsp; enddef</div>
+<div class="helpExample">&nbsp;28&nbsp;&nbsp;&nbsp;&nbsp; def Add(from: string, correct: bool)<br>
+&nbsp;29&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var to = input($&quot;type the correction for {from}: &quot;)<br>
+&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exe $&quot;:iabbrev {from} {to}&quot;<br>
+&nbsp;...<br>
+&nbsp;34&nbsp;&nbsp;&nbsp;&nbsp; enddef</div>
 <br>
 Now we can call the function Add() from within this script.&nbsp;&nbsp;If another<br>
 script also defines Add(), it will be local to that script and can only<br>
@@ -215,9 +194,9 @@ which is again another function.<br>
 <span class="Special">&lt;SID&gt;</span>&nbsp;can be used with mappings.&nbsp;&nbsp;It generates a script ID, which identifies<br>
 the current script.&nbsp;&nbsp;In our typing correction plugin we use it like this:<br>
 <br>
-<div class="helpExample">&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;unique&gt; &lt;script&gt; &lt;Plug&gt;TypecorrAdd;&nbsp;&nbsp;&lt;SID&gt;Add<br>
-&nbsp;..<br>
-&nbsp;28&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;SID&gt;Add&nbsp;&nbsp;:call &lt;SID&gt;Add(expand(&quot;&lt;cword&gt;&quot;), true)&lt;CR&gt;</div>
+<div class="helpExample">&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;unique&gt; &lt;script&gt; &lt;Plug&gt;TypecorrAdd;&nbsp;&nbsp;&lt;SID&gt;Add<br>
+&nbsp;...<br>
+&nbsp;26&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;SID&gt;Add&nbsp;&nbsp;:call &lt;SID&gt;Add(expand(&quot;&lt;cword&gt;&quot;), true)&lt;CR&gt;</div>
 <br>
 Thus when a user types &quot;\a&quot;, this sequence is invoked:<br>
 <br>
@@ -237,7 +216,7 @@ Add() in other places (the script itself, autocommands, user commands).<br>
 <br>
 We can also add a menu entry to do the same as the mapping:<br>
 <br>
-<div class="helpExample">&nbsp;26&nbsp;&nbsp;&nbsp;&nbsp; noremenu &lt;script&gt; Plugin.Add\ Correction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;SID&gt;Add</div>
+<div class="helpExample">&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp; noremenu &lt;script&gt; Plugin.Add\ Correction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;SID&gt;Add</div>
 <br>
 The &quot;Plugin&quot; menu is recommended for adding menu items for plugins.&nbsp;&nbsp;In this<br>
 case only one item is used.&nbsp;&nbsp;When adding more items, creating a submenu is<br>
@@ -281,9 +260,9 @@ USER COMMAND<br>
 <br>
 Now let's add a user command to add a correction:<br>
 <br>
-<div class="helpExample">&nbsp;38&nbsp;&nbsp;&nbsp;&nbsp; if !exists(&quot;:Correct&quot;)<br>
-&nbsp;39&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; command -nargs=1&nbsp;&nbsp;Correct&nbsp;&nbsp;:call Add(&lt;q-args&gt;, false)<br>
-&nbsp;40&nbsp;&nbsp;&nbsp;&nbsp; endif</div>
+<div class="helpExample">&nbsp;36&nbsp;&nbsp;&nbsp;&nbsp; if !exists(&quot;:Correct&quot;)<br>
+&nbsp;37&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; command -nargs=1&nbsp;&nbsp;Correct&nbsp;&nbsp;:call Add(&lt;q-args&gt;, false)<br>
+&nbsp;38&nbsp;&nbsp;&nbsp;&nbsp; endif</div>
 <br>
 The user command is defined only if no command with the same name already<br>
 exists.&nbsp;&nbsp;Otherwise we would get an error here.&nbsp;&nbsp;Overriding the existing user<br>
@@ -304,20 +283,21 @@ the same script again.&nbsp;<a class="Identifier" href="eval.html#s:var">s:var</
 <br>
 The nice thing about&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script is that variables are local to the script<br>
 by default.&nbsp;&nbsp;You can prepend &quot;s:&quot; if you like, but you do not need to.&nbsp;&nbsp;And<br>
-functions in the script can also use the script variables without a prefix.<br>
+functions in the script can also use the script variables without a prefix<br>
+(they must be declared before the function for this to work).<br>
 <br>
 Script-local variables can also be used in functions, autocommands and user<br>
 commands that are defined in the script.&nbsp;&nbsp;Thus they are the perfect way to<br>
 share information between parts of your plugin, without it leaking out.&nbsp;&nbsp;In<br>
 our example we can add a few lines to count the number of corrections:<br>
 <br>
-<div class="helpExample">&nbsp;19&nbsp;&nbsp;&nbsp;&nbsp; var count = 4<br>
-&nbsp;..<br>
-&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp; def Add(from: string, correct: bool)<br>
-&nbsp;..<br>
-&nbsp;34&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; count += 1<br>
-&nbsp;35&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &quot;you now have &quot; .. count .. &quot; corrections&quot;<br>
-&nbsp;36&nbsp;&nbsp;&nbsp;&nbsp; enddef</div>
+<div class="helpExample">&nbsp;17&nbsp;&nbsp;&nbsp;&nbsp; var count = 4<br>
+&nbsp;...<br>
+&nbsp;28&nbsp;&nbsp;&nbsp;&nbsp; def Add(from: string, correct: bool)<br>
+&nbsp;...<br>
+&nbsp;32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; count += 1<br>
+&nbsp;33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &quot;you now have &quot; .. count .. &quot; corrections&quot;<br>
+&nbsp;34&nbsp;&nbsp;&nbsp;&nbsp; enddef</div>
 <br>
 &quot;count&quot; is declared and initialized to 4 in the script itself.&nbsp;&nbsp;When later<br>
 the Add() function is called, it increments &quot;count&quot;.&nbsp;&nbsp;It doesn't matter from<br>
@@ -339,40 +319,36 @@ Here is the resulting complete example:<br>
 &nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; finish<br>
 &nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp; endif<br>
 &nbsp;10&nbsp;&nbsp;&nbsp;&nbsp; g:loaded_typecorrect = 1<br>
-&nbsp;11&nbsp;&nbsp;&nbsp;&nbsp; var save_cpo = &amp;cpo<br>
-&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp; set cpo&amp;vim<br>
-&nbsp;13<br>
-&nbsp;14&nbsp;&nbsp;&nbsp;&nbsp; iabbrev teh the<br>
-&nbsp;15&nbsp;&nbsp;&nbsp;&nbsp; iabbrev otehr other<br>
-&nbsp;16&nbsp;&nbsp;&nbsp;&nbsp; iabbrev wnat want<br>
-&nbsp;17&nbsp;&nbsp;&nbsp;&nbsp; iabbrev synchronisation<br>
-&nbsp;18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ synchronization<br>
-&nbsp;19&nbsp;&nbsp;&nbsp;&nbsp; var count = 4<br>
-&nbsp;20<br>
-&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp; if !hasmapto('&lt;Plug&gt;TypecorrAdd;')<br>
-&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;<br>
-&nbsp;23&nbsp;&nbsp;&nbsp;&nbsp; endif<br>
-&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;unique&gt; &lt;script&gt; &lt;Plug&gt;TypecorrAdd;&nbsp;&nbsp;&lt;SID&gt;Add<br>
+&nbsp;11<br>
+&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp; iabbrev teh the<br>
+&nbsp;13&nbsp;&nbsp;&nbsp;&nbsp; iabbrev otehr other<br>
+&nbsp;14&nbsp;&nbsp;&nbsp;&nbsp; iabbrev wnat want<br>
+&nbsp;15&nbsp;&nbsp;&nbsp;&nbsp; iabbrev synchronisation<br>
+&nbsp;16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ synchronization<br>
+&nbsp;17&nbsp;&nbsp;&nbsp;&nbsp; var count = 4<br>
+&nbsp;18<br>
+&nbsp;19&nbsp;&nbsp;&nbsp;&nbsp; if !hasmapto('&lt;Plug&gt;TypecorrAdd;')<br>
+&nbsp;20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; map &lt;unique&gt; &lt;Leader&gt;a&nbsp;&nbsp;&lt;Plug&gt;TypecorrAdd;<br>
+&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp; endif<br>
+&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;unique&gt; &lt;script&gt; &lt;Plug&gt;TypecorrAdd;&nbsp;&nbsp;&lt;SID&gt;Add<br>
+&nbsp;23<br>
+&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp; noremenu &lt;script&gt; Plugin.Add\ Correction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;SID&gt;Add<br>
 &nbsp;25<br>
-&nbsp;26&nbsp;&nbsp;&nbsp;&nbsp; noremenu &lt;script&gt; Plugin.Add\ Correction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;SID&gt;Add<br>
+&nbsp;26&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;SID&gt;Add&nbsp;&nbsp;:call &lt;SID&gt;Add(expand(&quot;&lt;cword&gt;&quot;), true)&lt;CR&gt;<br>
 &nbsp;27<br>
-&nbsp;28&nbsp;&nbsp;&nbsp;&nbsp; noremap &lt;SID&gt;Add&nbsp;&nbsp;:call &lt;SID&gt;Add(expand(&quot;&lt;cword&gt;&quot;), true)&lt;CR&gt;<br>
-&nbsp;29<br>
-&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp; def Add(from: string, correct: bool)<br>
-&nbsp;31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var to = input(&quot;type the correction for &quot; .. from .. &quot;: &quot;)<br>
-&nbsp;32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exe &quot;:iabbrev &quot; .. from .. &quot; &quot; .. to<br>
-&nbsp;33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if correct | exe &quot;normal viws\&lt;C-R&gt;\&quot; \b\e&quot; | endif<br>
-&nbsp;34&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; count += 1<br>
-&nbsp;35&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &quot;you now have &quot; .. count .. &quot; corrections&quot;<br>
-&nbsp;36&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
-&nbsp;37<br>
-&nbsp;38&nbsp;&nbsp;&nbsp;&nbsp; if !exists(&quot;:Correct&quot;)<br>
-&nbsp;39&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; command -nargs=1&nbsp;&nbsp;Correct&nbsp;&nbsp;call Add(&lt;q-args&gt;, false)<br>
-&nbsp;40&nbsp;&nbsp;&nbsp;&nbsp; endif<br>
-&nbsp;41<br>
-&nbsp;42&nbsp;&nbsp;&nbsp;&nbsp; &amp;cpo = save_cpo</div>
+&nbsp;28&nbsp;&nbsp;&nbsp;&nbsp; def Add(from: string, correct: bool)<br>
+&nbsp;29&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var to = input(&quot;type the correction for &quot; .. from .. &quot;: &quot;)<br>
+&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exe &quot;:iabbrev &quot; .. from .. &quot; &quot; .. to<br>
+&nbsp;31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if correct | exe &quot;normal viws\&lt;C-R&gt;\&quot; \b\e&quot; | endif<br>
+&nbsp;32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; count += 1<br>
+&nbsp;33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &quot;you now have &quot; .. count .. &quot; corrections&quot;<br>
+&nbsp;34&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
+&nbsp;35<br>
+&nbsp;36&nbsp;&nbsp;&nbsp;&nbsp; if !exists(&quot;:Correct&quot;)<br>
+&nbsp;37&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; command -nargs=1&nbsp;&nbsp;Correct&nbsp;&nbsp;call Add(&lt;q-args&gt;, false)<br>
+&nbsp;38&nbsp;&nbsp;&nbsp;&nbsp; endif</div>
 <br>
-Line 33 wasn't explained yet.&nbsp;&nbsp;It applies the new correction to the word under<br>
+Line 31 wasn't explained yet.&nbsp;&nbsp;It applies the new correction to the word under<br>
 the cursor.&nbsp;&nbsp;The&nbsp;<a class="Identifier" href="various.html#:normal">:normal</a>&nbsp;command is used to use the new abbreviation.&nbsp;&nbsp;<span class="Todo">Note</span><br>
 that mappings and abbreviations are expanded here, even though the function<br>
 was called from a mapping defined with &quot;:noremap&quot;.<br>
@@ -416,24 +392,6 @@ them, like &quot;typecorrect-settings&quot; in the example.<br>
 <br>
 Using references to other parts of the help in || is recommended.&nbsp;&nbsp;This makes<br>
 it easy for the user to find associated help.<br>
-<br>
-<br>
-<span class="Statement">FILETYPE DETECTION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="usr_51.html#plugin-filetype" name="plugin-filetype">plugin-filetype</a><br>
-<br>
-If your filetype is not already detected by Vim, you should create a filetype<br>
-detection snippet in a separate file.&nbsp;&nbsp;It is usually in the form of an<br>
-autocommand that sets the filetype when the file name matches a pattern.<br>
-Example:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au BufNewFile,BufRead *.foo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; setlocal filetype=foofoo</div>
-<br>
-Write this single-line file as &quot;ftdetect/foofoo.vim&quot; in the first directory<br>
-that appears in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;For Unix that would be<br>
-&quot;~/.vim/ftdetect/foofoo.vim&quot;.&nbsp;&nbsp;The convention is to use the name of the<br>
-filetype for the script name.<br>
-<br>
-You can make more complicated checks if you like, for example to inspect the<br>
-contents of the file to recognize the language.&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="filetype.html#new-filetype">new-filetype</a>.<br>
 <br>
 <br>
 <span class="Statement">SUMMARY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="usr_51.html#plugin-special" name="plugin-special">plugin-special</a><br>
@@ -502,7 +460,7 @@ you can write the different setting in a script:<br>
 Now write this in the &quot;after&quot; directory, so that it gets sourced after the<br>
 distributed &quot;vim.vim&quot; ftplugin&nbsp;<a class="Identifier" href="options.html#after-directory">after-directory</a>.&nbsp;&nbsp;For Unix this would be<br>
 &quot;~/.vim/after/ftplugin/vim.vim&quot;.&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that the default plugin will have set<br>
-&quot;b:did_ftplugin&quot;, but it is ignored here.<br>
+&quot;b:did_ftplugin&quot;, it is ignored here.<br>
 <br>
 <br>
 OPTIONS<br>
@@ -596,6 +554,9 @@ This construct makes sure the function is only defined once:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
 <br>
+Don't forget to use &quot;noclear&quot; with the&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;command to avoid that the<br>
+function is deleted when the script is sourced a second time.<br>
+<br>
 <br>
 <span class="Statement">UNDO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="usr_51.html#undo_indent" name="undo_indent">undo_indent</a>&nbsp;<a class="Constant" href="usr_51.html#undo_ftplugin" name="undo_ftplugin">undo_ftplugin</a><br>
 <br>
@@ -603,14 +564,11 @@ When the user does &quot;:setfiletype xyz&quot; the effect of the previous filet
 should be undone.&nbsp;&nbsp;Set the b:undo_ftplugin variable to the commands that will<br>
 undo the settings in your filetype plugin.&nbsp;&nbsp;Example:<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let b:undo_ftplugin = &quot;setlocal fo&lt; com&lt; tw&lt; commentstring&lt;&quot;<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b:undo_ftplugin = &quot;setlocal fo&lt; com&lt; tw&lt; commentstring&lt;&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ .. &quot;| unlet b:match_ignorecase b:match_words b:match_skip&quot;</div>
 <br>
 Using &quot;:setlocal&quot; with &quot;&lt;&quot; after the option name resets the option to its<br>
 global value.&nbsp;&nbsp;That is mostly the best way to reset the option value.<br>
-<br>
-This does require removing the &quot;C&quot; flag from&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;to allow line<br>
-continuation, as mentioned above&nbsp;<a class="Identifier" href="usr_51.html#use-cpo-save">use-cpo-save</a>.<br>
 <br>
 For undoing the effect of an indent script, the b:undo_indent variable should<br>
 be set accordingly.<br>
@@ -628,6 +586,24 @@ these three forms:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.../ftplugin/stuff/bar.vim<br>
 <br>
 &quot;stuff&quot; is the filetype, &quot;foo&quot; and &quot;bar&quot; are arbitrary names.<br>
+<br>
+<br>
+<span class="Statement">FILETYPE DETECTION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="usr_51.html#plugin-filetype" name="plugin-filetype">plugin-filetype</a><br>
+<br>
+If your filetype is not already detected by Vim, you should create a filetype<br>
+detection snippet in a separate file.&nbsp;&nbsp;It is usually in the form of an<br>
+autocommand that sets the filetype when the file name matches a pattern.<br>
+Example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;au BufNewFile,BufRead *.foo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; setlocal filetype=foofoo</div>
+<br>
+Write this single-line file as &quot;ftdetect/foofoo.vim&quot; in the first directory<br>
+that appears in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;For Unix that would be<br>
+&quot;~/.vim/ftdetect/foofoo.vim&quot;.&nbsp;&nbsp;The convention is to use the name of the<br>
+filetype for the script name.<br>
+<br>
+You can make more complicated checks if you like, for example to inspect the<br>
+contents of the file to recognize the language.&nbsp;&nbsp;Also see&nbsp;<a class="Identifier" href="filetype.html#new-filetype">new-filetype</a>.<br>
 <br>
 <br>
 <span class="Statement">SUMMARY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="usr_51.html#ftplugin-special" name="ftplugin-special">ftplugin-special</a><br>
@@ -698,149 +674,7 @@ last, thus it should be in a directory at the end of&nbsp;<a class="Type" href="
 that could be ~/.vim/after/compiler.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
-<a class="Constant" href="usr_51.html#51.4" name="51.4">51.4</a>&nbsp;&nbsp;Writing a plugin that loads quickly&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_51.html#write-plugin-quickload" name="write-plugin-quickload">write-plugin-quickload</a><br>
-<br>
-A plugin may grow and become quite long.&nbsp;&nbsp;The startup delay may become<br>
-noticeable, while you hardly ever use the plugin.&nbsp;&nbsp;Then it's time for a<br>
-quickload plugin.<br>
-<br>
-The basic idea is that the plugin is loaded twice.&nbsp;&nbsp;The first time user<br>
-commands and mappings are defined that offer the functionality.&nbsp;&nbsp;The second<br>
-time the functions that implement the functionality are defined.<br>
-<br>
-It may sound surprising that quickload means loading a script twice.&nbsp;&nbsp;What we<br>
-mean is that it loads quickly the first time, postponing the bulk of the<br>
-script to the second time, which only happens when you actually use it.&nbsp;&nbsp;When<br>
-you always use the functionality it actually gets slower!<br>
-<br>
-This uses a FuncUndefined autocommand.&nbsp;&nbsp;Since Vim 7 there is an alternative:<br>
-use the&nbsp;<a class="Identifier" href="eval.html#autoload">autoload</a>&nbsp;functionality&nbsp;<a class="Identifier" href="usr_51.html#51.5">51.5</a>.&nbsp;&nbsp;That will also use&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script<br>
-instead of legacy script that is used here.<br>
-<br>
-The following example shows how it's done:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Vim global plugin for demonstrating quick loading<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Last Change:&nbsp;&nbsp;2005 Feb 25<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Maintainer:&nbsp;&nbsp; Bram Moolenaar &lt;Bram@vim.org&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; License:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file is placed in the public domain.</div>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if !exists(&quot;s:did_load&quot;)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command -nargs=* BNRead&nbsp;&nbsp;call BufNetRead(&lt;f-args&gt;)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map &lt;F19&gt; :call BufNetWrite('something')&lt;CR&gt;</div>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let s:did_load = 1<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exe 'au FuncUndefined BufNet* source ' .. expand('&lt;sfile&gt;')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function BufNetRead(...)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'BufNetRead(' .. string(a:000) .. ')'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; read functionality here<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunction</div>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function BufNetWrite(...)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'BufNetWrite(' .. string(a:000) .. ')'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; write functionality here<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunction</div>
-<br>
-When the script is first loaded &quot;s:did_load&quot; is not set.&nbsp;&nbsp;The commands between<br>
-the &quot;if&quot; and &quot;endif&quot; will be executed.&nbsp;&nbsp;This ends in a&nbsp;<a class="Identifier" href="repeat.html#:finish">:finish</a>&nbsp;command, thus<br>
-the rest of the script is not executed.<br>
-<br>
-The second time the script is loaded &quot;s:did_load&quot; exists and the commands<br>
-after the &quot;endif&quot; are executed.&nbsp;&nbsp;This defines the (possible long)<br>
-BufNetRead() and BufNetWrite() functions.<br>
-<br>
-If you drop this script in your plugin directory Vim will execute it on<br>
-startup.&nbsp;&nbsp;This is the sequence of events that happens:<br>
-<br>
-1. The &quot;BNRead&quot; command is defined and the&nbsp;<span class="Special">&lt;F19&gt;</span>&nbsp;key is mapped when the script<br>
-&nbsp;&nbsp; is sourced at startup.&nbsp;&nbsp;A&nbsp;<a class="Identifier" href="autocmd.html#FuncUndefined">FuncUndefined</a>&nbsp;autocommand is defined.&nbsp;&nbsp;The<br>
-&nbsp;&nbsp; &quot;:finish&quot; command causes the script to terminate early.<br>
-<br>
-2. The user types the BNRead command or presses the&nbsp;<span class="Special">&lt;F19&gt;</span>&nbsp;key.&nbsp;&nbsp;The<br>
-&nbsp;&nbsp; BufNetRead() or BufNetWrite() function will be called.<br>
-<br>
-3. Vim can't find the function and triggers the&nbsp;<a class="Identifier" href="autocmd.html#FuncUndefined">FuncUndefined</a>&nbsp;autocommand<br>
-&nbsp;&nbsp; event.&nbsp;&nbsp;Since the pattern &quot;BufNet*&quot; matches the invoked function, the<br>
-&nbsp;&nbsp; command &quot;source fname&quot; will be executed.&nbsp;&nbsp;&quot;fname&quot; will be equal to the name<br>
-&nbsp;&nbsp; of the script, no matter where it is located, because it comes from<br>
-&nbsp;&nbsp; expanding &quot;<span class="Special">&lt;sfile&gt;</span>&quot; (see&nbsp;<a class="Identifier" href="builtin.html#expand()">expand()</a>).<br>
-<br>
-4. The script is sourced again, the &quot;s:did_load&quot; variable exists and the<br>
-&nbsp;&nbsp; functions are defined.<br>
-<br>
-Notice that the functions that are loaded afterwards match the pattern in the<br>
-<a class="Identifier" href="autocmd.html#FuncUndefined">FuncUndefined</a>&nbsp;autocommand.&nbsp;&nbsp;You must make sure that no other plugin defines<br>
-functions that match this pattern.<br>
-<br>
-<span class="PreProc">==============================================================================</span><br>
-<a class="Constant" href="usr_51.html#51.5" name="51.5">51.5</a>&nbsp;&nbsp;Writing library scripts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_51.html#write-library-script" name="write-library-script">write-library-script</a><br>
-<br>
-Some functionality will be required in several places.&nbsp;&nbsp;When this becomes more<br>
-than a few lines you will want to put it in one script and use it from many<br>
-scripts.&nbsp;&nbsp;We will call that one script a library script.<br>
-<br>
-Manually loading a library script is possible, so long as you avoid loading it<br>
-when it's already done.&nbsp;&nbsp;You can do this with the&nbsp;<a class="Identifier" href="builtin.html#exists()">exists()</a>&nbsp;function.<br>
-Example:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if !exists('*MyLibFunction')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; runtime library/mylibscript.vim<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MyLibFunction(arg)</div>
-<br>
-Here you need to know that MyLibFunction() is defined in a script<br>
-&quot;library/mylibscript.vim&quot; in one of the directories in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.<br>
-<br>
-To make this a bit simpler Vim offers the autoload mechanism.&nbsp;&nbsp;Then the<br>
-example looks like this:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mylib#myfunction(arg)</div>
-<br>
-That's a lot simpler, isn't it?&nbsp;&nbsp;Vim will recognize the function name by the<br>
-embedded &quot;#&quot; character and when it's not defined search for the script<br>
-&quot;autoload/mylib.vim&quot; in&nbsp;<a class="Type" href="options.html#'runtimepath'">'runtimepath'</a>.&nbsp;&nbsp;That script must define the<br>
-&quot;mylib#myfunction()&quot; function.<br>
-<br>
-You can put many other functions in the mylib.vim script, you are free to<br>
-organize your functions in library scripts.&nbsp;&nbsp;But you must use function names<br>
-where the part before the '#' matches the script name.&nbsp;&nbsp;Otherwise Vim would<br>
-not know what script to load.<br>
-<br>
-If you get really enthusiastic and write lots of library scripts, you may<br>
-want to use subdirectories.&nbsp;&nbsp;Example:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;netlib#ftp#read('somefile')</div>
-<br>
-For Unix the library script used for this could be:<br>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~/.vim/autoload/netlib/ftp.vim<br>
-<br>
-Where the function is defined like this:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def netlib#ftp#read(fname: string)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;Read the file fname through ftp<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
-<br>
-Notice that the name the function is defined with is exactly the same as the<br>
-name used for calling the function.&nbsp;&nbsp;And the part before the last '#'<br>
-exactly matches the subdirectory and script name.<br>
-<br>
-You can use the same mechanism for variables:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var weekdays = dutch#weekdays</div>
-<br>
-This will load the script &quot;autoload/dutch.vim&quot;, which should contain something<br>
-like:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var dutch#weekdays = ['zondag', 'maandag', 'dinsdag', 'woensdag',<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'donderdag', 'vrijdag', 'zaterdag']</div>
-<br>
-Further reading:&nbsp;<a class="Identifier" href="eval.html#autoload">autoload</a>.<br>
-<br>
-<span class="PreProc">==============================================================================</span><br>
-<a class="Constant" href="usr_51.html#51.6" name="51.6">51.6</a>&nbsp;&nbsp;Distributing Vim scripts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_51.html#distribute-script" name="distribute-script">distribute-script</a><br>
+<a class="Constant" href="usr_51.html#51.4" name="51.4">51.4</a>&nbsp;&nbsp;Distributing Vim scripts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_51.html#distribute-script" name="distribute-script">distribute-script</a><br>
 <br>
 Vim users will look for scripts on the Vim website:&nbsp;<span class="Constant"><a href="http://www.vim.org">http://www.vim.org</a></span>.<br>
 If you made something that is useful for others, share it!<br>
@@ -860,7 +694,7 @@ It's good if you add a line to allow automatic updating.&nbsp;&nbsp;See&nbsp;<a 
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
-Next chapter:&nbsp;<a class="Identifier" href="usr_52.html">usr_52.txt</a>&nbsp;&nbsp;Write plugins using Vim9 script<br>
+Next chapter:&nbsp;<a class="Identifier" href="usr_52.html">usr_52.txt</a>&nbsp;&nbsp;Write large plugins<br>
 <br>
 Copyright: see&nbsp;<a class="Identifier" href="usr_01.html#manual-copyright">manual-copyright</a>&nbsp;&nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
 </div>
