@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Jun 17<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 8.2.</span>&nbsp;&nbsp;Last change: 2022 Jun 20<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,18 +43,15 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Searchpair() timeout using skip expression using synID() interferes with<br>
-syntax highlighting. #10562<br>
-Add flag that timeout is set for&nbsp;<a class="Type" href="options.html#'redrawtime'">'redrawtime'</a>&nbsp;and only then set b_syn_slow.<br>
-<br>
 Prepare for Vim 9.0 release:<br>
 - Update the user manual:<br>
 &nbsp;&nbsp;- Add more to usr_50.txt as an &quot;advanced section&quot; of usr_41.txt<br>
 &nbsp;&nbsp;- Move some from vim9.txt to the user manual?&nbsp;&nbsp;Keep the specification.<br>
-- Use Vim9 for more runtime files.<br>
+- Update version9.txt<br>
 - Adjust intro message to say &quot;help version9&quot;.<br>
 <br>
 Further Vim9 improvements, possibly after launch:<br>
+- Use Vim9 for more runtime files.<br>
 - Check performance with callgrind and kcachegrind.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;getline()/substitute()/setline() in #5632<br>
 - Better implementation for partial and tests for that.<br>
@@ -85,7 +82,8 @@ Further Vim9 improvements, possibly after launch:<br>
 Update list of features to vote on:<br>
 - multiple cursors<br>
 - built-in LSP support<br>
-- start first line halfway<br>
+- virtual text, using text properties<br>
+- start first line halfway, scroll per screen line<br>
 <br>
 Popup windows:<br>
 - Preview popup not properly updated when it overlaps with completion menu.<br>
@@ -211,8 +209,15 @@ Terminal emulator window:<br>
 - When&nbsp;<a class="Type" href="options.html#'encoding'">'encoding'</a>&nbsp;is not utf-8, or the job is using another encoding, setup<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
+Patches considered for including:<br>
+- Add &quot;-n&quot; option to xxd. #10599<br>
+- Support %e and %k in&nbsp;<a class="Type" href="options.html#'errorformat'">'errorformat'</a>. #9624<br>
+- Add support for &quot;underdouble&quot;, &quot;underdot&quot; and &quot;underdash&quot;. #9553<br>
+- Patch to implement the vimtutor with a plugin: #6414<br>
+&nbsp;&nbsp;Was originally written by Felipe Morales.<br>
+- Patch to make fillchars global-local. (#5206)<br>
+<br>
 Autoconf: must use autoconf 2.69, later version generates lots of warnings<br>
-&nbsp;&nbsp;&nbsp;&nbsp;attempt in ~/tmp/configure.ac<br>
 - try using autoconf 2.71 and fix all &quot;obsolete&quot; warnings<br>
 <br>
 Can deref_func_name() and deref_function_name() be merged?<br>
@@ -233,32 +238,15 @@ pass it on with modifications.<br>
 <br>
 Can &quot;CSI nr X&quot; be used instead of outputting spaces?&nbsp;&nbsp;Is it faster?&nbsp;&nbsp;#8002<br>
 <br>
-Valgrind reports memory leaks in test_options.<br>
-Valgrind reports overlapping memcpy in<br>
-&nbsp;&nbsp;&nbsp;&nbsp;test_conceal.3<br>
-&nbsp;&nbsp;&nbsp;&nbsp;test_edit.1<br>
-&nbsp;&nbsp;&nbsp;&nbsp;test_functions.4<br>
-&nbsp;&nbsp;&nbsp;&nbsp;test_ins_complete.3<br>
-&nbsp;&nbsp;&nbsp;&nbsp;test_method<br>
-&nbsp;&nbsp;&nbsp;&nbsp;test_normal<br>
-&nbsp;&nbsp;&nbsp;&nbsp;test_popupwin.35 et al.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;test_search_stat<br>
-Memory leak in test_debugger<br>
-Memory leak in test_paste, using XtOpenDisplay several times<br>
-OLD:<br>
-TODO: be able to run all parts of test_alot with valgrind separately<br>
-Memory leak in test_alot with pyeval() (allocating partial)<br>
-Memory leak in test_alot with expand()<br>
-Memory leaks in test_channel? (or is it because of fork())<br>
-<br>
-PR to support %e and %k in&nbsp;<a class="Type" href="options.html#'errorformat'">'errorformat'</a>. #9624<br>
+Problems reported by Valgrind:<br>
+Memory leaks in test_channel, in func Test_job_start_fails().&nbsp;&nbsp;Weird.<br>
 <br>
 With a window height of 6 and&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;set to 3, using &quot;j&quot; does not scroll<br>
-evenly. (#10545)<br>
+evenly. (#10545)&nbsp;&nbsp;Need to handle this in scroll_cursor_bot().<br>
 <br>
 Idea: when typing &quot;:e /some/dir/&quot; and &quot;dir&quot; does not exist, highlight in red.<br>
 <br>
-&quot;:set &amp;shellpipe&quot; and &quot;:set &amp;shellredir&quot; should use the logic from<br>
+&quot;:set shellpipe&amp;&quot; and &quot;:set shellredir&amp;&quot; should use the logic from<br>
 initialization to figure out the default value from&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>.&nbsp;&nbsp;Add a test for<br>
 this.<br>
 <br>
@@ -271,8 +259,6 @@ The line number can be obtained from win-&gt;w_lines[].<br>
 <br>
 MS-Windows: did path modifier :p:8 stop working?&nbsp;&nbsp;#8600<br>
 <br>
-Add support for &quot;underdouble&quot;, &quot;underdot&quot; and &quot;underdash&quot;. #9553<br>
-<br>
 test_arglist func Test_all_not_allowed_from_cmdwin() hangs on MS-Windows.<br>
 <br>
 Information for a specific terminal (e.g. gnome, tmux, konsole, alacritty) is<br>
@@ -282,9 +268,6 @@ more information.<br>
 Problem that a previous silent &quot;:throw&quot; causes a following try/catch not to<br>
 work. (ZyX, 2013 Sep 28) With examples: (Malcolm Rowe, 2015 Dec 24)<br>
 Also see #8487 for an example.<br>
-<br>
-Patch to implement the vimtutor with a plugin: #6414<br>
-Was originally written by Felipe Morales.<br>
 <br>
 Request to use &quot;.&quot; for the cursor column in search pattern \%&lt;.c and \%&lt;.v.<br>
 (#8179)<br>
@@ -322,8 +305,6 @@ with&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a
 <br>
 Patch for blockwise paste reporting changes: #6660.&nbsp;&nbsp;Asked for a PR.<br>
 <br>
-Patch to make fillchars global-local. (#5206)<br>
-<br>
 Missing filetype test for bashrc, PKGBUILD, etc.<br>
 <br>
 Add an option to not fetch terminal codes in xterm, to avoid flicker when t_Co<br>
@@ -343,6 +324,10 @@ Try setting a color then request the current color, like using t_u7.<br>
 <br>
 Make the jumplist behave like a tag stack. (#7738)&nbsp;&nbsp;Should there be a more<br>
 time bound navigation, like with undo?<br>
+<br>
+For testing, make a copy of ml_line_ptr instead of pointing it into the data<br>
+block, so that valgrind can do out of bounds check.&nbsp;&nbsp;Set ML_LINE_DIRTY flag or<br>
+add ML_LINE_ALLOCED.<br>
 <br>
 Changing a capturing group to non-capturing changes the result: #7607<br>
 &nbsp;&nbsp;&nbsp;&nbsp;:echo matchstr('aaa bbb', '\(.\<span class="Special">{-1,}</span>\&gt;\)\|.*')<br>
