@@ -150,6 +150,17 @@ Do not start a comment with #{, it looks like the legacy dictionary literal<br>
 and produces an error where this might be confusing.&nbsp;&nbsp;#{{ "{{" }} or #{{ "{{{" }} are OK,<br>
 these can be used to start a fold.<br>
 <br>
+When starting to read a script file Vim doesn't know it is&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script until<br>
+the&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;command is found.&nbsp;&nbsp;Until that point you would need to use<br>
+legacy comments:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; legacy comment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Vim9 comment</div>
+<br>
+That looks ugly, better put&nbsp;<a class="Comment" href="vim9.html#vim9script">vim9script</a>&nbsp;in the very first line:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Vim9 comment</div>
+<br>
 In legacy Vim script # is also used for the alternate file name.&nbsp;&nbsp;In Vim9<br>
 script you need to use %% instead.&nbsp;&nbsp;Instead of ## use %%% (stands for all<br>
 arguments).<br>
@@ -1692,21 +1703,34 @@ be exported.&nbsp;<span class="Special">{not implemented yet: class, interface}<
 <span class="PreProc">Import</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:import" name=":import">:import</a>&nbsp;<a class="Constant" href="vim9.html#:imp" name=":imp">:imp</a>&nbsp;<a class="Constant" href="vim9.html#E1094" name="E1094">E1094</a>&nbsp;<a class="Constant" href="vim9.html#E1047" name="E1047">E1047</a>&nbsp;<a class="Constant" href="vim9.html#E1262" name="E1262">E1262</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1048" name="E1048">E1048</a>&nbsp;<a class="Constant" href="vim9.html#E1049" name="E1049">E1049</a>&nbsp;<a class="Constant" href="vim9.html#E1053" name="E1053">E1053</a>&nbsp;<a class="Constant" href="vim9.html#E1071" name="E1071">E1071</a>&nbsp;<a class="Constant" href="vim9.html#E1236" name="E1236">E1236</a><br>
-The exported items can be imported in another Vim9 script:<br>
+The exported items can be imported in another script. The import syntax has<br>
+two forms. The simple form:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import {filename}</div>
+<br>
+Where&nbsp;<span class="Special">{filename}</span>&nbsp;is an expression that must evaluate to a string.&nbsp;&nbsp;In this<br>
+form the filename should end in &quot;.vim&quot; and the portion before &quot;.vim&quot; will<br>
+become the script local name of the namespace. For example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import &quot;myscript.vim&quot;</div>
 <br>
-This makes each item available as &quot;myscript.item&quot;.<br>
+This makes each exported item in &quot;myscript.vim&quot; available as &quot;myscript.item&quot;.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:import-as" name=":import-as">:import-as</a>&nbsp;<a class="Constant" href="vim9.html#E1257" name="E1257">E1257</a>&nbsp;<a class="Constant" href="vim9.html#E1261" name="E1261">E1261</a><br>
-In case the name is long or ambiguous, another name can be specified:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import &quot;thatscript.vim&quot; as that</div>
+In case the name is long or ambiguous, this form can be used to specify<br>
+another name:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import {longfilename} as {name}</div>
+<br>
+In this form&nbsp;<span class="Special">{name}</span>&nbsp;becomes a specific script local name for the imported<br>
+namespace.&nbsp;&nbsp;Therefore&nbsp;<span class="Special">{name}</span>&nbsp;must consist of letters, digits and '_', like<br>
+<a class="Identifier" href="eval.html#internal-variables">internal-variables</a>.&nbsp;&nbsp;The&nbsp;<span class="Special">{longfilename}</span>&nbsp;expression must evaluate to any<br>
+filename.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import &quot;thatscript.vim.v2&quot; as that</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1060" name="E1060">E1060</a>&nbsp;<a class="Constant" href="vim9.html#E1258" name="E1258">E1258</a>&nbsp;<a class="Constant" href="vim9.html#E1259" name="E1259">E1259</a>&nbsp;<a class="Constant" href="vim9.html#E1260" name="E1260">E1260</a><br>
-Then you can use &quot;that.EXPORTED_CONST&quot;, &quot;that.someValue&quot;, etc.&nbsp;&nbsp;You are free<br>
-to choose the name &quot;that&quot;.&nbsp;&nbsp;Use something that will be recognized as referring<br>
-to the imported script.&nbsp;&nbsp;Avoid command names, command modifiers and builtin<br>
-function names, because the name will shadow them.<br>
-If the name starts with a capital letter it can also shadow global user<br>
-commands and functions.&nbsp;&nbsp;Also, you cannot use the name for something else in<br>
-the script, such as a function or variable name.<br>
+Then you can use &quot;that.item&quot;, etc.&nbsp;&nbsp;You are free to choose the name &quot;that&quot;.<br>
+Use something that will be recognized as referring to the imported script.<br>
+Avoid command names, command modifiers and builtin function names, because the<br>
+name will shadow them.&nbsp;&nbsp;Better not start the name starts with a capital<br>
+letter, since it can then also shadow global user commands and functions.<br>
+Also, you cannot use the name for something else in the script, such as a<br>
+function or variable name.<br>
 <br>
 In case the dot in the name is undesired, a local reference can be made for a<br>
 function:<br>
@@ -1718,15 +1742,6 @@ This also works for constants:<br>
 This does not work for variables, since the value would be copied once and<br>
 when changing the variable the copy will change, not the original variable.<br>
 You will need to use the full name, with the dot.<br>
-<br>
-The full syntax of the command is:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import&nbsp;<span class="Special">{filename}</span>&nbsp;[as&nbsp;<span class="Special">{name}</span>]<br>
-Where&nbsp;<span class="Special">{filename}</span>&nbsp;is an expression that must evaluate to a string.&nbsp;&nbsp;Without the<br>
-&quot;as&nbsp;<span class="Special">{name}</span>&quot; part it must end in &quot;.vim&quot;.&nbsp;&nbsp;<span class="Special">{name}</span>&nbsp;must consist of letters,<br>
-digits and '_', like&nbsp;<a class="Identifier" href="eval.html#internal-variables">internal-variables</a>.<br>
-<br>
-<a class="Comment" href="vim9.html#:import">:import</a>&nbsp;can also be used in legacy Vim script.&nbsp;&nbsp;The imported items still<br>
-become script-local, even when the &quot;s:&quot; prefix is not given.<br>
 <br>
 <a class="Comment" href="vim9.html#:import">:import</a>&nbsp;can not be used in a function.&nbsp;&nbsp;Imported items are intended to exist<br>
 at the script level and only imported once.<br>
@@ -1757,14 +1772,38 @@ line, there can be no line break:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo that<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.name&nbsp;&nbsp;# Error!</div>
 <br>
-To refer to a function in an imported script in a mapping,&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>&nbsp;can be<br>
-used:<br>
+When you've imported a function from one script into a vim9 script you can<br>
+refer to the imported function in a mapping by prefixing it with&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;noremap &lt;silent&gt; ,a :call &lt;SID&gt;name.Function()&lt;CR&gt;</div>
 <br>
 When the mapping is defined &quot;<span class="Special">&lt;SID&gt;</span>name.&quot; will be replaced with&nbsp;<span class="Special">&lt;SNR&gt;</span>&nbsp;and the<br>
 script ID of the imported script.<br>
 An even simpler solution is using&nbsp;<a class="Identifier" href="map.html#<ScriptCmd>">&lt;ScriptCmd&gt;</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;noremap ,a &lt;ScriptCmd&gt;name.Function()&lt;CR&gt;</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that this does not work for variables, only for functions.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#import-legacy" name="import-legacy">import-legacy</a>&nbsp;<a class="Constant" href="vim9.html#legacy-import" name="legacy-import">legacy-import</a><br>
+<a class="Comment" href="vim9.html#:import">:import</a>&nbsp;can also be used in legacy Vim script.&nbsp;&nbsp;The imported namespace still<br>
+becomes script-local, even when the &quot;s:&quot; prefix is not given. For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import &quot;myfile.vim&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call s:myfile.MyFunc()</div>
+<br>
+And using the &quot;as name&quot; form:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import &quot;otherfile.vim9script&quot; as that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call s:that.OtherFunc()</div>
+<br>
+However, the namespace cannot be resolved on it's own:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import &quot;that.vim&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo s:that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; ERROR: E1060: Expected dot after name: s:that</div>
+<br>
+This also affects the use of&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>&nbsp;in the legacy mapping context.&nbsp;&nbsp;Since<br>
+<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>&nbsp;is only a valid prefix for a function and NOT for a namespace, you<br>
+cannot use it<br>
+to scope a function in a script local namespace. Instead of prefixing the<br>
+function with&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>&nbsp;you should use<a class="Identifier" href="map.html#<ScriptCmd>">&lt;ScriptCmd&gt;</a>. For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;noremap ,a &lt;ScriptCmd&gt;:call s:that.OtherFunc()&lt;CR&gt;</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:import-cycle" name=":import-cycle">:import-cycle</a><br>
 The&nbsp;<a class="Comment" href="vim9.html#:import">import</a>&nbsp;commands are executed when encountered.&nbsp;&nbsp;If script A imports<br>
