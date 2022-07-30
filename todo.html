@@ -44,18 +44,24 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 PR to consider:<br>
-- Fix&nbsp;<span class="Special">CTRL-[</span>&nbsp;for Win32 on Belgian keyboard&nbsp;&nbsp;#10687 (closes #10454)<br>
 - stricter parsing for has('patch-x.y.z')&nbsp;&nbsp;#10752<br>
 - cmdheight=0&nbsp;&nbsp;#10675&nbsp;&nbsp;Does it work properly?<br>
 - add splitscroll&nbsp;&nbsp;#10682&nbsp;&nbsp;Useful?&nbsp;&nbsp;Any trouble? Null Chilly says it's OK.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;suggestion: names instead of numbers for the option value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;problem depending on whether window is focused or not<br>
 <br>
-Support virtual text:<br>
-- clear b_textprop_text when buffer is cleared<br>
+Support virtual text:&nbsp;&nbsp;#7553<br>
 - Remove and free text when textprop is removed with negative ID.<br>
 - &quot;gj&quot; does not work correctly<br>
+- no virtual text when&nbsp;<a class="Type" href="options.html#'signcolumn'">'signcolumn'</a>&nbsp;is set to &quot;yes&quot;&nbsp;&nbsp;#10794<br>
 - placement at the end of the line: after the text (text_align: &quot;end&quot;), right<br>
-&nbsp;&nbsp;aligned (text_align: &quot;right&quot;)<br>
+&nbsp;&nbsp;aligned (text_align: &quot;right&quot;); choice: truncate when not enough space or<br>
+&nbsp;&nbsp;wrap to next line (text_wrap: &quot;yes&quot;); Also: fill with space to text wraps to<br>
+&nbsp;&nbsp;start of next screen line (text_align: &quot;below&quot;)<br>
+&nbsp;&nbsp;Also consider an empty line, should fix #10786.&nbsp;&nbsp;Also check inserting text.<br>
+- win_lbr_chartabsize() TODO item: count screen cells<br>
+- wrong cursor position (Yegappan, July 27)<br>
+- many tests<br>
 <br>
 Further Vim9 improvements, possibly after launch:<br>
 - Use Vim9 for more runtime files.<br>
@@ -242,6 +248,9 @@ feature is supported or not.&nbsp;&nbsp;Replaces the xterm mechanism to request 
 entry separately. #6609<br>
 Multiplexers (screen, tmux) can request it to the underlying terminal, and<br>
 pass it on with modifications.<br>
+<br>
+Using &quot;A&quot; and &quot;o&quot; in manually created fold (in empty buffer) does not behave<br>
+consistenly (James McCoy, #10698)<br>
 <br>
 When scheme can't be found by configure there is no clear &quot;not found&quot; message:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;configure:5769: checking MzScheme install prefix<br>
