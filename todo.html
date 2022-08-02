@@ -43,23 +43,17 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-PR to consider:<br>
-- stricter parsing for has('patch-x.y.z')&nbsp;&nbsp;#10752<br>
-- cmdheight=0&nbsp;&nbsp;#10675&nbsp;&nbsp;Does it work properly?<br>
-- add splitscroll&nbsp;&nbsp;#10682&nbsp;&nbsp;Useful?&nbsp;&nbsp;Any trouble? Null Chilly says it's OK.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;suggestion: names instead of numbers for the option value<br>
-&nbsp;&nbsp;&nbsp;&nbsp;problem depending on whether window is focused or not<br>
-<br>
 Support virtual text:&nbsp;&nbsp;#7553<br>
-- Remove and free text when textprop is removed with negative ID.<br>
-- &quot;gj&quot; does not work correctly<br>
-- no virtual text when&nbsp;<a class="Type" href="options.html#'signcolumn'">'signcolumn'</a>&nbsp;is set to &quot;yes&quot;&nbsp;&nbsp;#10794<br>
-- placement at the end of the line: after the text (text_align: &quot;end&quot;), right<br>
-&nbsp;&nbsp;aligned (text_align: &quot;right&quot;); choice: truncate when not enough space or<br>
-&nbsp;&nbsp;wrap to next line (text_wrap: &quot;yes&quot;); Also: fill with space to text wraps to<br>
-&nbsp;&nbsp;start of next screen line (text_align: &quot;below&quot;)<br>
-&nbsp;&nbsp;Also consider an empty line, should fix #10786.&nbsp;&nbsp;Also check inserting text.<br>
+- Wrong cursor position in Insert mode, wrong pos after typing char #10786<br>
+- implement &quot;text_align&quot; - right<br>
+&nbsp;&nbsp;&nbsp;&nbsp;when not truncated, may increase line height<br>
+- implement &quot;text_align&quot; - below<br>
+&nbsp;&nbsp;&nbsp;&nbsp;need to compute extra screen line<br>
+- implement &quot;text_wrap&quot; - truncate<br>
+- when Tab is in text handle it like a space<br>
+- Also consider an empty line, should fix #10786.&nbsp;&nbsp;Also check inserting text.<br>
 - win_lbr_chartabsize() TODO item: count screen cells<br>
+- check that when inserting/deleting text col == MAXCOL isn't changed<br>
 - wrong cursor position (Yegappan, July 27)<br>
 - many tests<br>
 <br>
@@ -227,8 +221,13 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
 Patches considered for including:<br>
+- use int instead of char_ for index&nbsp;&nbsp;#10818&nbsp;&nbsp;needs a test<br>
 - Add &quot;-n&quot; option to xxd. #10599&nbsp;&nbsp;needs a test<br>
 - allow for nesting of timeout, sketch in #10595<br>
+<br>
+Add&nbsp;<span class="MissingTag">'splitscroll'</span>&nbsp;&nbsp;#10682&nbsp;&nbsp;Useful?&nbsp;&nbsp;Any trouble? Null Chilly says it's OK.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;suggestion: names instead of numbers for the option value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;problem depending on whether window is focused or not<br>
 <br>
 Autoconf: must use autoconf 2.69, later version generates lots of warnings<br>
 - try using autoconf 2.71 and fix all &quot;obsolete&quot; warnings<br>
@@ -251,6 +250,9 @@ pass it on with modifications.<br>
 <br>
 Using &quot;A&quot; and &quot;o&quot; in manually created fold (in empty buffer) does not behave<br>
 consistenly (James McCoy, #10698)<br>
+<br>
+To avoid flicker: add an option that when a screen clear is requested, instead<br>
+of clearing it draws everything and uses &quot;clear to end of line&quot; for every line.<br>
 <br>
 When scheme can't be found by configure there is no clear &quot;not found&quot; message:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;configure:5769: checking MzScheme install prefix<br>
