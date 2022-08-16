@@ -43,6 +43,11 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Text props: Add &quot;padding&quot; argument - only for when using &quot;text&quot; and&nbsp;<span class="Special">{col}</span>&nbsp;is<br>
+zero.&nbsp;&nbsp;Use tp_len field and n_attr_skip. #10906<br>
+<br>
+Graduate FEAT_TEXTOBJ ?<br>
+<br>
 Further Vim9 improvements, possibly after launch:<br>
 - Use Vim9 for more runtime files.<br>
 - Check performance with callgrind and kcachegrind.<br>
@@ -71,18 +76,6 @@ Further Vim9 improvements, possibly after launch:<br>
 - When evaluating constants for script variables, some functions could work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;has(featureName), len(someString)<br>
 - Implement as part of an expression: ++expr, --expr, expr++, expr--.<br>
-<br>
-Update list of features to vote on:<br>
-- Remove Athena item (won't happen)<br>
-- Remove &quot;add open mode&quot; (won't happen)<br>
-- Remove &quot;editing of a hidden buffer&quot; (done)<br>
-- Change &quot;add IDE features&quot; to &quot;improve terminal debugger&quot;<br>
-- Change &quot;diff/merge capability for CVS&quot; to &quot;CVS and git&quot;<br>
-- Remove &quot;pre-compile them&quot; from &quot;improve the performance of Vim scripts&quot;<br>
-- Add: multiple cursors, edit text in more than one place at a time<br>
-- Add: fast syntax highlighting with parser instead of regex patterns<br>
-- Add: virtual text, text properties can insert text in the line<br>
-- Add: start first line halfway, scroll per wrapped screen line<br>
 <br>
 Popup windows:<br>
 - Preview popup not properly updated when it overlaps with completion menu.<br>
@@ -197,6 +190,7 @@ Patches considered for including:<br>
 - use int instead of char_ for index&nbsp;&nbsp;#10818&nbsp;&nbsp;needs a test<br>
 - Add &quot;-n&quot; option to xxd. #10599&nbsp;&nbsp;needs a test<br>
 - allow for nesting of timeout, sketch in #10595<br>
+- Add setcmdline()&nbsp;&nbsp;#10869<br>
 <br>
 Add&nbsp;<span class="MissingTag">'splitscroll'</span>&nbsp;&nbsp;#10682&nbsp;&nbsp;Useful?&nbsp;&nbsp;Any trouble? Null Chilly says it's OK.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;suggestion: names instead of numbers for the option value<br>
@@ -3963,15 +3957,16 @@ Vim script language:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;can be the plugin name.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Perhaps also have a way to remove everything that the package added?<br>
 &nbsp;&nbsp;&nbsp;&nbsp;including autocommands.<br>
-7&nbsp;&nbsp; Pre-parse or compile Vim scripts into a bytecode.<br>
+7&nbsp;&nbsp; Pre-parse or compile Vim scripts into a bytecode, like :def functions.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Possibilities:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;1. Put the bytecode with the original script, with an &quot;:if<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has(<span class="MissingTag">'bytecode'</span>)&quot; around it, so that it's only used with a Vim that<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; supports it.&nbsp;&nbsp;Update the code with a command, can be used in an<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; autocommand.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has('bytecode-1234')&quot; around it, so that it's only used with a Vim that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; supports the version.&nbsp;&nbsp;Update the code with a command, can be used in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; an autocommand.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;2. Use a &quot;.vic&quot; file (like Python use .pyc).&nbsp;&nbsp;Create it when writing a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .vim file.&nbsp;&nbsp;Problem: distribution.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;3. Use a cache directory for each user.&nbsp;&nbsp;How to recognize which cached<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; file belongs to a sourced script?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .vim file.&nbsp;&nbsp;Problem: distribution, non-writable directory, etc.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3. Use a cache directory for each user.&nbsp;&nbsp;Disadvantage: cache lookup may<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cost more time than bytecode wins.<br>
 7&nbsp;&nbsp; Add argument to winwidth() to subtract the space taken by&nbsp;<a class="Type" href="options.html#'foldcolumn'">'foldcolumn'</a>,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;signs and/or&nbsp;<a class="Type" href="options.html#'number'">'number'</a>.<br>
 6&nbsp;&nbsp; Add ++ and -- operators?&nbsp;&nbsp;They only work on variables (lvals), how to<br>
