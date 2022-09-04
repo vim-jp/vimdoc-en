@@ -2984,6 +2984,62 @@ is used as a method:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let y = GetList()-&gt;Filter()</div>
 <br>
 <br>
+<span class="PreProc">CLEANING UP IN A FUNCTION</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#:defer" name=":defer">:defer</a><br>
+:defer&nbsp;<span class="Special">{func}</span>(<span class="Special">{args}</span>)&nbsp;&nbsp; Call&nbsp;<span class="Special">{func}</span>&nbsp;when the current function is done.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{args}</span>&nbsp;are evaluated here.<br>
+<br>
+Quite often a command in a function has a global effect, which must be undone<br>
+when the function finishes.&nbsp;&nbsp;Handling this in all kinds of situations can be a<br>
+hassle.&nbsp;&nbsp;Especially when an unexpected error is encountered.&nbsp;&nbsp;This can be done<br>
+with&nbsp;<a class="Comment" href="eval.html#:try">try</a>&nbsp;/&nbsp;<a class="Comment" href="eval.html#:finally">finally</a>&nbsp;blocks, but this gets complicated when there is more<br>
+than one.<br>
+<br>
+A much simpler solution is using&nbsp;<a class="Comment" href="eval.html#:defer">defer</a>.&nbsp;&nbsp;It schedules a function call when<br>
+the function is returning, no matter if there is an error.&nbsp;&nbsp;Example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Filter(text)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call writefile(a:text, 'Tempfile')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call system('filter &lt; Tempfile &gt; Outfile')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Handle('Outfile')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call delete('Tempfile')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call delete('Outfile')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
+<br>
+Here 'Tempfile' and 'Outfile' will not be deleted if something causes the<br>
+function to abort.&nbsp;&nbsp;<a class="Comment" href="eval.html#:defer">:defer</a>&nbsp;can be used to avoid that:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Filter(text)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call writefile(a:text, 'Tempfile')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defer delete('Tempfile')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defer delete('Outfile')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call system('filter &lt; Tempfile &gt; Outfile')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call Handle('Outfile')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that deleting &quot;Outfile&quot; is scheduled before calling system(), since it<br>
+can be created even when&nbsp;<a class="Comment" href="builtin.html#system()">system()</a>&nbsp;fails.<br>
+<br>
+The defered functions are called in reverse order, the last one added is<br>
+executed first.&nbsp;&nbsp;A useless example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Useless()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for s in range(3)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defer execute('echomsg &quot;number ' .. s .. '&quot;')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc</div>
+<br>
+Now&nbsp;<a class="Comment" href="message.html#:messages">:messages</a>&nbsp;shows:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number 2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number 0<br>
+<br>
+Any return value of the deferred function is discarded.&nbsp;&nbsp;The function cannot<br>
+be followed by anything, such as &quot;-&gt;func&quot; or &quot;.member&quot;.&nbsp;&nbsp;Currently `:defer<br>
+GetArg()-&gt;TheFunc()` does not work, it may work in a later version.<br>
+<br>
+Errors are reported but do not cause aborting execution of deferred functions.<br>
+<br>
+No range is accepted.<br>
+<br>
+<br>
 <span class="PreProc">AUTOMATICALLY LOADING FUNCTIONS</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#autoload-functions" name="autoload-functions">autoload-functions</a><br>
 When using many or large functions, it's possible to automatically define them<br>
