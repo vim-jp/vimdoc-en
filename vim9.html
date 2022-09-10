@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Jun 25<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Sep 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -1316,7 +1316,7 @@ Make sure to define the breakpoint before compiling the outer function.<br>
 The &quot;inloop&quot; variable will exist only once, all closures put in the list refer<br>
 to the same instance, which in the end will have the value 4.&nbsp;&nbsp;This is<br>
 efficient, also when looping many times.&nbsp;&nbsp;If you do want a separate context<br>
-for each closure call a function to define it:<br>
+for each closure, call a function to define it:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def GetClosure(i: number): func<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var infunc = i<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return () =&gt; infunc<br>
@@ -1331,6 +1331,30 @@ for each closure call a function to define it:<br>
 <br>
 In some situations, especially when calling a Vim9 closure from legacy<br>
 context, the evaluation will fail.&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1248" name="E1248">E1248</a><br>
+<br>
+<span class="Todo">Note</span>&nbsp;that at the script level the loop variable will be invalid after the<br>
+loop, also when used in a closure that is called later, e.g. with a timer.<br>
+This will generate error&nbsp;<a class="Identifier" href="eval.html#E1302">E1302</a>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for n in range(4)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timer_start(500 * n, (_) =&gt; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echowin n<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; })<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfor</div>
+<br>
+You need to create a closure to store the current value of &quot;n&quot;, so that it is<br>
+evaluated at the time the closure is created:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def GetClosure(nr: number): func<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return (_) =&gt; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echowindow nr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for n in range(4)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timer_start(500 * n, GetClosure(n))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfor</div>
+<br>
+Using&nbsp;<a class="Comment" href="eval.html#:echowindow">echowindow</a>&nbsp;is useful in a timer, the messages go into a popup and will<br>
+not interfere with what the user is doing when it triggers.<br>
 <br>
 <br>
 <span class="PreProc">Converting a function from legacy to Vim9</span><br>
@@ -1623,7 +1647,7 @@ type, it can not be used in Vim9 script.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1211" name="E1211">E1211</a>&nbsp;<a class="Constant" href="vim9.html#E1217" name="E1217">E1217</a>&nbsp;<a class="Constant" href="vim9.html#E1218" name="E1218">E1218</a>&nbsp;<a class="Constant" href="vim9.html#E1219" name="E1219">E1219</a>&nbsp;<a class="Constant" href="vim9.html#E1220" name="E1220">E1220</a>&nbsp;<a class="Constant" href="vim9.html#E1221" name="E1221">E1221</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1222" name="E1222">E1222</a>&nbsp;<a class="Constant" href="vim9.html#E1223" name="E1223">E1223</a>&nbsp;<a class="Constant" href="vim9.html#E1224" name="E1224">E1224</a>&nbsp;<a class="Constant" href="vim9.html#E1225" name="E1225">E1225</a>&nbsp;<a class="Constant" href="vim9.html#E1226" name="E1226">E1226</a>&nbsp;<a class="Constant" href="vim9.html#E1227" name="E1227">E1227</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1228" name="E1228">E1228</a>&nbsp;<a class="Constant" href="vim9.html#E1238" name="E1238">E1238</a>&nbsp;<a class="Constant" href="vim9.html#E1250" name="E1250">E1250</a>&nbsp;<a class="Constant" href="vim9.html#E1251" name="E1251">E1251</a>&nbsp;<a class="Constant" href="vim9.html#E1252" name="E1252">E1252</a>&nbsp;<a class="Constant" href="vim9.html#E1253" name="E1253">E1253</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1256" name="E1256">E1256</a>&nbsp;<a class="Constant" href="vim9.html#E1297" name="E1297">E1297</a>&nbsp;<a class="Constant" href="vim9.html#E1298" name="E1298">E1298</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1256" name="E1256">E1256</a>&nbsp;<a class="Constant" href="vim9.html#E1297" name="E1297">E1297</a>&nbsp;<a class="Constant" href="vim9.html#E1298" name="E1298">E1298</a>&nbsp;<a class="Constant" href="vim9.html#E1301" name="E1301">E1301</a><br>
 Types are checked for most builtin functions to make it easier to spot<br>
 mistakes.<br>
 <br>
