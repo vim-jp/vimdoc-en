@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Sep 10<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Sep 15<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -112,7 +112,7 @@ script and&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Comment" href="change.html#:t">:t</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Comment" href="editing.html#:xit">:xit</a><br>
 - Some commands, especially those used for flow control, cannot be shortened.<br>
-&nbsp;&nbsp;E.g.,&nbsp;<a class="Comment" href="eval.html#:throw">:throw</a>&nbsp;cannot be written as&nbsp;<a class="Comment" href="eval.html#:th">:th</a>.<br>
+&nbsp;&nbsp;E.g.,&nbsp;<a class="Comment" href="eval.html#:throw">:throw</a>&nbsp;cannot be written as&nbsp;<a class="Comment" href="eval.html#:th">:th</a>.&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-no-shorten" name="vim9-no-shorten">vim9-no-shorten</a><br>
 - You cannot use curly-braces names.<br>
 - A range before a command must be prefixed with a colon:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%s/this/that</div>
@@ -1341,16 +1341,15 @@ This will generate error&nbsp;<a class="Identifier" href="eval.html#E1302">E1302
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; })<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfor</div>
 <br>
-You need to create a closure to store the current value of &quot;n&quot;, so that it is<br>
-evaluated at the time the closure is created:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def GetClosure(nr: number): func<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return (_) =&gt; {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echowindow nr<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
-<br>
+You need to use a block and define a variable there, and use that one in the<br>
+closure:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for n in range(4)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timer_start(500 * n, GetClosure(n))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var nr = n<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; timer_start(500 * n, (_) =&gt; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echowin nr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfor</div>
 <br>
 Using&nbsp;<a class="Comment" href="eval.html#:echowindow">echowindow</a>&nbsp;is useful in a timer, the messages go into a popup and will<br>
@@ -1689,7 +1688,7 @@ deleted.<br>
 <br>
 In Vim9 script the global &quot;g:&quot; namespace can still be used as before.&nbsp;&nbsp;And the<br>
 &quot;w:&quot;, &quot;b:&quot; and &quot;t:&quot; namespaces.&nbsp;&nbsp;These have in common that variables are not<br>
-declared and they can be deleted.<br>
+declared, have no specific type and they can be deleted.&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1304" name="E1304">E1304</a><br>
 <br>
 A side effect of&nbsp;<a class="Comment" href="repeat.html#:vim9script">:vim9script</a>&nbsp;is that the&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>&nbsp;option is set to the<br>
 Vim default value, like with:<br>
@@ -1830,7 +1829,7 @@ And using the &quot;as name&quot; form:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import &quot;otherfile.vim9script&quot; as that<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call s:that.OtherFunc()</div>
 <br>
-However, the namespace cannot be resolved on it's own:<br>
+However, the namespace cannot be resolved on its own:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import &quot;that.vim&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo s:that<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; ERROR: E1060: Expected dot after name: s:that</div>
