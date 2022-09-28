@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'ft_context'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="ft_context.html" name="ft_context.txt">ft_context.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Aug 12<br>
+<a class="Constant" href="ft_context.html" name="ft_context.txt">ft_context.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Sep 27<br>
 <br>
 This is the documentation for the ConTeXt filetype plugin.<br>
 <br>
@@ -28,13 +28,12 @@ ConTeXt, similarly to LaTeX, is a macro-based typesetting system built on TeX:<b
 <br>
 The ConTeXt plugin provides syntax highlighting, completion and support for<br>
 typesetting ConTeXt documents. The recommended way to typeset a document is to<br>
-use&nbsp;<a class="Identifier" href="ft_context.html#:ConTeXt">:ConTeXt</a>. This will invoke the&nbsp;<span class="Comment">mtxrun</span>&nbsp;script that is found in $PATH.<br>
+use&nbsp;<a class="Identifier" href="ft_context.html#:ConTeXt">:ConTeXt</a>. This will invoke the&nbsp;<span class="Comment">mtxrun</span>&nbsp;script that is found in&nbsp;<span class="Comment">$PATH</span>.<br>
 <br>
-For more fine grained control over the command and its environment, you may<br>
-invoke&nbsp;<span class="Comment">context.Typeset()</span>&nbsp;directly (or&nbsp;<span class="Comment">context#Typeset()</span>&nbsp;from legacy Vim<br>
-script). For instance, if you have installed a version of ConTeXt in<br>
-<span class="Comment">~/context</span>, you may define a function to use it (you may put the following<br>
-code in&nbsp;<span class="Comment">~/.vim/after/ftplugin/context.vim</span>) similar to the following:<br>
+For more fine grained control over the command and its environment,<br>
+<span class="Comment">context.Typeset()</span>&nbsp;can be used directly (or&nbsp;<span class="Comment">context#Typeset()</span>&nbsp;from legacy<br>
+Vim script). For instance, if a version of ConTeXt is installed in<br>
+<span class="Comment">~/context</span>, you may define a function to use it similar to the following:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import autoload 'context.vim'</div>
 <br>
@@ -44,13 +43,14 @@ code in&nbsp;<span class="Comment">~/.vim/after/ftplugin/context.vim</span>) sim
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context.Typeset(&quot;%&quot;, env)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
-and perhaps use it with a mapping:<br>
+This code may go in&nbsp;<span class="Comment">~/.vim/after/ftplugin/context.vim</span>. A mapping can then be<br>
+defined to invoke the custom command:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;silent&gt;&lt;buffer&gt;&lt;leader&gt;t &lt;scriptcmd&gt;MyConTeXt()&lt;cr&gt;</div>
 <br>
 <span class="Comment">context.Typeset()</span>&nbsp;accepts a third optional argument to specify a custom<br>
-typesetting command. Such argument must be a function that takes a path and<br>
-returns the command as a List. For example:<br>
+typesetting command. That must be a function that takes a path and returns the<br>
+command as a List. For example:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ConTeXtCustomCommand(path: string): list&lt;string&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ['mtxrun', '--script', 'context', '--nonstopmode, path]<br>
@@ -108,14 +108,20 @@ Stop all the ConTeXt jobs currently running in the background.<br>
 <span class="PreProc">Settings</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'b:context_ignore_makefile'" name="'b:context_ignore_makefile'">'b:context_ignore_makefile'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'g:context_ignore_makefile'" name="'g:context_ignore_makefile'">'g:context_ignore_makefile'</a><br>
-<a class="Comment" href="quickfix.html#:make">make</a>&nbsp;can be used to (synchronously) typeset a document. If a Makefile exists<br>
+<a class="Comment" href="quickfix.html#:make">:make</a>&nbsp;can be used to (synchronously) typeset a document. If a Makefile exists<br>
 and this option is not set, standard&nbsp;<a class="Comment" href="quickfix.html#:make">make</a>&nbsp;is used. If this option is set,<br>
 <span class="Comment">mtxrun</span>&nbsp;is invoked instead, even if a Makefile exists.<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:context_ignore_makefile = 0</div>
 <br>
-<span class="Todo">NOTE</span>: before using&nbsp;<a class="Comment" href="quickfix.html#:make">make</a>, set the working directory of the buffer to the<br>
+<span class="Todo">NOTE</span>: before using&nbsp;<a class="Comment" href="quickfix.html#:make">:make</a>, set the working directory of the buffer to the<br>
 directory of the file to be typeset.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'g:context_extra_options'" name="'g:context_extra_options'">'g:context_extra_options'</a><br>
+A list of additional options to pass to&nbsp;<span class="Comment">mtxrun</span>.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:context_extra_options = []</div>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'b:context_include'" name="'b:context_include'">'b:context_include'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'g:context_include'" name="'g:context_include'">'g:context_include'</a><br>
 Dictionary of filetype/GROUP pairs for which syntax highlighting should be<br>
