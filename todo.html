@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Oct 03<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Oct 16<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -44,22 +44,12 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
 <a class="Type" href="options.html#'smoothscroll'">'smoothscroll'</a>:<br>
+-&nbsp;<span class="Special">CTRL-E</span>&nbsp;and gj in long line with&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;5 not working well yet.<br>
 - computing&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;position row use w_skipcol<br>
 <br>
-Add a string to the&nbsp;<a class="Type" href="options.html#'display'">'display'</a>&nbsp;option (&quot;smoothscroll&quot; ?) to make&nbsp;<span class="Special">CTRL-E</span>&nbsp;and<br>
-<span class="Special">CTRL-Y</span>&nbsp;scroll one screen line, also if this means the first line doesn't start<br>
-with the first character (like what happens with a last line that doesn't<br>
-fit).&nbsp;&nbsp;Display &quot;&lt;&lt;&lt;&quot; at the start of the first visible line (like &quot;@@@&quot; is<br>
-displayed in the last line). (Arseny Nasokin,&nbsp;&nbsp;#5154)<br>
-Neovim PR:&nbsp;<span class="Constant"><a href="https://github.com/neovim/neovim/pull/11014">https://github.com/neovim/neovim/pull/11014</a></span><br>
+Check textprop right/above/below with&nbsp;<a class="Type" href="options.html#'number'">'number'</a>&nbsp;set and &quot;n&quot; in&nbsp;<a class="Type" href="options.html#'cpo'">'cpo'</a>.<br>
 <br>
-Use :defer command:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- Use &quot;D&quot; flag of writefile() and mkdir() in tests.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(testdir/test_p*.vim done)<br>
-<br>
-Fix for powershell: #11257<br>
-<br>
-Change boolean&nbsp;<span class="MissingTag">'splitscroll'</span>&nbsp;into string&nbsp;<a class="Type" href="options.html#'splitkeep'">'splitkeep'</a>. #11258<br>
+Don't do anything for &quot;:!&quot;. #11372<br>
 <br>
 <br>
 Further Vim9 improvements, possibly after launch:<br>
@@ -75,7 +65,8 @@ Further Vim9 improvements, possibly after launch:<br>
 Popup windows:<br>
 - Add a function to redraw a specific popup window.&nbsp;&nbsp;Esp. to be used when<br>
 &nbsp;&nbsp;editing the command line, when screen updating doesn't happen. (Shougo)<br>
-&nbsp;&nbsp;#10210&nbsp;&nbsp;Probably need to update all popup windows (they may overlap)<br>
+&nbsp;&nbsp;#10210&nbsp;&nbsp;Example that shows the need on the issue.<br>
+&nbsp;&nbsp;Probably need to update all popup windows (they may overlap)<br>
 &nbsp;&nbsp;If the display is scrolled need to redraw everything later.<br>
 - Add a flag to make a popup window focusable?<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">CTRL-W</span>&nbsp;P cycle over any preview window or focusable popup, end up back in<br>
@@ -179,7 +170,10 @@ Terminal emulator window:<br>
 &nbsp;&nbsp;conversions.<br>
 <br>
 Autoconf: must use autoconf 2.69, later version generates lots of warnings<br>
-- try using autoconf 2.71 and fix all &quot;obsolete&quot; warnings<br>
+- try using autoconf 2.71 and fix all &quot;obsolete&quot; warnings&nbsp;&nbsp;#11322<br>
+<br>
+Problem with Visual highlight when&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;are set.<br>
+#11272<br>
 <br>
 Can deref_func_name() and deref_function_name() be merged?<br>
 <br>
@@ -201,9 +195,16 @@ feature is supported or not.&nbsp;&nbsp;Replaces the xterm mechanism to request 
 entry separately. #6609<br>
 Multiplexers (screen, tmux) can request it to the underlying terminal, and<br>
 pass it on with modifications.<br>
+How to get all the text quickly (also over ssh)?&nbsp;&nbsp;Can we use a side channel?<br>
 <br>
 Using &quot;A&quot; and &quot;o&quot; in manually created fold (in empty buffer) does not behave<br>
 consistenly (James McCoy, #10698)<br>
+<br>
+In a timer callback, when using &quot;:echo&quot; and then input() the message is<br>
+overwritten.&nbsp;&nbsp;Could use &quot;:echowin&quot; and call redraw_cmd() in get_user_input().<br>
+#11299<br>
+<br>
+Syntax include problem: #11277.&nbsp;&nbsp;Related to Patch 8.2.2761<br>
 <br>
 To avoid flicker: add an option that when a screen clear is requested, instead<br>
 of clearing it draws everything and uses &quot;clear to end of line&quot; for every line.<br>
@@ -238,10 +239,9 @@ MS-Windows: did path modifier :p:8 stop working?&nbsp;&nbsp;#8600<br>
 Version of getchar() that does not move the cursor - #10603 Use a separate<br>
 argument for the new flag.<br>
 <br>
-Add &quot;lastline&quot; entry to&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>&nbsp;to specify a character instead of '@'.<br>
-#10963<br>
-<br>
 test_arglist func Test_all_not_allowed_from_cmdwin() hangs on MS-Windows.<br>
+<br>
+Can we add highlighting to &quot;:echowindow&quot;?<br>
 <br>
 Information for a specific terminal (e.g. gnome, tmux, konsole, alacritty) is<br>
 spread out.&nbsp;&nbsp;Make a section with copy/paste examples of script and pointers to<br>
@@ -455,8 +455,6 @@ find them. (Max Kukartsev, #6218)<br>
 <br>
 Enable&nbsp;<a class="Type" href="options.html#'termbidi'">'termbidi'</a>&nbsp;if $VTE_VERSION &gt;= 5703 ?<br>
 <br>
-Sound: support on Mac?&nbsp;&nbsp;Or does libcanberra work there?<br>
-<br>
 Python 3.8 doesn't work. (Antonios Hadjigeorgalis, #5509)<br>
 <br>
 &quot;--cleanFOO&quot; does not result in an error. (#5537)<br>
@@ -605,6 +603,11 @@ negative. (see #4326)<br>
 <span class="Comment">:echo gettabwinvar(2, 1, '&amp;cmdheight')</span>&nbsp;returns the value for the _current_<br>
 tab page. (Ingo Karkat, #4324)<br>
 :call settabwinvar(1, 1, '&amp;cmdheight', 2) also doesn't work well.<br>
+<br>
+When opening a file, allow for specifying the initial column position:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;vim +12:5 file.txt&nbsp;&nbsp; line 12 column 5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:edit +12:5 file.txt<br>
+Should probably use the column as the character index.<br>
 <br>
 This modeline throws unexpected errors: (#4165)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;vim: syn=nosyntax<br>
@@ -3079,9 +3082,6 @@ Macintosh:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;line is too short.&nbsp;&nbsp;Add a word in&nbsp;<a class="Type" href="options.html#'scrollopt'">'scrollopt'</a>&nbsp;to allow moving the cursor<br>
 &nbsp;&nbsp;&nbsp;&nbsp;to longer line that is visible.&nbsp;&nbsp;A similar thing is done for the GUI when<br>
 &nbsp;&nbsp;&nbsp;&nbsp;using the horizontal scrollbar.<br>
-7&nbsp;&nbsp; VisVim can only open one file.&nbsp;&nbsp;Hard to solve: each opened file is passed<br>
-&nbsp;&nbsp;&nbsp;&nbsp;with a separate invocation, would need to use timestamps to know the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;invocations belong together.<br>
 8&nbsp;&nbsp; When giving a &quot;:bwipeout&quot; command a file-changed dialog may popup for this<br>
 &nbsp;&nbsp;&nbsp;&nbsp;buffer, which is pointless.&nbsp;&nbsp;(Mike Williams)<br>
 8&nbsp;&nbsp; On MS-Windows &quot;:make&quot; doesn't show output while it is working.&nbsp;&nbsp;Use the<br>
