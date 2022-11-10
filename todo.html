@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Oct 28<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Nov 09<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -42,6 +42,8 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 (replace 1234 with the issue/pull number)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
+<br>
+Add test for what 9.0.0827 fixes - '@' in termcap key code<br>
 <br>
 <a class="Type" href="options.html#'smoothscroll'">'smoothscroll'</a>:<br>
 -&nbsp;<span class="Special">CTRL-E</span>&nbsp;and gj in long line with&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;5 not working well yet.<br>
@@ -181,12 +183,18 @@ reduced?<br>
 <br>
 Add BufDeletePost.&nbsp;&nbsp;#11041<br>
 <br>
+Add winid arg to col() and charcol()&nbsp;&nbsp;#11466 (request #11461)<br>
+<br>
 Test property disappears when using CR twice in a row.&nbsp;&nbsp;OK when some text was<br>
 entered. (#11151)<br>
 <br>
 NFA regexp does not handle composing characters well: #10286<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[ɔ̃] matches both ɔ and ɔ̃<br>
 &nbsp;&nbsp;&nbsp;&nbsp;\(ɔ\|ɔ̃\) matches ɔ and not ɔ̃<br>
+<br>
+Is there a way to make&nbsp;<a class="Type" href="options.html#'autowriteall'">'autowriteall'</a>&nbsp;make a clean exit when the xterm is<br>
+closed? (Dennis Nazic says files are preserved, okt 28).&nbsp;&nbsp;Perhaps handle TERM<br>
+like HUP?<br>
 <br>
 Improvement in terminal configuration mess: Request the terminfo entry from<br>
 the terminal itself.&nbsp;&nbsp;The $TERM value then is only relevant for whether this<br>
@@ -195,6 +203,16 @@ entry separately. #6609<br>
 Multiplexers (screen, tmux) can request it to the underlying terminal, and<br>
 pass it on with modifications.<br>
 How to get all the text quickly (also over ssh)?&nbsp;&nbsp;Can we use a side channel?<br>
+<br>
+Horizontal mouse scroll only works when compiled with GUI?&nbsp;&nbsp;#11374<br>
+<br>
+In the libvterm fork properly implement:<br>
+- modifyOtherKeys 2 - follow xterm implementation as close as possible, that<br>
+&nbsp;&nbsp;is the reference.<br>
+- Kitty key protocol - just like the latest Kitty<br>
+So that in TermDebug the key handling can be stepped through (instead of<br>
+having to log messages all over the place to see what happens).<br>
+Ask Leonerd about location of code, he might want to take over some of it.<br>
 <br>
 Using &quot;A&quot; and &quot;o&quot; in manually created fold (in empty buffer) does not behave<br>
 consistenly (James McCoy, #10698)<br>
@@ -305,6 +323,9 @@ When &quot;:redir&quot; is used while already active, the previous one is ended.
 when redirecting to a local variable (function or script) storing the value<br>
 won't work.&nbsp;&nbsp;At least give an error.&nbsp;&nbsp;Is there a way to make it work?<br>
 #10616<br>
+<br>
+Completion for &quot;:runtime&quot; should show valid values, not what's in the current<br>
+directory. (#11447)<br>
 <br>
 Add an option to start_timer() to return from the input loop with K_IGNORE.<br>
 This is useful e.g. when a popup was created that disables mappings, we need<br>
