@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Nov 09<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Nov 18<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,19 +43,71 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
-Add test for what 9.0.0827 fixes - '@' in termcap key code<br>
+virtual text issues:<br>
+- #11463&nbsp;&nbsp;<span class="Comment">after</span>&nbsp;is sometimes wrapped with&nbsp;<a class="Comment" href="eval.html#list">list</a>,&nbsp;<span class="Comment">nowrap</span>&nbsp;and<br>
+&nbsp;&nbsp;<span class="Comment">listchars+=extends:&gt;</span>, cursor position is also wrong<br>
+- #11520&nbsp;&nbsp;&nbsp;<span class="Comment">below</span>&nbsp;cannot be placed below empty lines<br>
+&nbsp;&nbsp;&nbsp;&nbsp;James Alvarado looks into it<br>
 <br>
 <a class="Type" href="options.html#'smoothscroll'">'smoothscroll'</a>:<br>
+- PR #11502 -&nbsp;&nbsp;cursor position wrong<br>
+- PR #11514 -&nbsp;&nbsp;mouse click is off<br>
 -&nbsp;<span class="Special">CTRL-E</span>&nbsp;and gj in long line with&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;5 not working well yet.<br>
 - computing&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;position row use w_skipcol<br>
-- PR: Error in screen dump for Test_smoothscroll_one_long_line.&nbsp;&nbsp;(PR #11436)<br>
+- Check this list:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/pulls?q=is%3Apr+is%3Aopen+smoothscroll+author%3Aychin">https://github.com/vim/vim/pulls?q=is%3Apr+is%3Aopen+smoothscroll+author%3Aychin</a></span><br>
+- Long line spanning multiple pages:&nbsp;&nbsp;After a few&nbsp;<span class="Special">CTRL-E</span>&nbsp;then gj causes a<br>
+&nbsp;&nbsp;scroll. (Ernie Rael, 18 Nov)&nbsp;&nbsp;Also pressing space or &quot;l&quot;<br>
+<br>
+Switching to window for a buffer in set_buffer_lines() doesn't work if there<br>
+is no window.&nbsp;&nbsp;Use aucmd_prepbuf() instead.&nbsp;&nbsp;#11558<br>
+<br>
+<br>
+Upcoming larger works:<br>
+- Make spell checking work with recent .dic/.aff files, e.g. French.&nbsp;&nbsp;#4916<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Make Vim understand the format somehow?&nbsp;&nbsp; Search for &quot;spell&quot; below.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Make sure suggestions are speedy, also with composed words (German).<br>
+- Discuss alternatives for using other grammars (treesitter, TextMate).<br>
+&nbsp;&nbsp; - Possibly conversion to Vim syntax rules.<br>
+&nbsp;&nbsp; - Other mechanism than group and cluster to nest syntax items, to be used<br>
+&nbsp;&nbsp;&nbsp;&nbsp; for grammars.<br>
+&nbsp;&nbsp; - Possibly keeping the parsed syntax tree and incremental updates.<br>
+&nbsp;&nbsp; - Make clear how it relates to LSP.<br>
+&nbsp;&nbsp; - example plugin:&nbsp;<span class="Constant"><a href="https://github.com/uga-rosa/dps-vsctm.vim">https://github.com/uga-rosa/dps-vsctm.vim</a></span><br>
+- Better support for detecting terminal emulator behavior (esp. special key<br>
+&nbsp;&nbsp;handling) and taking away the need for users to tweak their config.<br>
+&nbsp;&nbsp;&gt; In the libvterm fork properly implement:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- modifyOtherKeys 2 - follow xterm implementation as close as possible<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- Kitty key protocol - just like the latest Kitty<br>
+&nbsp;&nbsp;&nbsp;&nbsp;So that in TermDebug the key handling can be stepped through (instead of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;having to log messages all over the place to see what happens).&nbsp;&nbsp;Ask<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Leonerd about location of code, he might want to take over some of it.<br>
+&nbsp;&nbsp;&gt; In the table of names pointing to the list of entries, with an additional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;one.&nbsp;&nbsp;So that &quot;xterm-kitty&quot; can first load &quot;xterm&quot; and then add &quot;kitty&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;entries.<br>
+&nbsp;&nbsp;&gt; Add an &quot;expectKittyEsc&quot; flag (Esc is always sent as a sequence, not one<br>
+&nbsp;&nbsp;&nbsp;&nbsp;character) and always wait after an Esc for more to come, don't leave<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Insert mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Request code for Esc after outputting t_KI, use &quot;k!&quot; value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Use response to set &quot;expectKittyEsc&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&gt; Add ESC[&gt;1uESC[?u to t_KI, parse flag response.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&gt; May also send t_RV and delay starting a shell command until the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; response has been seen, to make sure the other responses don't get read<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by a shell command.<br>
+&nbsp;&nbsp;&gt; Add an option with a list of names that, when matching $TERM, indicate the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kitty keyboard protocol should be used?&nbsp;&nbsp;Allows adding &quot;foot&quot; and others<br>
+&nbsp;&nbsp;&nbsp;&nbsp;later, without modifying Vim.&nbsp;&nbsp;Perhaps a pattern-value pair:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set keyprotocol=kitty:kitty,foot:kitty,xterm:mok2,doggy:mok2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Here &quot;mok2&quot; means modifyOtherKeys level 2.<br>
+&nbsp;&nbsp;&gt; Can we use the req_more_codes_from_term() mechanism with more terminals?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Should we repeat it after executing a shell command?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Can also add this to the&nbsp;<span class="MissingTag">'keyprotocol'</span>&nbsp;option: &quot;mok2+tcap&quot;<br>
 <br>
 <br>
 Further Vim9 improvements, possibly after launch:<br>
 - Use Vim9 for more runtime files.<br>
 - implement :type<br>
 - implement :enum<br>
-- implement :class and :interface: See&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a><br>
+- implement :class and :interface: See&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a>&nbsp;&nbsp;#11544<br>
 - Inline call to map() and filter(), better type checking.<br>
 - When evaluating constants for script variables, some functions could work:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;has(featureName), len(someString)<br>
@@ -185,8 +237,32 @@ Add BufDeletePost.&nbsp;&nbsp;#11041<br>
 <br>
 Add winid arg to col() and charcol()&nbsp;&nbsp;#11466 (request #11461)<br>
 <br>
+Make the default for&nbsp;<a class="Type" href="options.html#'ttyfast'">'ttyfast'</a>&nbsp;on, checking $TERM names doesn't make much<br>
+sense right now, most terminals are fast.&nbsp;&nbsp;#11549<br>
+<br>
+Can we make&nbsp;<a class="Type" href="options.html#'noendofline'">'noendofline'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'endoffile'">'endoffile'</a>&nbsp;visible?&nbsp;&nbsp;Should show by default,<br>
+since it's an unusual situation.<br>
+- Show&nbsp;<a class="Type" href="options.html#'noendofline'">'noendofline'</a>&nbsp;when it would be used for writing (<a class="Type" href="options.html#'fileformat'">'fileformat'</a>&nbsp;&quot;dos&quot;)<br>
+&nbsp;&nbsp;with an upside down exclamation mark?&nbsp;&nbsp;NonText highlighting.<br>
+- Show&nbsp;<a class="Type" href="options.html#'endoffile'">'endoffile'</a>&nbsp;when it would be used for writing (<a class="Type" href="options.html#'fileformat'">'fileformat'</a>&nbsp;&quot;dos&quot;) with<br>
+&nbsp;&nbsp;&quot;<span class="Special">CTRL-Z</span>&quot;, NonText highlighting.<br>
+- Add&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>&nbsp;items to change this, default behavior like:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;noeol:¡<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eof:<span class="Special">CTRL-Z</span><br>
+<br>
 Test property disappears when using CR twice in a row.&nbsp;&nbsp;OK when some text was<br>
 entered. (#11151)<br>
+<br>
+Add&nbsp;<a class="Type" href="options.html#'keywordprg'">'keywordprg'</a>&nbsp;to various ftplugin files:<br>
+<span class="Constant"><a href="https://github.com/vim/vim/pull/5566">https://github.com/vim/vim/pull/5566</a></span><br>
+<br>
+Add some kind of &quot;:whathappend&quot; command and functions to make visible what the<br>
+last few typed keys and executed commands are.&nbsp;&nbsp;To be used when the user<br>
+wonders what went wrong.<br>
+- typed keys - Normal mode command - like what is recorded in a register and<br>
+&nbsp;&nbsp;displayed by&nbsp;<a class="Type" href="options.html#'showcmd'">'showcmd'</a>.<br>
+- executed command lines<br>
+- with more verbosity: what scripts/functions/autocommands were executed<br>
 <br>
 NFA regexp does not handle composing characters well: #10286<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[ɔ̃] matches both ɔ and ɔ̃<br>
@@ -206,14 +282,6 @@ How to get all the text quickly (also over ssh)?&nbsp;&nbsp;Can we use a side ch
 <br>
 Horizontal mouse scroll only works when compiled with GUI?&nbsp;&nbsp;#11374<br>
 <br>
-In the libvterm fork properly implement:<br>
-- modifyOtherKeys 2 - follow xterm implementation as close as possible, that<br>
-&nbsp;&nbsp;is the reference.<br>
-- Kitty key protocol - just like the latest Kitty<br>
-So that in TermDebug the key handling can be stepped through (instead of<br>
-having to log messages all over the place to see what happens).<br>
-Ask Leonerd about location of code, he might want to take over some of it.<br>
-<br>
 Using &quot;A&quot; and &quot;o&quot; in manually created fold (in empty buffer) does not behave<br>
 consistenly (James McCoy, #10698)<br>
 <br>
@@ -222,6 +290,8 @@ overwritten.&nbsp;&nbsp;Could use &quot;:echowin&quot; and call redraw_cmd() in 
 #11299<br>
 <br>
 Syntax include problem: #11277.&nbsp;&nbsp;Related to Patch 8.2.2761<br>
+<br>
+Add str2blob() and blob2str() ?&nbsp;&nbsp;#4049<br>
 <br>
 To avoid flicker: add an option that when a screen clear is requested, instead<br>
 of clearing it draws everything and uses &quot;clear to end of line&quot; for every line.<br>
@@ -285,9 +355,6 @@ Adding &quot;10&quot; to&nbsp;<a class="Type" href="options.html#'spellsuggest'"
 Also, z= in German on a long word can take a very long time, but&nbsp;<span class="Special">CTRL-C</span>&nbsp;to<br>
 interrupt does not work. Where to add ui_breakcheck()?<br>
 New English spell files also have very slow suggestions.<br>
-<br>
-French spell files don't work correctly.&nbsp;&nbsp;#4916<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Make Vim understand the format somehow?<br>
 <br>
 When&nbsp;<a class="Type" href="options.html#'spelloptions'">'spelloptions'</a>&nbsp;is &quot;camel&quot; then zG doesn't work on some words.<br>
 (Gary Johnson, 17 Oct 2022)<br>
