@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Nov 18<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Nov 23<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,23 +43,24 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Keyboard protocol (also see below):<br>
+- Use the kitty_protocol_state value, similar to seenModifyOtherKeys<br>
+- When kitty_protocol_state is set then reset seenModifyOtherKeys.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Do not set seenModifyOtherKeys for kitty-protocol sequences in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;handle_key_with_modifier().<br>
+<br>
 virtual text issues:<br>
-- #11463&nbsp;&nbsp;<span class="Comment">after</span>&nbsp;is sometimes wrapped with&nbsp;<a class="Comment" href="eval.html#list">list</a>,&nbsp;<span class="Comment">nowrap</span>&nbsp;and<br>
-&nbsp;&nbsp;<span class="Comment">listchars+=extends:&gt;</span>, cursor position is also wrong<br>
 - #11520&nbsp;&nbsp;&nbsp;<span class="Comment">below</span>&nbsp;cannot be placed below empty lines<br>
 &nbsp;&nbsp;&nbsp;&nbsp;James Alvarado looks into it<br>
+- virtual text&nbsp;<span class="Comment">below</span>&nbsp;highlighted incorrectly when&nbsp;<span class="Comment">cursorline</span>&nbsp;enabled<br>
+&nbsp;&nbsp;(Issue #11588)<br>
 <br>
 <a class="Type" href="options.html#'smoothscroll'">'smoothscroll'</a>:<br>
-- PR #11502 -&nbsp;&nbsp;cursor position wrong<br>
-- PR #11514 -&nbsp;&nbsp;mouse click is off<br>
 -&nbsp;<span class="Special">CTRL-E</span>&nbsp;and gj in long line with&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;5 not working well yet.<br>
 - computing&nbsp;<a class="Type" href="options.html#'scrolloff'">'scrolloff'</a>&nbsp;position row use w_skipcol<br>
 - Check this list:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/pulls?q=is%3Apr+is%3Aopen+smoothscroll+author%3Aychin">https://github.com/vim/vim/pulls?q=is%3Apr+is%3Aopen+smoothscroll+author%3Aychin</a></span><br>
 - Long line spanning multiple pages:&nbsp;&nbsp;After a few&nbsp;<span class="Special">CTRL-E</span>&nbsp;then gj causes a<br>
 &nbsp;&nbsp;scroll. (Ernie Rael, 18 Nov)&nbsp;&nbsp;Also pressing space or &quot;l&quot;<br>
-<br>
-Switching to window for a buffer in set_buffer_lines() doesn't work if there<br>
-is no window.&nbsp;&nbsp;Use aucmd_prepbuf() instead.&nbsp;&nbsp;#11558<br>
 <br>
 <br>
 Upcoming larger works:<br>
@@ -75,12 +76,6 @@ Upcoming larger works:<br>
 &nbsp;&nbsp; - example plugin:&nbsp;<span class="Constant"><a href="https://github.com/uga-rosa/dps-vsctm.vim">https://github.com/uga-rosa/dps-vsctm.vim</a></span><br>
 - Better support for detecting terminal emulator behavior (esp. special key<br>
 &nbsp;&nbsp;handling) and taking away the need for users to tweak their config.<br>
-&nbsp;&nbsp;&gt; In the libvterm fork properly implement:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- modifyOtherKeys 2 - follow xterm implementation as close as possible<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- Kitty key protocol - just like the latest Kitty<br>
-&nbsp;&nbsp;&nbsp;&nbsp;So that in TermDebug the key handling can be stepped through (instead of<br>
-&nbsp;&nbsp;&nbsp;&nbsp;having to log messages all over the place to see what happens).&nbsp;&nbsp;Ask<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Leonerd about location of code, he might want to take over some of it.<br>
 &nbsp;&nbsp;&gt; In the table of names pointing to the list of entries, with an additional<br>
 &nbsp;&nbsp;&nbsp;&nbsp;one.&nbsp;&nbsp;So that &quot;xterm-kitty&quot; can first load &quot;xterm&quot; and then add &quot;kitty&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;entries.<br>
@@ -93,14 +88,9 @@ Upcoming larger works:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&gt; May also send t_RV and delay starting a shell command until the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; response has been seen, to make sure the other responses don't get read<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by a shell command.<br>
-&nbsp;&nbsp;&gt; Add an option with a list of names that, when matching $TERM, indicate the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;kitty keyboard protocol should be used?&nbsp;&nbsp;Allows adding &quot;foot&quot; and others<br>
-&nbsp;&nbsp;&nbsp;&nbsp;later, without modifying Vim.&nbsp;&nbsp;Perhaps a pattern-value pair:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set keyprotocol=kitty:kitty,foot:kitty,xterm:mok2,doggy:mok2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Here &quot;mok2&quot; means modifyOtherKeys level 2.<br>
 &nbsp;&nbsp;&gt; Can we use the req_more_codes_from_term() mechanism with more terminals?<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Should we repeat it after executing a shell command?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Can also add this to the&nbsp;<span class="MissingTag">'keyprotocol'</span>&nbsp;option: &quot;mok2+tcap&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Can also add this to the&nbsp;<a class="Type" href="options.html#'keyprotocol'">'keyprotocol'</a>&nbsp;option: &quot;mok2+tcap&quot;<br>
 <br>
 <br>
 Further Vim9 improvements, possibly after launch:<br>
@@ -299,7 +289,7 @@ Resetting&nbsp;<a class="Type" href="term.html#'t_ut'">'t_ut'</a>&nbsp;already c
 <br>
 When scheme can't be found by configure there is no clear &quot;not found&quot; message:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;configure:5769: checking MzScheme install prefix<br>
-&nbsp;&nbsp;&nbsp;&nbsp;configure:5781: result:&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;configure:5781: result:<br>
 <br>
 Can &quot;CSI nr X&quot; be used instead of outputting spaces?&nbsp;&nbsp;Is it faster?&nbsp;&nbsp;#8002<br>
 <br>
@@ -4573,8 +4563,11 @@ Autocommands:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufChangePre, BufChangePost and RevertBuf. (Shah)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ViewChanged&nbsp;&nbsp;&nbsp;&nbsp; - triggered when the text scrolls and when the window size<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;changes.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;WinResized&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- After a window has been resized<br>
-&nbsp;&nbsp;&nbsp;&nbsp;WinClose&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Just before closing a window<br>
+&nbsp;&nbsp;&nbsp;&nbsp;QuickfixList&nbsp;&nbsp;&nbsp;&nbsp;- when any entry in the current list changes or another<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list is selected<br>
+&nbsp;&nbsp;&nbsp;&nbsp;QuickfixPosition - when selecting another entry in the current quickfix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; list<br>
+<br>
 -&nbsp;&nbsp; Write the file now and then (<a class="Type" href="todo.html#'autosave'">'autosave'</a>):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#'autosave'" name="'autosave'">'autosave'</a>&nbsp;<a class="Constant" href="todo.html#'as'" name="'as'">'as'</a>&nbsp;<a class="Constant" href="todo.html#'noautosave'" name="'noautosave'">'noautosave'</a>&nbsp;<a class="Constant" href="todo.html#'noas'" name="'noas'">'noas'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="todo.html#'autosave'">'autosave'</a>&nbsp;<a class="Type" href="todo.html#'as'">'as'</a>&nbsp;number&nbsp;&nbsp;(default 0)<br>

@@ -95,6 +95,11 @@ Output resumes when you hit&nbsp;<span class="Special">&lt;BS&gt;</span>.<br>
 alternate screen.&nbsp;&nbsp;This may slightly change what happens when executing a<br>
 shell command or exiting Vim.&nbsp;&nbsp;To avoid this use&nbsp;<a class="Type" href="term.html#'t_TI'">'t_TI'</a>&nbsp;and&nbsp;<a class="Type" href="term.html#'t_TE'">'t_TE'</a>.<br>
 <br>
+Vim will try to detect what keyboard protocol the terminal is using with the<br>
+<a class="Type" href="term.html#'t_RK'">'t_RK'</a>&nbsp;termcap entry.&nbsp;&nbsp;This is sent after&nbsp;<a class="Type" href="term.html#'t_TI'">'t_TI'</a>, but only when there is no<br>
+work to do (no typeahead and no pending commands).&nbsp;&nbsp;That is to avoid the<br>
+response to end up in a shell command or arrive after Vim exits.<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#xterm-bracketed-paste" name="xterm-bracketed-paste">xterm-bracketed-paste</a><br>
 When the&nbsp;<a class="Type" href="term.html#'t_BE'">'t_BE'</a>&nbsp;option is set then&nbsp;<a class="Type" href="term.html#'t_BE'">'t_BE'</a>&nbsp;will be sent to the<br>
 terminal when entering &quot;raw&quot; mode and&nbsp;<a class="Type" href="term.html#'t_BD'">'t_BD'</a>&nbsp;when leaving &quot;raw&quot; mode.&nbsp;&nbsp;The<br>
@@ -393,6 +398,8 @@ Added by Vim (there are no standard codes for these):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xterm and other terminal emulators)&nbsp;&nbsp;The<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response is stored in&nbsp;<a class="Identifier" href="eval.html#v:termresponse">v:termresponse</a>&nbsp;<a class="Identifier" href="term.html#xterm-8bit">xterm-8bit</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#'ttymouse'">'ttymouse'</a>&nbsp;<a class="Identifier" href="term.html#xterm-codes">xterm-codes</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_RK&nbsp;&nbsp;&nbsp;&nbsp;request terminal keyboard protocol state;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_RK" name="t_RK">t_RK</a>&nbsp;<a class="Constant" href="term.html#'t_RK'" name="'t_RK'">'t_RK'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sent after&nbsp;<a class="Identifier" href="term.html#t_TI">t_TI</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_u7&nbsp;&nbsp;&nbsp;&nbsp;request cursor position (for xterm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_u7" name="t_u7">t_u7</a>&nbsp;<a class="Constant" href="term.html#'t_u7'" name="'t_u7'">'t_u7'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;see&nbsp;<a class="Identifier" href="options.html#'ambiwidth'">'ambiwidth'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The response is stored in&nbsp;<a class="Identifier" href="eval.html#v:termu7resp">v:termu7resp</a><br>
@@ -773,8 +780,9 @@ See the &quot;Options&quot; chapter&nbsp;<a class="Identifier" href="options.htm
 <br>
 If your terminal does not support a scrolling region, but it does support<br>
 insert/delete line commands, scrolling with multiple windows may make the<br>
-lines jump up and down.&nbsp;&nbsp;If you don't want this set the&nbsp;<a class="Type" href="options.html#'ttyfast'">'ttyfast'</a>&nbsp;option.<br>
-This will redraw the window instead of scroll it.<br>
+lines jump up and down.&nbsp;&nbsp;This would happen if the&nbsp;<a class="Type" href="options.html#'ttyfast'">'ttyfast'</a>&nbsp;option has been<br>
+reset.&nbsp;&nbsp;Check that with:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;verbose set ttyfast?</div>
 <br>
 If your terminal scrolls very slowly, but redrawing is not slow, set the<br>
 <a class="Type" href="options.html#'ttyscroll'">'ttyscroll'</a>&nbsp;option to a small number, e.g., 3.&nbsp;&nbsp;This will make Vim redraw the<br>

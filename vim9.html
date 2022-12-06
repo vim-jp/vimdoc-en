@@ -21,7 +21,7 @@ features in Vim9 script.<br>
 3.&nbsp;&nbsp;New style functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#fast-functions">fast-functions</a><br>
 4.&nbsp;&nbsp;Types&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-types">vim9-types</a><br>
 5.&nbsp;&nbsp;Namespace, Import and Export&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9script">vim9script</a><br>
-6.&nbsp;&nbsp;Future work: classes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a><br>
+6.&nbsp;&nbsp;Classes and interfaces&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a><br>
 <br>
 9.&nbsp;&nbsp;Rationale&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-rationale">vim9-rationale</a><br>
 <br>
@@ -1497,7 +1497,7 @@ The reference can also be a&nbsp;<a class="Identifier" href="eval.html#Partial">
 and/or a dictionary, which are not visible to the caller.&nbsp;&nbsp;Since they are<br>
 called in the same way the declaration is the same.<br>
 <br>
-Custom types can be defined with&nbsp;<a class="Comment" href="vim9.html#:type">:type</a>:<br>
+Custom types can be defined with&nbsp;<a class="Comment" href="vim9class.html#:type">:type</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:type MyList list&lt;string&gt;</div>
 Custom types must start with a capital letter, to avoid name clashes with<br>
 builtin types added later, similarly to user functions.<br>
@@ -1945,73 +1945,17 @@ Or:<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
-6. Future work: classes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-classes" name="vim9-classes">vim9-classes</a><br>
+6. Classes and interfaces&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-classes" name="vim9-classes">vim9-classes</a><br>
 <br>
-Above &quot;class&quot; was mentioned a few times, but it has not been implemented yet.<br>
-Most of Vim9 script can be created without this functionality, and since<br>
-implementing classes is going to be a lot of work, it is left for the future.<br>
-For now we'll just make sure classes can be added later.<br>
+In legacy script a Dictionary could be used as a kind-of object, by adding<br>
+members that are functions.&nbsp;&nbsp;However, this is quite inefficient and requires<br>
+the writer to do the work of making sure all the objects have the right<br>
+members.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="eval.html#Dictionary-function">Dictionary-function</a>.<br>
 <br>
-Thoughts:<br>
--&nbsp;<a class="Comment" href="vim9.html#:class">class</a>&nbsp;/&nbsp;<a class="Comment" href="vim9.html#:endclass">endclass</a>, the whole class must be in one file<br>
-- Class names are always CamelCase (to avoid a name clash with builtin types)<br>
-- A single constructor called &quot;constructor&quot; (similar to TypeScript)<br>
-- Single inheritance:&nbsp;<span class="Comment">class ThisClass extends BaseClass</span><br>
--&nbsp;<a class="Comment" href="vim9.html#:interface">interface</a>&nbsp;/&nbsp;<a class="Comment" href="vim9.html#:endinterface">endinterface</a>&nbsp;(looks like a class without any implementation)<br>
-- Explicit declaration that the class supports an interface, so that type<br>
-&nbsp;&nbsp;checking works properly:<br>
-&nbsp;&nbsp;<span class="Comment">class SomeClass implements SomeInterface, OtherInterface</span><br>
--&nbsp;<span class="Comment">abstract class</span>&nbsp;(class with incomplete implementation) - not really needed?<br>
-- Class (static) methods and Object methods: syntax to be defined.<br>
-- Class (static) members and Object members: syntax to be defined.<br>
-- Access control: private / protected / shared / public ?&nbsp;&nbsp;Keep it simple.<br>
-- Access object members with&nbsp;<span class="Comment">this.member</span>&nbsp;?<br>
-- Generics for class:&nbsp;<span class="Comment">class &lt;Tkey, Tentry&gt;</span><br>
-- Generics for function:&nbsp;<span class="Comment">def &lt;Tkey&gt; GetLast(key: Tkey)</span><br>
-- Method overloading (two methods with the same name but different argument<br>
-&nbsp;&nbsp;types): Most likely not<br>
-- Mixins: not sure if that is useful, leave out for simplicity.<br>
+In&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script you can have classes, objects and interfaces like in most<br>
+popular object-oriented programming languages.&nbsp;&nbsp;Since this is a lot of<br>
+functionality it is located in a separate help file:&nbsp;<a class="Identifier" href="vim9class.html">vim9class.txt</a>.<br>
 <br>
-Again, much of this is from TypeScript with a slightly different syntax.<br>
-<br>
-Some things that look like good additions:<br>
-- Use a class as an interface (like Dart)<br>
-- Extend a class with methods, using an import (like Dart)<br>
-- Mixins<br>
-- For testing: Mock mechanism<br>
-<br>
-An important class that will be provided is &quot;Promise&quot;.&nbsp;&nbsp;Since Vim is single<br>
-threaded, connecting asynchronous operations is a natural way of allowing<br>
-plugins to do their work without blocking the user.&nbsp;&nbsp;It's a uniform way to<br>
-invoke callbacks and handle timeouts and errors.<br>
-<br>
-Some commands have already been reserved:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:class" name=":class">:class</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:endclass" name=":endclass">:endclass</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:abstract" name=":abstract">:abstract</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:enum" name=":enum">:enum</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:endenum" name=":endenum">:endenum</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:interface" name=":interface">:interface</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:endinterface" name=":endinterface">:endinterface</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:static" name=":static">:static</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#:type" name=":type">:type</a><br>
-<br>
-Some examples:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abstract class Person&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static const prefix = 'xxx'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var name: string<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def constructor(name: string)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.name = name<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def display(): void<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo name<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abstract def find(string): Person<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
@@ -2296,19 +2240,6 @@ the tool into Vim script.&nbsp;&nbsp;For that to be possible without too much<br
 translation, and keeping the code fast at the same time, the constructs of the<br>
 tool need to be supported.&nbsp;&nbsp;Since most languages support classes the lack of<br>
 support for classes in Vim is then a problem.<br>
-<br>
-<br>
-<span class="PreProc">Classes</span><br>
-<br>
-Vim supports a kind-of object oriented programming by adding methods to a<br>
-dictionary.&nbsp;&nbsp;With some care this can be made to work, but it does not look<br>
-like real classes.&nbsp;&nbsp;On top of that, it's quite slow, because of the use of<br>
-dictionaries.<br>
-<br>
-It would be good to support real classes, and this is planned for a later<br>
-version.&nbsp;&nbsp;The support is a &quot;minimal common functionality&quot; of class support in<br>
-most languages.&nbsp;&nbsp;It will work much like Java, which is the most popular<br>
-programming language.<br>
 <br>
 <br>
 <br>
