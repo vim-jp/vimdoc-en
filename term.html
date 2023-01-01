@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'term'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="term.html" name="term.txt">term.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Dec 01<br>
+<a class="Constant" href="term.html" name="term.txt">term.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2022 Dec 31<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -93,7 +93,8 @@ Output resumes when you hit&nbsp;<span class="Special">&lt;BS&gt;</span>.<br>
 <br>
 <span class="Todo">Note</span>: When&nbsp;<a class="Type" href="term.html#'t_ti'">'t_ti'</a>&nbsp;is not empty, Vim assumes that it causes switching to the<br>
 alternate screen.&nbsp;&nbsp;This may slightly change what happens when executing a<br>
-shell command or exiting Vim.&nbsp;&nbsp;To avoid this use&nbsp;<a class="Type" href="term.html#'t_TI'">'t_TI'</a>&nbsp;and&nbsp;<a class="Type" href="term.html#'t_TE'">'t_TE'</a>.<br>
+shell command or exiting Vim.&nbsp;&nbsp;To avoid this use&nbsp;<a class="Type" href="term.html#'t_TI'">'t_TI'</a>&nbsp;and&nbsp;<a class="Type" href="term.html#'t_TE'">'t_TE'</a>&nbsp;(but make<br>
+sure to add to them, not overwrite).<br>
 <br>
 Vim will try to detect what keyboard protocol the terminal is using with the<br>
 <a class="Type" href="term.html#'t_RK'">'t_RK'</a>&nbsp;termcap entry.&nbsp;&nbsp;This is sent after&nbsp;<a class="Type" href="term.html#'t_TI'">'t_TI'</a>, but only when there is no<br>
@@ -131,6 +132,10 @@ automatically, you can try using something like this:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exec &quot;set t_PS=\e[200~&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exec &quot;set t_PE=\e[201~&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+The terminfo entries &quot;BE&quot;, &quot;BD&quot;, &quot;PS&quot; and &quot;PE&quot; were added in ncurses version<br>
+6.4, early 2023, for some terminals.&nbsp;&nbsp;If you have this version then you may<br>
+not have to manually configure your terminal.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#tmux-integration" name="tmux-integration">tmux-integration</a><br>
 If you experience issues when running Vim inside tmux, here are a few hints.<br>
@@ -299,13 +304,32 @@ When Vim receives a response to the&nbsp;<a class="Identifier" href="term.html#t
 starts with CSI, it assumes that the terminal is in 8-bit mode and will<br>
 convert all key sequences to their 8-bit variants.<br>
 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#xterm-terminfo-entries" name="xterm-terminfo-entries">xterm-terminfo-entries</a><br>
+For some time the terminfo entries were insufficient to describe all the<br>
+features tht Vim can use.&nbsp;&nbsp;The builtin xterm termcap entries did have these,<br>
+with the result that several terminals that were similar enough to xterm took<br>
+advantage of these by prefixing &quot;xterm-&quot; to the terminal name in $TERM.<br>
+<br>
+This leads to problems, because quite often these terminals are not 100%<br>
+compatible with xterm.&nbsp;&nbsp;At the start of 2023 several entries have been added<br>
+to the terminfo database to make it possible to use these features without<br>
+using the &quot;xterm&quot; workaround.&nbsp;&nbsp;These are the relevant entries (so far):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">name&nbsp;&nbsp;&nbsp;&nbsp;xterm value&nbsp;&nbsp;&nbsp;&nbsp; description</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RV&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\033[&gt;c&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Request version&nbsp;<a class="Identifier" href="term.html#t_RV">t_RV</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\033[?2004h&quot;&nbsp;&nbsp; enable bracketed paste mode&nbsp;<a class="Identifier" href="term.html#t_BE">t_BE</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\033[?2004l&quot;&nbsp;&nbsp; disable bracketed paste mode&nbsp;<a class="Identifier" href="term.html#t_BD">t_BD</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\033[200~&quot;&nbsp;&nbsp;&nbsp;&nbsp; pasted text start&nbsp;<a class="Identifier" href="term.html#t_PS">t_PS</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\033[201~&quot;&nbsp;&nbsp;&nbsp;&nbsp; pasted text end&nbsp;<a class="Identifier" href="term.html#t_PE">t_PE</a><br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#xterm-kitty" name="xterm-kitty">xterm-kitty</a>&nbsp;<a class="Constant" href="term.html#kitty-terminal" name="kitty-terminal">kitty-terminal</a><br>
-The Kitty terminal is a special case.&nbsp;&nbsp;Mainly because it works different from<br>
-most other terminals, but also because, instead of trying the fit in and make<br>
-it behave like other terminals by default, it dictates how applications need<br>
-to work when using Kitty.&nbsp;&nbsp;This makes it very difficult for Vim to work in a<br>
-Kitty terminal.&nbsp;&nbsp;Some exceptions have been hard coded, but it is not at all<br>
-nice to have to make exceptions for one specific terminal.<br>
+The Kitty terminal is a special case.&nbsp;&nbsp;Mainly because it works differently<br>
+from most other terminals, but also because, instead of trying the fit in and<br>
+make it behave like other terminals by default, it dictates how applications<br>
+need to work when using Kitty.&nbsp;&nbsp;This makes it very difficult for Vim to work<br>
+in a Kitty terminal.&nbsp;&nbsp;Some exceptions have been hard coded, but it is not at<br>
+all nice to have to make exceptions for one specific terminal.<br>
 <br>
 One of the problems is that the value for $TERM is set to &quot;xterm-kitty&quot;.&nbsp;&nbsp;For<br>
 Vim this is an indication that the terminal is xterm-compatible and the<br>
@@ -536,6 +560,7 @@ on Mac OS when Terminal.app could be recognized from the termresponse.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_%1&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Help&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;help key&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_%1" name="t_%1">t_%1</a>&nbsp;<a class="Constant" href="term.html#'t_%1'" name="'t_%1'">'t_%1'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_&amp;8&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Undo&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;undo key&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_&8" name="t_&amp;8">t_&amp;8</a>&nbsp;<a class="Constant" href="term.html#'t_&8'" name="'t_&amp;8'">'t_&amp;8'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_kI&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Insert&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;insert key&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_kI" name="t_kI">t_kI</a>&nbsp;<a class="Constant" href="term.html#'t_kI'" name="'t_kI'">'t_kI'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;kInsert&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; keypad insert key<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_kD&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Del&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete key&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_kD" name="t_kD">t_kD</a>&nbsp;<a class="Constant" href="term.html#'t_kD'" name="'t_kD'">'t_kD'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_kb&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;BS&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backspace key&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_kb" name="t_kb">t_kb</a>&nbsp;<a class="Constant" href="term.html#'t_kb'" name="'t_kb'">'t_kb'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_kB&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;S-Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; back-tab (shift-tab)&nbsp;&nbsp;<a class="Constant" href="term.html#<S-Tab>" name="&lt;S-Tab&gt;">&lt;S-Tab&gt;</a>&nbsp;<a class="Constant" href="term.html#t_kB" name="t_kB">t_kB</a>&nbsp;<a class="Constant" href="term.html#'t_kB'" name="'t_kB'">'t_kB'</a><br>
@@ -568,9 +593,13 @@ on Mac OS when Terminal.app could be recognized from the termresponse.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_KK&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;k8&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;keypad 8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#<k8>" name="&lt;k8&gt;">&lt;k8&gt;</a>&nbsp;<a class="Constant" href="term.html#t_KK" name="t_KK">t_KK</a>&nbsp;<a class="Constant" href="term.html#'t_KK'" name="'t_KK'">'t_KK'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_KL&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;k9&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;keypad 9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#<k9>" name="&lt;k9&gt;">&lt;k9&gt;</a>&nbsp;<a class="Constant" href="term.html#t_KL" name="t_KL">t_KL</a>&nbsp;<a class="Constant" href="term.html#'t_KL'" name="'t_KL'">'t_KL'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Mouse&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; leader of mouse code&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#<Mouse>" name="&lt;Mouse&gt;">&lt;Mouse&gt;</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_PS" name="t_PS">t_PS</a>&nbsp;<a class="Constant" href="term.html#'t_PS'" name="'t_PS'">'t_PS'</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_PS&nbsp;&nbsp;&nbsp;&nbsp;start of bracketed paste&nbsp;<a class="Identifier" href="term.html#xterm-bracketed-paste">xterm-bracketed-paste</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_PE&nbsp;&nbsp;&nbsp;&nbsp;end of bracketed paste&nbsp;<a class="Identifier" href="term.html#xterm-bracketed-paste">xterm-bracketed-paste</a>&nbsp;&nbsp;<a class="Constant" href="term.html#t_PE" name="t_PE">t_PE</a>&nbsp;<a class="Constant" href="term.html#'t_PE'" name="'t_PE'">'t_PE'</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_PS&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;PasteStart&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;start of bracketed paste&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_PS" name="t_PS">t_PS</a>&nbsp;<a class="Constant" href="term.html#'t_PS'" name="'t_PS'">'t_PS'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="term.html#xterm-bracketed-paste">xterm-bracketed-paste</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_PE&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;PasteEnd&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end of bracketed paste&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_PE" name="t_PE">t_PE</a>&nbsp;<a class="Constant" href="term.html#'t_PE'" name="'t_PE'">'t_PE'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="term.html#xterm-bracketed-paste">xterm-bracketed-paste</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;FocusGained&gt;</span>&nbsp;&nbsp; Vim window got focus (internal only)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;FocusLost&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp; Vim window lost focus (internal only)<br>
 <br>
 <span class="Todo">Note</span>&nbsp;about t_so and t_mr: When the termcap entry &quot;so&quot; is not present the<br>
 entry for &quot;mr&quot; is used.&nbsp;&nbsp;And vice versa.&nbsp;&nbsp;The same is done for &quot;se&quot; and &quot;me&quot;.<br>
@@ -609,12 +638,15 @@ work the&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors
 See&nbsp;<span class="Constant"><a href="https://github.com/termstandard/colors">https://github.com/termstandard/colors</a></span>&nbsp;for a list of terminals that<br>
 support true colors.<br>
 <br>
-Sometimes setting&nbsp;<a class="Type" href="options.html#'termguicolors'">'termguicolors'</a>&nbsp;is not enough and one has to set the&nbsp;<a class="Identifier" href="term.html#t_8f">t_8f</a><br>
-and&nbsp;<a class="Identifier" href="term.html#t_8b">t_8b</a>&nbsp;options explicitly. Default values of these options are<br>
-&quot;^[[38;2;%lu;%lu;%lum&quot; and &quot;^[[48;2;%lu;%lu;%lum&quot; respectively, but it is only<br>
-set when&nbsp;<span class="Comment">$TERM</span>&nbsp;is&nbsp;<span class="Comment">xterm</span>. Some terminals accept the same sequences, but<br>
-with all semicolons replaced by colons (this is actually more compatible, but<br>
-less widely supported):<br>
+For telling the terminal what RGB color to use the&nbsp;<a class="Identifier" href="term.html#t_8f">t_8f</a>&nbsp;and&nbsp;<a class="Identifier" href="term.html#t_8b">t_8b</a>&nbsp;termcap<br>
+entries are used.&nbsp;&nbsp;These are set by default to values that work for most<br>
+terminals.&nbsp;&nbsp;If that does not work for your terminal you can set them manually.<br>
+The default values are set like this:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let &amp;t_8f = &quot;\&lt;Esc&gt;[38;2;%lu;%lu;%lum&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let &amp;t_8b = &quot;\&lt;Esc&gt;[48;2;%lu;%lu;%lum&quot;</div>
+<br>
+Some terminals accept the same sequences, but with all semicolons replaced by<br>
+colons (this is actually more compatible, but less widely supported):<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let &amp;t_8f = &quot;\&lt;Esc&gt;[38:2:%lu:%lu:%lum&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let &amp;t_8b = &quot;\&lt;Esc&gt;[48:2:%lu:%lu:%lum&quot;</div>
 <br>
