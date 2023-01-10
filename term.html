@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'term'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="term.html" name="term.txt">term.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Jan 01<br>
+<a class="Constant" href="term.html" name="term.txt">term.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Jan 09<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -327,6 +327,9 @@ using the &quot;xterm&quot; workaround.&nbsp;&nbsp;These are the relevant entrie
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\033[200~&quot;&nbsp;&nbsp;&nbsp;&nbsp; pasted text start&nbsp;<a class="Identifier" href="term.html#t_PS">t_PS</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\033[201~&quot;&nbsp;&nbsp;&nbsp;&nbsp; pasted text end&nbsp;<a class="Identifier" href="term.html#t_PE">t_PE</a><br>
 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;\033[?1006;1000%?%p1%<span class="Special">{1}</span>%=%th%el%;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mouse enable / disable&nbsp;<a class="Identifier" href="term.html#t_XM">t_XM</a><br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#xterm-kitty" name="xterm-kitty">xterm-kitty</a>&nbsp;<a class="Constant" href="term.html#kitty-terminal" name="kitty-terminal">kitty-terminal</a><br>
 The Kitty terminal is a special case.&nbsp;&nbsp;Mainly because it works differently<br>
 from most other terminals, but also because, instead of trying the fit in and<br>
@@ -342,7 +345,7 @@ this.&nbsp;&nbsp;However, Kitty is not fully xterm compatible.&nbsp;&nbsp;The au
 ignore the &quot;xterm-&quot; prefix and use the terminfo entry anyway, so that is what<br>
 happens now, the builtin xterm termcap entries are not used.&nbsp;&nbsp;However, the<br>
 t_RV is set, otherwise other things would not work, such as automatically<br>
-setting&nbsp;<a class="Type" href="options.html#'ttymouse'">'ttymouse'</a>&nbsp;to &quot;sgr&quot;.<br>
+setting&nbsp;<a class="Type" href="options.html#'ttymouse'">'ttymouse'</a>&nbsp;to &quot;sgr&quot; (at least until&nbsp;<a class="Identifier" href="term.html#t_XM">t_XM</a>&nbsp;is being used for this).<br>
 <br>
 It is not clear why kitty sets $TERM to &quot;xterm-kitty&quot;, the terminal isn't<br>
 really xterm compatible.&nbsp;&nbsp;&quot;kitty&quot; would be more appropriate, but a terminfo<br>
@@ -451,6 +454,8 @@ Added by Vim (there are no standard codes for these):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xterm and other terminal emulators)&nbsp;&nbsp;The<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response is stored in&nbsp;<a class="Identifier" href="eval.html#v:termresponse">v:termresponse</a>&nbsp;<a class="Identifier" href="term.html#xterm-8bit">xterm-8bit</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="options.html#'ttymouse'">'ttymouse'</a>&nbsp;<a class="Identifier" href="term.html#xterm-codes">xterm-codes</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_XM&nbsp;&nbsp;&nbsp;&nbsp;enable/disable mouse reporting,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_XM" name="t_XM">t_XM</a>&nbsp;<a class="Constant" href="term.html#'t_XM'" name="'t_XM'">'t_XM'</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;see&nbsp;<a class="Identifier" href="term.html#mouse-reporting">mouse-reporting</a>&nbsp;below<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_RK&nbsp;&nbsp;&nbsp;&nbsp;request terminal keyboard protocol state;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_RK" name="t_RK">t_RK</a>&nbsp;<a class="Constant" href="term.html#'t_RK'" name="'t_RK'">'t_RK'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sent after&nbsp;<a class="Identifier" href="term.html#t_TI">t_TI</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_u7&nbsp;&nbsp;&nbsp;&nbsp;request cursor position (for xterm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#t_u7" name="t_u7">t_u7</a>&nbsp;<a class="Constant" href="term.html#'t_u7'" name="'t_u7'">'t_u7'</a><br>
@@ -503,6 +508,21 @@ t_SH must take one argument:<br>
 <br>
 t_RS is sent only if the response to t_RV has been received.&nbsp;&nbsp;It is not used<br>
 on Mac OS when Terminal.app could be recognized from the termresponse.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="term.html#mouse-reporting" name="mouse-reporting">mouse-reporting</a><br>
+Many terminals can report mouse clicks and some can report mouse movement and<br>
+dragging.&nbsp;&nbsp;Vim needs to know what codes are being used for this.<br>
+<br>
+The &quot;XM&quot; terminfo/termcap entry is used for this.&nbsp;&nbsp;Vim also has the&nbsp;<a class="Type" href="options.html#'ttymouse'">'ttymouse'</a><br>
+option to specify the mouse protocol being used.&nbsp;&nbsp;See the option for the<br>
+possible values.<br>
+<br>
+If Vim can read the &quot;XM&quot; terminfo/termcap entry then it will be used for<br>
+enabling and disabling the mouse reporting.&nbsp;&nbsp;If it is missing, then the value<br>
+from&nbsp;<a class="Type" href="options.html#'ttymouse'">'ttymouse'</a>&nbsp;is used to decide how to do this.<br>
+<br>
+If the &quot;XM&quot; entry exists and the first number is &quot;1006&quot; then&nbsp;<a class="Type" href="options.html#'ttymouse'">'ttymouse'</a>&nbsp;will<br>
+be set to &quot;sgr&quot;, unless it was already set earlier.<br>
 <br>
 <br>
 <span class="Statement">KEY CODES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="term.html#terminal-key-codes" name="terminal-key-codes">terminal-key-codes</a><br>
