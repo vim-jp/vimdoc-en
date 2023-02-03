@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Jan 09<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Feb 02<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,6 +43,13 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Errors when running tests with valgrind:<br>
+- test_codestyle.vim:&nbsp;&nbsp;e.g.:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;command line..script /home/mool/vim/vim90/src/testdir/runtest.vim[569]..function RunTheTest[52]..Test_test_files line 6: keycode_check.vim: space before tab: Expected 0 but got 7<br>
+&nbsp;&nbsp;&nbsp;&nbsp;command line..script /home/mool/vim/vim90/src/testdir/runtest.vim[569]..function RunTheTest[52]..Test_test_files line 10: setup.vim: trailing white space: Expected 0 but got 23<br>
+- test_gui.vim:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Found errors in Test_gui_mouse_event():<br>
+<br>
 Upcoming larger works:<br>
 - Make spell checking work with recent .dic/.aff files, e.g. French.&nbsp;&nbsp;#4916<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Make Vim understand the format somehow?&nbsp;&nbsp; Search for &quot;spell&quot; below.<br>
@@ -58,18 +65,29 @@ Upcoming larger works:<br>
 <br>
 <br>
 Further Vim9 improvements, possibly after launch:<br>
-- implement :class and :interface: See&nbsp;<a class="Identifier" href="vim9.html#vim9-classes">vim9-classes</a>&nbsp;&nbsp;#11544<br>
-&nbsp;&nbsp;&nbsp;&nbsp;inheritance: how about super()?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;inheritance: new() method from parent used in child?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;import/export of a class<br>
-&nbsp;&nbsp;&nbsp;&nbsp;type() should return different type for each class?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;give error for shadowing (variable and argument) when defining a class or<br>
-&nbsp;&nbsp;&nbsp;&nbsp;interface, not later when compiling it.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;object empty(), len() - can class define a method to be used for them?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;how about lock/unlock?<br>
-&nbsp;&nbsp;&nbsp;&nbsp;When checking &quot;implements&quot; also check types of members and function args.<br>
+- implement :class and :interface: See |vim9-classes<br>
+&nbsp;&nbsp;- Change access: public by default, private by prefixing &quot;_&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check for error: can't have same name twice (ignoring &quot;_&quot; prefix).<br>
+&nbsp;&nbsp;- Private methods?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;either: private def Func()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or: def _Func()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Perhaps use &quot;private&quot; keyword instead of &quot;_&quot; prefix?<br>
+&nbsp;&nbsp;- &quot;final&quot; object members - can only be set in the constructor.<br>
+&nbsp;&nbsp;- object empty(), len() - can class define a method to be used for them?<br>
+&nbsp;&nbsp;- how about lock/unlock?<br>
+&nbsp;&nbsp;- When checking &quot;implements&quot; also check types of members and function args.<br>
+&nbsp;&nbsp;- For chaining, allow using the class name as type for function return<br>
+&nbsp;&nbsp;&nbsp;&nbsp;value.<br>
+&nbsp;&nbsp;- Implement generics<br>
+&nbsp;&nbsp;- Add &quot;instanceof&quot;<br>
+&nbsp;&nbsp;- More efficient way for interface member index than iterating over list?<br>
+&nbsp;&nbsp;- a variant of type() that returns a different type for each class?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list<span class="Special">&lt;number&gt;</span>&nbsp;and list<span class="Special">&lt;string&gt;</span>&nbsp;should also differ.<br>
+&nbsp;&nbsp;- Issue #11822: any.Func() can be a dict or an object call, need to handle<br>
+&nbsp;&nbsp;&nbsp;&nbsp;this at runtime.<br>
 - implement :type<br>
 - implement :enum<br>
+- class local to a function<br>
 - Use Vim9 for more runtime files.<br>
 - Inline call to map() and filter(), better type checking.<br>
 - When evaluating constants for script variables, some functions could work:<br>
@@ -77,16 +95,19 @@ Further Vim9 improvements, possibly after launch:<br>
 - Implement as part of an expression: ++expr, --expr, expr++, expr--.<br>
 <br>
 Information missing in terminfo:<br>
-Priority:<br>
 - t_RV&nbsp;&nbsp;request terminal version string; xterm: &quot;\033[&gt;c&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;change in terminfo for &quot;RV&quot; uses the wrong escape sequence... ?<br>
-Mouse support:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;on/off: hard coded in mch_setmouse() - use &quot;XM&quot; terminfo/termcap entry;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it starts with &quot;\E[?1006;1000%&quot; then set&nbsp;<a class="Type" href="options.html#'ttymouse'">'ttymouse'</a>&nbsp;to &quot;sgr&quot;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;change in terminfo for &quot;RV&quot; uses the wrong escape sequence 7 - 14 Jan only<br>
 Codes used for focus gained and lost (currently using use_xterm_like_mouse())<br>
 &nbsp;&nbsp;termcodes are hard-coded in set_termname(), not named.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Use the XF flag?&nbsp;&nbsp;enables recognizing the focus in/out events.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Check if t_fe is not empty.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Check for &quot;1004&quot; in t_XM. (disadvantage: only focus events when mouse is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;used)<br>
 - t_fe&nbsp;&nbsp;enable focus-event tracking<br>
 - t_fd&nbsp;&nbsp;disable focus-event tracking<br>
+Modifiers for various keys<br>
+- Decode kitty key protocol Meta and use MOD_MASK_META.&nbsp;&nbsp;Document&nbsp;<span class="Special">&lt;T-k&gt;</span><br>
+- flag to indicate &quot;xterm compatible modifiers&quot; ?<br>
 Underline and similar:<br>
 - t_AU - Set underline color: like &quot;AF&quot; and &quot;AB&quot; entries.<br>
 - t_Ce&nbsp;&nbsp;undercurl and underline end<br>
@@ -129,6 +150,8 @@ Probably Vim internal, not in terminfo:<br>
 - t_RK&nbsp;&nbsp;request terminal keyboard protocol state; sent after&nbsp;<a class="Identifier" href="term.html#t_TI">t_TI</a><br>
 Already working, not properly documented:<br>
 - t_u7&nbsp;&nbsp;request cursor position<br>
+Also, with Alt-b we get â, with Alt-Shift-b we should bet another character.<br>
+That does not appear to work with Kitty.&nbsp;&nbsp;#11913<br>
 <br>
 Popup windows:<br>
 - Add a function to redraw a specific popup window.&nbsp;&nbsp;Esp. to be used when<br>

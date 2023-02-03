@@ -3,24 +3,25 @@ layout: vimdoc
 helpname: 'vim9class'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9class.html" name="vim9class.txt">vim9class.txt</a>&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Jan 09<br>
+<a class="Constant" href="vim9class.html" name="vim9class.txt">vim9class.txt</a>&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Jan 17<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
 <br>
 <br>
-<span class="Todo">NOTE</span>&nbsp;- This is under development, anything can still change! -&nbsp;<span class="Todo">NOTE</span><br>
+<span class="Todo">NOTE</span>&nbsp;- This is not finished yet, anything can still change! -&nbsp;<span class="Todo">NOTE</span><br>
 <br>
 <br>
 Vim9 classes, objects, interfaces, types and enums.<br>
 <br>
 1.&nbsp;&nbsp;Overview&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-class-overview">Vim9-class-overview</a><br>
 2.&nbsp;&nbsp;A simple class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-simple-class">Vim9-simple-class</a><br>
-3.&nbsp;&nbsp;Using an abstract class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-abstract-class">Vim9-abstract-class</a><br>
-4.&nbsp;&nbsp;Using an interface&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-using-interface">Vim9-using-interface</a><br>
-5.&nbsp;&nbsp;More class details&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-class">Vim9-class</a><br>
-6.&nbsp;&nbsp;Type definition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-type">Vim9-type</a><br>
-7.&nbsp;&nbsp;Enum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-enum">Vim9-enum</a><br>
+3.&nbsp;&nbsp;Class members and functions&nbsp;<a class="Identifier" href="vim9class.html#Vim9-class-member">Vim9-class-member</a><br>
+4.&nbsp;&nbsp;Using an abstract class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-abstract-class">Vim9-abstract-class</a><br>
+5.&nbsp;&nbsp;Using an interface&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-using-interface">Vim9-using-interface</a><br>
+6.&nbsp;&nbsp;More class details&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-class">Vim9-class</a><br>
+7.&nbsp;&nbsp;Type definition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-type">Vim9-type</a><br>
+8.&nbsp;&nbsp;Enum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="vim9class.html#Vim9-enum">Vim9-enum</a><br>
 <br>
 9.&nbsp;&nbsp;Rationale<br>
 10. To be done later<br>
@@ -30,25 +31,25 @@ Vim9 classes, objects, interfaces, types and enums.<br>
 1. Overview&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-class-overview" name="Vim9-class-overview">Vim9-class-overview</a><br>
 <br>
 The fancy term is &quot;object-oriented programming&quot;.&nbsp;&nbsp;You can find lots of study<br>
-material about this subject.&nbsp;&nbsp;Here we document what&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script provides,<br>
-assuming you know the basics already.&nbsp;&nbsp;Added are helpful hints about how<br>
-to use this functionality effectively.<br>
+material on this subject.&nbsp;&nbsp;Here we document what&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script provides,<br>
+assuming you know the basics already.&nbsp;&nbsp;Added are helpful hints about how to<br>
+use this functionality effectively.<br>
 <br>
 The basic item is an object:<br>
 - An object stores state.&nbsp;&nbsp;It contains one or more variables that can each<br>
 &nbsp;&nbsp;have a value.<br>
-- An object usually provides functions that manipulate its state.&nbsp;&nbsp;These<br>
+- An object provides functions that use and manipulate its state.&nbsp;&nbsp;These<br>
 &nbsp;&nbsp;functions are invoked &quot;on the object&quot;, which is what sets it apart from the<br>
 &nbsp;&nbsp;traditional separation of data and code that manipulates the data.<br>
 - An object has a well defined interface, with typed member variables and<br>
 &nbsp;&nbsp;member functions.<br>
-- Objects are created by a class and all objects have the same interface.<br>
-&nbsp;&nbsp;This never changes, it is not dynamic.<br>
+- Objects are created from a class and all objects have the same interface.<br>
+&nbsp;&nbsp;This does not change at runtime, it is not dynamic.<br>
 <br>
 An object can only be created by a class.&nbsp;&nbsp;A class provides:<br>
 - A new() method, the constructor, which returns an object for the class.<br>
 &nbsp;&nbsp;This method is invoked on the class name: MyClass.new().<br>
-- State shared by all objects of the class: class variables and constants.<br>
+- State shared by all objects of the class: class variables (class members).<br>
 - A hierarchy of classes, with super-classes and sub-classes, inheritance.<br>
 <br>
 An interface is used to specify properties of an object:<br>
@@ -67,17 +68,18 @@ teachers use real-world objects to explain class relations and you might think<b
 your model should therefore reflect the real world.&nbsp;&nbsp;It doesn't!&nbsp;&nbsp;The model<br>
 should match your purpose.<br>
 <br>
-You will soon find that composition is often better than inheritance.&nbsp;&nbsp;Don't<br>
-waste time trying to find the optimal class model.&nbsp;&nbsp;Or waste time discussing<br>
-whether a square is a rectangle or that a rectangle is a square.&nbsp;&nbsp;It doesn't<br>
-matter.<br>
+Keep in mind that composition (an object contains other objects) is often<br>
+better than inheritance (an object extends another object).&nbsp;&nbsp;Don't waste time<br>
+trying to find the optimal class model.&nbsp;&nbsp;Or waste time discussing whether a<br>
+square is a rectangle or that a rectangle is a square.&nbsp;&nbsp;It doesn't matter.<br>
 <br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
 2.&nbsp;&nbsp;A simple class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-simple-class" name="Vim9-simple-class">Vim9-simple-class</a><br>
 <br>
-Let's start with a simple example: a class that stores a text position:<br>
+Let's start with a simple example: a class that stores a text position (see<br>
+below for how to do this more efficiently):<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class TextPosition<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.lnum: number<br>
@@ -112,7 +114,7 @@ The object members &quot;lnum&quot; and &quot;col&quot; can be accessed directly
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1317" name="E1317">E1317</a>&nbsp;<a class="Constant" href="vim9class.html#E1327" name="E1327">E1327</a><br>
 If you have been using other object-oriented languages you will notice that<br>
 in Vim the object members are consistently referred to with the &quot;this.&quot;<br>
-prefix.&nbsp;&nbsp;This is different from languages like Java and TypeScript.&nbsp;&nbsp;This<br>
+prefix.&nbsp;&nbsp;This is different from languages like Java and TypeScript.&nbsp;&nbsp;The<br>
 naming convention makes the object members easy to spot.&nbsp;&nbsp;Also, when a<br>
 variable does not have the &quot;this.&quot; prefix you know it is not an object member.<br>
 <br>
@@ -122,9 +124,9 @@ variable does not have the &quot;this.&quot; prefix you know it is not an object
 Now try to change an object member directly:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos.lnum = 9</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1335" name="E1335">E1335</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1335" name="E1335">E1335</a><br>
 This will give you an error!&nbsp;&nbsp;That is because by default object members can be<br>
-read but not set.&nbsp;&nbsp;That's why the class provides a method for it:<br>
+read but not set.&nbsp;&nbsp;That's why the TextPosition class provides a method for it:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos.SetLnum(9)</div>
 <br>
@@ -133,12 +135,12 @@ way.&nbsp;&nbsp;Most often there is no problem using a value, while setting a va
 have side effects that need to be taken care of.&nbsp;&nbsp;In this case, the SetLnum()<br>
 method could check if the line number is valid and either give an error or use<br>
 the closest valid value.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#:public" name=":public">:public</a>&nbsp;<a class="Constant" href="vim9class.html#E1331" name="E1331">E1331</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#:public" name=":public">:public</a>&nbsp;<a class="Constant" href="vim9class.html#E1331" name="E1331">E1331</a><br>
 If you don't care about side effects and want to allow the object member to be<br>
 changed at any time, you can make it public:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public this.lnum: number<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public this.col number</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public this.col: number</div>
 <br>
 Now you don't need the SetLnum(), SetCol() and SetPosition() methods, setting<br>
 &quot;pos.lnum&quot; directly above will no longer give an error.<br>
@@ -158,7 +160,7 @@ name:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._col number</div>
 <br>
 Now you need to provide methods to get the value of the private members.<br>
-These are commonly call getters.&nbsp;&nbsp;We recommend using a name that starts with<br>
+These are commonly called getters.&nbsp;&nbsp;We recommend using a name that starts with<br>
 &quot;Get&quot;:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def GetLnum(): number<br>
@@ -186,13 +188,15 @@ number to the total number of lines:<br>
 Many constructors take values for the object members.&nbsp;&nbsp;Thus you very often see<br>
 this pattern:<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.lnum: number<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class SomeClass<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.lnum: number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.col: number</div>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; def new(lnum: number, col: number)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.lnum = lnum<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.col = col<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; endclass</div>
 <br>
 Not only is this text you need to write, it also has the type of each member<br>
 twice.&nbsp;&nbsp;Since this is so common a shorter way to write new() is provided:<br>
@@ -202,8 +206,24 @@ twice.&nbsp;&nbsp;Since this is so common a shorter way to write new() is provid
 <br>
 The semantics are easy to understand: Providing the object member name,<br>
 including &quot;this.&quot;, as the argument to new() means the value provided in the<br>
-new() call is assigned to that object member.&nbsp;&nbsp;This mechanism is coming from<br>
-the Dart language.<br>
+new() call is assigned to that object member.&nbsp;&nbsp;This mechanism comes from the<br>
+Dart language.<br>
+<br>
+Putting together this way of using new() and making the members public results<br>
+in a much shorter class definition as what we started with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class TextPosition<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public this.lnum: number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public this.col: number</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; def new(this.lnum, this.col)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; def SetPosition(lnum: number, col: number)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.lnum = lnum<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.col = col<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; endclass</div>
 <br>
 The sequence of constructing a new object is:<br>
 1. Memory is allocated and cleared.&nbsp;&nbsp;All values are zero/false/empty.<br>
@@ -213,21 +233,68 @@ The sequence of constructing a new object is:<br>
 3. Arguments in the new() method in the &quot;this.name&quot; form are assigned.<br>
 4. The body of the new() method is executed.<br>
 <br>
-TODO: for a sub-class the constructor of the parent class will be invoked<br>
-somewhere.<br>
-<br>
+If the class extends a parent class, the same thing happens.&nbsp;&nbsp;In the second<br>
+step the members of the parent class are done first.&nbsp;&nbsp;There is no need to call<br>
+&quot;super()&quot; or &quot;new()&quot; on the parent.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
-3.&nbsp;&nbsp;Using an abstract class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-abstract-class" name="Vim9-abstract-class">Vim9-abstract-class</a><br>
+3.&nbsp;&nbsp;class members and functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-class-member" name="Vim9-class-member">Vim9-class-member</a><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#:static" name=":static">:static</a>&nbsp;<a class="Constant" href="vim9class.html#E1337" name="E1337">E1337</a>&nbsp;<a class="Constant" href="vim9class.html#E1338" name="E1338">E1338</a><br>
+Class members are declared with &quot;static&quot;.&nbsp;&nbsp;They are used by the name without a<br>
+prefix:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class OtherThing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.size: number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static totalSize: number</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; def new(this.size)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;totalSize += this.size<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1340" name="E1340">E1340</a>&nbsp;<a class="Constant" href="vim9class.html#E1341" name="E1341">E1341</a><br>
+Since the name is used as-is, shadowing the name by a function argument name<br>
+or local variable name is not allowed.<br>
+<br>
+Just like object members the access can be made private by using an underscore<br>
+as the first character in the name, and it can be made public by prefixing<br>
+&quot;public&quot;:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;class OtherThing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static total: number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# anybody can read, only class can write<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static _sum: number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # only class can read and write<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public static result: number&nbsp;&nbsp;# anybody can read and write<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#class-function" name="class-function">class-function</a><br>
+Class functions are also declared with &quot;static&quot;.&nbsp;&nbsp;They have no access to<br>
+object members, they cannot use the &quot;this&quot; keyword.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class OtherThing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.size: number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static totalSize: number</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Clear the total size and return the value it had before.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static def ClearTotalSize(): number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var prev = totalSize<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;totalSize = 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return prev<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
+<br>
+Inside the class the function can be called by name directly, outside the<br>
+class the class name must be prefixed:&nbsp;<span class="Comment">OtherThing.ClearTotalSize()</span>.<br>
+<br>
+<span class="PreProc">==============================================================================</span><br>
+<br>
+4.&nbsp;&nbsp;Using an abstract class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-abstract-class" name="Vim9-abstract-class">Vim9-abstract-class</a><br>
 <br>
 An abstract class forms the base for at least one sub-class.&nbsp;&nbsp;In the class<br>
 model one often finds that a few classes have the same properties that can be<br>
-shared, but a class with those properties does not have enough state to create<br>
+shared, but a class with these properties does not have enough state to create<br>
 an object from.&nbsp;&nbsp;A sub-class must extend the abstract class and add the<br>
 missing state and/or methods before it can be used to create objects for.<br>
-<br>
-An abstract class does not have a new() method.<br>
 <br>
 For example, a Shape class could store a color and thickness.&nbsp;&nbsp;You cannot<br>
 create a Shape object, it is missing the information about what kind of shape<br>
@@ -254,51 +321,13 @@ class, for which objects can be created.&nbsp;&nbsp;Example:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#class-member" name="class-member">class-member</a>&nbsp;<a class="Constant" href="vim9class.html#:static" name=":static">:static</a>&nbsp;<a class="Constant" href="vim9class.html#E1337" name="E1337">E1337</a>&nbsp;<a class="Constant" href="vim9class.html#E1338" name="E1338">E1338</a><br>
-Class members are declared with &quot;static&quot;.&nbsp;&nbsp;They are used by the name without a<br>
-prefix:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class OtherThing<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.size: number<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static totalSize: number</div>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; def new(this.size)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;totalSize += this.size<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1340" name="E1340">E1340</a>&nbsp;<a class="Constant" href="vim9class.html#E1341" name="E1341">E1341</a><br>
-Since the name is used as-is, shadowing the name by a function argument name<br>
-or variable name is not allowed.<br>
-<br>
-Just like object members the access can be made private by using an underscore<br>
-as the first character in the name, and it can be made public by prefixing<br>
-&quot;public&quot;:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class OtherThing<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static total: number # anybody can read, only class can write<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static _sum: number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# only class can read and write<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public static result: number # anybody can read and write<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#class-function" name="class-function">class-function</a><br>
-Class functions are also declared with &quot;static&quot;.&nbsp;&nbsp;They have no access to<br>
-object members, they cannot use the &quot;this&quot; keyword.<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class OtherThing<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.size: number<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static totalSize: number</div>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; Clear the total size and return the value it had before.&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static def ClearTotalSize(): number<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var prev = totalSize<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;totalSize = 0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return prev<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
+An abstract class is defined the same way as a normal class, except that it<br>
+does not have any new() method.&nbsp;<a class="Constant" href="vim9class.html#E1359" name="E1359">E1359</a><br>
 <br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
-4.&nbsp;&nbsp;Using an interface&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-using-interface" name="Vim9-using-interface">Vim9-using-interface</a><br>
+5.&nbsp;&nbsp;Using an interface&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-using-interface" name="Vim9-using-interface">Vim9-using-interface</a><br>
 <br>
 The example above with Shape, Square and Triangle can be made more useful if<br>
 we add a method to compute the surface of the object.&nbsp;&nbsp;For that we create the<br>
@@ -353,7 +382,7 @@ The interface name can be used as a type:<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
-5.&nbsp;&nbsp;More class details&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-class" name="Vim9-class">Vim9-class</a>&nbsp;<a class="Constant" href="vim9class.html#Class" name="Class">Class</a>&nbsp;<a class="Constant" href="vim9class.html#class" name="class">class</a><br>
+6.&nbsp;&nbsp;More class details&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-class" name="Vim9-class">Vim9-class</a>&nbsp;<a class="Constant" href="vim9class.html#Class" name="Class">Class</a>&nbsp;<a class="Constant" href="vim9class.html#class" name="class">class</a><br>
 <br>
 <span class="PreProc">Defining a class</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#:class" name=":class">:class</a>&nbsp;<a class="Constant" href="vim9class.html#:endclass" name=":endclass">:endclass</a>&nbsp;<a class="Constant" href="vim9class.html#:abstract" name=":abstract">:abstract</a><br>
@@ -391,12 +420,52 @@ once.&nbsp;&nbsp;They can appear in any order, although this order is recommende
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extends ClassName<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;implements InterfaceName, OtherInterface<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specifies SomeInterface</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1355" name="E1355">E1355</a><br>
+Each member and function name can be used only once.&nbsp;&nbsp;It is not possible to<br>
+define a function with the same name and different type of arguments.<br>
+<br>
+<br>
+<span class="PreProc">Extending a class</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#extends" name="extends">extends</a><br>
 A class can extend one other class.&nbsp;<a class="Constant" href="vim9class.html#E1352" name="E1352">E1352</a>&nbsp;<a class="Constant" href="vim9class.html#E1353" name="E1353">E1353</a>&nbsp;<a class="Constant" href="vim9class.html#E1354" name="E1354">E1354</a><br>
+The basic idea is to build on top of an existing class, add properties to it.<br>
+<br>
+The extended class is called the &quot;base class&quot; or &quot;super class&quot;.&nbsp;&nbsp;The new class<br>
+is called the &quot;child class&quot;.<br>
+<br>
+Object members from the base class are all taken over by the child class.&nbsp;&nbsp;It<br>
+is not possible to override them (unlike some other languages).<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1356" name="E1356">E1356</a>&nbsp;<a class="Constant" href="vim9class.html#E1357" name="E1357">E1357</a>&nbsp;<a class="Constant" href="vim9class.html#E1358" name="E1358">E1358</a><br>
+Object methods of the base class can be overruled.&nbsp;&nbsp;The signature (arguments,<br>
+argument types and return type) must be exactly the same.&nbsp;&nbsp;The method of the<br>
+base class can be called by prefixing &quot;super.&quot;.<br>
+<br>
+Other object methods of the base class are taken over by the child class.<br>
+<br>
+Class functions, including functions starting with &quot;new&quot;, can be overruled,<br>
+like with object methods.&nbsp;&nbsp;The function on the base class can be called by<br>
+prefixing the name of the class (for class functions) or &quot;super.&quot;.<br>
+<br>
+Unlike other languages, the constructor of the base class does not need to be<br>
+invoked.&nbsp;&nbsp;In fact, it cannot be invoked.&nbsp;&nbsp;If some initialization from the base<br>
+class also needs to be done in a child class, put it in an object method and<br>
+call that method from every constructor().<br>
+<br>
+If the base class did not specify a new() function then one was automatically<br>
+created.&nbsp;&nbsp;This function will not be taken over by the child class.&nbsp;&nbsp;The child<br>
+class can define its own new() function, or, if there isn't one, a new()<br>
+function will be added automatically.<br>
+<br>
+<br>
+<span class="PreProc">A class implementing an interface</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#implements" name="implements">implements</a>&nbsp;<a class="Constant" href="vim9class.html#E1346" name="E1346">E1346</a>&nbsp;<a class="Constant" href="vim9class.html#E1347" name="E1347">E1347</a><br>
 A class can implement one or more interfaces.&nbsp;&nbsp;The &quot;implements&quot; keyword can<br>
 only appear once&nbsp;<a class="Constant" href="vim9class.html#E1350" name="E1350">E1350</a>&nbsp;.&nbsp;&nbsp;Multiple interfaces can be specified, separated by<br>
 commas.&nbsp;&nbsp;Each interface name can appear only once.&nbsp;<a class="Constant" href="vim9class.html#E1351" name="E1351">E1351</a><br>
+<br>
+<br>
+<span class="PreProc">A class defining an interface</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#specifies" name="specifies">specifies</a><br>
 A class can declare its interface, the object members and methods, with a<br>
 named interface.&nbsp;&nbsp;This avoids the need for separately specifying the<br>
@@ -533,7 +602,7 @@ constructor methods.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
-6.&nbsp;&nbsp;Type definition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-type" name="Vim9-type">Vim9-type</a>&nbsp;<a class="Constant" href="vim9class.html#:type" name=":type">:type</a><br>
+7.&nbsp;&nbsp;Type definition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-type" name="Vim9-type">Vim9-type</a>&nbsp;<a class="Constant" href="vim9class.html#:type" name=":type">:type</a><br>
 <br>
 A type definition is giving a name to a type specification.&nbsp;&nbsp;For Example:<br>
 <br>
@@ -544,7 +613,7 @@ TODO: more explanation<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
-7.&nbsp;&nbsp;Enum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-enum" name="Vim9-enum">Vim9-enum</a>&nbsp;<a class="Constant" href="vim9class.html#:enum" name=":enum">:enum</a>&nbsp;<a class="Constant" href="vim9class.html#:endenum" name=":endenum">:endenum</a><br>
+8.&nbsp;&nbsp;Enum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#Vim9-enum" name="Vim9-enum">Vim9-enum</a>&nbsp;<a class="Constant" href="vim9class.html#:enum" name=":enum">:enum</a>&nbsp;<a class="Constant" href="vim9class.html#:endenum" name=":endenum">:endenum</a><br>
 <br>
 An enum is a type that can have one of a list of values.&nbsp;&nbsp;Example:<br>
 <br>
@@ -644,7 +713,7 @@ Some languages support multiple inheritance.&nbsp;&nbsp;Although that can be use
 some cases, it makes the rules of how a class works quite complicated.<br>
 Instead, using interfaces to declare what is supported is much simpler.&nbsp;&nbsp;The<br>
 very popular Java language does it this way, and it should be good enough for<br>
-Vim.&nbsp;&nbsp;The &quot;keep it simple&quot; rule applies here.&nbsp;&nbsp;<br>
+Vim.&nbsp;&nbsp;The &quot;keep it simple&quot; rule applies here.<br>
 <br>
 Explicitly declaring that a class supports an interface makes it easy to see<br>
 what a class is intended for.&nbsp;&nbsp;It also makes it possible to do proper type<br>
