@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'todo'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Feb 02<br>
+<a class="Constant" href="todo.html" name="todo.txt">todo.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Feb 20<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -43,6 +43,17 @@ browser use:&nbsp;<span class="Constant"><a href="https://github.com/vim/vim/iss
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="todo.html#known-bugs" name="known-bugs">known-bugs</a><br>
 <span class="PreProc">-------------------- Known bugs and current work -----------------------</span><br>
 <br>
+Crash when splitting window: #11961.&nbsp;&nbsp;Set RedrawingDisabled in<br>
+win_split_ins().<br>
+<br>
+Do not use tt_member for class_T, add tt_class.<br>
+<br>
+CI: include #12008 end of February.<br>
+<br>
+In runtime/autoload/dist/script.vim change &quot;set ft=&quot; to &quot;setlocal ft=&quot; ?<br>
+<br>
+Include #11952 after a runtime files update.<br>
+<br>
 Errors when running tests with valgrind:<br>
 - test_codestyle.vim:&nbsp;&nbsp;e.g.:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;command line..script /home/mool/vim/vim90/src/testdir/runtest.vim[569]..function RunTheTest[52]..Test_test_files line 6: keycode_check.vim: space before tab: Expected 0 but got 7<br>
@@ -73,13 +84,17 @@ Further Vim9 improvements, possibly after launch:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or: def _Func()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Perhaps use &quot;private&quot; keyword instead of &quot;_&quot; prefix?<br>
 &nbsp;&nbsp;- &quot;final&quot; object members - can only be set in the constructor.<br>
+&nbsp;&nbsp;- accept line breaks in member initialization.&nbsp;&nbsp;#11957<br>
 &nbsp;&nbsp;- object empty(), len() - can class define a method to be used for them?<br>
+&nbsp;&nbsp;- add to help: when using a default new() method then reordering object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;members may cause trouble.&nbsp;&nbsp;Can define new() without arguments to avoid.<br>
+&nbsp;&nbsp;- TODO items: check types for &quot;implements&quot; - members and methods<br>
 &nbsp;&nbsp;- how about lock/unlock?<br>
 &nbsp;&nbsp;- When checking &quot;implements&quot; also check types of members and function args.<br>
 &nbsp;&nbsp;- For chaining, allow using the class name as type for function return<br>
 &nbsp;&nbsp;&nbsp;&nbsp;value.<br>
 &nbsp;&nbsp;- Implement generics<br>
-&nbsp;&nbsp;- Add &quot;instanceof&quot;<br>
+&nbsp;&nbsp;- Add &quot;instanceof&quot; (exact class name).&nbsp;&nbsp;And &quot;assignable&quot; (class or child)?<br>
 &nbsp;&nbsp;- More efficient way for interface member index than iterating over list?<br>
 &nbsp;&nbsp;- a variant of type() that returns a different type for each class?<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list<span class="Special">&lt;number&gt;</span>&nbsp;and list<span class="Special">&lt;string&gt;</span>&nbsp;should also differ.<br>
@@ -95,6 +110,8 @@ Further Vim9 improvements, possibly after launch:<br>
 - Implement as part of an expression: ++expr, --expr, expr++, expr--.<br>
 <br>
 Information missing in terminfo:<br>
+- Accept &quot;hyper&quot; and &quot;meta&quot; modifiers (16 and 32) from Kitty like Meta?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;8 is actually &quot;super&quot;.<br>
 - t_RV&nbsp;&nbsp;request terminal version string; xterm: &quot;\033[&gt;c&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;change in terminfo for &quot;RV&quot; uses the wrong escape sequence 7 - 14 Jan only<br>
 Codes used for focus gained and lost (currently using use_xterm_like_mouse())<br>
@@ -106,7 +123,6 @@ Codes used for focus gained and lost (currently using use_xterm_like_mouse())<br
 - t_fe&nbsp;&nbsp;enable focus-event tracking<br>
 - t_fd&nbsp;&nbsp;disable focus-event tracking<br>
 Modifiers for various keys<br>
-- Decode kitty key protocol Meta and use MOD_MASK_META.&nbsp;&nbsp;Document&nbsp;<span class="Special">&lt;T-k&gt;</span><br>
 - flag to indicate &quot;xterm compatible modifiers&quot; ?<br>
 Underline and similar:<br>
 - t_AU - Set underline color: like &quot;AF&quot; and &quot;AB&quot; entries.<br>
@@ -150,8 +166,6 @@ Probably Vim internal, not in terminfo:<br>
 - t_RK&nbsp;&nbsp;request terminal keyboard protocol state; sent after&nbsp;<a class="Identifier" href="term.html#t_TI">t_TI</a><br>
 Already working, not properly documented:<br>
 - t_u7&nbsp;&nbsp;request cursor position<br>
-Also, with Alt-b we get â, with Alt-Shift-b we should bet another character.<br>
-That does not appear to work with Kitty.&nbsp;&nbsp;#11913<br>
 <br>
 Popup windows:<br>
 - Add a function to redraw a specific popup window.&nbsp;&nbsp;Esp. to be used when<br>
@@ -306,6 +320,9 @@ Can we not request XT key sequences, or reduce them drastically?<br>
 Issue #10512: Dynamic loading broken with Perl 5.36<br>
 Damien has a patch (2022 Dec 4)<br>
 <br>
+Request #11965: Allow severaql &quot;%=&quot; items in&nbsp;<a class="Type" href="options.html#'statusline'">'statusline'</a>, makes it possible<br>
+to have text in the center.<br>
+<br>
 Add some kind of &quot;:whathappend&quot; command and functions to make visible what the<br>
 last few typed keys and executed commands are.&nbsp;&nbsp;To be used when the user<br>
 wonders what went wrong.<br>
@@ -345,7 +362,7 @@ Better terminal emulator support:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&quot;xterm&quot; and then add &quot;kitty&quot; entries.<br>
 <br>
 Using &quot;A&quot; and &quot;o&quot; in manually created fold (in empty buffer) does not behave<br>
-consistenly (James McCoy, #10698)<br>
+consistently (James McCoy, #10698)<br>
 <br>
 In a timer callback, when using &quot;:echo&quot; and then input() the message is<br>
 overwritten.&nbsp;&nbsp;Could use &quot;:echowin&quot; and call redraw_cmd() in get_user_input().<br>
@@ -389,8 +406,6 @@ need to make the change in where RET_WIN_BUF_CHARTABSIZE() is called.<br>
 IDEA: when drawing the text, store the text byte index in ScreenLinesIdx[].<br>
 When converting screen column to text position use this.<br>
 The line number can be obtained from win-&gt;w_lines[].<br>
-<br>
-MS-Windows: did path modifier :p:8 stop working?&nbsp;&nbsp;#8600<br>
 <br>
 Version of getchar() that does not move the cursor - #10603 Use a separate<br>
 argument for the new flag.<br>
@@ -472,6 +487,9 @@ Any way to convert &quot;$&quot; back by using a special value? (#6901)<br>
 <br>
 Can we detect true color support?&nbsp;&nbsp;<span class="Constant"><a href="https://gist.github.com/XVilka/8346728">https://gist.github.com/XVilka/8346728</a></span><br>
 Try setting a color then request the current color, like using t_u7.<br>
+<br>
+Add a v:register_used variable, which has the name of the register used for<br>
+the last command, e.g. put.&nbsp;&nbsp;#12003<br>
 <br>
 Make the jumplist behave like a tag stack. (#7738)&nbsp;&nbsp;Should there be a more<br>
 time bound navigation, like with undo?<br>
@@ -1178,9 +1196,6 @@ Avoids exceptions, e.g. when using the b: namespace as a dict.<br>
 Patch to make v:shell_error writable. (Christian Brabandt, 2016 Sep 27)<br>
 Useful to restore it.&nbsp;&nbsp;Is there another solution?<br>
 <br>
-&quot;ci[&quot; does not look for next [ like ci&quot; does look for next &quot;.<br>
-(J.F. 2017 Jan 7)<br>
-<br>
 Patch for wrong cursor position on wrapped line, involving breakindent.<br>
 (Ozaki Kiichi, 2016 Nov 25)<br>
 <br>
@@ -1203,9 +1218,6 @@ separator. (Toffanim, 2016 Nov 24, #1274)<br>
 Should :vmap in matchit.vim be :xmap?&nbsp;&nbsp;(Tony Mechelynck)<br>
 <br>
 Problem with whitespace in errorformat. (Gerd Wachsmuth, 2016 May 15, #807)<br>
-<br>
-Add &quot;unicode true&quot; to NSIS installer.&nbsp;&nbsp;Doesn't work with Windows 95, which we<br>
-no longer support.<br>
 <br>
 Support sort(l, 'F'), convert strings to float. (#7857)<br>
 <br>
@@ -1391,9 +1403,6 @@ Do not include the linebreak at the start?<br>
 <br>
 Feature request: add the &quot;al&quot; text object, to manipulate a screen line.<br>
 Especially useful when using&nbsp;<a class="Type" href="options.html#'linebreak'">'linebreak'</a><br>
-<br>
-&quot;:cd C:\Windows\System32\drivers\etc*&quot; does not work, even though the<br>
-directory exists. (Sergio Gallelli, 2013 Dec 29)<br>
 <br>
 Patch to avoid redrawing tabline when the popup menu is visible.<br>
 (Christian Brabandt, 2016 Jan 28)<br>
@@ -2979,10 +2988,6 @@ Win32 GUI known bugs:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;console, go back to Vim and click &quot;reload&quot; in the dialog for the changed<br>
 &nbsp;&nbsp;&nbsp;&nbsp;file: Window moves with the cursor!<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Put focus event in input buffer and let generic Vim code handle it?<br>
-8&nbsp;&nbsp; Win32 GUI: With maximized window, &quot;:set go-=r&quot; doesn't use the space that<br>
-&nbsp;&nbsp;&nbsp;&nbsp;comes available. (Poucet)&nbsp;&nbsp;It works OK on Win 98 but doesn't work on Win<br>
-&nbsp;&nbsp;&nbsp;&nbsp;NT 4.0.&nbsp;&nbsp;Leaves a grey area where the scrollbar was.&nbsp;&nbsp;&quot;:set go+=r&quot; also<br>
-&nbsp;&nbsp;&nbsp;&nbsp;doesn't work properly.<br>
 8&nbsp;&nbsp; When Vim is minimized and when maximizing it a file-changed dialog pops<br>
 &nbsp;&nbsp;&nbsp;&nbsp;up, Vim isn't maximized.&nbsp;&nbsp;It should be done before the dialog, so that it<br>
 &nbsp;&nbsp;&nbsp;&nbsp;appears in the right position. (Webb)<br>
@@ -3506,8 +3511,6 @@ Problems that will (probably) not be solved:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;input method called from GDK code.&nbsp;&nbsp;Without Perl it doesn't crash.<br>
 -&nbsp;&nbsp; VMS: Vimdiff doesn't work with the VMS diff, because the output looks<br>
 &nbsp;&nbsp;&nbsp;&nbsp;different.&nbsp;&nbsp;This makes test 47 fail.&nbsp;&nbsp;Install a Unix-compatible diff.<br>
--&nbsp;&nbsp; Win32 GUI: mouse wheel always scrolls rightmost window.&nbsp;&nbsp;The events arrive<br>
-&nbsp;&nbsp;&nbsp;&nbsp;in Vim as if the rightmost scrollbar was used.<br>
 -&nbsp;&nbsp; GTK with Gnome: Produces an error message when starting up:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gdk-<span class="Todo">WARNING</span>&nbsp;**: locale not supported by C library<br>
 &nbsp;&nbsp;&nbsp;&nbsp;This is caused by the gnome library gnome_init() setting $LC_CTYPE to<br>
@@ -4464,8 +4467,6 @@ Tags:<br>
 Win32 GUI:<br>
 8&nbsp;&nbsp; Make debug mode work while starting up (vim -D).&nbsp;&nbsp;Open console window for<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the message and input?<br>
-7&nbsp;&nbsp; GvimExt: when there are several existing Vims, move the list to a submenu.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(Mike McCollister)<br>
 8&nbsp;&nbsp; When using &quot;Edit with Vim&quot; for one file it changes directory, when several<br>
 &nbsp;&nbsp;&nbsp;&nbsp;files are selected and using &quot;Edit with single Vim&quot; the directory isn't<br>
 &nbsp;&nbsp;&nbsp;&nbsp;changed.&nbsp;&nbsp;At least change directory when the path is the same for all<br>
@@ -6010,7 +6011,7 @@ Various improvements:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;many percent down the windows).<br>
 -&nbsp;&nbsp; Make it possible for the&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;to be displayed at the end of the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;line.&nbsp;&nbsp;Use a comma to separate the part at the end and the start of the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;line?&nbsp;&nbsp;Highlight the linebreak characters, add flag in&nbsp;<a class="Type" href="options.html#'highlight'">'highlight'</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;line?&nbsp;&nbsp;#754&nbsp;&nbsp;Highlight the linebreak characters, add flag in&nbsp;<a class="Type" href="options.html#'highlight'">'highlight'</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Make&nbsp;<a class="Type" href="options.html#'showbreak'">'showbreak'</a>&nbsp;local to a window.<br>
 -&nbsp;&nbsp; Some string options should be expanded if they have wildcards, e.g.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'dictionary'">'dictionary'</a>&nbsp;when it is &quot;*.h&quot;.<br>
