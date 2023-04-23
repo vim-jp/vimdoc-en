@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'eval'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="eval.html" name="eval.txt">eval.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Feb 25<br>
+<a class="Constant" href="eval.html" name="eval.txt">eval.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Apr 15<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -1793,6 +1793,8 @@ b:changedtick&nbsp;&nbsp; The total number of changes to the current buffer.&nbs
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp; call My_Update()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:endif</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; You cannot change or delete the b:changedtick variable.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you need more information about the change see<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="builtin.html#listener_add()">listener_add()</a>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#window-variable" name="window-variable">window-variable</a>&nbsp;<a class="Constant" href="eval.html#w:var" name="w:var">w:var</a>&nbsp;<a class="Constant" href="eval.html#w:" name="w:">w:</a><br>
 A variable name that is preceded with &quot;w:&quot; is local to the current window.&nbsp;&nbsp;It<br>
@@ -4589,28 +4591,18 @@ The input is in the variable &quot;line&quot;, the results in the variables &quo
 The&nbsp;<a class="Comment" href="repeat.html#:scriptnames">:scriptnames</a>&nbsp;command can be used to get a list of all script files that<br>
 have been sourced.&nbsp;&nbsp;There is also the&nbsp;<a class="Comment" href="builtin.html#getscriptinfo()">getscriptinfo()</a>&nbsp;function, but the<br>
 information returned is not exactly the same.&nbsp;&nbsp;In case you need to manipulate<br>
-the output of&nbsp;<a class="Comment" href="repeat.html#:scriptnames">scriptnames</a>&nbsp;this code can be used:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&quot; Get the output of &quot;:scriptnames&quot; in the scriptnames_output variable.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let scriptnames_output = ''<br>
-&nbsp;&nbsp;&nbsp;&nbsp;redir =&gt; scriptnames_output<br>
-&nbsp;&nbsp;&nbsp;&nbsp;silent scriptnames<br>
-&nbsp;&nbsp;&nbsp;&nbsp;redir END</div>
+the list, this code can be used as a base:<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&quot; Split the output into lines and parse each line.&nbsp;&nbsp;Add an entry to the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&quot; &quot;scripts&quot; dictionary.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let scripts = {}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;for line in split(scriptnames_output, &quot;\n&quot;)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Only do non-blank lines.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if line =~ '\S'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Get the first number in the line.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let nr = matchstr(line, '\d\+')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Get the file name, remove the script number &quot; 123: &quot;.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let name = substitute(line, '.\+:\s*', '', '')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Add an item to the Dictionary<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let scripts[nr] = name<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
-&nbsp;&nbsp;&nbsp;&nbsp;endfor<br>
-&nbsp;&nbsp;&nbsp;&nbsp;unlet scriptnames_output</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;# Create or update scripts dictionary, indexed by SNR, and return it.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;def Scripts(scripts: dict&lt;string&gt; = {}): dict&lt;string&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for info in getscriptinfo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if scripts-&gt;has_key(info.sid)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scripts[info.sid] = info.name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return scripts<br>
+&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 10. Vim script versions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#vimscript-version" name="vimscript-version">vimscript-version</a>&nbsp;<a class="Constant" href="eval.html#vimscript-versions" name="vimscript-versions">vimscript-versions</a><br>
