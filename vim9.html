@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Mar 07<br>
+<a class="Constant" href="vim9.html" name="vim9.txt">vim9.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.0.</span>&nbsp;&nbsp;Last change: 2023 Jun 10<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -122,6 +122,9 @@ script and&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>&nbsp;functions
 - Unless mentioned specifically, the highest&nbsp;<a class="Identifier" href="eval.html#scriptversion">scriptversion</a>&nbsp;is used.<br>
 - When defining an expression mapping, the expression will be evaluated in the<br>
 &nbsp;&nbsp;context of the script where it was defined.<br>
+- When indexing a string the index is counted in characters, not bytes:<br>
+&nbsp;&nbsp;<a class="Identifier" href="vim9.html#vim9-string-index">vim9-string-index</a><br>
+- Some possibly unexpected differences:&nbsp;<a class="Identifier" href="vim9.html#vim9-gotchas">vim9-gotchas</a>.<br>
 <br>
 <br>
 <span class="PreProc">Comments starting with #</span><br>
@@ -195,8 +198,8 @@ created yet.&nbsp;&nbsp;In this case you can call&nbsp;<a class="Comment" href="
 used for the command or the error was caught a&nbsp;<a class="Comment" href="eval.html#:try">:try</a>&nbsp;block), does not get a<br>
 range passed, cannot be a &quot;dict&quot; function, and can always be a closure.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-no-dict-function" name="vim9-no-dict-function">vim9-no-dict-function</a><br>
-Later classes will be added, which replaces the &quot;dict function&quot; mechanism.<br>
-For now you will need to pass the dictionary explicitly:<br>
+You can use a Vim9 Class (<a class="Identifier" href="vim9class.html#Vim9-class">Vim9-class</a>) instead of a &quot;dict function&quot;.<br>
+You can also pass the dictionary explicitly:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def DictFunc(self: dict&lt;any&gt;, arg: string)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo self[arg]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
@@ -1061,11 +1064,11 @@ It is possible to compare&nbsp;<a class="Comment" href="vim9.html#null">null</a>
 error.&nbsp;&nbsp;However, comparing&nbsp;<a class="Comment" href="vim9.html#null">null</a>&nbsp;with a number, float or bool will always<br>
 result in&nbsp;<a class="Comment" href="vim9.html#false">false</a>.&nbsp;&nbsp;This is different from legacy script, where comparing<br>
 <a class="Comment" href="vim9.html#null">null</a>&nbsp;with zero or&nbsp;<a class="Comment" href="vim9.html#false">false</a>&nbsp;would return&nbsp;<a class="Comment" href="vim9.html#true">true</a>.<br>
-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-false-true" name="vim9-false-true">vim9-false-true</a><br>
 When converting a boolean to a string&nbsp;<a class="Comment" href="vim9.html#false">false</a>&nbsp;and&nbsp;<a class="Comment" href="vim9.html#true">true</a>&nbsp;are used, not<br>
 <a class="Comment" href="eval.html#v:false">v:false</a>&nbsp;and&nbsp;<a class="Comment" href="eval.html#v:true">v:true</a>&nbsp;like in legacy script.&nbsp;&nbsp;<a class="Comment" href="eval.html#v:none">v:none</a>&nbsp;has no&nbsp;<span class="Comment">none</span><br>
 replacement, it has no equivalent in other languages.<br>
-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-string-index" name="vim9-string-index">vim9-string-index</a><br>
 Indexing a string with&nbsp;<span class="Special">[idx]</span>&nbsp;or taking a slice with [idx : idx] uses character<br>
 indexes instead of byte indexes.&nbsp;&nbsp;Composing characters are included.<br>
 Example:<br>
