@@ -313,17 +313,27 @@ This switches on three very clever mechanisms:<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="usr_05.html#restore-cursor" name="restore-cursor">restore-cursor</a>&nbsp;<a class="Constant" href="usr_05.html#last-position-jump" name="last-position-jump">last-position-jump</a>&nbsp;<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;autocmd BufReadPost *<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ if line(&quot;'\&quot;&quot;) &gt;= 1 &amp;&amp; line(&quot;'\&quot;&quot;) &lt;= line(&quot;$&quot;) &amp;&amp; &amp;ft !~# 'commit'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ |&nbsp;&nbsp; exe &quot;normal! g`\&quot;&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ | endif</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;augroup RestoreCursor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autocmd!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autocmd BufReadPost *<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ let line = line(&quot;'\&quot;&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ | if line &gt;= 1 &amp;&amp; line &lt;= line(&quot;$&quot;) &amp;&amp; &amp;filetype !~# 'commit'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&amp; index(['xxd', 'gitrebase'], &amp;filetype) == -1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ |&nbsp;&nbsp; execute &quot;normal! g`\&quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ | endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;augroup END</div>
 <br>
 Another autocommand.&nbsp;&nbsp;This time it is used after reading any file.&nbsp;&nbsp;The<br>
 complicated stuff after it checks if the '&quot; mark is defined, and jumps to it<br>
-if so.&nbsp;&nbsp;The backslash at the start of a line is used to continue the command<br>
-from the previous line.&nbsp;&nbsp;That avoids a line getting very long.<br>
-See&nbsp;<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>.&nbsp;&nbsp;This only works in a Vim script file, not when<br>
-typing commands at the command-line.<br>
+if so.&nbsp;&nbsp;It doesn't do that for a commit or rebase message, which are likely<br>
+a different one than last time, and when using xxd(1) to filter and edit<br>
+binary files, which transforms input files back and forth, causing them to<br>
+have dual nature, so to speak.&nbsp;&nbsp;See also&nbsp;<a class="Identifier" href="tips.html#using-xxd">using-xxd</a>.<br>
+<br>
+The backslash at the start of a line is used to continue the command from the<br>
+previous line.&nbsp;&nbsp;That avoids a line getting very long.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="repeat.html#line-continuation">line-continuation</a>.<br>
+This only works in a Vim script file, not when typing commands at the<br>
+command line.<br>
 <br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis<br>

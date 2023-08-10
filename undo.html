@@ -116,10 +116,20 @@ use&nbsp;<span class="Special">CTRL-G</span>&nbsp;u.&nbsp;&nbsp;This is useful i
 parts.&nbsp;&nbsp;E.g., for each sentence.&nbsp;&nbsp;<a class="Identifier" href="insert.html#i_CTRL-G_u">i_CTRL-G_u</a><br>
 <br>
 Setting the value of&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>&nbsp;also closes the undo block.&nbsp;&nbsp;Even when the<br>
-new value is equal to the old value.&nbsp;&nbsp;In&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;undolevels = &amp;undolevels</div>
+new value is equal to the old value.&nbsp;&nbsp;Use&nbsp;<span class="Comment">g:undolevels</span>&nbsp;to explicitly read<br>
+and write only the global value of&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>. In&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;g:undolevels = &amp;g:undolevels</div>
 In legacy script:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;undolevels = &amp;undolevels</div>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;g:undolevels = &amp;g:undolevels</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that the similar-looking assignment&nbsp;<span class="Comment">let &amp;undolevels=&amp;undolevels</span>&nbsp;does not<br>
+preserve the global option value of&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>&nbsp;in the event that the local<br>
+option has been set to a different value.&nbsp;&nbsp;For example:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Start with different global and local values for 'undolevels'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;g:undolevels = 1000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;l:undolevels = 2000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; This assignment changes the global option to 2000:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let &amp;undolevels = &amp;undolevels</div>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 4. Undo branches&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="undo.html#undo-branches" name="undo-branches">undo-branches</a>&nbsp;<a class="Constant" href="undo.html#undo-tree" name="undo-tree">undo-tree</a><br>
@@ -371,11 +381,19 @@ undo is possible.&nbsp;&nbsp;Use this if you are running out of memory.<br>
 When you set&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a>&nbsp;to -1 the undo information is not immediately<br>
 cleared, this happens at the next change.&nbsp;&nbsp;To force clearing the undo<br>
 information you can use these commands:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let old_undolevels = &amp;undolevels<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set undolevels=-1<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let old_undolevels = &amp;l:undolevels<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:setlocal undolevels=-1<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:exe &quot;normal a \&lt;BS&gt;\&lt;Esc&gt;&quot;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let &amp;undolevels = old_undolevels<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let &amp;l:undolevels = old_undolevels<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:unlet old_undolevels</div>
+<br>
+<span class="Todo">Note</span>&nbsp;use of&nbsp;<span class="Comment">&amp;l:undolevels</span>&nbsp;to explicitly read the local value of&nbsp;<a class="Type" href="options.html#'undolevels'">'undolevels'</a><br>
+and the use of&nbsp;<a class="Comment" href="options.html#:setlocal">:setlocal</a>&nbsp;to change only the local option (which takes<br>
+precedence over the corresponding global option value).&nbsp;&nbsp;Saving the option value<br>
+via the use of&nbsp;<span class="Comment">&amp;undolevels</span>&nbsp;is unpredictable; it reads either the local value<br>
+(if one has been set) or the global value (otherwise).&nbsp;&nbsp;Also, if a local value<br>
+has been set, changing the option via&nbsp;<span class="Comment">:set undolevels</span>&nbsp;will change both the<br>
+global and local values, requiring extra work to save and restore both values.<br>
 <br>
 Marks for the buffer ('a to 'z) are also saved and restored, together with the<br>
 text.<br>
