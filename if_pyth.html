@@ -774,7 +774,19 @@ That is the default value for&nbsp;<a class="Type" href="options.html#'pythondll
 The&nbsp;<a class="Type" href="options.html#'pythondll'">'pythondll'</a>&nbsp;or&nbsp;<a class="Type" href="options.html#'pythonthreedll'">'pythonthreedll'</a>&nbsp;option can be used to specify the Python<br>
 shared library file instead of DYNAMIC_PYTHON_DLL or DYNAMIC_PYTHON3_DLL file<br>
 what were specified at compile time.&nbsp;&nbsp;The version of the shared library must<br>
-match the Python 2.x or Python 3 version Vim was compiled with.<br>
+match the Python 2.x or Python 3 version (<a class="Identifier" href="eval.html#v:python3_version">v:python3_version</a>) Vim was<br>
+compiled with unless using&nbsp;<a class="Identifier" href="if_pyth.html#python3-stable-abi">python3-stable-abi</a>.<br>
+<br>
+<br>
+<span class="PreProc">Stable ABI and mixing Python versions</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_pyth.html#python-stable" name="python-stable">python-stable</a>&nbsp;<a class="Constant" href="if_pyth.html#python-stable-abi" name="python-stable-abi">python-stable-abi</a>&nbsp;<a class="Constant" href="if_pyth.html#python3-stable-abi" name="python3-stable-abi">python3-stable-abi</a><br>
+If Vim was not compiled with Stable ABI (only available for Python 3), the<br>
+version of the Python shared library must match the version that Vim was<br>
+compiled with.&nbsp;&nbsp;Otherwise, mixing versions could result in unexpected crashes<br>
+and failures.&nbsp;&nbsp;With Stable ABI, this restriction is relaxed, and any Python 3<br>
+library with version of at least&nbsp;<a class="Identifier" href="eval.html#v:python3_version">v:python3_version</a>&nbsp;will work.&nbsp;&nbsp;See<br>
+<a class="Identifier" href="if_pyth.html#has-python">has-python</a>&nbsp;for how to check if Stable ABI is supported, or see if version<br>
+output includes&nbsp;<a class="Identifier" href="various.html#+python3/dyn-stable">+python3/dyn-stable</a>.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 10. Python 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="if_pyth.html#python3" name="python3">python3</a><br>
@@ -883,6 +895,18 @@ python support:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'compiled with Python 3.x support'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('python3_dynamic')<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'Python 3.x dynamically loaded'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
+<br>
+When loading the library dynamically, Vim can be compiled to support Python 3<br>
+Stable ABI (<a class="Identifier" href="if_pyth.html#python3-stable-abi">python3-stable-abi</a>) which allows you to load a different version<br>
+of Python 3 library than the one Vim was compiled with.&nbsp;&nbsp;To check it:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('python3_dynamic')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has('python3_stable')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'support Python 3 Stable ABI.'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'does not support Python 3 Stable ABI.'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'only use Python 3 version ' .. v:python3_version<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
 <br>
