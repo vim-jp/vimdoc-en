@@ -42,7 +42,7 @@ The basic item is an object:<br>
 &nbsp;&nbsp;functions are invoked &quot;on the object&quot;, which is what sets it apart from the<br>
 &nbsp;&nbsp;traditional separation of data and code that manipulates the data.<br>
 - An object has a well defined interface, with typed member variables and<br>
-&nbsp;&nbsp;member functions.<br>
+&nbsp;&nbsp;methods.<br>
 - Objects are created from a class and all objects have the same interface.<br>
 &nbsp;&nbsp;This does not change at runtime, it is not dynamic.<br>
 <br>
@@ -108,7 +108,7 @@ You can create an object from this class with the new() method:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var pos = TextPosition.new(1, 1)</div>
 <br>
-The object members &quot;lnum&quot; and &quot;col&quot; can be accessed directly:<br>
+The object variables &quot;lnum&quot; and &quot;col&quot; can be accessed directly:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo $'The text position is ({pos.lnum}, {pos.col})'</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1317" name="E1317">E1317</a>&nbsp;<a class="Constant" href="vim9class.html#E1327" name="E1327">E1327</a><br>
@@ -116,28 +116,30 @@ If you have been using other object-oriented languages you will notice that<br>
 in Vim the object members are consistently referred to with the &quot;this.&quot;<br>
 prefix.&nbsp;&nbsp;This is different from languages like Java and TypeScript.&nbsp;&nbsp;The<br>
 naming convention makes the object members easy to spot.&nbsp;&nbsp;Also, when a<br>
-variable does not have the &quot;this.&quot; prefix you know it is not an object member.<br>
+variable does not have the &quot;this.&quot; prefix you know it is not an object<br>
+variable.<br>
 <br>
 <br>
-<span class="PreProc">Member write access</span><br>
+<span class="PreProc">Object variable write access</span><br>
 <br>
-Now try to change an object member directly:<br>
+Now try to change an object variable directly:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos.lnum = 9</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1335" name="E1335">E1335</a><br>
-This will give you an error!&nbsp;&nbsp;That is because by default object members can be<br>
-read but not set.&nbsp;&nbsp;That's why the TextPosition class provides a method for it:<br>
+This will give you an error!&nbsp;&nbsp;That is because by default object variables can<br>
+be read but not set.&nbsp;&nbsp;That's why the TextPosition class provides a method for<br>
+it:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos.SetLnum(9)</div>
 <br>
-Allowing to read but not set an object member is the most common and safest<br>
+Allowing to read but not set an object variable is the most common and safest<br>
 way.&nbsp;&nbsp;Most often there is no problem using a value, while setting a value may<br>
 have side effects that need to be taken care of.&nbsp;&nbsp;In this case, the SetLnum()<br>
 method could check if the line number is valid and either give an error or use<br>
 the closest valid value.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#:public" name=":public">:public</a>&nbsp;<a class="Constant" href="vim9class.html#E1331" name="E1331">E1331</a><br>
-If you don't care about side effects and want to allow the object member to be<br>
-changed at any time, you can make it public:<br>
+If you don't care about side effects and want to allow the object variable to<br>
+be changed at any time, you can make it public:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public this.lnum: number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public this.col: number</div>
@@ -145,23 +147,23 @@ changed at any time, you can make it public:<br>
 Now you don't need the SetLnum(), SetCol() and SetPosition() methods, setting<br>
 &quot;pos.lnum&quot; directly above will no longer give an error.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1326" name="E1326">E1326</a><br>
-If you try to set an object member that doesn't exist you get an error:<br>
+If you try to set an object variable that doesn't exist you get an error:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos.other = 9</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">E1326: Member not found on object &quot;TextPosition&quot;: other</span><br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1376" name="E1376">E1376</a><br>
-A object member cannot be accessed using the class name.<br>
+A object variable cannot be accessed using the class name.<br>
 <br>
-<span class="PreProc">Private members</span><br>
+<span class="PreProc">Private variables</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1332" name="E1332">E1332</a>&nbsp;<a class="Constant" href="vim9class.html#E1333" name="E1333">E1333</a><br>
-On the other hand, if you do not want the object members to be read directly,<br>
+On the other hand, if you do not want the object variables to be read directly,<br>
 you can make them private.&nbsp;&nbsp;This is done by prefixing an underscore to the<br>
 name:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._lnum: number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._col number</div>
 <br>
-Now you need to provide methods to get the value of the private members.<br>
+Now you need to provide methods to get the value of the private variables.<br>
 These are commonly called getters.&nbsp;&nbsp;We recommend using a name that starts with<br>
 &quot;Get&quot;:<br>
 <br>
@@ -173,7 +175,7 @@ These are commonly called getters.&nbsp;&nbsp;We recommend using a name that sta
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return this._col<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
-This example isn't very useful, the members might as well have been public.<br>
+This example isn't very useful, the variables might as well have been public.<br>
 It does become useful if you check the value.&nbsp;&nbsp;For example, restrict the line<br>
 number to the total number of lines:<br>
 <br>
@@ -207,8 +209,8 @@ the above class):<br>
 <br>
 <span class="PreProc">Simplifying the new() method</span><br>
 <br>
-Many constructors take values for the object members.&nbsp;&nbsp;Thus you very often see<br>
-this pattern:<br>
+Many constructors take values for the object variables.&nbsp;&nbsp;Thus you very often<br>
+see this pattern:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class SomeClass<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.lnum: number<br>
@@ -220,19 +222,20 @@ this pattern:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; endclass</div>
 <br>
-Not only is this text you need to write, it also has the type of each member<br>
-twice.&nbsp;&nbsp;Since this is so common a shorter way to write new() is provided:<br>
+Not only is this text you need to write, it also has the type of each<br>
+variables twice.&nbsp;&nbsp;Since this is so common a shorter way to write new() is<br>
+provided:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; def new(this.lnum, this.col)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef</div>
 <br>
-The semantics are easy to understand: Providing the object member name,<br>
+The semantics are easy to understand: Providing the object variable name,<br>
 including &quot;this.&quot;, as the argument to new() means the value provided in the<br>
-new() call is assigned to that object member.&nbsp;&nbsp;This mechanism comes from the<br>
+new() call is assigned to that object variable.&nbsp;&nbsp;This mechanism comes from the<br>
 Dart language.<br>
 <br>
-Putting together this way of using new() and making the members public results<br>
-in a much shorter class definition than what we started with:<br>
+Putting together this way of using new() and making the variables public<br>
+results in a much shorter class definition than what we started with:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class TextPosition<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public this.lnum: number<br>
@@ -249,15 +252,15 @@ in a much shorter class definition than what we started with:<br>
 <br>
 The sequence of constructing a new object is:<br>
 1. Memory is allocated and cleared.&nbsp;&nbsp;All values are zero/false/empty.<br>
-2. For each declared member that has an initializer, the expression is<br>
-&nbsp;&nbsp; evaluated and assigned to the member.&nbsp;&nbsp;This happens in the sequence the<br>
-&nbsp;&nbsp; members are declared in the class.<br>
+2. For each declared object variable that has an initializer, the expression<br>
+&nbsp;&nbsp; is evaluated and assigned to the variable.&nbsp;&nbsp;This happens in the sequence<br>
+&nbsp;&nbsp; the variables are declared in the class.<br>
 3. Arguments in the new() method in the &quot;this.name&quot; form are assigned.<br>
 4. The body of the new() method is executed.<br>
 <br>
 If the class extends a parent class, the same thing happens.&nbsp;&nbsp;In the second<br>
-step the members of the parent class are done first.&nbsp;&nbsp;There is no need to call<br>
-&quot;super()&quot; or &quot;new()&quot; on the parent.<br>
+step the object variables of the parent class are initialized first.&nbsp;&nbsp;There is<br>
+no need to call &quot;super()&quot; or &quot;new()&quot; on the parent.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1365" name="E1365">E1365</a><br>
 When defining the new() method the return type should not be specified.&nbsp;&nbsp;It<br>
@@ -280,7 +283,7 @@ prefix in the class where they are defined:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1340" name="E1340">E1340</a>&nbsp;<a class="Constant" href="vim9class.html#E1341" name="E1341">E1341</a><br>
-Since the name is used as-is, shadowing the name by a function argument name<br>
+Since the name is used as-is, shadowing the name by a method argument name<br>
 or local variable name is not allowed.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1374" name="E1374">E1374</a>&nbsp;<a class="Constant" href="vim9class.html#E1375" name="E1375">E1375</a><br>
@@ -399,7 +402,7 @@ does not have any new() method.&nbsp;<a class="Constant" href="vim9class.html#E1
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#abstract-method" name="abstract-method">abstract-method</a>&nbsp;<a class="Constant" href="vim9class.html#E1371" name="E1371">E1371</a>&nbsp;<a class="Constant" href="vim9class.html#E1372" name="E1372">E1372</a><br>
 An abstract method can be defined in an abstract class by using the &quot;abstract&quot;<br>
-prefix when defining the function:<br>
+prefix when defining the method:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abstract class Shape<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; abstract def Draw()<br>
@@ -515,17 +518,16 @@ once.&nbsp;&nbsp;They can appear in any order, although this order is recommende
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;implements InterfaceName, OtherInterface<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specifies SomeInterface</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1355" name="E1355">E1355</a>&nbsp;<a class="Constant" href="vim9class.html#E1369" name="E1369">E1369</a><br>
-Each member and function name can be used only once.&nbsp;&nbsp;It is not possible to<br>
-define a function with the same name and different type of arguments.&nbsp;&nbsp;It is<br>
-not possible to use a public and private member variable with the same name.<br>
-A object variable name used in a super class cannot be reused in a child<br>
-class.<br>
+Each variable and method name can be used only once.&nbsp;&nbsp;It is not possible to<br>
+define a method with the same name and different type of arguments.&nbsp;&nbsp;It is not<br>
+possible to use a public and private member variable with the same name.&nbsp;&nbsp;A<br>
+object variable name used in a super class cannot be reused in a child class.<br>
 <br>
 <br>
-<span class="PreProc">Member Initialization</span><br>
-If the type of a member is not explicitly specified in a class, then it is set<br>
-to &quot;any&quot; during class definition.&nbsp;&nbsp;When an object is instantiated from the<br>
-class, then the type of the member is set.<br>
+<span class="PreProc">Object Variable Initialization</span><br>
+If the type of a variable is not explicitly specified in a class, then it is<br>
+set to &quot;any&quot; during class definition.&nbsp;&nbsp;When an object is instantiated from the<br>
+class, then the type of the variable is set.<br>
 <br>
 <br>
 <span class="PreProc">Extending a class</span><br>
@@ -536,7 +538,7 @@ The basic idea is to build on top of an existing class, add properties to it.<br
 The extended class is called the &quot;base class&quot; or &quot;super class&quot;.&nbsp;&nbsp;The new class<br>
 is called the &quot;child class&quot;.<br>
 <br>
-Object members from the base class are all taken over by the child class.&nbsp;&nbsp;It<br>
+Object variables from the base class are all taken over by the child class.&nbsp;&nbsp;It<br>
 is not possible to override them (unlike some other languages).<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1356" name="E1356">E1356</a>&nbsp;<a class="Constant" href="vim9class.html#E1357" name="E1357">E1357</a>&nbsp;<a class="Constant" href="vim9class.html#E1358" name="E1358">E1358</a><br>
@@ -550,19 +552,19 @@ the same as the super class.<br>
 <br>
 Other object methods of the base class are taken over by the child class.<br>
 <br>
-Class functions, including functions starting with &quot;new&quot;, can be overruled,<br>
-like with object methods.&nbsp;&nbsp;The function on the base class can be called by<br>
-prefixing the name of the class (for class functions) or &quot;super.&quot;.<br>
+Class methods, including methods starting with &quot;new&quot;, can be overruled, like<br>
+with object methods.&nbsp;&nbsp;The method on the base class can be called by prefixing<br>
+the name of the class (for class methods) or &quot;super.&quot;.<br>
 <br>
 Unlike other languages, the constructor of the base class does not need to be<br>
 invoked.&nbsp;&nbsp;In fact, it cannot be invoked.&nbsp;&nbsp;If some initialization from the base<br>
 class also needs to be done in a child class, put it in an object method and<br>
 call that method from every constructor().<br>
 <br>
-If the base class did not specify a new() function then one was automatically<br>
-created.&nbsp;&nbsp;This function will not be taken over by the child class.&nbsp;&nbsp;The child<br>
-class can define its own new() function, or, if there isn't one, a new()<br>
-function will be added automatically.<br>
+If the base class did not specify a new() method then one was automatically<br>
+created.&nbsp;&nbsp;This method will not be taken over by the child class.&nbsp;&nbsp;The child<br>
+class can define its own new() method, or, if there isn't one, a new() method<br>
+will be added automatically.<br>
 <br>
 <br>
 <span class="PreProc">A class implementing an interface</span><br>
@@ -574,7 +576,7 @@ commas.&nbsp;&nbsp;Each interface name can appear only once.&nbsp;<a class="Cons
 <br>
 <span class="PreProc">A class defining an interface</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#specifies" name="specifies">specifies</a><br>
-A class can declare its interface, the object members and methods, with a<br>
+A class can declare its interface, the object variables and methods, with a<br>
 named interface.&nbsp;&nbsp;This avoids the need for separately specifying the<br>
 interface, which is often done in many languages, especially Java.<br>
 <br>
@@ -582,14 +584,14 @@ interface, which is often done in many languages, especially Java.<br>
 <span class="PreProc">Items in a class</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1318" name="E1318">E1318</a>&nbsp;<a class="Constant" href="vim9class.html#E1325" name="E1325">E1325</a><br>
 Inside a class, in between&nbsp;<a class="Comment" href="vim9class.html#:class">:class</a>&nbsp;and&nbsp;<a class="Comment" href="vim9class.html#:endclass">:endclass</a>, these items can appear:<br>
-- An object member declaration:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._privateMemberName: memberType<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.readonlyMemberName: memberType<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public this.readwriteMemberName: memberType</div>
-- A class member declaration:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static this._privateMemberName: memberType<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static this.readonlyMemberName: memberType<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static public this.readwriteMemberName: memberType</div>
+- An object variable declaration:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this._privateVariableName: memberType<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.readonlyVariableName: memberType<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public this.readwriteVariableName: memberType</div>
+- A class variable declaration:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static _privateClassVariableName: memberType<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static readonlyClassVariableName: memberType<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static public readwriteClassVariableName: memberType</div>
 - A constructor method:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def new(arguments)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def newName(arguments)</div>
@@ -600,10 +602,11 @@ Inside a class, in between&nbsp;<a class="Comment" href="vim9class.html#:class">
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def SomeMethod(arguments)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def _PrivateMethod(arguments)</div>
 <br>
-For the object member the type must be specified.&nbsp;&nbsp;The best way is to do this<br>
-explicitly with &quot;:&nbsp;<span class="Special">{type}</span>&quot;.&nbsp;&nbsp;For simple types you can also use an initializer,<br>
-such as &quot;= 123&quot;, and Vim will see that the type is a number.&nbsp;&nbsp;Avoid doing this<br>
-for more complex types and when the type will be incomplete.&nbsp;&nbsp;For example:<br>
+For the object variable the type must be specified.&nbsp;&nbsp;The best way is to do<br>
+this explicitly with &quot;:&nbsp;<span class="Special">{type}</span>&quot;.&nbsp;&nbsp;For simple types you can also use an<br>
+initializer, such as &quot;= 123&quot;, and Vim will see that the type is a number.<br>
+Avoid doing this for more complex types and when the type will be incomplete.<br>
+For example:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.nameList = []</div>
 This specifies a list, but the item type is unknown.&nbsp;&nbsp;Better use:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.nameList: list&lt;string&gt;</div>
@@ -623,8 +626,8 @@ prefixed with&nbsp;<a class="Comment" href="vim9.html#:export">:export</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export interface InterfaceName<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endinterface</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1344" name="E1344">E1344</a><br>
-An interface can declare object members, just like in a class but without any<br>
-initializer.<br>
+An interface can declare object variables, just like in a class but without<br>
+any initializer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1345" name="E1345">E1345</a><br>
 An interface can declare methods with&nbsp;<a class="Comment" href="vim9.html#:def">:def</a>, including the arguments and<br>
 return type, but without the body and without&nbsp;<a class="Comment" href="vim9.html#:enddef">:enddef</a>.&nbsp;&nbsp;Example:<br>
@@ -647,15 +650,15 @@ interface.&nbsp;<a class="Constant" href="vim9class.html#E1381" name="E1381">E13
 When a variable is declared to have the type of an object, but it is not<br>
 initialized, the value is null.&nbsp;&nbsp;When trying to use this null object Vim often<br>
 does not know what class was supposed to be used.&nbsp;&nbsp;Vim then cannot check if<br>
-a member name is correct and you will get an &quot;Using a null object&quot; error,<br>
-even when the member name is invalid.&nbsp;<a class="Constant" href="vim9class.html#E1360" name="E1360">E1360</a>&nbsp;<a class="Constant" href="vim9class.html#E1362" name="E1362">E1362</a>&nbsp;<a class="Constant" href="vim9class.html#E1363" name="E1363">E1363</a><br>
+a variable name is correct and you will get an &quot;Using a null object&quot; error,<br>
+even when the variable name is invalid.&nbsp;<a class="Constant" href="vim9class.html#E1360" name="E1360">E1360</a>&nbsp;<a class="Constant" href="vim9class.html#E1362" name="E1362">E1362</a>&nbsp;<a class="Constant" href="vim9class.html#E1363" name="E1363">E1363</a><br>
 <br>
 <br>
 <span class="PreProc">Default constructor</span><br>
 <br>
 In case you define a class without a new() method, one will be automatically<br>
 defined.&nbsp;&nbsp;This default constructor will have arguments for all the object<br>
-members, in the order they were specified.&nbsp;&nbsp;Thus if your class looks like:<br>
+variables, in the order they were specified.&nbsp;&nbsp;Thus if your class looks like:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class AutoNew<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.name: string<br>
@@ -663,14 +666,14 @@ members, in the order they were specified.&nbsp;&nbsp;Thus if your class looks l
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.gender: Gender<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
 <br>
-Then The default constructor will be:<br>
+Then the default constructor will be:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def new(this.name = v:none, this.age = v:none, this.gender = v:none)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
 The &quot;= v:none&quot; default values make the arguments optional.&nbsp;&nbsp;Thus you can also<br>
 call&nbsp;<span class="Comment">new()</span>&nbsp;without any arguments.&nbsp;&nbsp;No assignment will happen and the default<br>
-value for the object members will be used.&nbsp;&nbsp;This is a more useful example,<br>
+value for the object variables will be used.&nbsp;&nbsp;This is a more useful example,<br>
 with default values:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class TextPosition<br>
@@ -686,13 +689,13 @@ the name, you can define the constructor like this:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1328" name="E1328">E1328</a><br>
 <span class="Todo">Note</span>&nbsp;that you cannot use another default value than &quot;v:none&quot; here.&nbsp;&nbsp;If you<br>
-want to initialize the object members, do it where they are declared.&nbsp;&nbsp;This<br>
+want to initialize the object variables, do it where they are declared.&nbsp;&nbsp;This<br>
 way you only need to look in one place for the default values.<br>
 <br>
-All object members will be used in the default constructor, also private<br>
+All object variables will be used in the default constructor, also private<br>
 access ones.<br>
 <br>
-If the class extends another one, the object members of that class will come<br>
+If the class extends another one, the object variables of that class will come<br>
 first.<br>
 <br>
 <br>
@@ -806,7 +809,7 @@ the method being called is obvious.<br>
 <span class="PreProc">No overloading of the constructor</span><br>
 <br>
 In Vim script, both legacy and&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script, there is no overloading of<br>
-functions.&nbsp;&nbsp;That means it is not possible to use the same function name with<br>
+methods.&nbsp;&nbsp;That means it is not possible to use the same method name with<br>
 different types of arguments.&nbsp;&nbsp;Therefore there also is only one new()<br>
 constructor.<br>
 <br>
@@ -849,39 +852,40 @@ class implements an interface just because the methods happen to match is<br>
 brittle and leads to obscure problems, let's not do that.<br>
 <br>
 <br>
-<span class="PreProc">Using &quot;this.member&quot; everywhere</span><br>
+<span class="PreProc">Using &quot;this.variable&quot; everywhere</span><br>
 <br>
-The object members in various programming languages can often be accessed in<br>
+The object variables in various programming languages can often be accessed in<br>
 different ways, depending on the location.&nbsp;&nbsp;Sometimes &quot;this.&quot; has to be<br>
 prepended to avoid ambiguity.&nbsp;&nbsp;They are usually declared without &quot;this.&quot;.<br>
 That is quite inconsistent and sometimes confusing.<br>
 <br>
 A very common issue is that in the constructor the arguments use the same name<br>
-as the object member.&nbsp;&nbsp;Then for these members &quot;this.&quot; needs to be prefixed in<br>
-the body, while for other members this is not needed and often omitted.&nbsp;&nbsp;This<br>
-leads to a mix of members with and without &quot;this.&quot;, which is inconsistent.<br>
+as the object variable.&nbsp;&nbsp;Then for these variables &quot;this.&quot; needs to be prefixed<br>
+in the body, while for other variables this is not needed and often omitted.<br>
+This leads to a mix of variables with and without &quot;this.&quot;, which is<br>
+inconsistent.<br>
 <br>
 For&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;classes the &quot;this.&quot; prefix is always used.&nbsp;&nbsp;Also for declaring the<br>
-members.&nbsp;&nbsp;Simple and consistent.&nbsp;&nbsp;When looking at the code inside a class it's<br>
-also directly clear which variable references are object members and which<br>
-aren't.<br>
+variables.&nbsp;&nbsp;Simple and consistent.&nbsp;&nbsp;When looking at the code inside a class<br>
+it's also directly clear which variable references are object variables and<br>
+which aren't.<br>
 <br>
 <br>
-<span class="PreProc">Using class members</span><br>
+<span class="PreProc">Using class variables</span><br>
 <br>
-Using &quot;static member&quot; to declare a class member is very common, nothing new<br>
-here.&nbsp;&nbsp;In&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script these can be accessed directly by their name.&nbsp;&nbsp;Very<br>
-much like how a script-local variable can be used in a function.&nbsp;&nbsp;Since object<br>
-members are always accessed with &quot;this.&quot; prepended, it's also quickly clear<br>
-what kind of member it is.<br>
+Using &quot;static variable&quot; to declare a class variable is very common, nothing<br>
+new here.&nbsp;&nbsp;In&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script these can be accessed directly by their name.<br>
+Very much like how a script-local variable can be used in a method.&nbsp;&nbsp;Since<br>
+object variables are always accessed with &quot;this.&quot; prepended, it's also quickly<br>
+clear what kind of variable it is.<br>
 <br>
-TypeScript prepends the class name before the class member, also inside the<br>
-class.&nbsp;&nbsp;This has two problems: The class name can be rather long, taking up<br>
-quite a bit of space, and when the class is renamed all these places need to<br>
-be changed too.<br>
+TypeScript prepends the class name before the class variable name, also inside<br>
+the class.&nbsp;&nbsp;This has two problems: The class name can be rather long, taking<br>
+up quite a bit of space, and when the class is renamed all these places need<br>
+to be changed too.<br>
 <br>
 <br>
-<span class="PreProc">Declaring object and class members</span><br>
+<span class="PreProc">Declaring object and class variables</span><br>
 <br>
 The main choice is whether to use &quot;var&quot; as with variable declarations.<br>
 TypeScript does not use it:<br>
@@ -890,7 +894,7 @@ TypeScript does not use it:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y = 0;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</div>
 <br>
-Following that Vim object members could be declared like this:<br>
+Following that Vim object variables could be declared like this:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class Point<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.x: number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.y = 0<br>
@@ -903,7 +907,7 @@ declaration.&nbsp;&nbsp;Adding &quot;var&quot; changes that:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var this.y = 0<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
 <br>
-We also need to be able to declare class members using the &quot;static&quot; keyword.<br>
+We also need to be able to declare class variables using the &quot;static&quot; keyword.<br>
 There we can also choose to leave out &quot;var&quot;:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class Point<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var this.x: number<br>
@@ -943,50 +947,50 @@ while there is no ClassName() method, it's a method by another name in the<br>
 class called ClassName.&nbsp;&nbsp;Quite confusing.<br>
 <br>
 <br>
-<span class="PreProc">Default read access to object members</span><br>
+<span class="PreProc">Default read access to object variables</span><br>
 <br>
-Some users will remark that the access rules for object members are<br>
+Some users will remark that the access rules for object variables are<br>
 asymmetric.&nbsp;&nbsp;Well, that is intentional.&nbsp;&nbsp;Changing a value is a very different<br>
 action than reading a value.&nbsp;&nbsp;The read operation has no side effects, it can<br>
 be done any number of times without affecting the object.&nbsp;&nbsp;Changing the value<br>
 can have many side effects, and even have a ripple effect, affecting other<br>
 objects.<br>
 <br>
-When adding object members one usually doesn't think much about this, just get<br>
-the type right.&nbsp;&nbsp;And normally the values are set in the new() method.<br>
+When adding object variables one usually doesn't think much about this, just<br>
+get the type right.&nbsp;&nbsp;And normally the values are set in the new() method.<br>
 Therefore defaulting to read access only &quot;just works&quot; in most cases.&nbsp;&nbsp;And when<br>
 directly writing you get an error, which makes you wonder if you actually want<br>
 to allow that.&nbsp;&nbsp;This helps writing code with fewer mistakes.<br>
 <br>
 <br>
-<span class="PreProc">Making object members private with an underscore</span><br>
+<span class="PreProc">Making object variables private with an underscore</span><br>
 <br>
-When an object member is private, it can only be read and changed inside the<br>
+When an object variable is private, it can only be read and changed inside the<br>
 class (and in sub-classes), then it cannot be used outside of the class.<br>
 Prepending an underscore is a simple way to make that visible.&nbsp;&nbsp;Various<br>
 programming languages have this as a recommendation.<br>
 <br>
-In case you change your mind and want to make the object member accessible<br>
+In case you change your mind and want to make the object variable accessible<br>
 outside of the class, you will have to remove the underscore everywhere.<br>
 Since the name only appears in the class (and sub-classes) they will be easy<br>
 to find and change.<br>
 <br>
 The other way around is much harder: you can easily prepend an underscore to<br>
-the object member inside the class to make it private, but any usage elsewhere<br>
-you will have to track down and change.&nbsp;&nbsp;You may have to make it a &quot;set&quot;<br>
-method call.&nbsp;&nbsp;This reflects the real world problem that taking away access<br>
-requires work to be done for all places where that access exists.<br>
+the object variable inside the class to make it private, but any usage<br>
+elsewhere you will have to track down and change.&nbsp;&nbsp;You may have to make it a<br>
+&quot;set&quot; method call.&nbsp;&nbsp;This reflects the real world problem that taking away<br>
+access requires work to be done for all places where that access exists.<br>
 <br>
 An alternative would have been using the &quot;private&quot; keyword, just like &quot;public&quot;<br>
 changes the access in the other direction.&nbsp;&nbsp;Well, that's just to reduce the<br>
 number of keywords.<br>
 <br>
 <br>
-<span class="PreProc">No protected object members</span><br>
+<span class="PreProc">No protected object variables</span><br>
 <br>
-Some languages provide several ways to control access to object members.&nbsp;&nbsp;The<br>
-most known is &quot;protected&quot;, and the meaning varies from language to language.<br>
-Others are &quot;shared&quot;, &quot;private&quot; and even &quot;friend&quot;.<br>
+Some languages provide several ways to control access to object variables.<br>
+The most known is &quot;protected&quot;, and the meaning varies from language to<br>
+language.&nbsp;&nbsp;Others are &quot;shared&quot;, &quot;private&quot; and even &quot;friend&quot;.<br>
 <br>
 These rules make life more difficult.&nbsp;&nbsp;That can be justified in projects where<br>
 many people work on the same, complex code where it is easy to make mistakes.<br>
