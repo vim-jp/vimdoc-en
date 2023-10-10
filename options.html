@@ -197,10 +197,27 @@ To include white space in a string option value it has to be preceded with a<br>
 backslash.&nbsp;&nbsp;To include a backslash you have to use two.&nbsp;&nbsp;Effectively this<br>
 means that the number of backslashes in an option value is halved (rounded<br>
 down).<br>
+In options&nbsp;<a class="Type" href="options.html#'path'">'path'</a>,&nbsp;<a class="Type" href="options.html#'cdpath'">'cdpath'</a>, and&nbsp;<a class="Type" href="options.html#'tags'">'tags'</a>, spaces have to be preceded with three<br>
+backslashes instead for compatibility with version 3.0 where the options can<br>
+be separated by either commas or spaces.<br>
+Comma-separated options like&nbsp;<a class="Type" href="options.html#'backupdir'">'backupdir'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'tags'">'tags'</a>&nbsp;will also require commas<br>
+to be escaped with two backslashes, whereas this is not needed for<br>
+non-comma-separated ones like&nbsp;<a class="Type" href="options.html#'makeprg'">'makeprg'</a>.<br>
+When setting options using&nbsp;<a class="Identifier" href="eval.html#:let">:let</a>&nbsp;and&nbsp;<a class="Identifier" href="eval.html#literal-string">literal-string</a>, you need to use one<br>
+fewer layer of backslash.<br>
 A few examples:<br>
-<div class="helpExample">&nbsp;&nbsp; :set tags=tags\ /usr/tags&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;results in &quot;tags /usr/tags&quot;<br>
-&nbsp;&nbsp; :set tags=tags\\,file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;results in &quot;tags\,file&quot;<br>
-&nbsp;&nbsp; :set tags=tags\\\ file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; results in &quot;tags\ file&quot;</div>
+<div class="helpExample">&nbsp;&nbsp; :set makeprg=make\ file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;results in &quot;make file&quot;<br>
+&nbsp;&nbsp; :let &amp;makeprg='make file'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(same as above)<br>
+&nbsp;&nbsp; :set makeprg=make\\\ file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;results in &quot;make\ file&quot;<br>
+&nbsp;&nbsp; :set tags=tags\ /usr/tags&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;results in &quot;tags&quot; and &quot;/usr/tags&quot;<br>
+&nbsp;&nbsp; :set tags=tags\\\ file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; results in &quot;tags file&quot;<br>
+&nbsp;&nbsp; :let &amp;tags='tags\ file'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(same as above)</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp; :set makeprg=make,file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; results in &quot;make,file&quot;<br>
+&nbsp;&nbsp; :set makeprg=make\\,file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; results in &quot;make\,file&quot;<br>
+&nbsp;&nbsp; :set tags=tags,file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;results in &quot;tags&quot; and &quot;file&quot;<br>
+&nbsp;&nbsp; :set tags=tags\\,file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;results in &quot;tags,file&quot;<br>
+&nbsp;&nbsp; :let &amp;tags='tags\,file'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(same as above)</div>
 <br>
 The &quot;|&quot; character separates a &quot;:set&quot; command from a following command.&nbsp;&nbsp;To<br>
 include the &quot;|&quot; in the option value, use &quot;\|&quot; instead.&nbsp;&nbsp;This example sets the<br>
@@ -8218,8 +8235,8 @@ A jump table for the options with a short description can be found at&nbsp;<a cl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="various.html#+emacs_tags">+emacs_tags</a>: &quot;./tags,./TAGS,tags,TAGS&quot;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;global or local to buffer&nbsp;<a class="Identifier" href="options.html#global-local">global-local</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filenames for the tag command, separated by spaces or commas.&nbsp;&nbsp;To<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include a space or comma in a file name, precede it with a backslash<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(see&nbsp;<a class="Identifier" href="options.html#option-backslash">option-backslash</a>&nbsp;about including spaces and backslashes).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include a space or comma in a file name, precede it with backslashes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(see&nbsp;<a class="Identifier" href="options.html#option-backslash">option-backslash</a>&nbsp;about including spaces/commas and backslashes).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When a file name starts with &quot;./&quot;, the '.' is replaced with the path<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of the current file.&nbsp;&nbsp;But only when the 'd' flag is not included in<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'cpoptions'">'cpoptions'</a>.&nbsp;&nbsp;Environment variables are expanded&nbsp;<a class="Identifier" href="options.html#:set_env">:set_env</a>.&nbsp;&nbsp;Also see<br>
