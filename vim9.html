@@ -1473,7 +1473,7 @@ return value) results in error&nbsp;<a class="Constant" href="vim9.html#E1031" n
 There is no array type, use list&lt;<span class="Special">{type}</span>&gt; instead.&nbsp;&nbsp;For a list constant an<br>
 efficient implementation is used that avoids allocating a lot of small pieces<br>
 of memory.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1005" name="E1005">E1005</a>&nbsp;<a class="Constant" href="vim9.html#E1007" name="E1007">E1007</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#vim9-func-declaration" name="vim9-func-declaration">vim9-func-declaration</a>&nbsp;<a class="Constant" href="vim9.html#E1005" name="E1005">E1005</a>&nbsp;<a class="Constant" href="vim9.html#E1007" name="E1007">E1007</a><br>
 A partial and function can be declared in more or less specific ways:<br>
 func&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any kind of function reference, no type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;checking for arguments or return value<br>
@@ -1673,6 +1673,26 @@ needed.<br>
 Same for&nbsp;<a class="Identifier" href="builtin.html#extend()">extend()</a>, use&nbsp;<a class="Identifier" href="builtin.html#extendnew()">extendnew()</a>&nbsp;instead, and for&nbsp;<a class="Identifier" href="builtin.html#flatten()">flatten()</a>, use<br>
 <a class="Identifier" href="builtin.html#flattennew()">flattennew()</a>&nbsp;instead.&nbsp;&nbsp;Since&nbsp;<a class="Identifier" href="builtin.html#flatten()">flatten()</a>&nbsp;is intended to always change the<br>
 type, it can not be used in Vim9 script.<br>
+<br>
+Assigning to a funcref with specified arguments (see&nbsp;<a class="Identifier" href="vim9.html#vim9-func-declaration">vim9-func-declaration</a>)<br>
+does strict type checking of the arguments. For variable number of arguments<br>
+the type must match:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var FuncRef: func(string, number, bool): number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FuncRef = (v1: string, v2: number, v3: bool) =&gt; 777&nbsp;&nbsp;&nbsp;&nbsp; # OK<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FuncRef = (v1: string, v2: number, v3: number) =&gt; 777&nbsp;&nbsp; # Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# variable number of arguments must have same type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var FuncVA: func(...list&lt;string&gt;): number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FuncVA = (...v: list&lt;number&gt;): number =&gt; v&nbsp;&nbsp;# Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FuncVA = (...v: list&lt;any&gt;): number =&gt; v&nbsp;&nbsp;&nbsp;&nbsp; # OK, `any` runtime check<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FuncVA = (v1: string, v: string2): number =&gt; 333&nbsp;&nbsp;&nbsp;&nbsp; # Error!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FuncVA = (v: list&lt;string&gt;): number =&gt; 3&nbsp;&nbsp;&nbsp;&nbsp; # Error!</div>
+<br>
+If the destinataion funcref has no specified arguments, then there is no<br>
+argument type checking:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var FuncUnknownArgs: func: number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FuncUnknownArgs = (v): number =&gt; v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# OK<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FuncUnknownArgs = (v1: string, v2: string): number =&gt; 3 # OK</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FuncUnknownArgs = (...v1: list<span class="Special">&lt;string&gt;</span>): number =&gt; 333&nbsp;&nbsp;# OK<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1211" name="E1211">E1211</a>&nbsp;<a class="Constant" href="vim9.html#E1217" name="E1217">E1217</a>&nbsp;<a class="Constant" href="vim9.html#E1218" name="E1218">E1218</a>&nbsp;<a class="Constant" href="vim9.html#E1219" name="E1219">E1219</a>&nbsp;<a class="Constant" href="vim9.html#E1220" name="E1220">E1220</a>&nbsp;<a class="Constant" href="vim9.html#E1221" name="E1221">E1221</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9.html#E1222" name="E1222">E1222</a>&nbsp;<a class="Constant" href="vim9.html#E1223" name="E1223">E1223</a>&nbsp;<a class="Constant" href="vim9.html#E1224" name="E1224">E1224</a>&nbsp;<a class="Constant" href="vim9.html#E1225" name="E1225">E1225</a>&nbsp;<a class="Constant" href="vim9.html#E1226" name="E1226">E1226</a>&nbsp;<a class="Constant" href="vim9.html#E1227" name="E1227">E1227</a><br>
