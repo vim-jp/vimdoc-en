@@ -49,6 +49,8 @@ You can download precompiled executables from:<br>
 <br>
 To use the precompiled binary version, you need one of these archives:<br>
 <br>
+&nbsp;&nbsp;vim-XX-exe-x86-gui.zip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X86_64 GUI/Motif executables<br>
+&nbsp;&nbsp;vim-XX-exe-x86-term.zip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X86_64 console executables<br>
 &nbsp;&nbsp;vim-XX-exe-ia64-gui.zip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IA64 GUI/Motif executables<br>
 &nbsp;&nbsp;vim-XX-exe-ia64-gtk.zip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IA64 GUI/GTK executables<br>
 &nbsp;&nbsp;vim-XX-exe-ia64-term.zip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IA64 console executables<br>
@@ -64,7 +66,7 @@ and of course (optional)<br>
 The binary archives contain: vim.exe, ctags.exe, xxd.exe files.<br>
 <br>
 For GTK executables you will need GTKLIB that is available for<br>
-Alpha and IA64 platform.<br>
+Alpha and IA64 platforms.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
@@ -76,9 +78,9 @@ See the file [.SRC]INSTALLVMS.TXT.<br>
 <br>
 4. Problems&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_vms.html#vms-problems" name="vms-problems">vms-problems</a><br>
 <br>
-The code has been tested under Open VMS 6.2 - 8.2 on Alpha, VAX and IA64<br>
-platforms with the DEC C compiler. It should work without major problems.<br>
-If your system does not have some include libraries you can tune up in<br>
+The code has been tested under Open VMS 6.2 - 9.2 on Alpha, VAX, IA64 and<br>
+X86_64 platforms with the DEC C compiler. It should work without major problems.<br>
+If your system does not have some include libraries you can tune in the<br>
 OS_VMS_CONF.H file.<br>
 <br>
 If you decided to build Vim with +perl, +python, etc. options, first you need<br>
@@ -93,8 +95,7 @@ VAX C compiler is not fully ANSI C compatible in pre-processor directives<br>
 semantics, therefore you have to use a converter program that will do the lion<br>
 part of the job.&nbsp;&nbsp;For detailed instructions read file INSTALLvms.txt<br>
 <br>
-MMS_VIM.EXE is built together with VIM.EXE, but for XXD.EXE you should<br>
-change to a subdirectory and build it separately.<br>
+To build XXD.EXE, you should change to the subdirectory and build it separately.<br>
 <br>
 CTAGS is not part of the Vim source distribution anymore, however the OpenVMS<br>
 specific source might contain CTAGS source files as described above.<br>
@@ -211,6 +212,7 @@ Example LOGIN.COM:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ define/nolog VIM DKA0:[UTIL.VIM81]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ vi*m :== mcr VIM:VIM.EXE<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ gv*im:== spawn/nowait/input=NLA0 mcr VIM:VIM.EXE -g -GEOMETRY 80x40<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ set term/inq/ins ! inquire the terminal capabilities<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ set disp/create/node=192.168.10.202/trans=tcpip</div>
 <br>
 <span class="Todo">Note</span>: This set-up should be enough, if you are working on a standalone server or<br>
@@ -448,7 +450,12 @@ Terminal entry not found in termcap<br>
 &nbsp;&nbsp;&nbsp;&nbsp;builtin_dumb<br>
 defaulting to 'vt320'<br>
 ---<br>
-The solution is to define the default terminal name:<br>
+<br>
+Try to force to inquire the terminal capabilities with:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ set term/inquire</div>
+<br>
+If the inquire did not help, the solutions is to define the default terminal name:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ ! unknown terminal name.&nbsp;&nbsp;Let us use vt320 or ansi instead.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ ! Note: it's case sensitive<br>
@@ -763,7 +770,18 @@ GNU_TOOLS.ZIP package downloadable from&nbsp;<span class="Constant"><a href="htt
 <br>
 9. VMS related changes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_vms.html#vms-changes" name="vms-changes">vms-changes</a><br>
 <br>
-Version 8.2<br>
+Version 9.0 (2023 Nov 27)<br>
+- Vim is ported to the X86_64 architecture<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- IMPORTANT: because of the getline function name used in stucts like in ex_cmds.h<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on X86_64 the CRTL_VER is kept under 80500000 level. The proper solution would be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to rename the getline function to something else in the struct (and in all places<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it is used) - and avoiding to use POSIX functions in structs, but this change would<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;impact on all other operating systems. (added the the VMS TODO list)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read more about at&nbsp;<span class="Constant"><a href="https://forum.vmssoftware.com/viewtopic.php?f=38&amp;t=8914&amp;p=20049">https://forum.vmssoftware.com/viewtopic.php?f=38&amp;t=8914&amp;p=20049</a></span><br>
+- os_vms_conf.h includes have been reviewed for all architectures<br>
+- added support for the MODIFIED_BY define<br>
+<br>
+Version 8.2 (2020 Feb 6)<br>
 - make all changes needed for clean compile build of v8.2 on VMS on all platforms<br>
 - fix the call mkdir bug (vicente_polo@yahoo.es)<br>
 - test on VSI OpenVMS Alpha and Itanium platforms<br>
@@ -772,17 +790,18 @@ Version 8.2<br>
 - XPM v3.4.11 libraries for IA64, AXP and VAX are added<br>
 - start integrating the new test scripts<br>
 <br>
-Version 8.1<br>
+Version 8.1 (2019 Jan 9)<br>
 - make necessary changes to build v8.1 on VMS<br>
+- GTK1.2.10 on VAX<br>
 <br>
-Version 8.0<br>
+Version 8.0 (2016 Nov 21)<br>
 - solve the 100% cpu usage issue while waiting for a keystroke<br>
 - correct the VMS warnings and errors around handling the INFINITY (used in json.c)<br>
 - minor VMS port related changes<br>
 - correct the make_vms.mms file for 8.0<br>
 - fix [.TESTDIR]make_vms.mms for 8.0<br>
 <br>
-Version 7.4<br>
+Version 7.4 (2013 Aug 10)<br>
 - Undo: VMS can not handle more than one dot in the filenames use &quot;dir/name&quot; -&gt; &quot;dir/_un_name&quot;<br>
 &nbsp;&nbsp;add _un_ at the beginning to keep the extension<br>
 - correct swap file name wildcard handling<br>
@@ -798,7 +817,7 @@ Version 7.4<br>
 - minor compiler warnings fixed<br>
 - CTAGS 5.8 +regex included<br>
 <br>
-Version 7.3<br>
+Version 7.3 (2010 Aug 15)<br>
 - CTAGS 5.8 included<br>
 - VMS compile warnings fixed - floating-point overflow warning corrected on VAX<br>
 - filepath completion corrected - too many chars were escaped in filename<br>
@@ -961,7 +980,7 @@ Version 4.5 (1996 Dec 16)<br>
 10. Authors&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="os_vms.html#vms-authors" name="vms-authors">vms-authors</a><br>
 <br>
 OpenVMS documentation and executables are maintained by:<br>
-Zoltan Arpadffy &lt;arpadffy@polarhome.com&gt;<br>
+Zoltan Arpadffy &lt;zoltan.arpadffy@gmail.com&gt;<br>
 OpenVMS Vim page:&nbsp;<span class="Constant"><a href="http://www.polarhome.com/vim/">http://www.polarhome.com/vim/</a></span><br>
 <br>
 This document uses parts and remarks from earlier authors and contributors<br>
