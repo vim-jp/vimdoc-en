@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9class'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9class.html" name="vim9class.txt">vim9class.txt</a>&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Jan 01<br>
+<a class="Constant" href="vim9class.html" name="vim9class.txt">vim9class.txt</a>&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Jan 06<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -111,17 +111,17 @@ The object variables &quot;lnum&quot; and &quot;col&quot; can be accessed direct
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo $'The text position is ({pos.lnum}, {pos.col})'</div>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1317" name="E1317">E1317</a>&nbsp;<a class="Constant" href="vim9class.html#E1327" name="E1327">E1327</a>&nbsp;<a class="Constant" href="vim9class.html#:this" name=":this">:this</a><br>
 If you have been using other object-oriented languages you will notice that in<br>
-Vim, within a class definition, the object members are consistently referred<br>
-to with the &quot;this.&quot; prefix.&nbsp;&nbsp;This is different from languages like Java and<br>
-TypeScript.&nbsp;&nbsp;The naming convention makes the object members easy to spot.<br>
-Also, when a variable does not have the &quot;this.&quot; prefix you know it is not an<br>
-object variable.<br>
+Vim, within a class definition, the declared object members are consistently<br>
+referred to with the &quot;this.&quot; prefix.&nbsp;&nbsp;This is different from languages like<br>
+Java and TypeScript.&nbsp;&nbsp;The naming convention makes the object members easy to<br>
+spot.&nbsp;&nbsp;Also, when a variable does not have the &quot;this.&quot; prefix you know it is<br>
+not an object variable.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1411" name="E1411">E1411</a><br>
 From outside the class definition, access an object's methods and variables by<br>
 using the object name followed by a dot following by the member:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos.lnum<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos.setCol(10)</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos.SetCol(10)</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1405" name="E1405">E1405</a>&nbsp;<a class="Constant" href="vim9class.html#E1406" name="E1406">E1406</a><br>
 A class name cannot be used as an expression.&nbsp;&nbsp;A class name cannot be used in<br>
@@ -169,7 +169,7 @@ from outside the class or its sub-classes, you can make them protected.&nbsp;&nb
 is done by prefixing an underscore to the name:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var _lnum: number<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var _col number</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var _col: number</div>
 <br>
 Now you need to provide methods to get the value of the protected variables.<br>
 These are commonly called getters.&nbsp;&nbsp;We recommend using a name that starts with<br>
@@ -179,7 +179,7 @@ These are commonly called getters.&nbsp;&nbsp;We recommend using a name that sta
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return this._lnum<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def GetCol() number<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def GetCol(): number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return this._col<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
@@ -335,7 +335,8 @@ variables but they have no access to the object variables, they cannot use the<b
 <br>
 Inside the class the class method can be called by name directly, outside the<br>
 class the class name must be prefixed:&nbsp;<span class="Comment">OtherThing.ClearTotalSize()</span>.&nbsp;&nbsp;To use<br>
-a super class method in a child class, the class name must be prefixed.<br>
+a class method from a parent class in a child class, the class name must be<br>
+prefixed.<br>
 <br>
 Just like object methods the access can be made protected by using an<br>
 underscore as the first character in the method name:<br>
@@ -497,17 +498,15 @@ prefix when defining the method:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abstract class Shape<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; abstract def Draw()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; abstract static def SetColor()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
 <br>
 A static method in an abstract class cannot be an abstract method.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1373" name="E1373">E1373</a><br>
-A class extending the abstract class must implement all the abstract methods.<br>
-The signature (arguments, argument types and return type) must be exactly the<br>
-same.&nbsp;&nbsp;If the return type of a method is a class, then that class or one of<br>
-its subclasses can be used in the extended method.&nbsp;&nbsp;Class methods in an<br>
-abstract class can also be abstract methods.<br>
+A non-abstract class extending the abstract class must implement all the<br>
+abstract methods.&nbsp;&nbsp;The signature (arguments, argument types and return type)<br>
+must be exactly the same.&nbsp;&nbsp;If the return type of a method is a class, then<br>
+that class or one of its subclasses can be used in the extended method.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <br>
@@ -615,7 +614,7 @@ once.&nbsp;&nbsp;They can appear in any order, although this order is recommende
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1355" name="E1355">E1355</a>&nbsp;<a class="Constant" href="vim9class.html#E1369" name="E1369">E1369</a><br>
 Each variable and method name can be used only once.&nbsp;&nbsp;It is not possible to<br>
 define a method with the same name and different type of arguments.&nbsp;&nbsp;It is not<br>
-possible to use a public and protected member variable with the same name.&nbsp;&nbsp;A<br>
+possible to use a public and protected member variable with the same name.&nbsp;&nbsp;An<br>
 object variable name used in a super class cannot be reused in a child class.<br>
 <br>
 <br>
@@ -693,7 +692,7 @@ Inside a class, in between&nbsp;<a class="Comment" href="vim9class.html#:class">
 - A class variable declaration:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static var _protectedClassVariableName: memberType<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static var readonlyClassVariableName: memberType<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static var public readwriteClassVariableName: memberType</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public static var readwriteClassVariableName: memberType</div>
 - A constructor method:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def new(arguments)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def newName(arguments)</div>
@@ -752,7 +751,7 @@ interface.&nbsp;<a class="Constant" href="vim9class.html#E1381" name="E1381">E13
 When a variable is declared to have the type of an object, but it is not<br>
 initialized, the value is null.&nbsp;&nbsp;When trying to use this null object Vim often<br>
 does not know what class was supposed to be used.&nbsp;&nbsp;Vim then cannot check if<br>
-a variable name is correct and you will get an &quot;Using a null object&quot; error,<br>
+a variable name is correct and you will get a &quot;Using a null object&quot; error,<br>
 even when the variable name is invalid.&nbsp;<a class="Constant" href="vim9class.html#E1360" name="E1360">E1360</a>&nbsp;<a class="Constant" href="vim9class.html#E1362" name="E1362">E1362</a><br>
 <br>
 <br>
@@ -792,7 +791,7 @@ the name, you can define the constructor like this:<br>
 <br>
 When using the default new() method, if the order of the object variables in<br>
 the class is changed later, then all the callers of the default new() method<br>
-needs to change.&nbsp;&nbsp;To avoid this, the new() method can be explicitly defined<br>
+need to change.&nbsp;&nbsp;To avoid this, the new() method can be explicitly defined<br>
 without any arguments.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1328" name="E1328">E1328</a><br>
@@ -998,7 +997,7 @@ in the body, while for other variables this is not needed and often omitted.<br>
 This leads to a mix of variables with and without &quot;this.&quot;, which is<br>
 inconsistent.<br>
 <br>
-For&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;classes the &quot;this.&quot; prefix is always used.&nbsp;&nbsp;Also for declaring the<br>
+For&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;classes the &quot;this.&quot; prefix is always used for declared methods and<br>
 variables.&nbsp;&nbsp;Simple and consistent.&nbsp;&nbsp;When looking at the code inside a class<br>
 it's also directly clear which variable references are object variables and<br>
 which aren't.<br>
@@ -1034,7 +1033,7 @@ Following that Vim object variables could be declared like this:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
 <br>
 Some users pointed out that this looks more like an assignment than a<br>
-declaration.&nbsp;&nbsp;Adding &quot;var&quot; changes that:<br>
+declaration.&nbsp;&nbsp;Adding &quot;var&quot; and omitting &quot;this.&quot; changes that:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class Point<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var x: number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var y = 0<br>
