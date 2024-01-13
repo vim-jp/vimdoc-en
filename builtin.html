@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'builtin'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="builtin.html" name="builtin.txt">builtin.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Jan 05<br>
+<a class="Constant" href="builtin.html" name="builtin.txt">builtin.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Jan 13<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -203,6 +203,8 @@ foldclosedend(<span class="Special">{lnum}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 foldlevel(<span class="Special">{lnum}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Number&nbsp;&nbsp;fold level at&nbsp;<span class="Special">{lnum}</span><br>
 foldtext()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String&nbsp;&nbsp;line displayed for closed fold<br>
 foldtextresult(<span class="Special">{lnum}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String&nbsp;&nbsp;text for closed fold at&nbsp;<span class="Special">{lnum}</span><br>
+foreach(<span class="Special">{expr1}</span>,&nbsp;<span class="Special">{expr2}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; List/Dict/Blob/String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for each item in&nbsp;<span class="Special">{expr1}</span>&nbsp;call&nbsp;<span class="Special">{expr2}</span><br>
 foreground()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;&nbsp;bring the Vim window to the foreground<br>
 fullcommand(<span class="Special">{name}</span>&nbsp;[,&nbsp;<span class="Special">{vim9}</span>])&nbsp;&nbsp;String&nbsp;&nbsp;get full command from&nbsp;<span class="Special">{name}</span><br>
 funcref(<span class="Special">{name}</span>&nbsp;[,&nbsp;<span class="Special">{arglist}</span>] [,&nbsp;<span class="Special">{dict}</span>])<br>
@@ -3000,6 +3002,45 @@ foldtextresult(<span class="Special">{lnum}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetLnum()-&gt;foldtextresult()</div>
+<br>
+foreach(<span class="Special">{expr1}</span>,&nbsp;<span class="Special">{expr2}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="builtin.html#foreach()" name="foreach()">foreach()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{expr1}</span>&nbsp;must be a&nbsp;<a class="Identifier" href="eval.html#List">List</a>,&nbsp;<a class="Identifier" href="eval.html#String">String</a>,&nbsp;<a class="Identifier" href="eval.html#Blob">Blob</a>&nbsp;or&nbsp;<a class="Identifier" href="eval.html#Dictionary">Dictionary</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For each item in&nbsp;<span class="Special">{expr1}</span>&nbsp;execute&nbsp;<span class="Special">{expr2}</span>.&nbsp;<span class="Special">{expr1}</span>&nbsp;is not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modified; its values may be, as with&nbsp;<a class="Identifier" href="eval.html#:lockvar">:lockvar</a>&nbsp;1.&nbsp;<a class="Constant" href="eval.html#E741" name="E741">E741</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="builtin.html#map()">map()</a>&nbsp;and&nbsp;<a class="Identifier" href="builtin.html#filter()">filter()</a>&nbsp;to modify&nbsp;<span class="Special">{expr1}</span>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{expr2}</span>&nbsp;must be a&nbsp;<a class="Identifier" href="eval.html#string">string</a>&nbsp;or&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;<span class="Special">{expr2}</span>&nbsp;is a&nbsp;<a class="Identifier" href="eval.html#string">string</a>, inside&nbsp;<span class="Special">{expr2}</span>&nbsp;<a class="Identifier" href="eval.html#v:val">v:val</a>&nbsp;has the value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of the current item.&nbsp;&nbsp;For a&nbsp;<a class="Identifier" href="eval.html#Dictionary">Dictionary</a>&nbsp;<a class="Identifier" href="eval.html#v:key">v:key</a>&nbsp;has the key<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of the current item and for a&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;<a class="Identifier" href="eval.html#v:key">v:key</a>&nbsp;has the index of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the current item.&nbsp;&nbsp;For a&nbsp;<a class="Identifier" href="eval.html#Blob">Blob</a>&nbsp;<a class="Identifier" href="eval.html#v:key">v:key</a>&nbsp;has the index of the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;current byte. For a&nbsp;<a class="Identifier" href="eval.html#String">String</a>&nbsp;<a class="Identifier" href="eval.html#v:key">v:key</a>&nbsp;has the index of the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;current character.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Examples:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call foreach(mylist, 'used[v:val] = true')</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This records the items that are in the&nbsp;<span class="Special">{expr1}</span>&nbsp;list.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that&nbsp;<span class="Special">{expr2}</span>&nbsp;is the result of expression and is then used<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as a command.&nbsp;&nbsp;Often it is good to use a&nbsp;<a class="Identifier" href="eval.html#literal-string">literal-string</a>&nbsp;to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;avoid having to double backslashes.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;<span class="Special">{expr2}</span>&nbsp;is a&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>&nbsp;it must take two arguments:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. the key or the index of the current item.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. the value of the current item.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;With a legacy script lambda you don't get an error if it only<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;accepts one argument, but with a Vim9 lambda you get &quot;E1106:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;One argument too many&quot;, the number of arguments must match.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the function returns a value, it is ignored.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns&nbsp;<span class="Special">{expr1}</span>&nbsp;in all cases.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When an error is encountered while executing&nbsp;<span class="Special">{expr2}</span>&nbsp;no<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;further items in&nbsp;<span class="Special">{expr1}</span>&nbsp;are processed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">{expr2}</span>&nbsp;is a Funcref errors inside a function are ignored,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unless it was defined with the &quot;abort&quot; flag.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mylist-&gt;foreach(expr2)</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="builtin.html#foreground()" name="foreground()">foreground()</a><br>
 foreground()&nbsp;&nbsp;&nbsp;&nbsp;Move the Vim window to the foreground.&nbsp;&nbsp;Useful when sent from<br>
