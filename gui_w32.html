@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'gui_w32'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="gui_w32.html" name="gui_w32.txt">gui_w32.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2022 Mar 09<br>
+<a class="Constant" href="gui_w32.html" name="gui_w32.txt">gui_w32.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Jan 23<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -458,6 +458,40 @@ To try out if XPM support works do this:<br>
 You may need to get the vim16x16.xpm file from github:<br>
 <span class="Constant"><a href="https://github.com/vim/vim/blob/master/runtime/vim16x16.xpm">https://github.com/vim/vim/blob/master/runtime/vim16x16.xpm</a></span><br>
 <br>
+<br>
+Keycode translation strategy&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="gui_w32.html#w32-experimental-keycode-trans-strategy" name="w32-experimental-keycode-trans-strategy">w32-experimental-keycode-trans-strategy</a><br>
+<br>
+In Patch v8.2.4807 W32 GVIM was changed over to experimental keycode<br>
+translation method with the aim to be able to use more keyboard shortcuts and<br>
+especially supporting non-standard keyboard layouts. In order to implement<br>
+this support Win API TranslateMessage() call was dropped, and instead the<br>
+recognition of keycode was changed over to ToUnicode() Win API call. This<br>
+approach uncovered numerous corner cases, which are apparently covered by<br>
+TranslateMessage() implementation, each of it is necessary to be dealt with on<br>
+an individual basis. Therefore the decision was taken to declare this<br>
+functionality experimental for the time being and to recover &quot;classic&quot; keycode<br>
+translation method as default again.<br>
+<br>
+Discussion about use of &quot;experimental&quot; keycode translation method will<br>
+probably last some time yet. In the meantime, if you are impacted by this<br>
+change over back to &quot;classic&quot; keycode translation method in W32 GVIM, you can<br>
+enable &quot;experimental&quot; translation method again in your vimrc using following<br>
+snippet:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;:call test_mswin_event('set_keycode_trans_strategy', {'strategy': 'experimental'})</div>
+<br>
+Similarly, in case you need to turn back &quot;classic&quot; keycode translation method<br>
+(for example for testing purposes), please use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;:call test_mswin_event('set_keycode_trans_strategy', {'strategy': 'classic'})</div>
+<br>
+Alternatively (this method is especially useful for the TINY GVIM build, where<br>
+test_mswin_event() cannot be called), an environment variable<br>
+VIM_KEYCODE_TRANS_STRATEGY can be set to the desired value (&quot;experimental&quot; or<br>
+&quot;classic&quot;), to override the default, e.g., type in dos prompt:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set VIM_KEYCODE_TRANS_STRATEGY=experimental<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gvim.exe</div>
 <br>
 &nbsp;vim:tw=78:sw=4:ts=8:noet:ft=help:norl:<br>
 </div>
