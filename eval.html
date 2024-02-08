@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'eval'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="eval.html" name="eval.txt">eval.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Feb 06<br>
+<a class="Constant" href="eval.html" name="eval.txt">eval.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Feb 08<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -308,10 +308,15 @@ is not available it returns zero or the default value you specify:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#list-concatenation" name="list-concatenation">list-concatenation</a><br>
 Two lists can be concatenated with the &quot;+&quot; operator:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let longlist = mylist + [5, 6]<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let mylist += [7, 8]</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let longlist = [5, 6] + mylist</div>
+To prepend or append an item, turn it into a list by putting [] around it.<br>
 <br>
-To prepend or append an item, turn the item into a list by putting [] around<br>
-it.&nbsp;&nbsp;To change a list in-place, refer to&nbsp;<a class="Identifier" href="eval.html#list-modification">list-modification</a>&nbsp;below.<br>
+A list can be concatenated with another one in-place using&nbsp;<a class="Identifier" href="eval.html#:let+=">:let+=</a>&nbsp;or<br>
+<a class="Identifier" href="builtin.html#extend()">extend()</a>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let mylist += [7, 8]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:call extend(mylist, [7, 8])</div>
+<br>
+See&nbsp;<a class="Identifier" href="eval.html#list-modification">list-modification</a>&nbsp;below for more about changing a list in-place.<br>
 <br>
 <br>
 <span class="PreProc">Sublist</span><br>
@@ -430,7 +435,7 @@ To change part of a list you can specify the first and last item to be<br>
 modified.&nbsp;&nbsp;The value must at least have the number of items in the range:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let list[3:5] = [3, 4, 5]</div>
 <br>
-To add items to a List in-place, you can use the&nbsp;<span class="MissingTag">+=</span>&nbsp;operator:<br>
+To add items to a List in-place, you can use&nbsp;<a class="Identifier" href="eval.html#:let+=">:let+=</a>&nbsp;(<a class="Identifier" href="eval.html#list-concatenation">list-concatenation</a>):<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let listA = [1, 2]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let listA += [3, 4]</div>
 <br>
@@ -762,12 +767,15 @@ This calls Doit() with 0x11, 0x22 and 0x33.<br>
 <br>
 <br>
 <span class="PreProc">Blob concatenation</span><br>
-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="eval.html#blob-concatenation" name="blob-concatenation">blob-concatenation</a><br>
 Two blobs can be concatenated with the &quot;+&quot; operator:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let longblob = myblob + 0z4455<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let myblob += 0z6677</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let longblob = 0z4455 + myblob</div>
 <br>
-To change a blob in-place see&nbsp;<a class="Identifier" href="eval.html#blob-modification">blob-modification</a>&nbsp;below.<br>
+A blob can be concatenated with another one in-place using&nbsp;<a class="Identifier" href="eval.html#:let+=">:let+=</a>:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let myblob += 0z6677</div>
+<br>
+See&nbsp;<a class="Identifier" href="eval.html#blob-modification">blob-modification</a>&nbsp;below for more about changing a blob in-place.<br>
 <br>
 <br>
 <span class="PreProc">Part of a blob</span><br>
@@ -809,6 +817,18 @@ provided.&nbsp;<a class="Constant" href="eval.html#E972" name="E972">E972</a><br
 To change part of a blob you can specify the first and last byte to be<br>
 modified.&nbsp;&nbsp;The value must have the same number of bytes in the range:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blob[3:5] = 0z334455</div>
+<br>
+To add items to a Blob in-place, you can use&nbsp;<a class="Identifier" href="eval.html#:let+=">:let+=</a>&nbsp;(<a class="Identifier" href="eval.html#blob-concatenation">blob-concatenation</a>):<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blobA = 0z1122<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blobA += 0z3344</div>
+<br>
+When two variables refer to the same Blob, changing one Blob in-place will<br>
+cause the referenced Blob to be changed in-place:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blobA = 0z1122<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blobB = blobA<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:let blobB += 0z3344<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo blobA<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0z11223344</div>
 <br>
 You can also use the functions&nbsp;<a class="Identifier" href="builtin.html#add()">add()</a>,&nbsp;<a class="Identifier" href="builtin.html#remove()">remove()</a>&nbsp;and&nbsp;<a class="Identifier" href="builtin.html#insert()">insert()</a>.<br>
 <br>
@@ -2826,6 +2846,8 @@ declarations and assignments do not use a command.&nbsp;&nbsp;<a class="Identifi
 :let&nbsp;<span class="Special">{var}</span>&nbsp;..=&nbsp;<span class="Special">{expr1}</span>&nbsp;&nbsp;Like &quot;:let&nbsp;<span class="Special">{var}</span>&nbsp;=&nbsp;<span class="Special">{var}</span>&nbsp;..&nbsp;<span class="Special">{expr1}</span>&quot;.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;These fail if&nbsp;<span class="Special">{var}</span>&nbsp;was not set yet and when the type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;<span class="Special">{var}</span>&nbsp;and&nbsp;<span class="Special">{expr1}</span>&nbsp;don't fit the operator.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">+=</span>&nbsp;modifies a&nbsp;<a class="Identifier" href="eval.html#List">List</a>&nbsp;or a&nbsp;<a class="Identifier" href="eval.html#Blob">Blob</a>&nbsp;in-place instead of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;creating a new one.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Comment">.=</span>&nbsp;is not supported with Vim script version 2 and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;later, see&nbsp;<a class="Identifier" href="eval.html#vimscript-version">vimscript-version</a>.<br>
 <br>
