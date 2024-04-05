@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'vim9class'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="vim9class.html" name="vim9class.txt">vim9class.txt</a>&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Mar 28<br>
+<a class="Constant" href="vim9class.html" name="vim9class.txt">vim9class.txt</a>&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Apr 04<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -333,10 +333,27 @@ variables but they have no access to the object variables, they cannot use the<b
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enddef<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
 <br>
-Inside the class the class method can be called by name directly, outside the<br>
-class the class name must be prefixed:&nbsp;<span class="Comment">OtherThing.ClearTotalSize()</span>.&nbsp;&nbsp;To use<br>
-a class method from a parent class in a child class, the class name must be<br>
-prefixed.<br>
+Inside the class, the class method can be called by name directly, outside the<br>
+class, the class name must be prefixed:&nbsp;<span class="Comment">OtherThing.ClearTotalSize()</span>.&nbsp;&nbsp;Also,<br>
+the name prefix must be used for public class methods in the special contexts<br>
+of class variable initializers and of lambda expressions and nested functions:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;class OtherThing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static var name: string = OtherThing.GiveName()</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static def GiveName(): string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def DoGiveName(): string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return OtherThing.NameAny()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return DoGiveName()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static def NameAny(): string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return &quot;any&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endclass</div>
+<br>
 <br>
 Just like object methods the access can be made protected by using an<br>
 underscore as the first character in the method name:<br>
@@ -977,8 +994,8 @@ The following example shows an enum with object variables and methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;echo Planet.Earth.has_rings</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#E1421" name="E1421">E1421</a>&nbsp;<a class="Constant" href="vim9class.html#E1423" name="E1423">E1423</a>&nbsp;<a class="Constant" href="vim9class.html#E1424" name="E1424">E1424</a>&nbsp;<a class="Constant" href="vim9class.html#E1425" name="E1425">E1425</a><br>
-Enums and their values are immutable. They cannot be modified after<br>
-declaration and cannot be utilized as numerical or string types.<br>
+Enums and their values are immutable.&nbsp;&nbsp;They cannot be utilized as numerical or<br>
+string types.&nbsp;&nbsp;Enum values can declare mutable instance variables.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="vim9class.html#enum-name" name="enum-name">enum-name</a><br>
 Each enum value object has a &quot;name&quot; instance variable which contains the name<br>
