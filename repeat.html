@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'repeat'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="repeat.html" name="repeat.txt">repeat.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2023 May 26<br>
+<a class="Constant" href="repeat.html" name="repeat.txt">repeat.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Jun 20<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -740,6 +740,10 @@ Your directory layout would be like this:<br>
 &nbsp;&nbsp; start/foobar/autoload/foo.vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; loaded when foo command used<br>
 &nbsp;&nbsp; start/foobar/doc/foo.txt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; help for foo.vim<br>
 &nbsp;&nbsp; start/foobar/doc/tags&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; help tags<br>
+&nbsp;&nbsp; start/foobar/lang/<span class="Special">&lt;lang_id&gt;</span>/LC_MESSAGES/foo.po<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; messages for the plugin in the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;<span class="Special">&lt;lang_id&gt;</span>&nbsp;language.&nbsp;&nbsp;These files are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; optional.<br>
 &nbsp;&nbsp; opt/fooextra/plugin/extra.vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; optional plugin, defines commands<br>
 &nbsp;&nbsp; opt/fooextra/autoload/extra.vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; loaded when extra command used<br>
 &nbsp;&nbsp; opt/fooextra/doc/extra.txt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; help for extra.vim<br>
@@ -766,6 +770,35 @@ pack directory and the help command works right away.&nbsp;&nbsp;Don't forget to
 the command after changing the plugin help:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:helptags path/start/foobar/doc<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:helptags path/opt/fooextra/doc</div>
+<br>
+The messages that are in the lang/<span class="Special">&lt;lang_id&gt;</span>/LC_MESSAGES/foo.po file need to be<br>
+translated to a format that the&nbsp;<a class="Identifier" href="builtin.html#gettext()">gettext()</a>&nbsp;function understands by running the<br>
+msgfmt program. This will result in a lang/<span class="Special">&lt;lang_id&gt;</span>/LC_MESSAGES/foo.mo<br>
+file. See&nbsp;<a class="Identifier" href="mlang.html#multilang">multilang</a>&nbsp;on how to specify languages.<br>
+<br>
+In your plugin, you need to call the&nbsp;<a class="Identifier" href="builtin.html#bindtextdomain()">bindtextdomain()</a>&nbsp;function as follows.<br>
+This assumes that the directory structure is as above:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:call bindtextdomain(&quot;foo&quot;, fnamemodify(expand(&quot;&lt;script&gt;&quot;), ':p:h')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .. '/../lang/')</div>
+<br>
+You only need to do this once. After this call, you can use:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo gettext(&quot;Hello&quot;, &quot;foo&quot;)</div>
+<br>
+to get the text &quot;Hello&quot; translated to the user's preferred language (if the<br>
+plugin messages have been translated to this language).<br>
+<br>
+To create the foo.po file, you need to create a foo.pot file first. The<br>
+entries in this file need to be translated to the language(s) you want to be<br>
+supported by your plugin.<br>
+<br>
+To create the foo.pot file, run the following command:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd ~/.vim/pack/start/foobar<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make -f ~/src/vim/src/po/Makefile PACKAGE=foo \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PO_BASEDIR=~/src/vim/src/po PO_INPUTLIST= \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PO_VIM_JSLIST=&quot;plugin__foo.js plugin__bar.js \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autoload__foo.js&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PO_VIM_INPUTLIST=&quot;plugin/foo.vim plugin/bar.vim autoload/foo.vim&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foo.pot</div>
 <br>
 <br>
 <span class="PreProc">Dependencies between plugins</span><br>
