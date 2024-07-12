@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'repeat'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="repeat.html" name="repeat.txt">repeat.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Jun 20<br>
+<a class="Constant" href="repeat.html" name="repeat.txt">repeat.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Jul 11<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -740,7 +740,7 @@ Your directory layout would be like this:<br>
 &nbsp;&nbsp; start/foobar/autoload/foo.vim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; loaded when foo command used<br>
 &nbsp;&nbsp; start/foobar/doc/foo.txt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; help for foo.vim<br>
 &nbsp;&nbsp; start/foobar/doc/tags&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; help tags<br>
-&nbsp;&nbsp; start/foobar/lang/<span class="Special">&lt;lang_id&gt;</span>/LC_MESSAGES/foo.po<br>
+&nbsp;&nbsp; start/foobar/lang/<span class="Special">&lt;lang_id&gt;</span>/LC_MESSAGES/foobar.mo<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; messages for the plugin in the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;<span class="Special">&lt;lang_id&gt;</span>&nbsp;language.&nbsp;&nbsp;These files are<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; optional.<br>
@@ -764,6 +764,7 @@ to load the optional plugin:<br>
 You could add this packadd command in one of your plugins, to be executed when<br>
 the optional plugin is needed.<br>
 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#package-doc" name="package-doc">package-doc</a>&nbsp;<a class="Constant" href="repeat.html#package-documentation" name="package-documentation">package-documentation</a><br>
 Run the&nbsp;<a class="Comment" href="helphelp.html#:helptags">:helptags</a>&nbsp;command to generate the doc/tags file.&nbsp;&nbsp;Including this<br>
 generated file in the package means that the user can drop the package in the<br>
 pack directory and the help command works right away.&nbsp;&nbsp;Don't forget to re-run<br>
@@ -771,35 +772,326 @@ the command after changing the plugin help:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:helptags path/start/foobar/doc<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:helptags path/opt/fooextra/doc</div>
 <br>
-The messages that are in the lang/<span class="Special">&lt;lang_id&gt;</span>/LC_MESSAGES/foo.po file need to be<br>
-translated to a format that the&nbsp;<a class="Identifier" href="builtin.html#gettext()">gettext()</a>&nbsp;function understands by running the<br>
-msgfmt program. This will result in a lang/<span class="Special">&lt;lang_id&gt;</span>/LC_MESSAGES/foo.mo<br>
-file. See&nbsp;<a class="Identifier" href="mlang.html#multilang">multilang</a>&nbsp;on how to specify languages.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#package-translation" name="package-translation">package-translation</a><br>
+In order for a plugin to display translated messages, a few steps are<br>
+required.<br>
+The author of the plugin who likes to translate messages must define the name<br>
+of the package and the location of the directory where the translations can be<br>
+found using the&nbsp;<a class="Identifier" href="builtin.html#bindtextdomain()">bindtextdomain()</a>&nbsp;function:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:call bindtextdomain(&quot;foobar&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ fnamemodify(expand(&quot;&lt;script&gt;&quot;), ':p:h') .. '/../lang/')</div>
 <br>
-In your plugin, you need to call the&nbsp;<a class="Identifier" href="builtin.html#bindtextdomain()">bindtextdomain()</a>&nbsp;function as follows.<br>
-This assumes that the directory structure is as above:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:call bindtextdomain(&quot;foo&quot;, fnamemodify(expand(&quot;&lt;script&gt;&quot;), ':p:h')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .. '/../lang/')</div>
+Where:<br>
+&nbsp;&nbsp;&quot;foobar&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is the unique package identifier by which the&nbsp;<a class="Identifier" href="builtin.html#gettext()">gettext()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function will later search for translation strings for this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;plugin.<br>
+&nbsp;&nbsp;&quot;lang/&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is the relative or absolute path to the directory structure<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where the translation file is located.<br>
 <br>
-You only need to do this once. After this call, you can use:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo gettext(&quot;Hello&quot;, &quot;foo&quot;)</div>
+The directory structure where the message translation files should be placed<br>
+is (from the top-level directory of the package):<br>
+&quot;lang/<span class="Special">&lt;lang_id&gt;</span>/LC_MESSAGES&quot;. For the format of&nbsp;<span class="Special">&lt;lang_id&gt;</span>&nbsp;see&nbsp;<a class="Identifier" href="mlang.html#multi-lang">multi-lang</a>.<br>
+This function needs to be called only once during the initialization of the<br>
+plugin.<br>
+Once this is done, the&nbsp;<a class="Identifier" href="builtin.html#gettext()">gettext()</a>&nbsp;function can be used to retrieve translated<br>
+messages:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:echo gettext(&quot;Hello&quot;, &quot;foobar&quot;)</div>
 <br>
-to get the text &quot;Hello&quot; translated to the user's preferred language (if the<br>
-plugin messages have been translated to this language).<br>
+Where:<br>
+&nbsp;&nbsp;&quot;Hello&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the message &quot;Hello&quot; to be translated into the user's language&nbsp;<a class="Identifier" href="mlang.html#:lang">:lang</a><br>
+&nbsp;&nbsp;&quot;foobar&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the package identifier, which was previously defined using the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="builtin.html#bindtextdomain()">bindtextdomain()</a>&nbsp;function.<br>
 <br>
-To create the foo.po file, you need to create a foo.pot file first. The<br>
-entries in this file need to be translated to the language(s) you want to be<br>
-supported by your plugin.<br>
+After that you need to create a template file for translation - POT-file.<br>
+To do this, execute the following commands (using the Vim repository):<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd ~/forkvim/src/po<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make -f Makefile &quot;PLUGPACKAGE={package}&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;PO_PLUG_INPUTLIST={path/to/scripts-that-need-translations.vim}&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;POT_PLUGPACKAGE_PATH={path/where/to/write/{package}.pot}&quot; \]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;VIMPROG={path/to/vim} \]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{package}.pot</div>
 <br>
-To create the foo.pot file, run the following command:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd ~/.vim/pack/start/foobar<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make -f ~/src/vim/src/po/Makefile PACKAGE=foo \<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PO_BASEDIR=~/src/vim/src/po PO_INPUTLIST= \<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PO_VIM_JSLIST=&quot;plugin__foo.js plugin__bar.js \<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autoload__foo.js&quot; \<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PO_VIM_INPUTLIST=&quot;plugin/foo.vim plugin/bar.vim autoload/foo.vim&quot; \<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foo.pot</div>
+Where:<br>
+PLUGPACKAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A variable containing the name of the package that we<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specified in the&nbsp;<a class="Identifier" href="builtin.html#bindtextdomain()">bindtextdomain()</a>&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="builtin.html#gettext()">gettext()</a>&nbsp;functions, for example, &quot;foobar&quot;.<br>
+PO_PLUG_INPUTLIST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A variable containing scripts that have strings<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to translate, i.e. where we specified the&nbsp;<a class="Identifier" href="builtin.html#gettext()">gettext()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function. Scripts are specified with an absolute<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or relative path. Example: start/foobar/plugin/bar.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;use blanks to separate scripts.<br>
+POT_PLUGPACKAGE_PATH&nbsp;&nbsp;&nbsp;&nbsp;A variable containing the directory where the prepared<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;POT file will be saved. This is not a required variable,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if no directory is specified, then the POT file will<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be placed in the &quot;src/po&quot; directory.<br>
+VIMPROG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A variable containing a directory with a working Vim.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the Vim editor is already built and installed, and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is contained in the $PATH environment variable,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;then you can specify just the name of the vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;executable.<br>
+<span class="Special">{package}</span>.pot&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the Target. It is specified as the name of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the package, for example, &quot;foobar&quot; with the addition<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of the .pot extension.<br>
+Once a POT file is created, its contents are copied into separate PO files for<br>
+each language for which the translation will be prepared.<br>
 <br>
+When the translation is finished, it is necessary to convert the PO files into<br>
+binary MO-files format and place these MO-files into the &quot;lang/&quot; directory, the<br>
+structure of which we created earlier.<br>
+To do this, run the following commands:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd ~/forkvim/src/po<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make -f Makefile &quot;PLUGPACKAGE={package}&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;PO_PLUGPACKAGE={path/to/{lang}.po}&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;MO_PLUGPACKAGE_PATH={path/to/lang/&lt;lang_id&gt;/LC_MESSAGES}&quot; \]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{package}.mo</div>
+<br>
+Where:<br>
+PLUGPACKAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A variable containing the name of the package that we<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specified in the&nbsp;<a class="Identifier" href="builtin.html#bindtextdomain()">bindtextdomain()</a>&nbsp;and&nbsp;<a class="Identifier" href="builtin.html#gettext()">gettext()</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;functions, for example, &quot;foobar&quot;.<br>
+PO_PLUGPACKAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A variable containing a PO file. The file is specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with an absolute or relative path. For example,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;~/myproject/translate/en.po&quot;<br>
+MO_PLUGPACKAGE_PATH&nbsp;&nbsp;&nbsp;&nbsp; A variable containing the structure of the &quot;lang/&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;directory, where the file with translations will be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;placed, for example, &quot;foobar.mo&quot;. This is not<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a required variable, if the directory is not specified,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the MO file will be saved in the &quot;src/po&quot; directory.<br>
+<span class="Special">{package}</span>.mo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is the Target. It is specified as the name of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the package, for example, &quot;foobar&quot; with the addition<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of the .mo extension.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#package-translate_example" name="package-translate_example">package-translate_example</a><br>
+Let's show it all on some concrete example and translate the<br>
+&quot;ftplugin/aap.vim&quot; file into Russian and German.<br>
+<br>
+First, let's prepare the &quot;aap.vim&quot; file, specifying&nbsp;<a class="Identifier" href="builtin.html#bindtextdomain()">bindtextdomain()</a>&nbsp;and<br>
+<a class="Identifier" href="builtin.html#gettext()">gettext()</a>&nbsp;function calls in it.<br>
+<br>
+<div class="helpExample">&nbsp;&quot; Only do this when not done yet for this buffer<br>
+&nbsp;if exists(&quot;b:did_ftplugin&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; finish<br>
+&nbsp;endif</div>
+<br>
+<div class="helpExample">&nbsp;&quot; Don't load another plugin for this buffer<br>
+&nbsp;let b:did_ftplugin = 1<br>
+&nbsp;call bindtextdomain(&quot;aap&quot;, fnamemodify(expand(&quot;&lt;script&gt;&quot;), ':p:h') .. '/../lang/')</div>
+<br>
+<div class="helpExample">&nbsp;&quot; Reset 'formatoptions', 'comments', 'commentstring' and 'expandtab' to undo<br>
+&nbsp;&quot; this plugin.<br>
+&nbsp;let b:undo_ftplugin = &quot;setl fo&lt; com&lt; cms&lt; et&lt;&quot;</div>
+<br>
+<div class="helpExample">&nbsp;&quot; Set 'formatoptions' to break comment lines but not other lines,<br>
+&nbsp;&quot; and insert the comment leader when hitting &lt;CR&gt; or using &quot;o&quot;.<br>
+&nbsp;setlocal fo-=t fo+=croql</div>
+<br>
+<div class="helpExample">&nbsp;&quot; Set 'comments' to format dashed lists in comments.<br>
+&nbsp;setlocal comments=s:#\ -,m:#\ \ ,e:#,n:#,fb:-<br>
+&nbsp;setlocal commentstring=#\ %s</div>
+<br>
+<div class="helpExample">&nbsp;&quot; Expand tabs to spaces to avoid trouble.<br>
+&nbsp;setlocal expandtab</div>
+<br>
+<div class="helpExample">&nbsp;if (has(&quot;gui_win32&quot;) || has(&quot;gui_gtk&quot;)) &amp;&amp; !exists(&quot;b:browsefilter&quot;)<br>
+&nbsp;let b:browsefilter = gettext(&quot;Aap Recipe Files (*.aap)\t*.aap\n&quot;, &quot;aap&quot;)<br>
+&nbsp;if has(&quot;win32&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; let b:browsefilter ..= gettext(&quot;All Files (*.*)\t*\n&quot;, &quot;aap&quot;)<br>
+&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp; let b:browsefilter ..= gettext(&quot;All Files (*)\t*\n&quot;, &quot;aap&quot;)<br>
+&nbsp;endif<br>
+&nbsp;let b:undo_ftplugin ..= &quot; | unlet! b:browsefilter&quot;<br>
+&nbsp;endif</div>
+<br>
+Now let's create a POT file for it (example uses Windows paths):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd /d f:\forkvim\src\po<br>
+&nbsp;(the following command must be entered in one line, here it is separated for example)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmake.exe -f Make_mvc.mak &quot;PLUGPACKAGE=aap&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;PO_PLUG_INPUTLIST=d:\Programs\vim\vim91\ftplugin\aap.vim&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;POT_PLUGPACKAGE_PATH=e:\project\translate\plugins&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;VIMPROG=d:\Programs\vim\vim91\vim.exe&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aap.pot</div>
+<br>
+After the POT file of our package is created, go to the directory where we<br>
+saved it and perform the translation.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd /d e:\project\translate\plugins<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;copy aap.pot ru.po<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;copy aap.pot de.po</div>
+<br>
+We have prepared a PO file with a translation into Russian:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc"># Test plugins translate</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Project-Id-Version: aap\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Report-Msgid-Bugs-To: \n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;POT-Creation-Date: 2024-06-23 14:58+0300\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;PO-Revision-Date: 2024-06-23 14:58+0300\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Last-Translator: Restorer\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Language-Team: RuVim\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Language: ru\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;MIME-Version: 1.0\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Content-Type: text/plain; charset=UTF-8\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Content-Transfer-Encoding: 8bit\n&quot;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#: ../../runtime/ftplugin/aap.vim:32</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;Aap Recipe Files (*.aap)\t*.aap\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;Файлы инструкций Aap (*.aap)\t*.aap\n&quot;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#: ../../runtime/ftplugin/aap.vim:34</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;All Files (*.*)\t*\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;Все файлы (*.*)\t*\n&quot;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#: ../../runtime/ftplugin/aap.vim:36</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;All Files (*)\t*\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;Все файлы (*)\t*\n&quot;</span><br>
+<br>
+And the PO file in German:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc"># Test plugins translate</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Project-Id-Version: aap\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Report-Msgid-Bugs-To: \n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;POT-Creation-Date: 2024-06-23 14:58+0300\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;PO-Revision-Date: 2024-06-24 13:11+0300\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Last-Translator: Restorer\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Language-Team: German\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Language: de\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;MIME-Version: 1.0\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Content-Type: text/plain; charset=UTF-8\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Content-Transfer-Encoding: 8bit\n&quot;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#: ../../runtime/ftplugin/aap.vim:32</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;Aap Recipe Files (*.aap)\t*.aap\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;Aap-Rezeptdateien (*.aap)\t*.aap\n&quot;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#: ../../runtime/ftplugin/aap.vim:34</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;All Files (*.*)\t*\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;Alle Dateien (*.*)\t*.*\n&quot;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#: ../../runtime/ftplugin/aap.vim:36</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;All Files (*)\t*\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;Alle Dateien (*)\t*\n&quot;</span><br>
+<br>
+Now convert these files into MO files so that&nbsp;<a class="Identifier" href="builtin.html#gettext()">gettext()</a>&nbsp;can display message<br>
+translations.&nbsp;<span class="Todo">Note</span>&nbsp;that since this is not a specialized plugin package, we<br>
+will put the MO files in the &quot;lang/&quot; directory of the Vim editor.<br>
+Type the following commands:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd /d f:\forkvim\src\po<br>
+&nbsp;(the following command must be entered in one line, here it is separated for example)<br>
+&nbsp;For Russian:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmake.exe -f Make_mvc.mak &quot;PLUGPACKAGE=aap&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;PO_PLUGPACKAGE=e:\project\translate\plugins\ru.po&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;MO_PLUGPACKAGE_PATH=d:\Programs\vim\vim91\lang\ru\LC_MESSAGES&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aap.mo<br>
+&nbsp;For German:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nmake.exe -f Make_mvc.mak &quot;PLUGPACKAGE=aap&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;PO_PLUGPACKAGE=e:\project\translate\plugins\de.po&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;MO_PLUGPACKAGE_PATH=d:\Programs\vim\vim91\lang\de\LC_MESSAGES&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aap.mo</div>
+<br>
+That's it, the translations are ready and you can see the plugin's messages<br>
+in your native language.<br>
+<br>
+Let's also try to translate a plugin package. For example, when a package<br>
+contains several scripts containing strings that need to be translated.<br>
+For example, let's translate the &quot;netrw&quot; package into Japanese.<br>
+For this example, we will translate only a few lines from this package.<br>
+Let's prepare the scripts where we need to translate the message strings.<br>
+<br>
+The file &quot;autoload\netrw.vim&quot;:<br>
+<br>
+<div class="helpExample">&nbsp;&quot; Load Once:<br>
+&nbsp;if &amp;cp || exists(&quot;g:loaded_netrw&quot;)<br>
+&nbsp;&nbsp; finish<br>
+&nbsp;endif<br>
+&nbsp;call bindtextdomain(&quot;netrw&quot;, fnamemodify(expand(&quot;&lt;script&gt;&quot;), ':p:h') .. '/../lang/')</div>
+<br>
+<div class="helpExample">&nbsp;&quot; Check that vim has patches that netrw requires.<br>
+&nbsp;&quot; Patches needed for v7.4: 1557, and 213.<br>
+&nbsp;&quot; (netrw will benefit from vim's having patch#656, too)<br>
+&nbsp;let s:needspatches=[1557,213]<br>
+&nbsp;if exists(&quot;s:needspatches&quot;)<br>
+&nbsp;&nbsp;for ptch in s:needspatches<br>
+&nbsp;&nbsp; if v:version &lt; 704 || (v:version == 704 &amp;&amp; !has(&quot;patch&quot;.ptch))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if !exists(&quot;s:needpatch{ptch}&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; unsilent echomsg gettext(&quot;***sorry*** this version of netrw requires vim v7.4 with patch#&quot;, &quot;netrw&quot;) .. ptch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let s:needpatch{ptch}= 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;finish<br>
+&nbsp;&nbsp; endif<br>
+&nbsp;&nbsp;endfor<br>
+&nbsp;endif</div>
+<br>
+The file &quot;autoload\netrwSettings.vim&quot;:<br>
+<br>
+<div class="helpExample">&nbsp;&quot; Load Once:<br>
+&nbsp;if exists(&quot;g:loaded_netrwSettings&quot;) || &amp;cp<br>
+&nbsp;&nbsp; finish<br>
+&nbsp;endif<br>
+&nbsp;call bindtextdomain(&quot;netrw&quot;, fnamemodify(expand(&quot;&lt;script&gt;&quot;), ':p:h') .. '/../lang/')<br>
+&nbsp;let g:loaded_netrwSettings = &quot;v18&quot;<br>
+&nbsp;if v:version &lt; 700<br>
+&nbsp;&nbsp;echohl WarningMsg<br>
+&nbsp;&nbsp;echo gettext(&quot;***warning*** this version of netrwSettings needs vim 7.0&quot;, &quot;netrw&quot;)<br>
+&nbsp;&nbsp;echohl Normal<br>
+&nbsp;&nbsp;finish<br>
+&nbsp;endif</div>
+<br>
+Now we will prepare a POT file for further translation of messages.<br>
+Execute the following commands:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd ~/forkvim/src/po<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make -f Makefile &quot;VIMPROG=/usr/local/bin/vim&quot; &quot;PLUGPACKAGE=netrw&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;POT_PLUGPACKAGE_PATH=~/project/translate/plugins&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;PO_PLUG_INPUTLIST=../../runtime/autoload/netrw.vim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;../../runtime/autoload/netrwSettings.vim&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;netrw.pot</div>
+<br>
+Go to the directory with the POT file and make the translation:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd ~/project/translate/plugins<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cp ./netrw.pot ja.po</div>
+<br>
+When we have the translation ready in the &quot;ja.po&quot; file:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc"># Test plugins translate</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Project-Id-Version: netrw\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Report-Msgid-Bugs-To: \n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;POT-Creation-Date: 2024-06-23 17:14+0300\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;PO-Revision-Date: 2024-06-23 17:14+0300\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Last-Translator: Restorer\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Language-Team: Japanese\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Language: ja\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;MIME-Version: 1.0\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Content-Type: text/plain; charset=UTF-8\n&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;Content-Transfer-Encoding: 8bit\n&quot;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#: ../../runtime/autoload/netrw.vim:51</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;***sorry*** this version of netrw requires vim v7.4 with patch#&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">&quot;***申し訳ありません***このバージョンのnetrwには、パッチ付きのvim v7.4が必要です#&quot;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">#: ../../runtime/autoload/netrwSettings.vim:28</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgid &quot;***warning*** this version of netrwSettings needs vim 7.0&quot;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">msgstr &quot;***警告***このバージョンのnetrwSettingsにはvim7.0が必要です&quot;</span><br>
+<br>
+Convert ja.po to a MO file:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd ~/forkvim/src/po<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make -f Makefile &quot;PLUGPACKAGE=netrw&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;PO_PLUGPACKAGE=~/project/translate/plugins/ja.po&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;MO_PLUGPACKAGE_PATH=/usr/local/share/vim/vim91/lang/ja/LC_MESSAGES&quot; \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;netrw.mo</div>
+<br>
+Executing those steps will allow you to get translation of any third-party<br>
+plug-in packages.<br>
 <br>
 <span class="PreProc">Dependencies between plugins</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="repeat.html#packload-two-steps" name="packload-two-steps">packload-two-steps</a><br>
