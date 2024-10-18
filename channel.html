@@ -34,9 +34,9 @@ The Netbeans interface also uses a channel.&nbsp;<a class="Identifier" href="net
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#E1277" name="E1277">E1277</a><br>
 <span class="Special">{only when compiled with the&nbsp;</span><a class="Identifier" href="various.html#+channel">+channel</a><span class="Special">&nbsp;feature for channel stuff}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can check this with:&nbsp;<span class="Comment">has('channel')</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can check this with:&nbsp;`<span class="Comment">has('channel')</span>`<br>
 <span class="Special">{only when compiled with the&nbsp;</span><a class="Identifier" href="various.html#+job">+job</a><span class="Special">&nbsp;feature for job stuff}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can check this with:&nbsp;<span class="Comment">has('job')</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can check this with:&nbsp;`<span class="Comment">has('job')</span>`<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 1. Overview&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#job-channel-overview" name="job-channel-overview">job-channel-overview</a><br>
@@ -75,29 +75,29 @@ This requires Python.&nbsp;&nbsp;The demo program can be found in<br>
 $VIMRUNTIME/tools/demoserver.py<br>
 Run it in one terminal.&nbsp;&nbsp;We will call this T1.<br>
 <br>
-Run Vim in another terminal.&nbsp;&nbsp;Connect to the demo server with:<br>
+Run Vim in another terminal.&nbsp;&nbsp;Connect to the demo server with:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let channel = ch_open('localhost:8765')</div>
 <br>
 In T1 you should see:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">=== socket opened ===</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">=== socket opened ===</span>&nbsp;~<br>
 <br>
-You can now send a message to the server:<br>
+You can now send a message to the server:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo ch_evalexpr(channel, 'hello!')</div>
 <br>
 The message is received in T1 and a response is sent back to Vim.<br>
 You can see the raw messages in T1.&nbsp;&nbsp;What Vim sends is:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[1,&quot;hello!&quot;]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[1,&quot;hello!&quot;]</span>&nbsp;~<br>
 And the response is:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[1,&quot;got it&quot;]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[1,&quot;got it&quot;]</span>&nbsp;~<br>
 The number will increase every time you send a message.<br>
 <br>
 The server can send a command to Vim.&nbsp;&nbsp;Type this on T1 (literally, including<br>
 the quotes):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;ex&quot;,&quot;echo 'hi there'&quot;]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;ex&quot;,&quot;echo 'hi there'&quot;]</span>&nbsp;~<br>
 And you should see the message in Vim. You can move the cursor a word forward:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;normal&quot;,&quot;w&quot;]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;normal&quot;,&quot;w&quot;]</span>&nbsp;~<br>
 <br>
-To handle asynchronous communication a callback needs to be used:<br>
+To handle asynchronous communication a callback needs to be used:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func MyHandler(channel, msg)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo &quot;from the handler: &quot; .. a:msg<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
@@ -106,20 +106,20 @@ Vim will not wait for a response.&nbsp;&nbsp;Now the server can send the respons
 and MyHandler will be invoked.<br>
 <br>
 Instead of giving a callback with every send call, it can also be specified<br>
-when opening the channel:<br>
+when opening the channel:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call ch_close(channel)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let channel = ch_open('localhost:8765', {'callback': &quot;MyHandler&quot;})<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendexpr(channel, 'hello channel!')</div>
 <br>
 When trying out channels it's useful to see what is going on.&nbsp;&nbsp;You can tell<br>
-Vim to write lines in log file:<br>
+Vim to write lines in log file:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call ch_logfile('channellog', 'w')</div>
 See&nbsp;<a class="Identifier" href="channel.html#ch_logfile()">ch_logfile()</a>.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 3. Opening a channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-open" name="channel-open">channel-open</a><br>
 <br>
-To open a channel:<br>
+To open a channel:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let channel = ch_open({address} [, {options}])<br>
 &nbsp;&nbsp;&nbsp;&nbsp;if ch_status(channel) == &quot;open&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; use the channel</div>
@@ -128,7 +128,7 @@ Use&nbsp;<a class="Identifier" href="channel.html#ch_status()">ch_status()</a>&n
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-address" name="channel-address">channel-address</a><br>
 <span class="Special">{address}</span>&nbsp;can be a domain name or an IP address, followed by a port number, or<br>
-a Unix-domain socket path prefixed by &quot;unix:&quot;.&nbsp;&nbsp;E.g.<br>
+a Unix-domain socket path prefixed by &quot;unix:&quot;.&nbsp;&nbsp;E.g.&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;www.example.com:80&nbsp;&nbsp; &quot; domain + port<br>
 &nbsp;&nbsp;&nbsp;&nbsp;127.0.0.1:1234&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot; IPv4 + port<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[2001:db8::1]:8765&nbsp;&nbsp; &quot; IPv6 + port<br>
@@ -146,12 +146,12 @@ a Unix-domain socket path prefixed by &quot;unix:&quot;.&nbsp;&nbsp;E.g.<br>
 &quot;callback&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function that is called when a message is received that is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not handled otherwise (e.g. a JSON message with ID zero).&nbsp;&nbsp;It<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gets two arguments: the channel and the received message.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func Handle(channel, msg)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo 'Received: ' .. a:msg<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunc<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let channel = ch_open(&quot;localhost:8765&quot;, {&quot;callback&quot;: &quot;Handle&quot;})</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When &quot;mode&quot; is &quot;json&quot; or &quot;js&quot; or &quot;lsp&quot; the &quot;msg&quot; argument is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the body of the received message, converted to Vim types.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When &quot;mode&quot; is &quot;nl&quot; the &quot;msg&quot; argument is one message,<br>
@@ -169,16 +169,16 @@ a Unix-domain socket path prefixed by &quot;unix:&quot;.&nbsp;&nbsp;E.g.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#close_cb" name="close_cb">close_cb</a><br>
 &quot;close_cb&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A function that is called when the channel gets closed, other<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;than by calling ch_close().&nbsp;&nbsp;It should be defined like this:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;than by calling ch_close().&nbsp;&nbsp;It should be defined like this:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func MyCloseHandler(channel)</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim will invoke callbacks that handle data before invoking<br>
+&lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vim will invoke callbacks that handle data before invoking<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;close_cb, thus when this function is called no more data will<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be passed to the callbacks.&nbsp;&nbsp;However, if a callback causes Vim<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to check for messages, the close_cb may be invoked while still<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in the callback.&nbsp;&nbsp;The plugin must handle this somehow, it can<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be useful to know that no more data is coming.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If it is not known if there is a message to be read, use a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try/catch block:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try/catch block:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let msg = ch_readraw(a:channel)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch<br>
@@ -189,7 +189,7 @@ a Unix-domain socket path prefixed by &quot;unix:&quot;.&nbsp;&nbsp;E.g.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let err = 'no error'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endtry</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-drop" name="channel-drop">channel-drop</a><br>
+&lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-drop" name="channel-drop">channel-drop</a><br>
 &quot;drop&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies when to drop messages:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;auto&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When there is no callback to handle a message.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The &quot;close_cb&quot; is also considered for this.<br>
@@ -219,19 +219,19 @@ To change the channel options after opening it use&nbsp;<a class="Identifier" hr
 arguments are similar to what is passed to&nbsp;<a class="Identifier" href="channel.html#ch_open()">ch_open()</a>, but &quot;waittime&quot; cannot<br>
 be given, since that only applies to opening the channel.<br>
 <br>
-For example, the handler can be added or changed:<br>
+For example, the handler can be added or changed:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;call ch_setoptions(channel, {'callback': callback})</div>
 When &quot;callback&quot; is empty (zero or an empty string) the handler is removed.<br>
 <br>
 After a callback has been invoked Vim will update the screen and put the<br>
 cursor back where it belongs.&nbsp;&nbsp;Thus the callback should not need to do<br>
-<a class="Comment" href="various.html#:redraw">:redraw</a>.<br>
+`<a class="Comment" href="various.html#:redraw">:redraw</a>`.<br>
 <br>
-The timeout can be changed:<br>
+The timeout can be changed:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;call ch_setoptions(channel, {'timeout': msec})</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-close" name="channel-close">channel-close</a>&nbsp;<a class="Constant" href="channel.html#E906" name="E906">E906</a><br>
-Once done with the channel, disconnect it like this:<br>
+Once done with the channel, disconnect it like this:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;call ch_close(channel)</div>
 When a socket is used this will close the socket for both directions.&nbsp;&nbsp;When<br>
 pipes are used (stdin/stdout/stderr) they are all closed.&nbsp;&nbsp;This might not be<br>
@@ -256,7 +256,7 @@ If there is an error reading or writing a channel it will be closed.<br>
 <span class="PreProc">==============================================================================</span><br>
 4. Using a JSON or JS channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-use" name="channel-use">channel-use</a><br>
 <br>
-If mode is JSON then a message can be sent synchronously like this:<br>
+If mode is JSON then a message can be sent synchronously like this:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let response = ch_evalexpr(channel, {expr})</div>
 This awaits a response from the other side.<br>
 <br>
@@ -264,11 +264,11 @@ When mode is JS this works the same, except that the messages use<br>
 JavaScript encoding.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="builtin.html#js_encode()">js_encode()</a>&nbsp;for the difference.<br>
 <br>
 To send a message, without handling a response or letting the channel callback<br>
-handle the response:<br>
+handle the response:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendexpr(channel, {expr})</div>
 <br>
 To send a message and letting the response handled by a specific function,<br>
-asynchronously:<br>
+asynchronously:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendexpr(channel, {expr}, {'callback': Handler})</div>
 <br>
 Vim will match the response with the request using the message ID.&nbsp;&nbsp;Once the<br>
@@ -278,7 +278,7 @@ need to send them with ID zero, they will be passed to the channel callback.<br>
 <br>
 The&nbsp;<span class="Special">{expr}</span>&nbsp;is converted to JSON and wrapped in an array.&nbsp;&nbsp;An example of the<br>
 message that the receiver will get when&nbsp;<span class="Special">{expr}</span>&nbsp;is the string &quot;hello&quot;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[12,&quot;hello&quot;]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[12,&quot;hello&quot;]</span>&nbsp;~<br>
 <br>
 The format of the JSON sent is:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[<span class="Special">{number}</span>,<span class="Special">{expr}</span>]<br>
@@ -331,14 +331,14 @@ With all of these: Be careful what these commands do!&nbsp;&nbsp;You can easily<
 interfere with what the user is doing.&nbsp;&nbsp;To avoid trouble use&nbsp;<a class="Identifier" href="builtin.html#mode()">mode()</a>&nbsp;to check<br>
 that the editor is in the expected state.&nbsp;&nbsp;E.g., to send keys that must be<br>
 inserted as text, not executed as a command:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;ex&quot;,&quot;if mode() == 'i' | call feedkeys('ClassName') | endif&quot;]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;ex&quot;,&quot;if mode() == 'i' | call feedkeys('ClassName') | endif&quot;]</span>&nbsp;~<br>
 <br>
 Errors in these commands are normally not reported to avoid them messing up<br>
 the display.&nbsp;&nbsp;If you do want to see them, set the&nbsp;<a class="Type" href="options.html#'verbose'">'verbose'</a>&nbsp;option to 3 or<br>
 higher.<br>
 <br>
 <br>
-<span class="PreProc">Command &quot;redraw&quot;</span><br>
+<span class="PreProc">Command &quot;redraw&quot;</span>&nbsp;~<br>
 <br>
 The other commands do not explicitly update the screen, so that you can send a<br>
 sequence of commands without the cursor moving around.&nbsp;&nbsp;A redraw can happen as<br>
@@ -346,12 +346,12 @@ a side effect of some commands.&nbsp;&nbsp;You must end with the &quot;redraw&qu
 show any changed text and show the cursor where it belongs.<br>
 <br>
 The argument is normally an empty string:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;redraw&quot;, &quot;&quot;]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;redraw&quot;, &quot;&quot;]</span>&nbsp;~<br>
 To first clear the screen pass &quot;force&quot;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;redraw&quot;, &quot;force&quot;]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;redraw&quot;, &quot;force&quot;]</span>&nbsp;~<br>
 <br>
 <br>
-<span class="PreProc">Command &quot;ex&quot;</span><br>
+<span class="PreProc">Command &quot;ex&quot;</span>&nbsp;~<br>
 <br>
 The &quot;ex&quot; command is executed as any Ex command.&nbsp;&nbsp;There is no response for<br>
 completion or error.&nbsp;&nbsp;You could use functions in an&nbsp;<a class="Identifier" href="userfunc.html#autoload">autoload</a>&nbsp;script:<br>
@@ -363,21 +363,21 @@ When there is an error a message is written to the channel log, if it exists,<br
 and v:errmsg is set to the error.<br>
 <br>
 <br>
-<span class="PreProc">Command &quot;normal&quot;</span><br>
+<span class="PreProc">Command &quot;normal&quot;</span>&nbsp;~<br>
 <br>
 The &quot;normal&quot; command is executed like with &quot;:normal!&quot;, commands are not<br>
 mapped.&nbsp;&nbsp;Example to open the folds under the cursor:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&quot;normal&quot; &quot;zO&quot;]<br>
 <br>
 <br>
-<span class="PreProc">Command &quot;expr&quot;&nbsp;&nbsp;with response</span><br>
+<span class="PreProc">Command &quot;expr&quot;&nbsp;&nbsp;with response</span>&nbsp;~<br>
 <br>
 The &quot;expr&quot; command can be used to get the result of an expression.&nbsp;&nbsp;For<br>
 example, to get the number of lines in the current buffer:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;expr&quot;,&quot;line('$')&quot;, -2]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;expr&quot;,&quot;line('$')&quot;, -2]</span>&nbsp;~<br>
 <br>
 It will send back the result of the expression:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[-2, &quot;last line&quot;]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[-2, &quot;last line&quot;]</span>&nbsp;~<br>
 The format is:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="Special">{number}</span>,&nbsp;<span class="Special">{result}</span>]<br>
 <br>
@@ -390,29 +390,29 @@ evaluation fails or the result can't be encoded in JSON it is the string<br>
 &quot;ERROR&quot;.<br>
 <br>
 <br>
-<span class="PreProc">Command &quot;expr&quot; without a response</span><br>
+<span class="PreProc">Command &quot;expr&quot; without a response</span>&nbsp;~<br>
 <br>
 This command is similar to &quot;expr&quot; above, but does not send back any response.<br>
 Example:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;expr&quot;,&quot;setline('$', ['one', 'two', 'three'])&quot;]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;expr&quot;,&quot;setline('$', ['one', 'two', 'three'])&quot;]</span>&nbsp;~<br>
 There is no third argument in the request.<br>
 <br>
 <br>
-<span class="PreProc">Command &quot;call&quot;</span><br>
+<span class="PreProc">Command &quot;call&quot;</span>&nbsp;~<br>
 <br>
 This is similar to &quot;expr&quot;, but instead of passing the whole expression as a<br>
 string this passes the name of a function and a list of arguments.&nbsp;&nbsp;This<br>
 avoids the conversion of the arguments to a string and escaping and<br>
 concatenating them.&nbsp;&nbsp;Example:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;call&quot;, &quot;line&quot;, [&quot;$&quot;], -2]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;call&quot;, &quot;line&quot;, [&quot;$&quot;], -2]</span>&nbsp;~<br>
 <br>
 Leave out the fourth argument if no response is to be sent:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;call&quot;, &quot;setline&quot;, [&quot;$&quot;, [&quot;one&quot;, &quot;two&quot;, &quot;three&quot;]]]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">[&quot;call&quot;, &quot;setline&quot;, [&quot;$&quot;, [&quot;one&quot;, &quot;two&quot;, &quot;three&quot;]]]</span>&nbsp;~<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 6. Using a RAW or NL channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-raw" name="channel-raw">channel-raw</a><br>
 <br>
-If mode is RAW or NL then a message can be sent like this:<br>
+If mode is RAW or NL then a message can be sent like this:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let response = ch_evalraw(channel, {string})</div>
 <br>
 The&nbsp;<span class="Special">{string}</span>&nbsp;is sent as-is.&nbsp;&nbsp;The response will be what can be read from the<br>
@@ -426,14 +426,14 @@ ending in a NL at once.&nbsp;&nbsp;The response will be the text up to and inclu
 first NL.&nbsp;&nbsp;This can also be just the NL for an empty response.<br>
 If no NL was read before the channel timeout an empty string is returned.<br>
 <br>
-To send a message, without expecting a response:<br>
+To send a message, without expecting a response:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendraw(channel, {string})</div>
 The process can send back a response, the channel handler will be called with<br>
 it.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#channel-onetime-callback" name="channel-onetime-callback">channel-onetime-callback</a><br>
 To send a message and letting the response handled by a specific function,<br>
-asynchronously:<br>
+asynchronously:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendraw(channel, {string}, {'callback': 'MyHandler'})</div>
 <br>
 This&nbsp;<span class="Special">{string}</span>&nbsp;can also be JSON, use&nbsp;<a class="Identifier" href="builtin.html#json_encode()">json_encode()</a>&nbsp;to create it and<br>
@@ -456,10 +456,10 @@ are:<br>
 <br>
 To obtain the job associated with a channel: ch_getjob(channel)<br>
 <br>
-To read one message from a channel:<br>
+To read one message from a channel:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let output = ch_read(channel)</div>
 This uses the channel timeout.&nbsp;&nbsp;To read without a timeout, just get any<br>
-message that is available:<br>
+message that is available:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let output = ch_read(channel, {'timeout': 0})</div>
 When no message was available then the result is v:none for a JSON or JS mode<br>
 channels, an empty string for a RAW or NL channel.&nbsp;&nbsp;You can use&nbsp;<a class="Identifier" href="channel.html#ch_canread()">ch_canread()</a><br>
@@ -468,9 +468,9 @@ to check if there is something to read.<br>
 <span class="Todo">Note</span>&nbsp;that when there is no callback, messages are dropped.&nbsp;&nbsp;To avoid that add<br>
 a close callback to the channel.<br>
 <br>
-To read all normal output from a RAW channel that is available:<br>
+To read all normal output from a RAW channel that is available:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let output = ch_readraw(channel)</div>
-To read all error output from a RAW channel that is available:<br>
+To read all error output from a RAW channel that is available:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let output = ch_readraw(channel, {&quot;part&quot;: &quot;err&quot;})</div>
 <span class="Todo">Note</span>&nbsp;that if the channel is in NL mode, ch_readraw() will only return one line<br>
 for each call.<br>
@@ -478,11 +478,11 @@ for each call.<br>
 ch_read() and ch_readraw() use the channel timeout.&nbsp;&nbsp;When there is nothing to<br>
 read within that time an empty string is returned.&nbsp;&nbsp;To specify a different<br>
 timeout in msec use the &quot;timeout&quot; option:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">{&quot;timeout&quot;: 123}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">{&quot;timeout&quot;: 123}</span>&nbsp;~<br>
 To read from the error output use the &quot;part&quot; option:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">{&quot;part&quot;: &quot;err&quot;}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">{&quot;part&quot;: &quot;err&quot;}</span>&nbsp;~<br>
 To read a message with a specific ID, on a JS or JSON channel:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">{&quot;id&quot;: 99}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">{&quot;id&quot;: 99}</span>&nbsp;~<br>
 When no ID is specified or the ID is -1, the first message is returned. This<br>
 overrules any callback waiting for this message.<br>
 <br>
@@ -505,9 +505,9 @@ ch_canread(<span class="Special">{handle}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that messages are dropped when the channel does not have<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a callback.&nbsp;&nbsp;Add a close callback to avoid that.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_canread()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#Number">Number</a><br>
 <br>
 ch_close(<span class="Special">{handle}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_close()" name="ch_close()">ch_close()</a><br>
@@ -515,9 +515,9 @@ ch_close(<span class="Special">{handle}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{handle}</span>&nbsp;can be a Channel or a Job that has a Channel.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A close callback is not invoked.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_close()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#Number">Number</a><br>
 <br>
 ch_close_in(<span class="Special">{handle}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_close_in()" name="ch_close_in()">ch_close_in()</a><br>
@@ -525,9 +525,9 @@ ch_close_in(<span class="Special">{handle}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{handle}</span>&nbsp;can be a Channel or a Job that has a Channel.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A close callback is not invoked.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_close_in()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#Number">Number</a><br>
 <br>
 <br>
@@ -550,9 +550,9 @@ ch_evalexpr(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{e
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that while waiting for the response, Vim handles other<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages.&nbsp;&nbsp;You need to make sure this doesn't cause trouble.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_evalexpr(expr)</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type: dict<span class="Special">&lt;any&gt;</span>&nbsp;or&nbsp;<a class="Identifier" href="eval.html#String">String</a><br>
 <br>
 <br>
@@ -570,9 +570,9 @@ ch_evalraw(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{st
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;need to use&nbsp;<a class="Identifier" href="channel.html#ch_readraw()">ch_readraw()</a>&nbsp;to fetch the rest.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel-use">channel-use</a>.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_evalraw(rawstring)</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type: dict<span class="Special">&lt;any&gt;</span>&nbsp;or&nbsp;<a class="Identifier" href="eval.html#String">String</a><br>
 <br>
 ch_getbufnr(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{what}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_getbufnr()" name="ch_getbufnr()">ch_getbufnr()</a><br>
@@ -582,9 +582,9 @@ ch_getbufnr(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{w
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;socket output.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns -1 when there is no buffer.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_getbufnr(what)</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#Number">Number</a><br>
 <br>
 ch_getjob(<span class="Special">{channel}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_getjob()" name="ch_getjob()">ch_getjob()</a><br>
@@ -592,9 +592,9 @@ ch_getjob(<span class="Special">{channel}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there is no job calling&nbsp;<a class="Identifier" href="channel.html#job_status()">job_status()</a>&nbsp;on the returned Job<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will result in &quot;fail&quot;.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_getjob()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="channel.html#job">job</a>&nbsp;or&nbsp;<a class="Identifier" href="eval.html#String">String</a><br>
 <br>
 ch_info(<span class="Special">{handle}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_info()" name="ch_info()">ch_info()</a><br>
@@ -629,9 +629,9 @@ ch_info(<span class="Special">{handle}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;in_io&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;null&quot;, &quot;pipe&quot;, &quot;file&quot; or &quot;buffer&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;in_timeout&quot;&nbsp;&nbsp; timeout in msec<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_info()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type: dict<span class="Special">&lt;any&gt;</span><br>
 <br>
 ch_log(<span class="Special">{msg}</span>&nbsp;[,&nbsp;<span class="Special">{handle}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_log()" name="ch_log()">ch_log()</a><br>
@@ -645,9 +645,9 @@ ch_log(<span class="Special">{msg}</span>&nbsp;[,&nbsp;<span class="Special">{ha
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{handle}</span>&nbsp;can be a Channel or a Job that has a Channel.&nbsp;&nbsp;The<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Channel must be open for the channel number to be used.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'did something'-&gt;ch_log()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type: dict<span class="Special">&lt;any&gt;</span><br>
 <br>
 ch_logfile(<span class="Special">{fname}</span>&nbsp;[,&nbsp;<span class="Special">{mode}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_logfile()" name="ch_logfile()">ch_logfile()</a><br>
@@ -665,17 +665,17 @@ ch_logfile(<span class="Special">{fname}</span>&nbsp;[,&nbsp;<span class="Specia
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is going on in real time.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To enable the log very early, to see what is received from a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;terminal during startup, use&nbsp;<a class="Identifier" href="starting.html#--log">--log</a>&nbsp;(this uses mode &quot;ao&quot;):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;terminal during startup, use&nbsp;<a class="Identifier" href="starting.html#--log">--log</a>&nbsp;(this uses mode &quot;ao&quot;):&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim --log logfile</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function is not available in the&nbsp;<a class="Identifier" href="eval.html#sandbox">sandbox</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">NOTE</span>: the channel communication is stored in the file, be<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aware that this may contain confidential and privacy sensitive<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;information, e.g. a password you type in a terminal window.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'logfile'-&gt;ch_logfile('w')</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#Number">Number</a><br>
 <br>
 ch_open(<span class="Special">{address}</span>&nbsp;[,&nbsp;<span class="Special">{options}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_open()" name="ch_open()">ch_open()</a><br>
@@ -688,9 +688,9 @@ ch_open(<span class="Special">{address}</span>&nbsp;[,&nbsp;<span class="Special
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;<span class="Special">{options}</span>&nbsp;is given it must be a&nbsp;<a class="Identifier" href="eval.html#Dictionary">Dictionary</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel-open-options">channel-open-options</a>.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetAddress()-&gt;ch_open()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="channel.html#channel">channel</a><br>
 <br>
 ch_read(<span class="Special">{handle}</span>&nbsp;[,&nbsp;<span class="Special">{options}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_read()" name="ch_read()">ch_read()</a><br>
@@ -700,18 +700,18 @@ ch_read(<span class="Special">{handle}</span>&nbsp;[,&nbsp;<span class="Special"
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;there is nothing more to read (channel was closed).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel-more">channel-more</a>.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_read()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#String">String</a><br>
 <br>
 ch_readblob(<span class="Special">{handle}</span>&nbsp;[,&nbsp;<span class="Special">{options}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_readblob()" name="ch_readblob()">ch_readblob()</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like ch_read() but reads binary data and returns a&nbsp;<a class="Identifier" href="eval.html#Blob">Blob</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel-more">channel-more</a>.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_readblob()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#Blob">Blob</a><br>
 <br>
 ch_readraw(<span class="Special">{handle}</span>&nbsp;[,&nbsp;<span class="Special">{options}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_readraw()" name="ch_readraw()">ch_readraw()</a><br>
@@ -720,9 +720,9 @@ ch_readraw(<span class="Special">{handle}</span>&nbsp;[,&nbsp;<span class="Speci
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the NL to arrive, but otherwise works like ch_read().<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel-more">channel-more</a>.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_readraw()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#String">String</a><br>
 <br>
 ch_sendexpr(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{expr}</span>&nbsp;[,&nbsp;<span class="Special">{options}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_sendexpr()" name="ch_sendexpr()">ch_sendexpr()</a><br>
@@ -743,9 +743,9 @@ ch_sendexpr(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{e
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If a response message is not expected for&nbsp;<span class="Special">{expr}</span>, then don't<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specify the &quot;callback&quot; item in&nbsp;<span class="Special">{options}</span>.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_sendexpr(expr)</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type: dict<span class="Special">&lt;any&gt;</span>&nbsp;or&nbsp;<a class="Identifier" href="eval.html#String">String</a><br>
 <br>
 <br>
@@ -758,9 +758,9 @@ ch_sendraw(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{ex
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is removed.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="channel.html#channel-use">channel-use</a>.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_sendraw(rawexpr)</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type: dict<span class="Special">&lt;any&gt;</span>&nbsp;or&nbsp;<a class="Identifier" href="eval.html#String">String</a><br>
 <br>
 ch_setoptions(<span class="Special">{handle}</span>,&nbsp;<span class="Special">{options}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_setoptions()" name="ch_setoptions()">ch_setoptions()</a><br>
@@ -777,9 +777,9 @@ ch_setoptions(<span class="Special">{handle}</span>,&nbsp;<span class="Special">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;These options cannot be changed:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;waittime&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only applies to&nbsp;<a class="Identifier" href="channel.html#ch_open()">ch_open()</a><br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_setoptions(options)</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#Number">Number</a><br>
 <br>
 ch_status(<span class="Special">{handle}</span>&nbsp;[,&nbsp;<span class="Special">{options}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#ch_status()" name="ch_status()">ch_status()</a><br>
@@ -794,21 +794,21 @@ ch_status(<span class="Special">{handle}</span>&nbsp;[,&nbsp;<span class="Specia
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;<span class="Special">{options}</span>&nbsp;is given it can contain a &quot;part&quot; entry to specify<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the part of the channel to return the status for: &quot;out&quot; or<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;err&quot;.&nbsp;&nbsp;For example, to get the error status:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;err&quot;.&nbsp;&nbsp;For example, to get the error status:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ch_status(job, {&quot;part&quot;: &quot;err&quot;})</div>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&lt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetChannel()-&gt;ch_status()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#String">String</a><br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 9. Starting a job with a channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#job-start" name="job-start">job-start</a>&nbsp;<a class="Constant" href="channel.html#job" name="job">job</a><br>
 <br>
-To start a job and open a channel for stdin/stdout/stderr:<br>
+To start a job and open a channel for stdin/stdout/stderr:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(command, {options})</div>
 <br>
-You can get the channel with:<br>
+You can get the channel with:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let channel = job_getchannel(job)</div>
 <br>
 The channel will use NL mode.&nbsp;&nbsp;If you want another mode it's best to specify<br>
@@ -816,10 +816,10 @@ this in&nbsp;<span class="Special">{options}</span>.&nbsp;&nbsp;When changing th
 been received and not parsed correctly.<br>
 <br>
 If the command produces a line of output that you want to deal with, specify<br>
-a handler for stdout:<br>
+a handler for stdout:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(command, {&quot;out_cb&quot;: &quot;MyHandler&quot;})</div>
 The function will be called with the channel and a message. You would define<br>
-it like this:<br>
+it like this:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;func MyHandler(channel, msg)</div>
 <br>
 Without the handler you need to read the output with&nbsp;<a class="Identifier" href="channel.html#ch_read()">ch_read()</a>&nbsp;or<br>
@@ -831,16 +831,16 @@ of a pipe causes the read end to get EOF).&nbsp;&nbsp;To avoid this make the job
 for a short while before it exits.<br>
 <br>
 The handler defined for &quot;out_cb&quot; will not receive stderr.&nbsp;&nbsp;If you want to<br>
-handle that separately, add an &quot;err_cb&quot; handler:<br>
+handle that separately, add an &quot;err_cb&quot; handler:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(command, {&quot;out_cb&quot;: &quot;MyHandler&quot;,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;err_cb&quot;: &quot;ErrHandler&quot;})</div>
 <br>
 If you want to handle both stderr and stdout with one handler use the<br>
-&quot;callback&quot; option:<br>
+&quot;callback&quot; option:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(command, {&quot;callback&quot;: &quot;MyHandler&quot;})</div>
 <br>
 Depending on the system, starting a job can put Vim in the background, the<br>
-started job gets the focus.&nbsp;&nbsp;To avoid that, use the&nbsp;<a class="Comment" href="builtin.html#foreground()">foreground()</a>&nbsp;function.<br>
+started job gets the focus.&nbsp;&nbsp;To avoid that, use the&nbsp;`<a class="Comment" href="builtin.html#foreground()">foreground()</a>`&nbsp;function.<br>
 This might not always work when called early, put in the callback handler or<br>
 use a timer to call it after the job has started.<br>
 <br>
@@ -848,18 +848,18 @@ You can send a message to the command with ch_evalraw().&nbsp;&nbsp;If the chann
 JSON or JS mode you can use ch_evalexpr().<br>
 <br>
 There are several options you can use, see&nbsp;<a class="Identifier" href="channel.html#job-options">job-options</a>.<br>
-For example, to start a job and write its output in buffer &quot;dummy&quot;:<br>
+For example, to start a job and write its output in buffer &quot;dummy&quot;:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let logjob = job_start(&quot;tail -f /tmp/log&quot;,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ {'out_io': 'buffer', 'out_name': 'dummy'})<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sbuf dummy</div>
 <br>
 <br>
-<span class="PreProc">Job input from a buffer</span><br>
+<span class="PreProc">Job input from a buffer</span>&nbsp;~<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#in_io-buffer" name="in_io-buffer">in_io-buffer</a><br>
-To run a job that reads from a buffer:<br>
+To run a job that reads from a buffer:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start({command},<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ {'in_io': 'buffer', 'in_name': 'mybuffer'})</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#E915" name="E915">E915</a>&nbsp;<a class="Constant" href="channel.html#E918" name="E918">E918</a><br>
 The buffer is found by name, similar to&nbsp;<a class="Identifier" href="builtin.html#bufnr()">bufnr()</a>. The buffer must exist and<br>
 be loaded when job_start() is called.<br>
@@ -880,10 +880,10 @@ NUL bytes in the text will be passed to the job (internally Vim stores these<br>
 as NL bytes).<br>
 <br>
 <br>
-<span class="PreProc">Reading job output in the close callback</span><br>
+<span class="PreProc">Reading job output in the close callback</span>&nbsp;~<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#read-in-close-cb" name="read-in-close-cb">read-in-close-cb</a><br>
 If the job can take some time and you don't need intermediate results, you can<br>
-add a close callback and read the output there:<br>
+add a close callback and read the output there:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func! CloseHandler(channel)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while ch_status(a:channel, {'part': 'out'}) == 'buffered'<br>
@@ -897,7 +897,7 @@ You will want to do something more useful than &quot;echomsg&quot;.<br>
 <span class="PreProc">==============================================================================</span><br>
 10. Starting a job without a channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#job-start-nochannel" name="job-start-nochannel">job-start-nochannel</a><br>
 <br>
-To start another process without creating a channel:<br>
+To start another process without creating a channel:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(command,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ {&quot;in_io&quot;: &quot;null&quot;, &quot;out_io&quot;: &quot;null&quot;, &quot;err_io&quot;: &quot;null&quot;})</div>
 <br>
@@ -911,7 +911,7 @@ There are several options you can use, see&nbsp;<a class="Identifier" href="chan
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#job-start-if-needed" name="job-start-if-needed">job-start-if-needed</a><br>
 To start a job only when connecting to an address does not work, do something<br>
-like this:<br>
+like this:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let channel = ch_open(address, {&quot;waittime&quot;: 0})<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ch_status(channel) == &quot;fail&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(command)<br>
@@ -926,12 +926,12 @@ available.<br>
 <br>
 job_getchannel(<span class="Special">{job}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#job_getchannel()" name="job_getchannel()">job_getchannel()</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the channel handle that&nbsp;<span class="Special">{job}</span>&nbsp;is using.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To check if the job has no channel:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To check if the job has no channel:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if string(job_getchannel(job)) == 'channel fail'</div>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&lt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetJob()-&gt;job_getchannel()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="channel.html#channel">channel</a><br>
 <br>
 job_info([<span class="Special">{job}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#job_info()" name="job_info()">job_info()</a><br>
@@ -958,9 +958,9 @@ job_info([<span class="Special">{job}</span>])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Without any arguments, returns a List with all Job objects.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetJob()-&gt;job_info()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type: dict<span class="Special">&lt;any&gt;</span>&nbsp;or list<span class="Special">&lt;job&gt;</span>&nbsp;depending on whether&nbsp;<span class="Special">{job}</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;was given<br>
 <br>
@@ -970,9 +970,9 @@ job_setoptions(<span class="Special">{job}</span>,&nbsp;<span class="Special">{o
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;stoponexit&quot;&nbsp;<a class="Identifier" href="channel.html#job-stoponexit">job-stoponexit</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;exit_cb&quot;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="channel.html#job-exit_cb">job-exit_cb</a><br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetJob()-&gt;job_setoptions(options)</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#Number">Number</a><br>
 <br>
 <br>
@@ -998,11 +998,11 @@ job_start(<span class="Special">{command}</span>&nbsp;[,&nbsp;<span class="Speci
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;you want to show it, use&nbsp;<a class="Identifier" href="os_win32.html#:!start">:!start</a>&nbsp;instead.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The command is executed directly, not through a shell, the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>&nbsp;option is not used.&nbsp;&nbsp;To use the shell:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'shell'">'shell'</a>&nbsp;option is not used.&nbsp;&nbsp;To use the shell:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start([&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;echo hello&quot;])</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Or:<br>
+&lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Or:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start('/bin/sh -c &quot;echo hello&quot;')</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that this will start two processes, the shell and the<br>
+&lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that this will start two processes, the shell and the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command it executes.&nbsp;&nbsp;If you don't want this use the &quot;exec&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shell command.<br>
 <br>
@@ -1011,32 +1011,32 @@ job_start(<span class="Special">{command}</span>&nbsp;[,&nbsp;<span class="Speci
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The job will use the same terminal as Vim.&nbsp;&nbsp;If it reads from<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stdin the job and Vim will be fighting over input, that<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doesn't work.&nbsp;&nbsp;Redirect stdin and stdout to avoid problems:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doesn't work.&nbsp;&nbsp;Redirect stdin and stdout to avoid problems:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let job = job_start(['sh', '-c', &quot;myserver &lt;/dev/null &gt;/dev/null&quot;])</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The returned Job object can be used to get the status with<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="channel.html#job_status()">job_status()</a>&nbsp;and stop the job with&nbsp;<a class="Identifier" href="channel.html#job_stop()">job_stop()</a>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">Note</span>&nbsp;that the job object will be deleted if there are no<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;references to it.&nbsp;&nbsp;This closes the stdin and stderr, which may<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cause the job to fail with an error.&nbsp;&nbsp;To avoid this keep a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reference to the job.&nbsp;&nbsp;Thus instead of:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reference to the job.&nbsp;&nbsp;Thus instead of:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call job_start('my-command')</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; use:<br>
+&lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; use:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let myjob = job_start('my-command')</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and unlet &quot;myjob&quot; once the job is not needed or is past the<br>
+&lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and unlet &quot;myjob&quot; once the job is not needed or is past the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point where it would fail (e.g. when it prints a message on<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;startup).&nbsp;&nbsp;Keep in mind that variables local to a function<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will cease to exist if the function returns.&nbsp;&nbsp;Use a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;script-local variable if needed:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;script-local variable if needed:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let s:myjob = job_start('my-command')</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">{options}</span>&nbsp;must be a Dictionary.&nbsp;&nbsp;It can contain many optional<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;items, see&nbsp;<a class="Identifier" href="channel.html#job-options">job-options</a>.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BuildCommand()-&gt;job_start()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="channel.html#job">job</a><br>
 <br>
 <br>
@@ -1059,9 +1059,9 @@ job_status(<span class="Special">{job}</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For more information see&nbsp;<a class="Identifier" href="channel.html#job_info()">job_info()</a>.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetJob()-&gt;job_status()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#String">String</a><br>
 <br>
 <br>
@@ -1107,9 +1107,9 @@ job_stop(<span class="Special">{job}</span>&nbsp;[,&nbsp;<span class="Special">{
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When using &quot;kill&quot; Vim will assume the job will die and close<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the channel.<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can also be used as a&nbsp;<a class="Identifier" href="eval.html#method">method</a>:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GetJob()-&gt;job_stop()</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type:&nbsp;<a class="Identifier" href="eval.html#Number">Number</a><br>
 <br>
 <br>
@@ -1139,13 +1139,13 @@ See&nbsp;<a class="Identifier" href="channel.html#job_setoptions()">job_setoptio
 &quot;noblock&quot;: 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When writing use a non-blocking write call.&nbsp;&nbsp;This<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;avoids getting stuck if Vim should handle other<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages in between, e.g. when a job sends back data<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to Vim.&nbsp;&nbsp;It implies that when&nbsp;<a class="Comment" href="channel.html#ch_sendraw()">ch_sendraw()</a>&nbsp;returns<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to Vim.&nbsp;&nbsp;It implies that when&nbsp;`<a class="Comment" href="channel.html#ch_sendraw()">ch_sendraw()</a>`&nbsp;returns<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not all data may have been written yet.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option was added in patch 8.1.0350, test with:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This option was added in patch 8.1.0350, test with:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if has(&quot;patch-8.1.350&quot;)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let options['noblock'] = 1<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#job-callback" name="job-callback">job-callback</a><br>
 &quot;callback&quot;: handler&nbsp;&nbsp;&nbsp;&nbsp; Callback for something to read on any part of the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;channel.<br>
@@ -1196,7 +1196,7 @@ See&nbsp;<a class="Identifier" href="channel.html#job_setoptions()">job_setoptio
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#job-term" name="job-term">job-term</a><br>
 &quot;term&quot;: &quot;open&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start a terminal in a new window and connect the job<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stdin/stdout/stderr to it.&nbsp;&nbsp;Similar to using<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Comment" href="terminal.html#:terminal">:terminal</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`<a class="Comment" href="terminal.html#:terminal">:terminal</a>`.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Todo">NOTE</span>: Not implemented yet!<br>
 <br>
 &quot;channel&quot;:&nbsp;<span class="Special">{channel}</span>&nbsp;&nbsp;&nbsp;&nbsp;Use an existing channel instead of creating a new one.<br>
@@ -1254,7 +1254,7 @@ See&nbsp;<a class="Identifier" href="channel.html#job_setoptions()">job_setoptio
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if the directory does not exist an error is given<br>
 <br>
 <br>
-<span class="PreProc">Writing to a buffer</span><br>
+<span class="PreProc">Writing to a buffer</span>&nbsp;~<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#out_io-buffer" name="out_io-buffer">out_io-buffer</a><br>
 When the out_io or err_io mode is &quot;buffer&quot; and there is a callback, the text<br>
 is appended to the buffer before invoking the callback.<br>
@@ -1300,7 +1300,7 @@ Undo is synced for every added line.&nbsp;&nbsp;NUL bytes are accepted (internal
 stores these as NL bytes).<br>
 <br>
 <br>
-<span class="PreProc">Writing to a file</span><br>
+<span class="PreProc">Writing to a file</span>&nbsp;~<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#E920" name="E920">E920</a><br>
 The file is created with permissions 600 (read-write for the user, not<br>
 accessible for others).&nbsp;&nbsp;Use&nbsp;<a class="Identifier" href="builtin.html#setfperm()">setfperm()</a>&nbsp;to change this.<br>
@@ -1310,15 +1310,15 @@ If the file already exists it is truncated.<br>
 <span class="PreProc">==============================================================================</span><br>
 13. Controlling a job&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="channel.html#job-control" name="job-control">job-control</a><br>
 <br>
-To get the status of a job:<br>
+To get the status of a job:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo job_status(job)</div>
 <br>
-To make a job stop running:<br>
+To make a job stop running:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;job_stop(job)</div>
 <br>
 This is the normal way to end a job. On Unix it sends a SIGTERM to the job.<br>
 It is possible to use other ways to stop the job, or even send arbitrary<br>
-signals.&nbsp;&nbsp;E.g. to force a job to stop, &quot;kill it&quot;:<br>
+signals.&nbsp;&nbsp;E.g. to force a job to stop, &quot;kill it&quot;:&nbsp;&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;job_stop(job, &quot;kill&quot;)</div>
 <br>
 For more options see&nbsp;<a class="Identifier" href="channel.html#job_stop()">job_stop()</a>.<br>
@@ -1350,7 +1350,7 @@ calling functions, such as&nbsp;<a class="Identifier" href="builtin.html#append(
 buffer.<br>
 <br>
 After setting&nbsp;<a class="Type" href="options.html#'buftype'">'buftype'</a>&nbsp;to &quot;prompt&quot; Vim does not automatically start Insert<br>
-mode, use&nbsp;<a class="Comment" href="insert.html#:startinsert">:startinsert</a>&nbsp;if you want to enter Insert mode, so that the user<br>
+mode, use&nbsp;`<a class="Comment" href="insert.html#:startinsert">:startinsert</a>`&nbsp;if you want to enter Insert mode, so that the user<br>
 can start typing a line.<br>
 <br>
 The text of the prompt can be set with the&nbsp;<a class="Identifier" href="builtin.html#prompt_setprompt()">prompt_setprompt()</a>&nbsp;function. If<br>
@@ -1371,7 +1371,7 @@ start of the line.<br>
 <br>
 Here is an example for Unix.&nbsp;&nbsp;It starts a shell in the background and prompts<br>
 for the next shell command.&nbsp;&nbsp;Output from the shell is displayed above the<br>
-prompt.<br>
+prompt.&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; Create a channel log so we can see what happens.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call ch_logfile('logfile', 'w')</div>
@@ -1407,8 +1407,8 @@ prompt.<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot; start accepting shell commands<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;startinsert</div>
-<br>
-The same in&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script:<br>
+&lt;<br>
+The same in&nbsp;<a class="Identifier" href="vim9.html#Vim9">Vim9</a>&nbsp;script:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vim9script</div>
 <br>
@@ -1476,12 +1476,12 @@ and encode the Vim expression into JSON.&nbsp;&nbsp;Refer to&nbsp;<a class="Iden
 builtin types into JSON.<br>
 <br>
 To open a channel using the&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>&nbsp;mode, set the&nbsp;<span class="MissingTag">'mode'</span>&nbsp;item in the&nbsp;<a class="Identifier" href="channel.html#ch_open()">ch_open()</a><br>
-<span class="Special">{options}</span>&nbsp;argument to&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>.&nbsp;&nbsp;Example:<br>
+<span class="Special">{options}</span>&nbsp;argument to&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>.&nbsp;&nbsp;Example:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let ch = ch_open(..., #{mode: 'lsp'})</div>
 <br>
 To open a channel using the&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>&nbsp;mode with a job, set the 'in_mode' and<br>
-'out_mode' items in the&nbsp;<a class="Identifier" href="channel.html#job_start()">job_start()</a>&nbsp;<span class="Special">{options}</span>&nbsp;argument to&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>. Example:<br>
+'out_mode' items in the&nbsp;<a class="Identifier" href="channel.html#job_start()">job_start()</a>&nbsp;<span class="Special">{options}</span>&nbsp;argument to&nbsp;<a class="Type" href="options.html#'lsp'">'lsp'</a>. Example:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let cmd = ['clangd', '--background-index', '--clang-tidy']<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let opts = {}<br>
@@ -1502,7 +1502,7 @@ To synchronously send a JSON-RPC request to the server, use the<br>
 <a class="Identifier" href="channel.html#ch_evalexpr()">ch_evalexpr()</a>&nbsp;function. This function will wait and return the decoded<br>
 response message from the server. You can use either the&nbsp;<a class="Identifier" href="channel.html#channel-timeout">channel-timeout</a>&nbsp;or<br>
 the&nbsp;<a class="Type" href="options.html#'timeout'">'timeout'</a>&nbsp;field in the&nbsp;<span class="Special">{options}</span>&nbsp;argument to control the response wait<br>
-time.&nbsp;&nbsp;If the request times out, then an empty&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>&nbsp;is returned.&nbsp;&nbsp;Example:<br>
+time.&nbsp;&nbsp;If the request times out, then an empty&nbsp;<a class="Identifier" href="eval.html#Dict">Dict</a>&nbsp;is returned.&nbsp;&nbsp;Example:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let req = {}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.method = 'textDocument/definition'<br>
@@ -1525,7 +1525,7 @@ response, use the&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">c
 the &quot;id&quot; field is present in the request message, then Vim will overwrite it<br>
 with an internally generated number.&nbsp;&nbsp;This function returns a Dict with the<br>
 identifier used for the message.&nbsp;&nbsp;This can be used to send cancellation<br>
-request to the LSP server (if needed).&nbsp;&nbsp;Example:<br>
+request to the LSP server (if needed).&nbsp;&nbsp;Example:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let req = {}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req.method = 'textDocument/hover'<br>
@@ -1538,7 +1538,7 @@ request to the LSP server (if needed).&nbsp;&nbsp;Example:<br>
 To cancel an outstanding asynchronous LSP request sent to the server using the<br>
 <a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function, send a cancellation message to the server using the<br>
 <a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function with the ID returned by the&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function<br>
-for the request.&nbsp;&nbsp;Example:<br>
+for the request.&nbsp;&nbsp;Example:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&quot; send a completion request<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let req = {}<br>
@@ -1555,13 +1555,13 @@ for the request.&nbsp;&nbsp;Example:<br>
 <br>
 To send a JSON-RPC notification message to the server, use the&nbsp;<a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a><br>
 function. As the server will not send a response message to the notification,<br>
-don't specify the &quot;callback&quot; item.&nbsp;&nbsp;Example:<br>
+don't specify the &quot;callback&quot; item.&nbsp;&nbsp;Example:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;call ch_sendexpr(ch, #{method: 'initialized'})</div>
 <br>
 To respond to a JSON-RPC request message from the server, use the<br>
 <a class="Identifier" href="channel.html#ch_sendexpr()">ch_sendexpr()</a>&nbsp;function.&nbsp;&nbsp;In the response message, copy the&nbsp;<span class="MissingTag">'id'</span>&nbsp;field value<br>
-from the server request message. Example:<br>
+from the server request message. Example:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;let resp = {}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;let resp.id = req.id<br>
@@ -1575,7 +1575,7 @@ Depending on the use case, you can use the ch_evalexpr(), ch_sendexpr() and<br>
 ch_sendraw() functions on the same channel.<br>
 <br>
 A LSP request message has the following format (expressed as a Vim Dict).&nbsp;&nbsp;The<br>
-&quot;params&quot; field is optional:<br>
+&quot;params&quot; field is optional:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;jsonrpc&quot;: &quot;2.0&quot;,<br>
@@ -1585,7 +1585,7 @@ A LSP request message has the following format (expressed as a Vim Dict).&nbsp;&
 &nbsp;&nbsp;&nbsp;&nbsp;}</div>
 <br>
 A LSP response message has the following format (expressed as a Vim Dict).&nbsp;&nbsp;The<br>
-&quot;result&quot; and &quot;error&quot; fields are optional:<br>
+&quot;result&quot; and &quot;error&quot; fields are optional:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;jsonrpc&quot;: &quot;2.0&quot;,<br>
@@ -1595,7 +1595,7 @@ A LSP response message has the following format (expressed as a Vim Dict).&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;}</div>
 <br>
 A LSP notification message has the following format (expressed as a Vim Dict).<br>
-The &quot;params&quot; field is optional:<br>
+The &quot;params&quot; field is optional:&nbsp;&gt;<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;jsonrpc&quot;: &quot;2.0&quot;,<br>
@@ -1603,6 +1603,6 @@ The &quot;params&quot; field is optional:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;params&quot;: &lt;list|dict&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;}</div>
 <br>
-<br>
+&lt;<br>
 &nbsp;vim:tw=78:ts=8:noet:ft=help:norl:<br>
 </div>

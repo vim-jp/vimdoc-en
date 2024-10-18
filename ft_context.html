@@ -19,22 +19,22 @@ This is the documentation for the ConTeXt filetype plugin.<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#ft-context-intro" name="ft-context-intro">ft-context-intro</a><br>
-<span class="PreProc">Introduction</span><br>
+<span class="PreProc">Introduction</span>&nbsp;~<br>
 <br>
 ConTeXt, similarly to LaTeX, is a macro-based typesetting system built on TeX:<br>
-<br>
+&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://wiki.contextgarden.net">https://wiki.contextgarden.net</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://wiki.contextgarden.net/Vim">https://wiki.contextgarden.net/Vim</a></div>
-<br>
+&lt;<br>
 The ConTeXt plugin provides syntax highlighting, completion and support for<br>
 typesetting ConTeXt documents. The recommended way to typeset a document is to<br>
-use&nbsp;<a class="Identifier" href="ft_context.html#:ConTeXt">:ConTeXt</a>. This will invoke the&nbsp;<span class="Comment">mtxrun</span>&nbsp;script that is found in&nbsp;<span class="Comment">$PATH</span>.<br>
+use&nbsp;<a class="Identifier" href="ft_context.html#:ConTeXt">:ConTeXt</a>. This will invoke the&nbsp;`<span class="Comment">mtxrun</span>`&nbsp;script that is found in&nbsp;`<span class="Comment">$PATH</span>`.<br>
 <br>
 For more fine grained control over the command and its environment,<br>
-<span class="Comment">context.Typeset()</span>&nbsp;can be used directly (or&nbsp;<span class="Comment">context#Typeset()</span>&nbsp;from legacy<br>
+`<span class="Comment">context.Typeset()</span>`&nbsp;can be used directly (or&nbsp;`<span class="Comment">context#Typeset()</span>`&nbsp;from legacy<br>
 Vim script). For instance, if a version of ConTeXt is installed in<br>
-<span class="Comment">~/context</span>, you may define a function to use it similar to the following:<br>
-<br>
+`<span class="Comment">~/context</span>`, you may define a function to use it similar to the following:<br>
+&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import autoload 'context.vim'</div>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def MyConTeXt()<br>
@@ -43,29 +43,29 @@ Vim script). For instance, if a version of ConTeXt is installed in<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context.Typeset(&quot;%&quot;, env)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
-This code may go in&nbsp;<span class="Comment">~/.vim/after/ftplugin/context.vim</span>. A mapping can then be<br>
+This code may go in&nbsp;`<span class="Comment">~/.vim/after/ftplugin/context.vim</span>`. A mapping can then be<br>
 defined to invoke the custom command:<br>
-<br>
+&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nnoremap &lt;silent&gt;&lt;buffer&gt;&lt;leader&gt;t &lt;scriptcmd&gt;MyConTeXt()&lt;cr&gt;</div>
-<br>
-<span class="Comment">context.Typeset()</span>&nbsp;accepts a third optional argument to specify a custom<br>
+&lt;<br>
+`<span class="Comment">context.Typeset()</span>`&nbsp;accepts a third optional argument to specify a custom<br>
 typesetting command. That must be a function that takes a path and returns the<br>
 command as a List. For example:<br>
-<br>
+&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def ConTeXtCustomCommand(path: string): list&lt;string&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ['mtxrun', '--script', 'context', '--nonstopmode', path]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enddef</div>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context.ConTeXtTypeset(&quot;%&quot;, v:none, ConTeXtCustomCommand)</div>
-<br>
+&lt;<br>
 Large projects are often organized as a root document and various chapter<br>
 files. When editing a chapter file, it is convenient to invoke&nbsp;<a class="Identifier" href="ft_context.html#:ConTeXt">:ConTeXt</a><br>
 directly on it, rather than having to switch to the root file. A &quot;magic line&quot;<br>
 can be added at the beginning of each chapter file, which specifies the<br>
 relative path to the root file. For instance:<br>
-<br>
+&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% !TEX root = ../MyRoot.tex</div>
-<br>
+&lt;<br>
 Vim searches for the magic line in the first ten lines of the current buffer:<br>
 if it is found, the document specified by that line is typeset rather than the<br>
 one in the current buffer. The root document does not have to be opened in<br>
@@ -73,23 +73,23 @@ Vim.<br>
 <br>
 To extend completion and syntax highlighting, you may generate supporting<br>
 files using ConTeXt and add them to your configuration. If you configuration<br>
-resides in&nbsp;<span class="Comment">~/.vim</span>, you may use these commands:<br>
-<br>
+resides in&nbsp;`<span class="Comment">~/.vim</span>`, you may use these commands:<br>
+&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mkdir -p ~/.vim/syntax/shared<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd ~/.vim/syntax/shared<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mtxrun --script interface --vim</div>
-<br>
+&lt;<br>
 The last command will create the following syntax files:<br>
 <br>
--&nbsp;<span class="Comment">context-data-context.vim</span>;<br>
--&nbsp;<span class="Comment">context-data-interfaces.vim</span>;<br>
--&nbsp;<span class="Comment">context-data-metafun.vim</span>;<br>
--&nbsp;<span class="Comment">context-data-tex.vim</span>.<br>
+-&nbsp;`<span class="Comment">context-data-context.vim</span>`;<br>
+-&nbsp;`<span class="Comment">context-data-interfaces.vim</span>`;<br>
+-&nbsp;`<span class="Comment">context-data-metafun.vim</span>`;<br>
+-&nbsp;`<span class="Comment">context-data-tex.vim</span>`.<br>
 <br>
 The same command can be used to update those syntax files.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#ft-context-commands" name="ft-context-commands">ft-context-commands</a><br>
-<span class="PreProc">Commands</span><br>
+<span class="PreProc">Commands</span>&nbsp;~<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#:ConTeXt" name=":ConTeXt">:ConTeXt</a><br>
 Start a background&nbsp;<a class="Identifier" href="channel.html#job">job</a>&nbsp;to typeset the document in the current buffer. The<br>
 command accepts an optional buffer's name, if you want to typeset a document<br>
@@ -105,40 +105,40 @@ Echo the number of jobs currently running in the background.<br>
 Stop all the ConTeXt jobs currently running in the background.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#ft-context-settings" name="ft-context-settings">ft-context-settings</a><br>
-<span class="PreProc">Settings</span><br>
+<span class="PreProc">Settings</span>&nbsp;~<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'b:context_ignore_makefile'" name="'b:context_ignore_makefile'">'b:context_ignore_makefile'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'g:context_ignore_makefile'" name="'g:context_ignore_makefile'">'g:context_ignore_makefile'</a><br>
 <a class="Identifier" href="quickfix.html#:make">:make</a>&nbsp;can be used to (synchronously) typeset a document. If a Makefile exists<br>
-and this option is not set, standard&nbsp;<a class="Comment" href="quickfix.html#:make">make</a>&nbsp;is used. If this option is set,<br>
-<span class="Comment">mtxrun</span>&nbsp;is invoked instead, even if a Makefile exists.<br>
-<br>
+and this option is not set, standard&nbsp;`<a class="Comment" href="quickfix.html#:make">make</a>`&nbsp;is used. If this option is set,<br>
+`<span class="Comment">mtxrun</span>`&nbsp;is invoked instead, even if a Makefile exists.<br>
+&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:context_ignore_makefile = 0</div>
-<br>
+&lt;<br>
 <span class="Todo">NOTE</span>: before using&nbsp;<a class="Identifier" href="quickfix.html#:make">:make</a>, set the working directory of the buffer to the<br>
 directory of the file to be typeset.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'g:context_extra_options'" name="'g:context_extra_options'">'g:context_extra_options'</a><br>
-A list of additional options to pass to&nbsp;<span class="Comment">mtxrun</span>.<br>
-<br>
+A list of additional options to pass to&nbsp;`<span class="Comment">mtxrun</span>`.<br>
+&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:context_extra_options = []</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'b:context_include'" name="'b:context_include'">'b:context_include'</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'g:context_include'" name="'g:context_include'">'g:context_include'</a><br>
 Dictionary of filetype/GROUP pairs for which syntax highlighting should be<br>
 activated between \startGROUP and \stopGROUP. The default is to highlight XML<br>
-between&nbsp;<span class="Comment">\startXML</span>&nbsp;and&nbsp;<span class="Comment">\stopXML</span>.<br>
-<br>
+between&nbsp;`<span class="Comment">\startXML</span>`&nbsp;and&nbsp;`<span class="Comment">\stopXML</span>`.<br>
+&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:context_include = {'xml': 'XML'}</div>
 <br>
 <span class="Todo">NOTE</span>: Lua and MetaPost are always highlighted within the respective blocks.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#'g:no_context_maps'" name="'g:no_context_maps'">'g:no_context_maps'</a><br>
 When set, do not define any mappings.<br>
-<br>
+&gt;<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:no_context_maps = 0</div>
-<br>
+&lt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="ft_context.html#ft-context-mappings" name="ft-context-mappings">ft-context-mappings</a><br>
-<span class="PreProc">Mappings</span><br>
+<span class="PreProc">Mappings</span>&nbsp;~<br>
 <br>
 tp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;reflow TeX paragraph&quot;.<br>
 <br>
