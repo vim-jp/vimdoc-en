@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'develop'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="develop.html" name="develop.txt">develop.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 May 11<br>
+<a class="Constant" href="develop.html" name="develop.txt">develop.txt</a>&nbsp;&nbsp; For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Oct 31<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -162,6 +162,7 @@ and its environment.<br>
 &nbsp;&nbsp;being less consistent over all platforms.&nbsp;&nbsp;But functional GUI features are<br>
 &nbsp;&nbsp;welcomed.<br>
 <br>
+<br>
 <span class="PreProc">==============================================================================</span><br>
 2. Coding style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="develop.html#coding-style" name="coding-style">coding-style</a><br>
 <br>
@@ -176,17 +177,20 @@ This list is not complete.&nbsp;&nbsp;Look in the source code for more examples.
 The basic steps to make changes to the code:<br>
 1. Get the code from github.&nbsp;&nbsp;That makes it easier to keep your changed<br>
 &nbsp;&nbsp; version in sync with the main code base (it may be a while before your<br>
-&nbsp;&nbsp; changes will be included).&nbsp;&nbsp;You do need to spend some time learning git,<br>
-&nbsp;&nbsp; it's not the most user friendly tool.<br>
+&nbsp;&nbsp; changes will be included).<br>
 2. Adjust the documentation.&nbsp;&nbsp;Doing this first gives you an impression of how<br>
 &nbsp;&nbsp; your changes affect the user.<br>
 3. Make the source code changes.<br>
 4. Check ../doc/todo.txt if the change affects any listed item.<br>
-5. Make a patch with &quot;git diff&quot;.&nbsp;&nbsp;You can also create a pull request on<br>
-&nbsp;&nbsp; github, but it's the diff that matters.<br>
-6. Make a&nbsp;<span class="Todo">note</span>&nbsp;about what changed, preferably mentioning the problem and the<br>
+5. Add a test to src/testdir to verify the new behaviour and ensure it won't<br>
+&nbsp;&nbsp; regress in the future.<br>
+6. Make a patch with &quot;git diff&quot;.<br>
+7. Make a&nbsp;<span class="Todo">note</span>&nbsp;about what changed, preferably mentioning the problem and the<br>
 &nbsp;&nbsp; solution.&nbsp;&nbsp;Send an email to the&nbsp;<a class="Identifier" href="intro.html#vim-dev">vim-dev</a>&nbsp;maillist with an explanation and<br>
-&nbsp;&nbsp; include the diff. Or create a pull request on github.<br>
+&nbsp;&nbsp; include the diff.<br>
+<br>
+For any non-trivial change, please always create a pull request on github,<br>
+since this triggers the test suite.<br>
 <br>
 <br>
 <span class="Statement">C COMPILER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-compiler" name="style-compiler">style-compiler</a>&nbsp;<a class="Constant" href="develop.html#ANSI-C" name="ANSI-C">ANSI-C</a>&nbsp;<a class="Constant" href="develop.html#C89" name="C89">C89</a>&nbsp;<a class="Constant" href="develop.html#C99" name="C99">C99</a><br>
@@ -196,52 +200,234 @@ Later standards, such as C99, are not widely supported, or at least not 100%<br>
 supported.&nbsp;&nbsp;Therefore we use only some of the C99 features and explicitly<br>
 disallow some (this will gradually be adjusted over time).<br>
 <br>
-Please don't make changes everywhere to use the C99 features, it causes merge<br>
-problems for existing patches.&nbsp;&nbsp;Only use them for new and changed code.<br>
-<br>
-<span class="PreProc">Comments</span><br>
-<br>
-Traditionally Vim uses /* comments */.&nbsp;&nbsp;We intend to keep it that way<br>
-for file and function headers and larger blocks of code, E.g.:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * The &quot;foo&quot; argument does something useful.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * Return OK or FAIL.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */<br>
-For new code or lines of code that change, it is preferred to use // comments.<br>
-Especially when it comes after code:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int some_var;&nbsp;&nbsp;// single line comment useful here<br>
-<br>
-<span class="PreProc">Enums</span><br>
-<br>
-The last item in an enum may have a trailing comma.&nbsp;&nbsp;C89 didn't allow this.<br>
-<br>
-<span class="PreProc">Types</span><br>
-<br>
-&quot;long long&quot; is allowed and can be expected to be 64 bits.&nbsp;&nbsp;Use %lld in printf<br>
-formats.&nbsp;&nbsp;Also &quot;long long unsigned&quot; with %llu.<br>
-<br>
-<span class="PreProc">Declarations</span><br>
-<br>
-Now that the minimal supported compiler is MSVC 2015 declarations do not need<br>
-to be at the start of a block.&nbsp;&nbsp;However, it is often a good idea to do this<br>
-anyway.<br>
-<br>
-Declaration of the for loop variable inside the loop is recommended:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (int i = 0; i &lt; len; ++i)<br>
-Since this is clearly an advantage we'll use this more often.<br>
-<br>
-<br>
-<span class="PreProc">Not to be used</span><br>
+<span class="PreProc">Features not to be used</span><br>
 <br>
 These C99 features are not to be used, because not enough compilers support<br>
 them:<br>
 - Variable length arrays (even in C11 this is an optional feature).<br>
-- _Bool and _Complex types.<br>
+- C99 _Bool and _Complex types.<br>
 - &quot;inline&quot; (it's hardly ever needed, let the optimizer do its work)<br>
 - flexible array members: Not supported by HP-UX C compiler (John Marriott)<br>
 <br>
 <br>
-<span class="Statement">USE OF COMMON FUNCTIONS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-functions" name="style-functions">style-functions</a><br>
+<span class="Statement">COMMENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-comments" name="style-comments">style-comments</a><br>
+<br>
+Try to avoid putting multiline comments inside a function body: if the<br>
+function is so complex that you need to separately comment parts of it, you<br>
+should probably rethink the structure of the function.<br>
+<br>
+For file headers and function descriptions use:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;/*<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Description<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */</div>
+<br>
+For everything else use:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;// comment</div>
+<br>
+<br>
+<br>
+<span class="Statement">INDENTATION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-indentation" name="style-indentation">style-indentation</a><br>
+<br>
+We use 4 space to indent the code. If you are using Vim to edit the source,<br>
+you don't need to do anything due to the&nbsp;<a class="Identifier" href="options.html#modeline">modeline</a>.<br>
+<br>
+For other editors an&nbsp;<span class="Comment">.editorconfig</span>&nbsp;is provided at the root of the repo.<br>
+<br>
+<br>
+<span class="Statement">DECLARATIONS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-declarations" name="style-declarations">style-declarations</a><br>
+<br>
+Declare, when possible,&nbsp;<a class="Comment" href="eval.html#:for">for</a>&nbsp;loop variables in the guard:<br>
+OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;for (int i = 0; i &lt; len; ++i)</div>
+<br>
+Wrong:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;int i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; len; ++i)</div>
+<br>
+Always declare a variable with a default value:<br>
+OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;int n = 0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int *ptr = NULL;</div>
+<br>
+Wrong:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;int n;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int *ptr;</div>
+<br>
+<br>
+<br>
+<span class="Statement">BRACES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-braces" name="style-braces">style-braces</a><br>
+<br>
+All curly braces must be returned onto a new line:<br>
+OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;if (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+<br>
+Wrong:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;if (cond) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+<br>
+OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;while (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+<br>
+Wrong:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;while (cond) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+<br>
+When a block has one line, including comments, the braces can be left out.<br>
+OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;if (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;</div>
+<br>
+Wrong:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;if (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * comment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;</div>
+<br>
+When an&nbsp;<a class="Comment" href="eval.html#:if">if</a>/<a class="Comment" href="eval.html#:else">else</a>&nbsp;has braces on one block, the other should have it too.<br>
+OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;if (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+<br>
+Wrong:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;if (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;if (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;</div>
+<br>
+OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;while (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;</div>
+<br>
+Wrong:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;while (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (cond)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd;</div>
+<br>
+<br>
+<br>
+<span class="Statement">TYPES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-types" name="style-types">style-types</a><br>
+<br>
+Use descriptive types. You can find a list of them in the src/structs.h file<br>
+and probably in a typedef in the file you are working on.<br>
+<br>
+<span class="Todo">Note</span>&nbsp;that all custom types are postfixed with &quot;_T&quot;<br>
+<br>
+OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;int is_valid_line_number(linenr_T lnum);</div>
+<br>
+Wrong:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;int is_valid_line_number(unsigned long lnum);</div>
+<br>
+<br>
+<br>
+<span class="Statement">SPACES AND PUNCTUATION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-spaces" name="style-spaces">style-spaces</a><br>
+<br>
+No space between a function name and the bracket:<br>
+<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp; func(arg);<br>
+Wrong:&nbsp;&nbsp;func (arg);<br>
+<br>
+Do use a space after&nbsp;<a class="Comment" href="eval.html#:if">if</a>,&nbsp;<a class="Comment" href="eval.html#:while">while</a>,&nbsp;<span class="Comment">switch</span>, etc.<br>
+<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp; if (arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (;;)<br>
+Wrong:&nbsp;&nbsp;if(arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for(;;)<br>
+<br>
+Use a space after a comma or semicolon:<br>
+<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp; func(arg1, arg2);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; 2; ++i)<br>
+Wrong:&nbsp;&nbsp;func(arg1,arg2);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0;i &lt; 2;++i)<br>
+<br>
+Use a space before and after '=', '+', '/', etc.<br>
+<br>
+Wrong:&nbsp;&nbsp;var=a*5;<br>
+OK:&nbsp;&nbsp;&nbsp;&nbsp; var = a * 5;<br>
+<br>
+Use empty lines to group similar actions together.<br>
+<br>
+OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;msg_puts_title(_(&quot;\n--- Signs ---&quot;));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;msg_putchar('\n');</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;if (rbuf == NULL)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buf = firstbuf;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buf = rbuf;</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;while (buf != NULL &amp;&amp; !got_int)</div>
+<br>
+Wrong:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;msg_puts_title(_(&quot;\n--- Signs ---&quot;));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;msg_putchar('\n');<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if (rbuf == NULL)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buf = firstbuf;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buf = rbuf;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;while (buf != NULL &amp;&amp; !got_int)</div>
+<br>
+<br>
+<br>
+<span class="Statement">FUNCTIONS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-functions" name="style-functions">style-functions</a><br>
+<br>
+Use function declarations with the return type on a separate indented line.<br>
+<br>
+OK:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;function_name(int arg1, int arg2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+<br>
+Wrong:<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;int function_name(int arg1, int arg2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+<br>
+<br>
+Give meaningful names to function parameters.<br>
+<br>
+<br>
+<span class="Statement">USE OF COMMON FUNCTIONS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-common-functions" name="style-common-functions">style-common-functions</a><br>
 <br>
 Some functions that are common to use, have a special Vim version.&nbsp;&nbsp;Always<br>
 consider using the Vim version, because they were introduced with a reason.<br>
@@ -316,27 +502,30 @@ get_env_value() Linux system function<br>
 <br>
 <span class="Statement">VARIOUS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-various" name="style-various">style-various</a><br>
 <br>
-Typedef'ed names should end in &quot;_T&quot;:<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;typedef int some_T;</div>
-Define'ed names should be uppercase:<br>
+Define'd names should be uppercase:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;#define SOME_THING</div>
+<br>
+<br>
 Features always start with &quot;FEAT_&quot;:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;#define FEAT_FOO</div>
+<br>
 <br>
 Don't use '\&quot;', some compilers can't handle it.&nbsp;&nbsp;'&quot;' works fine.<br>
 <br>
 Don't use:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;#if HAVE_SOME<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;#if HAVE_SOME</div>
+<br>
 Some compilers can't handle that and complain that &quot;HAVE_SOME&quot; is not defined.<br>
 Use<br>
-&nbsp;&nbsp;&nbsp;&nbsp;#ifdef HAVE_SOME<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;#ifdef HAVE_SOME</div>
+<br>
 or<br>
-&nbsp;&nbsp;&nbsp;&nbsp;#if defined(HAVE_SOME)<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;#if defined(HAVE_SOME)</div>
 <br>
 <br>
 <span class="Statement">STYLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-examples" name="style-examples">style-examples</a><br>
 <br>
-General rule: One statement per line.<br>
+One statement per line.<br>
 <br>
 Wrong:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (cond) a = 1;<br>
 <br>
@@ -354,101 +543,6 @@ OK:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; do<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a = 1;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (cond);<br>
 <br>
-Wrong:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (cond) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-<br>
-OK:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (cond)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-<br>
-When a block has one line the braces can be left out.&nbsp;&nbsp;When an if/else has<br>
-braces on one block, it usually looks better when the other block also has<br>
-braces:<br>
-OK:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (cond)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-<br>
-OK:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (cond)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-<br>
-Use ANSI (new style) function declarations with the return type on a separate<br>
-indented line.<br>
-<br>
-Wrong:&nbsp;&nbsp;int function_name(int arg1, int arg2)<br>
-<br>
-OK:&nbsp;&nbsp;&nbsp;&nbsp; /*<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * Explanation of what this function is used for.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * Return value explanation.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function_name(<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; arg1,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // short comment about arg1<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; arg2)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // short comment about arg2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; local;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// comment about local<br>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;local = arg1 * arg2;<br>
-<br>
-<br>
-<br>
-<span class="Statement">SPACES AND PUNCTUATION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="develop.html#style-spaces" name="style-spaces">style-spaces</a><br>
-<br>
-No space between a function name and the bracket:<br>
-<br>
-Wrong:&nbsp;&nbsp;func (arg);<br>
-OK:&nbsp;&nbsp;&nbsp;&nbsp; func(arg);<br>
-<br>
-Do use a space after if, while, switch, etc.<br>
-<br>
-Wrong:&nbsp;&nbsp;if(arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for(;;)<br>
-OK:&nbsp;&nbsp;&nbsp;&nbsp; if (arg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (;;)<br>
-<br>
-Use a space after a comma and semicolon:<br>
-<br>
-Wrong:&nbsp;&nbsp;func(arg1,arg2);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0;i &lt; 2;++i)<br>
-OK:&nbsp;&nbsp;&nbsp;&nbsp; func(arg1, arg2);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; 2; ++i)<br>
-<br>
-Use a space before and after '=', '+', '/', etc.<br>
-<br>
-Wrong:&nbsp;&nbsp;var=a*5;<br>
-OK:&nbsp;&nbsp;&nbsp;&nbsp; var = a * 5;<br>
-<br>
-In general: Use empty lines to group lines of code together.&nbsp;&nbsp;Put a comment<br>
-just above the group of lines.&nbsp;&nbsp;This makes it easier to quickly see what is<br>
-being done.<br>
-<br>
-OK:&nbsp;&nbsp;&nbsp;&nbsp; /* Prepare for building the table. */<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get_first_item();<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table_idx = 0;<br>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* Build the table */<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (has_item())<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table[table_idx++] = next_item();<br>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* Finish up. */<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cleanup_items();<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;generate_hash(table);<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 3. Design decisions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="develop.html#design-decisions" name="design-decisions">design-decisions</a><br>

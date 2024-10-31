@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'pi_netrw'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="pi_netrw.html" name="pi_netrw.txt">pi_netrw.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Oct 27<br>
+<a class="Constant" href="pi_netrw.html" name="pi_netrw.txt">pi_netrw.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Oct 31<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;------------------------------------------------<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NETRW REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Charles E. Campbell<br>
@@ -1474,7 +1474,6 @@ With either form of the command, netrw will first ask for confirmation<br>
 that the removal is in fact what you want to do.&nbsp;&nbsp;If netrw doesn't have<br>
 permission to remove a file, it will issue an error message.<br>
 <br>
-<span class="Statement">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="pi_netrw.html#netrw-gx" name="netrw-gx">netrw-gx</a>&nbsp;<a class="Constant" href="pi_netrw.html#Open" name="Open">Open</a>&nbsp;<a class="Constant" href="pi_netrw.html#Launch" name="Launch">Launch</a><br>
 <span class="Statement">CUSTOMIZING BROWSING WITH A SPECIAL HANDLER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="pi_netrw.html#netrw-x" name="netrw-x">netrw-x</a>&nbsp;<a class="Constant" href="pi_netrw.html#netrw-handler" name="netrw-handler">netrw-handler</a>&nbsp;{{ "{{{" }}2<br>
 <br>
 Certain files, such as html, gif, jpeg, (word/office) doc, etc, files, are<br>
@@ -1484,7 +1483,7 @@ operating system).&nbsp;&nbsp;Netrw allows one to invoke such special handlers b
 <span class="Statement">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>* hitting gx with the cursor atop the file path or alternatively x<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in a netrw buffer; the former can be disabled by defining the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pi_netrw.html#g:netrw_nogx">g:netrw_nogx</a>&nbsp;variable<br>
-<span class="Statement">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>* when in command line, typing :Open&nbsp;<span class="Special">&lt;path&gt;</span><br>
+<span class="Statement">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>* when in command line, typing :Open&nbsp;<span class="Special">&lt;path&gt;</span>, see&nbsp;<a class="Identifier" href="pi_netrw.html#:Open">:Open</a>&nbsp;below.<br>
 <br>
 One may also use visual mode (see&nbsp;<a class="Identifier" href="visual.html#visual-start">visual-start</a>) to select the text that the<br>
 special handler will use.&nbsp;&nbsp;Normally gx checks for a close-by URL or file name<br>
@@ -1495,47 +1494,54 @@ select the text to be used by gx by making a visual selection (see<br>
 <a class="Identifier" href="visual.html#visual-block">visual-block</a>) and then pressing gx.<br>
 <br>
 The selection function can be adapted for each filetype by adding a function<br>
-Netrw_get_URL_<span class="Special">&lt;filetype&gt;</span>, where&nbsp;<span class="Special">&lt;filetype&gt;</span>&nbsp;is given by &amp;filetype.<br>
+<span class="Comment">Netrw_get_URL_&lt;filetype&gt;</span>, where&nbsp;<span class="Special">&lt;filetype&gt;</span>&nbsp;is given by the&nbsp;<a class="Type" href="options.html#'filetype'">'filetype'</a>.<br>
 The function should return the URL or file name to be used by gx, and will<br>
 fall back to the default behavior if it returns an empty string.<br>
 For example, special handlers for links Markdown and HTML are<br>
 <br>
-&quot; make gx work on concealed links regardless of exact cursor position<br>
-function Netrw_get_URL_markdown()<br>
-&nbsp;&nbsp;&quot; markdown URL such as [link text](<span class="Constant"><a href="http://ya.ru">http://ya.ru</a></span>&nbsp;'yandex search')<br>
-&nbsp;&nbsp;try<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let save_view = winsaveview()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;if searchpair('\[.\<span class="Special">{-}</span>\](', '', ')\zs', 'cbW', '', line('.')) &gt; 0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return matchstr(getline('.')[col('.')-1:], '\[.\<span class="Special">{-}</span>\](\zs' .. g:netrw_regex_url .. '\ze\(\s\+.\<span class="Special">{-}</span>\)\?)')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
-&nbsp;&nbsp;finally<br>
-&nbsp;&nbsp;&nbsp;&nbsp;call winrestview(save_view)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;return ''<br>
-&nbsp;&nbsp;endtry<br>
-endfunction<br>
+&quot; make gx work on concealed links regardless of exact cursor position:<br>
 <br>
-function Netrw_get_URL_html()<br>
-&nbsp;&nbsp;&quot; HTML URL such as &lt;a href='<span class="Constant"><a href="http://www.python.org">http://www.python.org</a></span>'&gt;Python is here&lt;/a&gt;<br>
-&nbsp;&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a href=&quot;<span class="Constant"><a href="http://www.python.org">http://www.python.org</a></span>&quot;/&gt;<br>
-&nbsp;&nbsp;try<br>
-&nbsp;&nbsp;&nbsp;&nbsp;let save_view = winsaveview()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;if searchpair('&lt;a\s\+href=', '', '\%(&lt;/a&gt;\|/&gt;\)\zs', 'cbW', '', line('.')) &gt; 0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return matchstr(getline('.')[col('.') - 1 : ],<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'href=[&quot;'..&quot;'&quot;..']\?\zs\S\<span class="Special">{-}</span>\ze[&quot;'..&quot;'&quot;..']\?/\?&gt;')<br>
-&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
-&nbsp;&nbsp;finally<br>
-&nbsp;&nbsp;&nbsp;&nbsp;call winrestview(save_view)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;return ''<br>
-&nbsp;&nbsp;endtry<br>
-endfunction<br>
-&lt;<br>
+<div class="helpExample">&nbsp;&nbsp;function Netrw_get_URL_markdown()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&quot; markdown URL such as [link text](<a href="http://ya.ru">http://ya.ru</a> 'yandex search')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;try<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let save_view = winsaveview()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if searchpair('\[.\{-}\](', '', ')\zs', 'cbW', '', line('.')) &gt; 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return matchstr(getline('.')[col('.')-1:],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ '\[.\{-}\](\zs' .. g:netrw_regex_url .. '\ze\(\s\+.\{-}\)\?)')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;finally<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call winrestview(save_view)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ''<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endtry<br>
+&nbsp;&nbsp;endfunction</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;function Netrw_get_URL_html()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&quot; HTML URL such as &lt;a href='<a href="http://www.python.org">http://www.python.org</a>'&gt;Python is here&lt;/a&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a href=&quot;<a href="http://www.python.org">http://www.python.org</a>&quot;/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;try<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let save_view = winsaveview()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if searchpair('&lt;a\s\+href=', '', '\%(&lt;/a&gt;\|/&gt;\)\zs', 'cbW', '', line('.')) &gt; 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return matchstr(getline('.')[col('.') - 1 : ],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'href=[&quot;'..&quot;'&quot;..']\?\zs\S\{-}\ze[&quot;'..&quot;'&quot;..']\?/\?&gt;')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;finally<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call winrestview(save_view)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ''<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endtry<br>
+&nbsp;&nbsp;endfunction</div>
 <br>
 Other than a file path, the text under the cursor may be a URL.&nbsp;&nbsp;Netrw uses<br>
 by default the following regular expression to determine if the text under the<br>
 cursor is a URL:<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g:netrw_regex_url = '\%(\%(http\|ftp\|irc\)s\?\|file\)://\S\{-}'</div>
+<div class="helpExample">&nbsp;&nbsp;:let g:netrw_regex_url = '\%(\%(http\|ftp\|irc\)s\?\|file\)://\S\{-}'</div>
 <br>
+Associated setting variables:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pi_netrw.html#g:netrw_gx">g:netrw_gx</a>&nbsp;&nbsp;&nbsp;&nbsp;control how gx picks up the text under the cursor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pi_netrw.html#g:netrw_nogx">g:netrw_nogx</a>&nbsp;&nbsp;prevent gx map while editing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pi_netrw.html#g:netrw_suppress_gx_mesg">g:netrw_suppress_gx_mesg</a>&nbsp;controls gx's suppression of browser messages<br>
+<br>
+<span class="Statement">OPENING FILES AND LAUNCHING APPS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="pi_netrw.html#netrw-gx" name="netrw-gx">netrw-gx</a>&nbsp;<a class="Constant" href="pi_netrw.html#:Open" name=":Open">:Open</a>&nbsp;<a class="Constant" href="pi_netrw.html#:Launch" name=":Launch">:Launch</a>&nbsp;{{ "{{{" }}2<br>
 <br>
 Netrw determines which special handler by the following method:<br>
 <br>
@@ -1549,23 +1555,24 @@ Netrw determines which special handler by the following method:<br>
 <span class="Statement">&nbsp;&nbsp;&nbsp;&nbsp;</span>* for Mac OS X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: open is used.<br>
 <span class="Statement">&nbsp;&nbsp;&nbsp;&nbsp;</span>* for Linux&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : xdg-open is used.<br>
 <br>
-To open a file&nbsp;<span class="Special">&lt;filepath&gt;</span>&nbsp;by the appropriate handler, type<br>
+To open a path (or URL)&nbsp;<span class="Special">&lt;path&gt;</span>&nbsp;by the appropriate handler, type<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Open&nbsp;<span class="Special">&lt;filepath&gt;</span><br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:Open &lt;path&gt;</div>
 <br>
-No escaping, neither for the shell, nor for Vim's command-line is needed.<br>
+No escaping, neither for the shell nor for Vim's command-line, is needed.<br>
 <br>
-To launch a specific application&nbsp;<span class="Special">&lt;app&gt;</span>&nbsp;<span class="Special">&lt;args&gt;</span>, often&nbsp;<span class="Special">&lt;args&gt;</span>&nbsp;being&nbsp;<span class="Special">&lt;filepath&gt;</span>,<br>
+To launch a specific application&nbsp;<span class="Special">&lt;app&gt;</span>&nbsp;<span class="Special">&lt;args&gt;</span>, often&nbsp;<span class="Special">&lt;args&gt;</span>&nbsp;being&nbsp;<span class="Special">&lt;path&gt;</span><br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:Launch&nbsp;<span class="Special">&lt;app&gt;</span>&nbsp;<span class="Special">&lt;args&gt;</span>.<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:Launch &lt;app&gt; &lt;args&gt;.</div>
 <br>
 Since&nbsp;<span class="Special">&lt;args&gt;</span>&nbsp;can be arbitrarily complex, in particular contain many file<br>
 paths, the escaping is left to the user.<br>
 <br>
-Associated setting variables:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pi_netrw.html#g:netrw_gx">g:netrw_gx</a>&nbsp;&nbsp;&nbsp;&nbsp;control how gx picks up the text under the cursor<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pi_netrw.html#g:netrw_nogx">g:netrw_nogx</a>&nbsp;&nbsp;prevent gx map while editing<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Identifier" href="pi_netrw.html#g:netrw_suppress_gx_mesg">g:netrw_suppress_gx_mesg</a>&nbsp;controls gx's suppression of browser messages<br>
+If you disabled the netrw plugin by setting g:loaded_netrwPlugin (see<br>
+<a class="Identifier" href="pi_netrw.html#netrw-noload">netrw-noload</a>), then you can use<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;:call netrw#Launch('&lt;app&gt; &lt;args&gt;')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:call netrw#Open('&lt;path&gt;')</div>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="pi_netrw.html#netrw-curdir" name="netrw-curdir">netrw-curdir</a><br>
 <span class="Statement">DELETING BOOKMARKS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="pi_netrw.html#netrw-mB" name="netrw-mB">netrw-mB</a>&nbsp;{{ "{{{" }}2<br>
