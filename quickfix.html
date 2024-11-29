@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'quickfix'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="quickfix.html" name="quickfix.txt">quickfix.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Nov 12<br>
+<a class="Constant" href="quickfix.html" name="quickfix.txt">quickfix.txt</a>&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Nov 28<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -1336,9 +1336,116 @@ g:compiler_gcc_ignore_unmatched_lines<br>
 <span class="Statement">JAVAC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="quickfix.html#compiler-javac" name="compiler-javac">compiler-javac</a><br>
 <br>
 Commonly used compiler options can be added to&nbsp;<a class="Type" href="options.html#'makeprg'">'makeprg'</a>&nbsp;by setting the<br>
-g:javac_makeprg_params variable.&nbsp;&nbsp;For example:<br>
+b/g:javac_makeprg_params variable.&nbsp;&nbsp;For example:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:javac_makeprg_params = &quot;-Xlint:all -encoding utf-8&quot;</div>
+<br>
+<span class="Statement">MAVEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="quickfix.html#compiler-maven" name="compiler-maven">compiler-maven</a><br>
+<br>
+Commonly used compiler options can be added to&nbsp;<a class="Type" href="options.html#'makeprg'">'makeprg'</a>&nbsp;by setting the<br>
+b/g:maven_makeprg_params variable.&nbsp;&nbsp;For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:maven_makeprg_params = &quot;-DskipTests -U -X&quot;</div>
+<br>
+<span class="Statement">SPOTBUGS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="quickfix.html#compiler-spotbugs" name="compiler-spotbugs">compiler-spotbugs</a><br>
+<br>
+SpotBugs is a static analysis tool that can be used to find bugs in Java.<br>
+It scans the Java bytecode of all classes in the currently open buffer.<br>
+(Therefore,&nbsp;<span class="Comment">:compiler! spotbugs</span>&nbsp;is not supported.)<br>
+<br>
+Commonly used compiler options can be added to&nbsp;<a class="Type" href="options.html#'makeprg'">'makeprg'</a>&nbsp;by setting the<br>
+&quot;b:&quot; or &quot;g:spotbugs_makeprg_params&quot; variable.&nbsp;&nbsp;For example:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let b:spotbugs_makeprg_params = &quot;-longBugCodes -effort:max -low&quot;</div>
+<br>
+The global default is &quot;-workHard -experimental&quot;.<br>
+<br>
+By default, the class files are searched in the directory where the source<br>
+files are placed.&nbsp;&nbsp;However, typical Java projects use distinct directories<br>
+for source files and class files.&nbsp;&nbsp;To make both known to SpotBugs, assign<br>
+their paths (distinct and relative to their common root directory) to the<br>
+following properties (using the example of a common Maven project):<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:spotbugs_properties = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'sourceDirPath':&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'src/main/java',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'classDirPath':&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'target/classes',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'testSourceDirPath':&nbsp;&nbsp;'src/test/java',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'testClassDirPath':&nbsp;&nbsp; 'target/test-classes',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ }</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that values for the path keys describe only for SpotBugs where to look<br>
+for files; refer to the documentation for particular compiler plugins for more<br>
+information.<br>
+<br>
+The default pre- and post-compiler actions are provided for Ant, Maven, and<br>
+Javac compiler plugins and can be selected by assigning the name of a compiler<br>
+plugin to the &quot;compiler&quot; key:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:spotbugs_properties = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'compiler':&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'maven',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ }</div>
+<br>
+This single setting is essentially equivalent to all the settings below, with<br>
+the exception made for the &quot;PreCompilerAction&quot; and &quot;PreCompilerTestAction&quot;<br>
+values: their listed&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>s will obtain no-op implementations whereas the<br>
+implicit Funcrefs of the &quot;compiler&quot; key will obtain the requested defaults if<br>
+available.<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:spotbugs_properties = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'PreCompilerAction':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ function('spotbugs#DefaultPreCompilerAction'),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'PreCompilerTestAction':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ function('spotbugs#DefaultPreCompilerTestAction'),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'PostCompilerAction':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ function('spotbugs#DefaultPostCompilerAction'),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'sourceDirPath':&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'src/main/java',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'classDirPath':&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'target/classes',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'testSourceDirPath':&nbsp;&nbsp;'src/test/java',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'testClassDirPath':&nbsp;&nbsp; 'target/test-classes',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ }</div>
+<br>
+With default actions, the compiler of choice will attempt to rebuild the class<br>
+files for the buffer (and possibly for the whole project) as soon as a Java<br>
+syntax file is loaded; then,&nbsp;<span class="Comment">spotbugs</span>&nbsp;will attempt to analyze the quality of<br>
+the compilation unit of the buffer.<br>
+<br>
+When default actions are not suited to a desired workflow, consider writing<br>
+arbitrary functions yourself and matching their&nbsp;<a class="Identifier" href="eval.html#Funcref">Funcref</a>s to the supported<br>
+keys: &quot;PreCompilerAction&quot;, &quot;PreCompilerTestAction&quot;, and &quot;PostCompilerAction&quot;.<br>
+<br>
+The next example re-implements the default pre-compiler actions for a Maven<br>
+project and requests other default Maven settings with the &quot;compiler&quot; entry:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function! MavenPreCompilerAction() abort<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call spotbugs#DeleteClassFiles()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;compiler maven<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make compile<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunction</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function! MavenPreCompilerTestAction() abort<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call spotbugs#DeleteClassFiles()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;compiler maven<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make test-compile<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endfunction</div>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let g:spotbugs_properties = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'compiler':&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'maven',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'PreCompilerAction':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ function('MavenPreCompilerAction'),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ 'PreCompilerTestAction':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ function('MavenPreCompilerTestAction'),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ }</div>
+<br>
+<span class="Todo">Note</span>&nbsp;that all entered custom settings will take precedence over the matching<br>
+default settings in &quot;g:spotbugs_properties&quot;.<br>
+<br>
+The &quot;g:spotbugs_properties&quot; variable is consulted by the Java filetype plugin<br>
+(<a class="Identifier" href="filetype.html#ft-java-plugin">ft-java-plugin</a>) to arrange for the described automation, and, therefore, it<br>
+must be defined before&nbsp;<a class="Identifier" href="autocmd.html#FileType">FileType</a>&nbsp;events can take place for the buffers loaded<br>
+with Java source files.&nbsp;&nbsp;It could, for example, be set in a project-local<br>
+<a class="Identifier" href="starting.html#vimrc">vimrc</a>&nbsp;loaded by [0].<br>
+<br>
+[0]&nbsp;<span class="Constant"><a href="https://github.com/MarcWeber/vim-addon-local-vimrc/">https://github.com/MarcWeber/vim-addon-local-vimrc/</a></span><br>
 <br>
 <span class="Statement">GNU MAKE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="quickfix.html#compiler-make" name="compiler-make">compiler-make</a><br>
 <br>
