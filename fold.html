@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'fold'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="fold.html" name="fold.txt">fold.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2023 Mar 24<br>
+<a class="Constant" href="fold.html" name="fold.txt">fold.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Dec 16<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -92,9 +92,11 @@ The most efficient is to call a compiled function without arguments:<br>
 The function must use v:lnum.&nbsp;&nbsp;See&nbsp;<a class="Identifier" href="vim9.html#expr-option-function">expr-option-function</a>.<br>
 <br>
 These are the conditions with which the expression is evaluated:<br>
+<br>
 - The current buffer and window are set for the line.<br>
 - The variable &quot;v:lnum&quot; is set to the line number.<br>
-- The result is used for the fold level in this way:<br>
+<br>
+The result of foldexpr then determines the fold level as follows:<br>
 &nbsp;&nbsp;<span class="PreProc">value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; meaning</span><br>
 &nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the line is not in a fold<br>
 &nbsp;&nbsp;1, 2, ..&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the line is in a fold with this level<br>
@@ -109,6 +111,8 @@ These are the conditions with which the expression is evaluated:<br>
 &nbsp;&nbsp;&quot;&lt;1&quot;, &quot;&lt;2&quot;, ..&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a fold with this level ends at this line<br>
 &nbsp;&nbsp;&quot;&gt;1&quot;, &quot;&gt;2&quot;, ..&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a fold with this level starts at this line<br>
 <br>
+The result values &quot;=&quot;, &quot;s&quot; and &quot;a&quot; are more expensive, please see&nbsp;<a class="Identifier" href="fold.html#fold-expr-slow">fold-expr-slow</a>.<br>
+<br>
 It is not required to mark the start (end) of a fold with &quot;&gt;1&quot; (&quot;&lt;1&quot;), a fold<br>
 will also start (end) when the fold level is higher (lower) than the fold<br>
 level of the previous line.<br>
@@ -121,12 +125,6 @@ If there is some error in the expression, or the resulting value isn't<br>
 recognized, there is no error message and the fold level will be zero.<br>
 For debugging the&nbsp;<a class="Type" href="options.html#'debug'">'debug'</a>&nbsp;option can be set to &quot;msg&quot;, the error messages will<br>
 be visible then.<br>
-<br>
-<span class="Todo">Note</span>: Since the expression has to be evaluated for every line, this fold<br>
-method can be very slow!<br>
-<br>
-Try to avoid the &quot;=&quot;, &quot;a&quot; and &quot;s&quot; return values, since Vim often has to search<br>
-backwards for a line for which the fold level is defined.&nbsp;&nbsp;This can be slow.<br>
 <br>
 If the&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;expression starts with s: or&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>, then it is replaced<br>
 with the script ID (<a class="Identifier" href="userfunc.html#local-function">local-function</a>). Examples:<br>
@@ -153,6 +151,36 @@ end in that line.<br>
 It may happen that folds are not updated properly.&nbsp;&nbsp;You can use&nbsp;<a class="Identifier" href="fold.html#zx">zx</a>&nbsp;or&nbsp;<a class="Identifier" href="fold.html#zX">zX</a><br>
 to force updating folds.<br>
 <br>
+Minimizing Computational Cost&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#fold-expr-slow" name="fold-expr-slow">fold-expr-slow</a><br>
+<br>
+Due to its computational cost, this fold method can make Vim unresponsive,<br>
+especially when the fold level of all lines have to be initially computed.<br>
+Afterwards, after each change, Vim restricts the computation of foldlevels<br>
+to those lines whose fold level was affected by it (and reuses the known<br>
+foldlevels of all the others).<br>
+<br>
+The fold expression should therefore strive to minimize the number of dependent<br>
+lines needed for the computation of a given line: For example, try to avoid the<br>
+&quot;=&quot;, &quot;a&quot; and &quot;s&quot; return values, because these will require the evaluation of the<br>
+fold levels on previous lines until an independent fold level is found.<br>
+<br>
+If this proves difficult, the next best thing could be to cache all fold levels<br>
+in a buffer-local variable (b:foldlevels) that is only updated on&nbsp;<a class="Identifier" href="eval.html#b:changedtick">b:changedtick</a>:<br>
+&gt;vim<br>
+&nbsp;&nbsp;vim9script<br>
+&nbsp;&nbsp;def MyFoldFunc(): number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if b:lasttick == b:changedtick<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return b:foldlevels[v:lnum - 1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;b:lasttick = b:changedtick<br>
+&nbsp;&nbsp;&nbsp;&nbsp;b:foldlevels = []<br>
+&nbsp;&nbsp;&nbsp;&nbsp;# compute foldlevels ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return b:foldlevels[v:lnum - 1]<br>
+&nbsp;&nbsp;enddef<br>
+&nbsp;&nbsp;set foldexpr=s:MyFoldFunc()<br>
+&lt;<br>
+In above example further speedup was gained by using a precompiled Vim9script<br>
+function without arguments (that must still use v:lnum). See&nbsp;<a class="Identifier" href="vim9.html#expr-option-function">expr-option-function</a>.<br>
 <br>
 <span class="Statement">SYNTAX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-syntax" name="fold-syntax">fold-syntax</a><br>
 <br>
