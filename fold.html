@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'fold'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="fold.html" name="fold.txt">fold.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Dec 16<br>
+<a class="Constant" href="fold.html" name="fold.txt">fold.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Dec 17<br>
 <br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Identifier">VIM REFERENCE MANUAL&nbsp;&nbsp;&nbsp;&nbsp;by Bram Moolenaar</span><br>
@@ -111,7 +111,8 @@ The result of foldexpr then determines the fold level as follows:<br>
 &nbsp;&nbsp;&quot;&lt;1&quot;, &quot;&lt;2&quot;, ..&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a fold with this level ends at this line<br>
 &nbsp;&nbsp;&quot;&gt;1&quot;, &quot;&gt;2&quot;, ..&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a fold with this level starts at this line<br>
 <br>
-The result values &quot;=&quot;, &quot;s&quot; and &quot;a&quot; are more expensive, please see&nbsp;<a class="Identifier" href="fold.html#fold-expr-slow">fold-expr-slow</a>.<br>
+The result values &quot;=&quot;, &quot;s&quot; and &quot;a&quot; are more expensive, please see<br>
+<a class="Identifier" href="fold.html#fold-expr-slow">fold-expr-slow</a>.<br>
 <br>
 It is not required to mark the start (end) of a fold with &quot;&gt;1&quot; (&quot;&lt;1&quot;), a fold<br>
 will also start (end) when the fold level is higher (lower) than the fold<br>
@@ -127,7 +128,7 @@ For debugging the&nbsp;<a class="Type" href="options.html#'debug'">'debug'</a>&n
 be visible then.<br>
 <br>
 If the&nbsp;<a class="Type" href="options.html#'foldexpr'">'foldexpr'</a>&nbsp;expression starts with s: or&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>, then it is replaced<br>
-with the script ID (<a class="Identifier" href="userfunc.html#local-function">local-function</a>). Examples:<br>
+with the script ID (<a class="Identifier" href="userfunc.html#local-function">local-function</a>).&nbsp;&nbsp;Examples:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set foldexpr=s:MyFoldExpr()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set foldexpr=&lt;SID&gt;SomeFoldExpr()</div>
 <br>
@@ -151,7 +152,7 @@ end in that line.<br>
 It may happen that folds are not updated properly.&nbsp;&nbsp;You can use&nbsp;<a class="Identifier" href="fold.html#zx">zx</a>&nbsp;or&nbsp;<a class="Identifier" href="fold.html#zX">zX</a><br>
 to force updating folds.<br>
 <br>
-Minimizing Computational Cost&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#fold-expr-slow" name="fold-expr-slow">fold-expr-slow</a><br>
+<span class="Statement">MINIMIZING COMPUTATIONAL COST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-expr-slow" name="fold-expr-slow">fold-expr-slow</a><br>
 <br>
 Due to its computational cost, this fold method can make Vim unresponsive,<br>
 especially when the fold level of all lines have to be initially computed.<br>
@@ -159,13 +160,15 @@ Afterwards, after each change, Vim restricts the computation of foldlevels<br>
 to those lines whose fold level was affected by it (and reuses the known<br>
 foldlevels of all the others).<br>
 <br>
-The fold expression should therefore strive to minimize the number of dependent<br>
-lines needed for the computation of a given line: For example, try to avoid the<br>
-&quot;=&quot;, &quot;a&quot; and &quot;s&quot; return values, because these will require the evaluation of the<br>
-fold levels on previous lines until an independent fold level is found.<br>
+The fold expression should therefore strive to minimize the number of<br>
+dependent lines needed for the computation of a given line: For example, try<br>
+to avoid the &quot;=&quot;, &quot;a&quot; and &quot;s&quot; return values, because these will require the<br>
+evaluation of the fold levels on previous lines until an independent fold<br>
+level is found.<br>
 <br>
-If this proves difficult, the next best thing could be to cache all fold levels<br>
-in a buffer-local variable (b:foldlevels) that is only updated on&nbsp;<a class="Identifier" href="eval.html#b:changedtick">b:changedtick</a>:<br>
+If this proves difficult, the next best thing could be to cache all fold<br>
+levels in a buffer-local variable (b:foldlevels) that is only updated on<br>
+<a class="Identifier" href="eval.html#b:changedtick">b:changedtick</a>:<br>
 &gt;vim<br>
 &nbsp;&nbsp;vim9script<br>
 &nbsp;&nbsp;def MyFoldFunc(): number<br>
@@ -179,8 +182,9 @@ in a buffer-local variable (b:foldlevels) that is only updated on&nbsp;<a class=
 &nbsp;&nbsp;enddef<br>
 &nbsp;&nbsp;set foldexpr=s:MyFoldFunc()<br>
 &lt;<br>
-In above example further speedup was gained by using a precompiled Vim9script<br>
-function without arguments (that must still use v:lnum). See&nbsp;<a class="Identifier" href="vim9.html#expr-option-function">expr-option-function</a>.<br>
+In above example further speedup was gained by using a precompiled Vim9 script<br>
+function without arguments (that must still use v:lnum).&nbsp;&nbsp;See<br>
+<a class="Identifier" href="vim9.html#expr-option-function">expr-option-function</a>.<br>
 <br>
 <span class="Statement">SYNTAX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a class="Constant" href="fold.html#fold-syntax" name="fold-syntax">fold-syntax</a><br>
 <br>
@@ -417,8 +421,8 @@ zX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Also forces recomputing folds, like&nbsp;<a class="Identifier" href="fold.html#zx">zx</a>.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zm" name="zm">zm</a><br>
-zm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fold more: Subtract&nbsp;<a class="Identifier" href="eval.html#v:count1">v:count1</a>&nbsp;from&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>.&nbsp;&nbsp;If&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>&nbsp;was<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;already zero nothing happens.<br>
+zm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fold more: Subtract&nbsp;<a class="Identifier" href="eval.html#v:count1">v:count1</a>&nbsp;from&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>.&nbsp;&nbsp;If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldlevel'">'foldlevel'</a>&nbsp;was already zero nothing happens.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Type" href="options.html#'foldenable'">'foldenable'</a>&nbsp;will be set.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#zM" name="zM">zM</a><br>
@@ -482,7 +486,7 @@ zk&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <br>
 <span class="PreProc">EXECUTING COMMANDS ON FOLDS</span><br>
 <br>
-:<span class="Special">[range]</span>foldd[oopen]&nbsp;<span class="Special">{cmd}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#:foldd" name=":foldd">:foldd</a>&nbsp;<a class="Constant" href="fold.html#:folddo" name=":folddo">:folddo</a>&nbsp;<a class="Constant" href="fold.html#:folddoopen" name=":folddoopen">:folddoopen</a><br>
+:<span class="Special">[range]</span>foldd[oopen]&nbsp;<span class="Special">{cmd}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="Constant" href="fold.html#:foldd" name=":foldd">:foldd</a>&nbsp;<a class="Constant" href="fold.html#:folddo" name=":folddo">:folddo</a>&nbsp;<a class="Constant" href="fold.html#:folddoopen" name=":folddoopen">:folddoopen</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute&nbsp;<span class="Special">{cmd}</span>&nbsp;on all lines that are not in a closed fold.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;<span class="Special">[range]</span>&nbsp;is given, only these lines are used.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each time&nbsp;<span class="Special">{cmd}</span>&nbsp;is executed the cursor is positioned on the<br>
@@ -572,7 +576,7 @@ When there is room after the text, it is filled with the character specified<br>
 by&nbsp;<a class="Type" href="options.html#'fillchars'">'fillchars'</a>.<br>
 <br>
 If the&nbsp;<a class="Type" href="options.html#'foldtext'">'foldtext'</a>&nbsp;expression starts with s: or&nbsp;<a class="Identifier" href="map.html#<SID>">&lt;SID&gt;</a>, then it is replaced<br>
-with the script ID (<a class="Identifier" href="userfunc.html#local-function">local-function</a>). Examples:<br>
+with the script ID (<a class="Identifier" href="userfunc.html#local-function">local-function</a>).&nbsp;&nbsp;Examples:<br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set foldtext=s:MyFoldText()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set foldtext=&lt;SID&gt;SomeFoldText()</div>
 <br>
