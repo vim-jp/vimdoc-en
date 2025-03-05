@@ -19,34 +19,48 @@ jobs:
         with:
           vim_version: 'v9.1.0065'
           vim_type: 'Vim'
+
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          path: work
+
+      #
+      # Generate HTML from Vim documents and upload it as an artifact.
+      #
+
       - name: Generate new HTML documents
         run: |
-          cd work
           make html
-          cd ..
-          mkdir target
-          cp work/target/html/doc/*.html target
+
       - name: Check commit IDs
         id: commitid
         run: |
-          echo "vim=$(git -C work/vim rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "vim_faq=$(git -C work/vim_faq rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "vim=$(git -C vim rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "vim_faq=$(git -C vim_faq rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Upload vim generated HTML files as an artifact
         uses: actions/upload-artifact@v4
         with:
           name: vim-generated-html
-          path: target
+          path: target/html/doc/*.html
 
-      # TODO: Jekyllのビルド。必要なパーツをgh-pagesブランチから持ってくる必要あり
+      #
+      # Generate GitHub Page site and upload it as an artifact.
+      #
 
-        #uses: actions/upload-pages-artifact@v3
-        #with:
-        #  path: _site/
-        #  retantion-days: 7
+      - name: Prepare for building GitHub Page (Jekyll)
+        run:
+          make jekyll-build-prepare
+
+      - name: Build GitHub Page site
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: target/jekyll-work
+          verbose: true
+
+      - name: Upload a site as an artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site/
+          retention-days: 7
 
   # TODO: masterへのpushもしくはcron実行のときだけ、GitHub Pagesへアップロードする
