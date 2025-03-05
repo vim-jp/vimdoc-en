@@ -17,13 +17,18 @@ html:
 clean:
 	rm -rf target
 
-jekyll-build:
+jekyll-build-prepare:
 	mkdir -p $(JEKYLL_WORKDIR)
 	cp target/html/doc/*.html $(JEKYLL_WORKDIR)
 	cp -Ru src/* $(JEKYLL_WORKDIR)
+
+jekyll-build: jekyll-build-prepare
 	jekyll build -s $(JEKYLL_WORKDIR) -d $(JEKYLL_OUTDIR)
+
+jekyll-build-by-docker: jekyll-build-prepare
+	./tools/docker_jekyll jekyll build -s $(JEKYLL_WORKDIR) -d $(JEKYLL_OUTDIR)
 
 jekyll-clean:
 	rm -rf $(JEKYLL_WORKDIR) $(JEKYLL_OUTDIR)
 
-.PHONY: jekyll-build jekyll-clean
+.PHONY: jekyll-build-prepare jekyll-build jekyll-build-by-docker jekyll-clean
