@@ -9,7 +9,6 @@ let g:html_no_progress = 1
 enew!
 
 source <sfile>:h/tag_aliases.vim
-source <sfile>:h/untranslated.vim
 source <sfile>:h/makehtml.vim
 
 let s:tools_dir = expand('<sfile>:p:h')
