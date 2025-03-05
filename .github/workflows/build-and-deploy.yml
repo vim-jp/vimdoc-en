@@ -63,4 +63,26 @@ jobs:
           path: _site/
           retention-days: 7
 
-  # TODO: masterへのpushもしくはcron実行のときだけ、GitHub Pagesへアップロードする
+  # Upload a site to GitHub Pages
+  deploy:
+    needs:
+      - build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Run only when updating the master branch or when started by cron.
+    if: github.ref == 'refs/heads/master' || github.event_name == 'schedule'
+    steps:
+      - name: Deploy to Github Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # TODO: レポジトリ側の設定:
+  #
+  # * Actionsを使うこと
+  # * page write パーミッション
