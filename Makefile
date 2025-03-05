@@ -1,5 +1,8 @@
 .PHONY: all html clean
 
+JEKYLL_WORKDIR=target/jekyll-work
+JEKYLL_OUTDIR=target/_site
+
 all:
 
 html:
@@ -13,3 +16,14 @@ html:
 
 clean:
 	rm -rf target
+
+jekyll-build:
+	mkdir -p $(JEKYLL_WORKDIR)
+	cp target/html/doc/*.html $(JEKYLL_WORKDIR)
+	cp -Ru src/* $(JEKYLL_WORKDIR)
+	jekyll build -s $(JEKYLL_WORKDIR) -d $(JEKYLL_OUTDIR)
+
+jekyll-clean:
+	rm -rf $(JEKYLL_WORKDIR) $(JEKYLL_OUTDIR)
+
+.PHONY: jekyll-build jekyll-clean
