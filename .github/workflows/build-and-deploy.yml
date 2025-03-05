@@ -1,0 +1,46 @@
+name: Build and deploy vim help
+
+# This is an experimental.
+#
+# gh-pagesブランチを経由せず、actions/upload-pages-artifactを使って直接GitHub Pagesにデプロイする試み
+# pushのたびにいったん artifacts まで作る(HTML生成+Jekyll実行)
+# masterへのpushかcronでの実行であればGitHub Pagesへアップロードする
+# …という計画
+
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Setup Vim
+        uses: thinca/action-setup-vim@v2
+        with:
+          vim_version: 'v9.1.0065'
+          vim_type: 'Vim'
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: work
+      - name: Generate new HTML documents
+        run: |
+          cd work
+          make html
+          cd ..
+          mkdir target
+          cp work/target/html/doc/*.html target
+      - name: Check commit IDs
+        id: commitid
+        run: |
+          echo "vim=$(git -C work/vim rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "vim_faq=$(git -C work/vim_faq rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      # TODO: Jekyllのビルド。必要なパーツをgh-pagesブランチから持ってくる必要あり
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: target
+
+  # TODO: masterへのpushもしくはcron実行のときだけ、GitHub Pagesへアップロードする
