@@ -74,7 +74,12 @@ endfunction
 
 function! MakeHtml2(src, dst, conceal)
   silent new `=a:src`
+  call MakeHtml3(s:GetLang(a:src), a:conceal)
+  silent wq! `=a:dst`
+endfunction
 
+" Generate HTML from the current buffer's contents
+function! MakeHtml3(lang, conceal)
   " 2html options
   let g:html_use_css = 1
   let g:html_no_pre = 1
@@ -90,8 +95,7 @@ function! MakeHtml2(src, dst, conceal)
   silent! %foldopen!
   silent! call tohtml#Convert2HTML(1, line('$'))
 
-  let lang = s:GetLang(a:src)
-  silent %s@<span class="\(helpHyperTextEntry\|helpHyperTextJump\|helpOption\|helpCommand\)">\([^<]*\)</span>@\=s:MakeLink(lang, submatch(1), submatch(2), a:conceal)@ge
+  silent %s@<span class="\(helpHyperTextEntry\|helpHyperTextJump\|helpOption\|helpCommand\)">\([^<]*\)</span>@\=s:MakeLink(a:lang, submatch(1), submatch(2), a:conceal)@ge
   silent %s@^<span class="Ignore">&lt;</span>\ze&nbsp;@\&nbsp;@ge
   silent %s@<span class="\(helpStar\|helpBar\|Ignore\)">[^<]*</span>@@ge
   call s:TranslateHelpExampleBlock()
@@ -100,8 +104,6 @@ function! MakeHtml2(src, dst, conceal)
 
   call s:Header()
   call s:Footer()
-
-  silent wq! `=a:dst`
 endfunction
 
 " <span>...</span>  -> <div>...

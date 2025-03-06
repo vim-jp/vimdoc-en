@@ -1,31 +1,51 @@
 .PHONY: all html clean
 
-JEKYLL_WORKDIR=target/jekyll-work
-JEKYLL_OUTDIR=target/_site
+VIM_ALL_TEXT = $(wildcard vim/runtime/doc/*.txt)
+SRC_TEXT = $(VIM_ALL_TEXT:vim/runtime/doc/%=target/html/doc/%) \
+	target/html/doc/tags.txt \
+	target/html/doc/vim_faq.txt
+DST_HTML = $(SRC_TEXT:%.txt=%.html)
 
-html-prepare: vim/runtime/doc vim_faq/doc target/html/doc
-	rm -f target/html/doc/*.txt
-	cp vim/runtime/doc/*.txt target/html/doc
-	cp vim_faq/doc/*.txt target/html/doc
+html: vim vim_faq
+	$(MAKE) html-generate
 
-html: html-prepare
-	-cd target/html/doc ; vim -eu ../../../tools/buildhtml.vim -c "qall!"
+html-generate: $(DST_HTML)
 
-vim/runtime/doc:
+vim:
 	git clone --depth=1 https://github.com/vim/vim.git
 	cd vim && git apply ../tools/add-vimfaq-link.diff
 
-vim_faq/doc:
+vim/runtime/doc/%.txt: vim
+
+vim_faq:
 	git clone --depth=1 https://github.com/chrisbra/vim_faq.git
+
+vim_faq/doc/vim_faq.txt: vim_faq
 
 target/html/doc:
 	mkdir -p $@
+
+target/html/doc/tags target/html/doc/tags.txt: $(SRC_TEXT)
+	-cd target/html/doc && vim -esu ../../../tools/build_tag.vim -c "qall!"
+
+target/html/doc/%.txt: vim/runtime/doc/%.txt target/html/doc
+	cp $< $@
+
+target/html/doc/vim_faq.txt: vim_faq/doc/vim_faq.txt target/html/doc
+	cp $< $@
+
+# referenced by $(DST_HTML)
+target/html/doc/%.html: target/html/doc/%.txt target/html/doc/tags
+	-cd target/html/doc && vim -esu ../../../tools/build_html.vim -c "call VimdocEnConvert() | wqall!" $(<F)
 
 clean:
 	rm -rf target
 
 distclean:
 	rm -rf vim vim_faq
+
+JEKYLL_WORKDIR=target/jekyll-work
+JEKYLL_OUTDIR=target/_site
 
 jekyll-build-prepare:
 	mkdir -p $(JEKYLL_WORKDIR)
