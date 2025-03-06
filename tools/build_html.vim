@@ -40,6 +40,9 @@ function VimdocEnConvert()
   " for ja custom syntax
   let &runtimepath .= ',' . s:proj_dir
 
+  " Avoid problem with highlight group helpIgnore character not being removed
+  hi Ignore guifg=#ffffff ctermfg=white
+
   let dst = expand("%:r") . ".html"
 
   call MakeHtml3("", 1)
