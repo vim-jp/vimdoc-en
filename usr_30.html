@@ -3,7 +3,7 @@ layout: vimdoc
 helpname: 'usr_30'
 ---
 <div id='vimCodeElement'>
-<a class="Constant" href="usr_30.html" name="usr_30.txt">usr_30.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2024 Apr 29<br>
+<a class="Constant" href="usr_30.html" name="usr_30.txt">usr_30.txt</a>&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;<span class="Identifier">Vim version 9.1.</span>&nbsp;&nbsp;Last change: 2025 May 30<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIM USER MANUAL - by Bram Moolenaar<br>
 <br>
@@ -414,108 +414,202 @@ the cursor is on &quot;printf&quot;:<br>
 <span class="PreProc">==============================================================================</span><br>
 <a class="Constant" href="usr_30.html#30.5" name="30.5">30.5</a>&nbsp;&nbsp;Tabs and spaces<br>
 <br>
-<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;is set to eight by default.&nbsp;&nbsp;Although you can change it, you quickly<br>
-run into trouble later.&nbsp;&nbsp;Other programs won't know what tabstop value you<br>
-used.&nbsp;&nbsp;They probably use the default value of eight, and your text suddenly<br>
-looks very different.&nbsp;&nbsp;Also, most printers use a fixed tabstop value of eight.<br>
-Thus it's best to keep&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;alone.&nbsp;&nbsp;(If you edit a file which was written<br>
-with a different tabstop setting, see&nbsp;<a class="Identifier" href="usr_25.html#25.3">25.3</a>&nbsp;for how to fix that.)<br>
-&nbsp;&nbsp; For indenting lines in a program, using a multiple of eight spaces makes<br>
+A QUICK HISTORY OF THE RATIONALE BEHIND TABS<br>
+<br>
+<a class="Comment" href="intro.html#vi">vi</a>&nbsp;(the ancestor of Vim) was created by Bill Joy.&nbsp;&nbsp;At the time, he was using<br>
+a PDP-11 with limited memory and I/O operation capabilities.&nbsp;&nbsp;Back then, it<br>
+was common to optimize the size of source code with the following trick.<br>
+&nbsp;&nbsp;The ASCII table was first designed to remotely control teleprinters.&nbsp;&nbsp;When<br>
+control character 9 (the Horizontal Tab, caret notation: ^I) was sent to a<br>
+teleprinter, it would move the carriage to the next tab stop.&nbsp;&nbsp;Assuming tab<br>
+stops were separated by 8 columns (a typical standard), this means that a<br>
+single control character could produce the same visual effect as up to 8 space<br>
+characters.&nbsp;&nbsp;For example, the following two lines will display identically<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1234^I9<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1234&nbsp;&nbsp;&nbsp;&nbsp;9</div>
+<br>
+Using the&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;key was also faster than typing&nbsp;<span class="Special">&lt;Space&gt;</span>&nbsp;several times; the<br>
+same was true for&nbsp;<span class="Special">&lt;BS&gt;</span>.<br>
+<br>
+<br>
+THE ISSUE WITH TABS AND INDENTATION<br>
+<br>
+In Vim, the number of columns between two (virtual) horizontal tab stops<br>
+is controlled by&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;and is set to eight by default.&nbsp;&nbsp;Although you can<br>
+change it, you quickly run into trouble later.&nbsp;&nbsp;Other programs won't know what<br>
+tabstop value you used.&nbsp;&nbsp;They probably use the default value of eight, and<br>
+your text suddenly looks very different.&nbsp;&nbsp;Also, most printers use a fixed<br>
+tabstop value of eight.&nbsp;&nbsp;Thus it's best to keep&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;alone; if you edit a<br>
+file which was written with a different tabstop setting, see&nbsp;<a class="Identifier" href="usr_25.html#25.3">25.3</a>&nbsp;for how<br>
+to fix that.<br>
+&nbsp;&nbsp; For indenting lines in a program, using a multiple of eight columns makes<br>
 you quickly run into the right border of the window.&nbsp;&nbsp;Using a single space<br>
 doesn't provide enough visual difference.&nbsp;&nbsp;Many people prefer to use four<br>
 spaces, a good compromise.<br>
-&nbsp;&nbsp; Since a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;is eight spaces and you want to use an indent of four spaces,<br>
-you can't use a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;character to make your indent.&nbsp;&nbsp;There are two ways to<br>
-handle this:<br>
+&nbsp;&nbsp; Since a tab character at the beginning of a line is visually represented<br>
+as eight spaces and you want to use an indent of four spaces, you can't use a<br>
+tab character to make your indent.<br>
+&nbsp;&nbsp;To remedy this,&nbsp;<a class="Comment" href="intro.html#vi">vi</a>&nbsp;had the&nbsp;<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;option.&nbsp;&nbsp;When set to 4, on a new<br>
+line, pressing&nbsp;<span class="Special">&lt;C-t&gt;</span>&nbsp;in Insert mode would indent the line by 4 spaces,<br>
+a result impossible to get with the&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;key and&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;set to 8.<br>
+&nbsp;To optimize space,&nbsp;<a class="Comment" href="intro.html#vi">vi</a>&nbsp;would also silently remove packs of spaces and replace<br>
+them with tab characters.&nbsp;&nbsp;The following shows what happens pressing&nbsp;<span class="Special">&lt;C-t&gt;</span><br>
+a few times.<br>
+&nbsp;&nbsp;A &quot;.&quot; stands for a space character and &quot;-------&gt;&quot; for a tab character.<br>
 <br>
-1.&nbsp;&nbsp;Use a mix of&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;and space characters.&nbsp;&nbsp;Since a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;takes the place of<br>
-&nbsp;&nbsp;&nbsp;&nbsp;eight spaces, you have fewer characters in your file.&nbsp;&nbsp;Inserting a&nbsp;<span class="Special">&lt;Tab&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;is quicker than eight spaces.&nbsp;&nbsp;Backspacing works faster as well.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-t&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-t&gt;&lt;C-t&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-------&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-t&gt;&lt;C-t&gt;&lt;C-t&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------&gt;....<br>
 <br>
-2.&nbsp;&nbsp;Use spaces only.&nbsp;&nbsp;This avoids the trouble with programs that use a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;different tabstop value.<br>
+&nbsp;&nbsp;Similarly pressing&nbsp;<span class="Special">&lt;C-d&gt;</span>&nbsp;in Insert mode would decrease the indent.&nbsp;&nbsp;Hence<br>
+with&nbsp;<span class="Comment">set tabstop=8 shiftwidth=2</span>&nbsp;one has<br>
 <br>
-Fortunately, Vim supports both methods quite well.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-t&gt;&lt;Tab&gt;&lt;C-t&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ..-----&gt;..<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;C-t&gt;&lt;Tab&gt;&lt;C-t&gt;&lt;C-d&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-------&gt;<br>
 <br>
+&nbsp;&nbsp;A third option that one could set in&nbsp;<a class="Comment" href="intro.html#vi">vi</a>&nbsp;was&nbsp;<a class="Type" href="options.html#'autoindent'">'autoindent'</a>.&nbsp;&nbsp;It copies the<br>
+indent level of the previous lines,<br>
 <br>
-SPACES AND TABS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Space&gt;&lt;Tab&gt;</span>hello&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .------&gt;hello<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Space&gt;&lt;Tab&gt;</span>hello<span class="Special">&lt;Enter&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.------&gt;hello<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-------&gt;<br>
 <br>
-If you are using a combination of tabs and spaces, you just edit normally.<br>
-The Vim defaults do a fine job of handling things.<br>
-&nbsp;&nbsp; You can make life a little easier by setting the&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>&nbsp;option.<br>
-This option tells Vim to make the&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;key look and feel as if tabs were set<br>
-at the value of&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>, but actually use a combination of tabs and<br>
-spaces.<br>
-&nbsp;&nbsp; After you execute the following command, every time you press the&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;key<br>
-the cursor moves to the next 4-column boundary:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set softtabstop=4</div>
-<br>
-When you start in the first column and press&nbsp;<span class="Special">&lt;Tab&gt;</span>, you get 4 spaces inserted<br>
-in your text.&nbsp;&nbsp;The second time, Vim takes out the 4 spaces and puts in a&nbsp;<span class="Special">&lt;Tab&gt;</span><br>
-(thus taking you to column 8).&nbsp;&nbsp;Thus Vim uses as many&nbsp;<span class="Special">&lt;Tab&gt;</span>s as possible, and<br>
-then fills up with spaces.<br>
-&nbsp;&nbsp; When backspacing it works the other way around.&nbsp;&nbsp;A&nbsp;<span class="Special">&lt;BS&gt;</span>&nbsp;will always delete<br>
-the amount specified with&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>.&nbsp;&nbsp;Then&nbsp;<span class="Special">&lt;Tab&gt;</span>s are used as many as<br>
-possible and spaces to fill the gap.<br>
-&nbsp;&nbsp; The following shows what happens pressing&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;a few times, and then using<br>
-<span class="Special">&lt;BS&gt;</span>.&nbsp;&nbsp;A &quot;.&quot; stands for a space and &quot;-------&gt;&quot; for a&nbsp;<span class="Special">&lt;Tab&gt;</span>.<br>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;&lt;Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-------&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;&lt;Tab&gt;&lt;Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------&gt;....<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;&lt;Tab&gt;&lt;Tab&gt;&lt;BS&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;&lt;Tab&gt;&lt;Tab&gt;&lt;BS&gt;&lt;BS&gt;</span>&nbsp;&nbsp; ....<br>
-<br>
-An alternative is to use the&nbsp;<a class="Type" href="options.html#'smarttab'">'smarttab'</a>&nbsp;option.&nbsp;&nbsp;When it's set, Vim uses<br>
-<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;for a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;typed in the indent of a line, and a real&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;when<br>
-typed after the first non-blank character.&nbsp;&nbsp;However,&nbsp;<span class="Special">&lt;BS&gt;</span>&nbsp;doesn't work like<br>
-with&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>.<br>
+but the new line is produced by optimizing the number of characters used.<br>
 <br>
 <br>
 JUST SPACES<br>
 <br>
-If you want absolutely no tabs in your file, you can set the&nbsp;<a class="Type" href="options.html#'expandtab'">'expandtab'</a><br>
-option:<br>
+But separating tab stops with 8 columns was not universal: IBM had a standard<br>
+at 10 columns, and today some Go developers write code with&nbsp;<span class="Comment">tabstop=4</span>.&nbsp;&nbsp;Every<br>
+time text is displayed with a different&nbsp;<a class="Type" href="options.html#'tabstop'">'tabstop'</a>&nbsp;value, it risks misaligning<br>
+the text, especially once the file is shared and opened on another machine.<br>
+&nbsp;&nbsp;In the meantime, computers got much better and the few octets saved by using<br>
+tabs were no longer making any real difference.&nbsp;&nbsp;It became possible to use<br>
+only spaces and thus guarantee the same resulting text everywhere.&nbsp;&nbsp;But using<br>
+only spaces was impossible in&nbsp;<a class="Comment" href="intro.html#vi">vi</a>&nbsp;without sacrificing features.&nbsp;&nbsp;Remember that<br>
+<a class="Type" href="options.html#'autoindent'">'autoindent'</a>&nbsp;would systematically try to input a tab character when it could.<br>
+&nbsp;&nbsp;Vim 4.0 made working with only spaces as convenient as working only with<br>
+tabs (or a mix of tabs and spaces), by introducing the&nbsp;<a class="Type" href="options.html#'expandtab'">'expandtab'</a>&nbsp;option.<br>
+When set, Vim will replace any horizontal tab character it would normally<br>
+insert with an equivalent number of spaces, to end up with the same visual<br>
+effect.&nbsp;<span class="Special">&lt;BS&gt;</span>&nbsp;would continue to remove only one character at a time.<br>
 <br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set expandtab</div>
-<br>
-When this option is set, the&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;key inserts a series of spaces.&nbsp;&nbsp;Thus you<br>
-get the same amount of white space as if a&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;character was inserted, but<br>
-there isn't a real&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;character in your file.<br>
-&nbsp;&nbsp; The backspace key will delete each space by itself.&nbsp;&nbsp;Thus after typing one<br>
-<span class="Special">&lt;Tab&gt;</span>&nbsp;you have to press the&nbsp;<span class="Special">&lt;BS&gt;</span>&nbsp;key up to eight times to undo it.&nbsp;&nbsp;If you are<br>
-in the indent, pressing&nbsp;<span class="Special">CTRL-D</span>&nbsp;will be a lot quicker.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ........<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;&lt;BS&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .......<br>
 <br>
 <br>
 CHANGING TABS IN SPACES (AND BACK)<br>
 <br>
-Setting&nbsp;<a class="Type" href="options.html#'expandtab'">'expandtab'</a>&nbsp;does not affect any existing tabs.&nbsp;&nbsp;In other words, any<br>
-tabs in the document remain tabs.&nbsp;&nbsp;If you want to convert tabs to spaces, use<br>
-the &quot;:retab&quot; command.&nbsp;&nbsp;Use these commands:<br>
+Setting&nbsp;<a class="Type" href="options.html#'expandtab'">'expandtab'</a>&nbsp;does not immediately affect existing tab characters.&nbsp;&nbsp;In<br>
+order to purge a file from all its horizontal tab characters, Vim 5.3<br>
+introduced the&nbsp;<a class="Identifier" href="change.html#:retab">:retab</a>&nbsp;command.&nbsp;&nbsp;Use these commands:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set expandtab<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%retab</div>
-<br>
-Now Vim will have changed all indents to use spaces instead of tabs.&nbsp;&nbsp;However,<br>
-all tabs that come after a non-blank character are kept.&nbsp;&nbsp;If you want these to<br>
-be converted as well, add a !:<br>
-<br>
-<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%retab!</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:retab</div>
 <br>
 This is a little bit dangerous, because it can also change tabs inside a<br>
 string.&nbsp;&nbsp;To check if these exist, you could use this:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&quot;[^&quot;\t]*\t[^&quot;]*&quot;</div>
 <br>
-It's recommended not to use hard tabs inside a string.&nbsp;&nbsp;Replace them with<br>
-&quot;\t&quot; to avoid trouble.<br>
+It's recommended not to use actual tab characters inside a string.&nbsp;&nbsp;Replace<br>
+them with &quot;\t&quot; to avoid trouble.<br>
 <br>
-The other way around works just as well:<br>
+&nbsp;&nbsp;The other way around works just as well:<br>
 <br>
 <div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set noexpandtab<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:%retab!</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:retab!</div>
+<br>
+<br>
+SOFT TAB STOPS<br>
+<br>
+When using only spaces, or a mix of spaces and horizontal tabs, one gets the<br>
+unpleasant feeling that the two keys&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;and&nbsp;<span class="Special">&lt;BS&gt;</span>&nbsp;do not act in mirror, as<br>
+they do when using only tab characters.<br>
+&nbsp;&nbsp;Vim 5.4 introduced the&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>&nbsp;option.&nbsp;&nbsp;On top of the (hard) tab stops<br>
+used to display the horizontal tab characters in the text, Vim adds extra<br>
+soft tab stops dedicated only to the cursor.&nbsp;&nbsp;When&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>&nbsp;is set to a<br>
+positive value, and the&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;key will push the cursor to the next soft tab<br>
+stop.&nbsp;&nbsp;Vim will insert the correct combination of tab characters and spaces to<br>
+make the effect visually.&nbsp;&nbsp;Likewise pressing&nbsp;<span class="Special">&lt;BS&gt;</span>&nbsp;will have the cursor try to<br>
+reach the nearest soft tab stop.&nbsp;&nbsp;The following example uses<br>
+<span class="Comment">:set softtabstop=4</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;&lt;Tab&gt;</span>a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------&gt;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;&lt;Tab&gt;</span>a<span class="Special">&lt;Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-------&gt;a...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;&lt;Tab&gt;</span>a<span class="Special">&lt;Tab&gt;&lt;BS&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;-------&gt;a<br>
+<br>
+&nbsp;&nbsp;To maintain global coherence, one can&nbsp;<span class="Comment">:set softtabstop=-1</span>&nbsp;so that<br>
+the value of&nbsp;<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;is use for the number of columns between two soft<br>
+tab stops.<br>
+<br>
+&nbsp;&nbsp;If you prefer to have different values for&nbsp;<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>&nbsp;and&nbsp;<a class="Type" href="options.html#'softtabstop'">'softtabstop'</a>,<br>
+you can still do so and use&nbsp;<span class="Special">&lt;C-t&gt;</span>&nbsp;to indent with&nbsp;<a class="Type" href="options.html#'shiftwidth'">'shiftwidth'</a>.&nbsp;&nbsp;Or you can<br>
+use the&nbsp;<a class="Type" href="options.html#'smarttab'">'smarttab'</a>&nbsp;option introduced in Vim 5.6, allowing for a unified<br>
+<span class="Special">&lt;Tab&gt;</span>&nbsp;key that knows what to do in the different situations.<br>
+<br>
+<br>
+VARIABLE TAB STOPS<br>
+<br>
+As we said before, the ASCII table was designed to remotely control<br>
+teleprinters.&nbsp;&nbsp;A given teleprinter could be configured to have their physical<br>
+tab stops have variable spacing.&nbsp;&nbsp;After all, the ^I control character was<br>
+only stipulating: go to the next tab stop wherever it is.<br>
+&nbsp;&nbsp;Vim 7.3 introduced&nbsp;<a class="Type" href="options.html#'vartabstop'">'vartabstop'</a>&nbsp;to emulate the same functionality.&nbsp;&nbsp;For<br>
+example if Vim was compiled with&nbsp;<a class="Comment" href="various.html#+vartabs">+vartabs</a>&nbsp;and&nbsp;<span class="Comment">:set vartabstop=2,4</span>&nbsp;one gets<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">actual character&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^I^I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;---&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^I^I^I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;---&gt;---&gt;<br>
+<br>
+&nbsp;&nbsp;Similarly,&nbsp;<a class="Type" href="options.html#'varsofttabstop'">'varsofttabstop'</a>&nbsp;was also introduced, to have variably spaced<br>
+soft tab stops.&nbsp;&nbsp;With&nbsp;<span class="Comment">:set varsofttabstop=2,4</span>&nbsp;one gets<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="PreProc">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ..<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;&lt;Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;......<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="Special">&lt;Tab&gt;&lt;Tab&gt;&lt;Tab&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------&gt;....<br>
+<br>
+<br>
+EXAMPLES OF CONFIGURATION<br>
+<br>
+By default, Vim is configured to use only tabs:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set tabstop=8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set shiftwidth=8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set noexpandtab<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set softtabstop=0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set nosmarttab</div>
+<br>
+&nbsp;&nbsp;If you want to write C code as if it were Python (only spaces, with indents<br>
+of 4 spaces), here is what you can use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set shiftwidth=4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set softtabstop=-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set expandtab</div>
+<br>
+&nbsp;&nbsp;If you want the same behavior but with better control over alignment<br>
+(e.g.&nbsp;&nbsp;lining up parameters or comments in multiples of 2 spaces), use:<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set shiftwidth=4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set softtabstop=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set expandtab<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set smarttab</div>
+<br>
+&nbsp;&nbsp;If instead, you would like to write C code like Bram Moolenaar would have<br>
+(using a mix of tabs and spaces), you can use<br>
+<br>
+<div class="helpExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set shiftwidth=4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:set softtabstop=-1</div>
+<br>
 <br>
 <span class="PreProc">==============================================================================</span><br>
 <a class="Constant" href="usr_30.html#30.6" name="30.6">30.6</a>&nbsp;&nbsp;Formatting comments<br>
