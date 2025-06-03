@@ -3,6 +3,10 @@
 JEKYLL_WORKDIR=target/jekyll-work
 JEKYLL_OUTDIR=target/_site
 
+all:
+	$(MAKE) html
+	$(MAKE) jekyl-build-by-docker
+
 html-prepare: vim/runtime/doc vim_faq/doc target/html/doc
 	rm -f target/html/doc/*.txt
 	cp vim/runtime/doc/*.txt target/html/doc
@@ -24,7 +28,7 @@ target/html/doc:
 clean:
 	rm -rf target
 
-distclean:
+distclean: clean
 	rm -rf vim vim_faq
 
 jekyll-build-prepare:
